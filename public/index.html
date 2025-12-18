@@ -734,6 +734,7 @@ function getSheetURL(sheetName) {
   return `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodedName}`;
 }
 
+
 async function loadData(sheetType) {
   const url = getSheetURL(CONFIG.SHEETS[sheetType]);
   const now = Date.now();
