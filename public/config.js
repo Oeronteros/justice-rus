@@ -3,9 +3,9 @@ window.CONFIG = {
   PINS: { member: '1234', officer: '6933', gm: '5934' },
   SHEET_ID: '1-ay4I-83j1mSMsU9Y5Txt_vdnEH6IVZTLnHpJbwIbJk',
   DISCORD: { USE_PROXY: false }, // Отключаем Discord для начала
-  API: { DISCORD_PROXY: '/api/discord-proxy' }
+  API: { DISCORD_PROXY: '/api/discord-proxy' }  // Изменено на Vercel путь
 };
-  
+
   // === РОЛИ ===
   ROLE_NAMES: {
     member: { ru: 'Участник', en: 'Member' },
@@ -36,17 +36,17 @@ window.CONFIG = {
   
   // === DISCORD (опционально) ===
 DISCORD: {
-  BOT_TOKEN: process.env.DISCORD_BOT_TOKEN || '', // Теперь берём из Netlify
+  BOT_TOKEN: process.env.DISCORD_BOT_TOKEN || '', // Теперь берём из Vercel
   GUILD_ID: process.env.DISCORD_GUILD_ID || '',
   NEWS_CHANNEL_ID: process.env.DISCORD_NEWS_CHANNEL_ID || '',
   AVATAR_BASE_URL: 'https://cdn.discordapp.com/avatars',
-  USE_PROXY: true // Используем Netlify Functions
+  USE_PROXY: true // Используем Vercel Functions
  },
   
   // === API ENDPOINTS ===
   API: {
-  DISCORD_PROXY: '/.netlify/functions/discord-proxy',
-  GOOGLE_SHEETS_PROXY: '/.netlify/functions/google-proxy'
+  DISCORD_PROXY: '/api/discord-proxy',  // Vercel путь
+  GOOGLE_SHEETS_PROXY: '/api/google-proxy'  // Изменено на Vercel путь
  }
   
   // === НАСТРОЙКИ ===
