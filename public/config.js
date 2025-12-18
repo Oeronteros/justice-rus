@@ -1,15 +1,5 @@
-// CONFIG.js - Настройки приложения
-// CONFIG.js - Настройки приложения
-window.CONFIG = {
-  SHEET_ID: '1-ay4I-83j1mSMsU9Y5Txt_vdnEH6IVZTLnHpJbwIbJk',
-  DISCORD: { USE_PROXY: true },
-  API: {
-    DISCORD_PROXY: '/api/discord-proxy',
-    GOOGLE_SHEETS_PROXY: '/api/google-proxy'
-  },
-  // ... остальное без изменений
-};
 
+window.CONFIG = {
   // === РОЛИ ===
   ROLE_NAMES: {
     member: { ru: 'Участник', en: 'Member' },
