@@ -5,444 +5,813 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cult Game Community — Justice Mobile</title>
   
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com/3.4.1"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
   <!-- Подключаем конфиг -->
   <script src="/config.js"></script>
   
-  <!-- Стили -->
   <style>
-    /* Основные стили Tailwind - будут добавлены при сборке */
-    body { margin: 0; font-family: system-ui, -apple-system, sans-serif; }
-    
-    /* Стили для PIN-экрана */
-    #pinScreen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
+    .nav-btn {
+      border: 1px solid transparent;
+      transition: all 0.3s ease;
     }
-    
-    .pin-container {
-      background: rgba(30, 30, 40, 0.95);
-      padding: 2rem;
-      border-radius: 1rem;
-      border: 1px solid rgba(239, 68, 68, 0.5);
-      max-width: 400px;
-      width: 90%;
-      text-align: center;
+    .nav-btn:hover {
+      border-color: rgba(239, 68, 68, 0.3);
+      transform: translateY(-1px);
     }
-    
-    .pin-input {
-      width: 100%;
-      padding: 1rem;
-      margin: 1rem 0;
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid #444;
-      border-radius: 0.5rem;
-      color: white;
-      font-size: 1.2rem;
-      text-align: center;
-      letter-spacing: 0.5rem;
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(139, 92, 246, 0.2));
+      border-color: rgba(239, 68, 68, 0.5);
     }
-    
-    .pin-btn {
-      width: 100%;
-      padding: 1rem;
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-      color: white;
-      border: none;
-      border-radius: 0.5rem;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    
-    .pin-btn:hover {
-      transform: translateY(-2px);
-    }
-    
-    /* Базовые стили для скрытия/показа */
-    .hidden {
-      display: none !important;
-    }
-    
-    /* Стили для header */
-    #siteHeader {
-      position: sticky;
-      top: 0;
-      background: rgba(30, 30, 40, 0.95);
-      backdrop-filter: blur(10px);
-      padding: 1rem;
-      z-index: 100;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    /* Основные цвета и стили */
-    .text-red-500 { color: #ef4444; }
-    .text-blue-500 { color: #3b82f6; }
-    .text-green-500 { color: #10b981; }
-    .text-purple-500 { color: #8b5cf6; }
-    .text-yellow-500 { color: #f59e0b; }
-    
-    .bg-gray-900 { background-color: #111827; }
-    .bg-gray-800 { background-color: #1f2937; }
-    .bg-gray-700 { background-color: #374151; }
-    
-    /* Таблицы */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    
-    th, td {
-      padding: 0.75rem;
-      text-align: left;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    th {
-      background: rgba(0, 0, 0, 0.3);
+    table th {
       font-weight: 600;
+      color: #d1d5db;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
     }
+    table td, table th {
+      padding: 0.75rem 1rem;
+    }
+    .status-pending { background-color: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    .status-active { background-color: rgba(34, 197, 94, 0.2); color: #4ade80; }
+    .status-inactive { background-color: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .status-leave { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    .level-novice { background: linear-gradient(135deg, #6b7280, #374151); }
+    .level-member { background: linear-gradient(135deg, #059669, #047857); }
+    .level-veteran { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+    .level-elite { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+    .level-legend { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .level-gm { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+    .kpi-good { color: #4ade80; }
+    .kpi-medium { color: #fbbf24; }
+    .kpi-bad { color: #f87171; }
+    .growth-positive { color: #4ade80; }
+    .growth-negative { color: #f87171; }
+    .activity-category { 
+      border-left: 4px solid;
+      padding-left: 12px;
+    }
+    .activity-pve { border-color: #10b981; }
+    .activity-pvp { border-color: #ef4444; }
+    .activity-event { border-color: #8b5cf6; }
+    .activity-raid { border-color: #f59e0b; }
+    .help-urgent { border: 2px solid #ef4444; animation: pulse 2s infinite; }
+    @keyframes pulse {
+      0%, 100% { border-color: #ef4444; }
+      50% { border-color: #f87171; }
+    }
+    .discord-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid #5865F2;
+      object-fit: cover;
+    }
+    .discord-online { border-color: #3ba55c; }
+    .discord-idle { border-color: #faa81a; }
+    .discord-dnd { border-color: #ed4245; }
+    .discord-offline { border-color: #747f8d; }
+    .event-raid { background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1)); border-color: #3b82f6; }
+    .event-pvp { background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1)); border-color: #ef4444; }
+    .event-event { background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1)); border-color: #22c55e; }
+    .event-farm { background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.1)); border-color: #f59e0b; }
   </style>
 </head>
-<body class="bg-gray-900 text-white">
+<body class="bg-gray-900 text-gray-100">
 
-<!-- PIN ACCESS ЭКРАН -->
-<div id="pinScreen">
-  <div class="pin-container">
-    <div style="text-align: center; margin-bottom: 2rem;">
-      <div style="font-size: 3rem; color: #ef4444; margin-bottom: 1rem;">🔒</div>
-      <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;">Cult Game Community</h2>
-      <p style="color: #9ca3af;">Justice Mobile</p>
+<!-- BACKGROUND VIDEO -->
+<video autoplay muted loop playsinline class="fixed inset-0 w-full h-full object-cover z-0 opacity-50" id="backgroundVideo">
+  <source src="videos/background.mp4" type="video/mp4">
+</video>
+<div class="fixed inset-0 bg-black/70 z-10"></div>
+
+<!-- PIN ACCESS -->
+<div id="pinScreen" class="fixed inset-0 flex items-center justify-center z-20">
+  <div class="bg-gray-900/95 backdrop-blur-xl p-8 rounded-2xl shadow-2xl w-full max-w-md border border-red-700/50">
+    <div class="text-center mb-6">
+      <i class="fas fa-shield-alt text-5xl text-red-500 mb-4"></i>
+      <h2 class="text-2xl font-bold">Cult Game Community</h2>
+      <p class="text-gray-400 mt-2">Доступ ограничен</p>
     </div>
     
-    <div style="margin-bottom: 1.5rem;">
-      <label style="display: block; text-align: left; color: #d1d5db; margin-bottom: 0.5rem;">
-        Введите PIN-код доступа
+    <div class="mb-6">
+      <label class="block text-sm font-medium text-gray-300 mb-3">
+        <i class="fas fa-key mr-2"></i>Введите PIN-код
       </label>
-      <input type="password" id="pinInput" class="pin-input" placeholder="****" maxlength="4">
-      <div id="pinError" style="color: #ef4444; margin-top: 0.5rem; display: none;">
-        Неверный PIN-код. Попробуйте снова.
-      </div>
+      <input type="password" id="pinInput" 
+             class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-500/50 outline-none transition"
+             placeholder="Введите 4-значный код"
+             maxlength="4">
+      <p id="pinError" class="text-red-400 text-sm mt-2 hidden">
+        <i class="fas fa-exclamation-circle mr-1"></i>Неверный PIN-код
+      </p>
     </div>
     
-    <button id="pinBtn" class="pin-btn">Войти в систему</button>
+    <button id="pinBtn" 
+            class="w-full py-3 bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 rounded-lg font-semibold transition-all duration-300 transform hover:-translate-y-1">
+      <i class="fas fa-unlock mr-2"></i>Войти
+    </button>
     
-    <div style="margin-top: 1.5rem; color: #6b7280; font-size: 0.9rem;">
+    <div class="mt-6 text-center text-sm text-gray-500">
+      <i class="fas fa-info-circle mr-1"></i>
       Обратитесь к офицеру гильдии для получения доступа
     </div>
   </div>
 </div>
 
-<!-- HEADER (изначально скрыт) -->
-<header id="siteHeader" class="hidden">
-  <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
-    <!-- Лого -->
-    <div style="display: flex; align-items: center; gap: 1rem;">
-      <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #ef4444, #8b5cf6); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-        <span style="font-size: 1.5rem;">⚔️</span>
+<!-- HEADER -->
+<header class="bg-gray-900/95 backdrop-blur-lg shadow-lg sticky top-0 z-40 hidden" id="siteHeader">
+  <div class="max-w-7xl mx-auto px-4 py-3">
+    <div class="flex items-center justify-between">
+      <!-- Логотип -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-gradient-to-r from-red-700 to-purple-700 rounded-lg flex items-center justify-center">
+          <i class="fas fa-skull-crossbones text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold">Demonic Cult</h1>
+          <p class="text-xs text-gray-400">Justice Mobile</p>
+        </div>
       </div>
-      <div>
-        <div style="font-weight: bold; font-size: 1.2rem;">Demonic Cult</div>
-        <div style="font-size: 0.8rem; color: #9ca3af;">Justice Mobile</div>
+      
+      <!-- Навигация -->
+      <nav class="flex space-x-1">
+        <button id="navMembers" data-section="members" 
+                class="nav-btn px-4 py-2 rounded-lg bg-gray-800/80 text-red-300">
+          <i class="fas fa-users mr-2"></i>
+          <span data-ru="Участники" data-en="Members">Участники</span>
+        </button>
+        <button id="navActivity" data-section="activity" 
+                class="nav-btn px-4 py-2 rounded-lg bg-gray-800/40 text-gray-300">
+          <i class="fas fa-calendar-alt mr-2"></i>
+          <span data-ru="Расписание" data-en="Schedule">Расписание</span>
+        </button>
+        <button id="navHelp" data-section="help" 
+                class="nav-btn px-4 py-2 rounded-lg bg-gray-800/40 text-gray-300">
+          <i class="fas fa-hands-helping mr-2"></i>
+          <span data-ru="Помощь" data-en="Help">Помощь</span>
+        </button>
+        <button id="navNews" data-section="news" 
+                class="nav-btn px-4 py-2 rounded-lg bg-gray-800/40 text-gray-300">
+          <i class="fas fa-newspaper mr-2"></i>
+          <span data-ru="Новости" data-en="News">Новости</span>
+        </button>
+        <button id="navGuides" data-section="guides" 
+                class="nav-btn px-4 py-2 rounded-lg bg-gray-800/40 text-gray-300">
+          <i class="fas fa-graduation-cap mr-2"></i>
+          <span data-ru="Гайды" data-en="Guides">Гайды</span>
+        </button>
+      </nav>
+      
+      <!-- Управление -->
+      <div class="flex items-center space-x-3">
+        <button id="refreshBtn" class="p-2 hover:bg-gray-800 rounded-lg transition">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+        <select id="langSwitch" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-600">
+          <option value="ru">🇷🇺 RU</option>
+          <option value="en">🇬🇧 EN</option>
+        </select>
+        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-red-700 to-red-900"></div>
       </div>
-    </div>
-    
-    <!-- Навигация -->
-    <nav style="display: flex; gap: 0.5rem;">
-      <button data-section="members" class="nav-btn" style="padding: 0.5rem 1rem; background: rgba(239, 68, 68, 0.2); border-radius: 0.5rem; border: 1px solid rgba(239, 68, 68, 0.5);">
-        👥 Участники
-      </button>
-      <button data-section="activity" class="nav-btn" style="padding: 0.5rem 1rem; background: rgba(59, 130, 246, 0.2); border-radius: 0.5rem; border: 1px solid rgba(59, 130, 246, 0.5);">
-        📅 Расписание
-      </button>
-      <button data-section="help" class="nav-btn" style="padding: 0.5rem 1rem; background: rgba(34, 197, 94, 0.2); border-radius: 0.5rem; border: 1px solid rgba(34, 197, 94, 0.5);">
-        🆘 Помощь
-      </button>
-      <button data-section="news" class="nav-btn" style="padding: 0.5rem 1rem; background: rgba(168, 85, 247, 0.2); border-radius: 0.5rem; border: 1px solid rgba(168, 85, 247, 0.5);">
-        📰 Новости
-      </button>
-      <button data-section="guides" class="nav-btn" style="padding: 0.5rem 1rem; background: rgba(245, 158, 11, 0.2); border-radius: 0.5rem; border: 1px solid rgba(245, 158, 11, 0.5);">
-        📚 Гайды
-      </button>
-    </nav>
-    
-    <!-- Управление -->
-    <div style="display: flex; align-items: center; gap: 1rem;">
-      <button id="refreshBtn" style="padding: 0.5rem; border-radius: 0.5rem; background: rgba(255, 255, 255, 0.1);">
-        🔄
-      </button>
-      <select id="langSwitch" style="padding: 0.5rem; border-radius: 0.5rem; background: rgba(255, 255, 255, 0.1); border: none; color: white;">
-        <option value="ru">🇷🇺 RU</option>
-        <option value="en">🇬🇧 EN</option>
-      </select>
     </div>
   </div>
 </header>
 
-<!-- MAIN CONTENT (изначально скрыт) -->
-<main id="mainContent" class="hidden" style="max-width: 1200px; margin: 2rem auto; padding: 0 1rem;">
+<!-- MAIN CONTENT -->
+<main id="mainContent" class="max-w-7xl mx-auto px-4 py-6 relative z-20 hidden">
   
   <!-- MEMBERS SECTION -->
-  <section id="members" class="section">
-    <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-      <span style="color: #ef4444;">👥</span> Список участников
-    </h2>
-    
-    <div style="background: rgba(30, 30, 40, 0.8); border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem;">
-      <!-- Статистика -->
-      <div style="display: flex; gap: 2rem; margin-bottom: 1rem;">
-        <div>
-          <div style="color: #9ca3af;">Всего участников:</div>
-          <div id="totalMembers" style="font-size: 1.5rem; font-weight: bold;">0</div>
-        </div>
-        <div>
-          <div style="color: #9ca3af;">Онлайн:</div>
-          <div id="onlineMembers" style="font-size: 1.5rem; font-weight: bold; color: #10b981;">0</div>
-        </div>
-        <div>
-          <div style="color: #9ca3af;">Средний KPI:</div>
-          <div id="avgKPI" style="font-size: 1.5rem; font-weight: bold;">0</div>
+  <section id="members" class="py-8">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">
+          <i class="fas fa-users mr-3 text-red-500"></i>
+          <span data-ru="Список участников" data-en="Members List">Список участников</span>
+        </h2>
+        <div class="flex items-center space-x-4">
+          <div class="text-sm text-gray-400">
+            <span data-ru="Роль:" data-en="Role:">Роль:</span>
+            <span id="currentRole" class="ml-2 px-3 py-1 rounded-full bg-gray-800">Member</span>
+          </div>
+          <div class="text-sm text-gray-400 hidden" id="adminStatsBtn">
+            <button onclick="showAdminStats()" class="px-3 py-1 bg-purple-900/50 hover:bg-purple-800/70 rounded-lg transition">
+              <i class="fas fa-chart-line mr-1"></i>
+              <span data-ru="Статистика" data-en="Stats">Статистика</span>
+            </button>
+          </div>
         </div>
       </div>
       
-      <!-- Таблица -->
-      <div style="overflow-x: auto;">
-        <table>
-          <thead>
-            <tr>
-              <th>№</th>
-              <th>Уровень</th>
-              <th>Никнейм</th>
-              <th>Класс</th>
-              <th>Гильдия</th>
-              <th>KPI</th>
-              <th>Статус</th>
-            </tr>
-          </thead>
-          <tbody id="membersTable">
-            <tr>
-              <td colspan="7" style="text-align: center; padding: 2rem; color: #9ca3af;">
-                Загрузка данных...
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-  
-  <!-- ACTIVITY SECTION -->
-  <section id="activity" class="section hidden">
-    <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-      <span style="color: #3b82f6;">📅</span> Расписание на неделю
-    </h2>
-    
-    <div style="background: rgba(30, 30, 40, 0.8); border-radius: 1rem; padding: 1.5rem;">
-      <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1rem; margin-bottom: 2rem;">
-        <!-- Дни недели будут заполнены JS -->
+      <div class="mb-4 flex flex-wrap gap-4">
+        <div class="flex items-center space-x-2">
+          <span class="text-sm text-gray-400" data-ru="Всего:" data-en="Total:">Всего:</span>
+          <span id="totalMembers" class="font-semibold">0</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="text-sm text-gray-400" data-ru="Онлайн:" data-en="Online:">Онлайн:</span>
+          <span id="onlineMembers" class="font-semibold text-green-400">0</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="text-sm text-gray-400" data-ru="Средний KPI:" data-en="Avg KPI:">Средний KPI:</span>
+          <span id="avgKPI" class="font-semibold">0</span>
+        </div>
       </div>
       
-      <div style="color: #9ca3af; font-size: 0.9rem;">
-        Используйте кнопки навигации для просмотра разных недель
-      </div>
-    </div>
-  </section>
-  
-  <!-- HELP SECTION -->
-  <section id="help" class="section hidden">
-    <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-      <span style="color: #10b981;">🆘</span> Система помощи
-    </h2>
-    
-    <div style="background: rgba(30, 30, 40, 0.8); border-radius: 1rem; padding: 1.5rem;">
-      <div style="text-align: center; padding: 2rem; color: #9ca3af;">
-        Система помощи будет загружена после входа
-      </div>
-    </div>
-  </section>
-  
-  <!-- NEWS SECTION -->
-  <section id="news" class="section hidden">
-    <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-      <span style="color: #8b5cf6;">📰</span> Новости гильдии
-    </h2>
-    
-    <div style="background: rgba(30, 30, 40, 0.8); border-radius: 1rem; padding: 1.5rem;">
-      <div style="text-align: center; padding: 2rem; color: #9ca3af;">
-        Новости загружаются...
-      </div>
-    </div>
-  </section>
-  
-  <!-- GUIDES SECTION -->
-  <section id="guides" class="section hidden">
-    <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-      <span style="color: #f59e0b;">📚</span> База знаний
-    </h2>
-    
-    <div style="background: rgba(30, 30, 40, 0.8); border-radius: 1rem; padding: 1.5rem;">
-      <div style="text-align: center; padding: 2rem; color: #9ca3af;">
-        Гайды загружаются...
+      <div class="bg-gray-800/70 backdrop-blur-sm rounded-xl overflow-hidden border border-gray-700/50">
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead class="bg-gray-900/80">
+              <tr>
+                <th class="py-3 px-4 text-left">№</th>
+                <th class="py-3 px-4 text-left">Уровень</th>
+                <th class="py-3 px-4 text-left">Discord</th>
+                <th class="py-3 px-4 text-left">Аватар</th>
+                <th class="py-3 px-4 text-left">Никнейм</th>
+                <th class="py-3 px-4 text-left">Класс</th>
+                <th class="py-3 px-4 text-left">Гильдия</th>
+                <th class="py-3 px-4 text-left">Время вступления</th>
+                <th class="py-3 px-4 text-left">KPI</th>
+                <th class="py-3 px-4 text-left">Прирост БМа</th>
+                <th class="py-3 px-4 text-left">Статус</th>
+              </tr>
+            </thead>
+            <tbody id="membersTable" class="divide-y divide-gray-700/50">
+              <tr>
+                <td colspan="11" class="py-8 text-center text-gray-400">
+                  <i class="fas fa-spinner fa-spin mr-2"></i>
+                  <span>Загрузка участников...</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- ACTIVITY SECTION -->
+  <section id="activity" class="py-8 hidden">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">
+          <i class="fas fa-calendar-alt mr-3 text-blue-500"></i>
+          <span data-ru="Расписание на неделю" data-en="Weekly Schedule">Расписание на неделю</span>
+        </h2>
+        <div class="flex items-center space-x-4">
+          <button onclick="prevWeek()" class="p-2 hover:bg-gray-800 rounded-lg">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <span id="currentWeek" class="font-semibold"></span>
+          <button onclick="nextWeek()" class="p-2 hover:bg-gray-800 rounded-lg">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+          <button onclick="openAddEventModal()" class="px-4 py-2 bg-blue-700 hover:bg-blue-600 rounded-lg transition hidden" id="addActivityBtn">
+            <i class="fas fa-plus mr-2"></i>
+            <span data-ru="Добавить" data-en="Add">Добавить</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Навигация по дням -->
+      <div class="mb-6">
+        <div class="grid grid-cols-7 gap-2 mb-4">
+          <div class="text-center py-2 rounded-lg bg-gray-800/50">
+            <div class="font-semibold">ПН</div>
+            <div id="monDate" class="text-sm text-gray-400"></div>
+          </div>
+          <div class="text-center py-2 rounded-lg bg-gray-800/50">
+            <div class="font-semibold">ВТ</div>
+            <div id="tueDate" class="text-sm text-gray-400"></div>
+          </div>
+          <div class="text-center py-2 rounded-lg bg-gray-800/50">
+            <div class="font-semibold">СР</div>
+            <div id="wedDate" class="text-sm text-gray-400"></div>
+          </div>
+          <div class="text-center py-2 rounded-lg bg-gray-800/50">
+            <div class="font-semibold">ЧТ</div>
+            <div id="thuDate" class="text-sm text-gray-400"></div>
+          </div>
+          <div class="text-center py-2 rounded-lg bg-gray-800/50">
+            <div class="font-semibold">ПТ</div>
+            <div id="friDate" class="text-sm text-gray-400"></div>
+          </div>
+          <div class="text-center py-2 rounded-lg bg-gray-800/50">
+            <div class="font-semibold">СБ</div>
+            <div id="satDate" class="text-sm text-gray-400"></div>
+          </div>
+          <div class="text-center py-2 rounded-lg bg-gray-800/50">
+            <div class="font-semibold">ВС</div>
+            <div id="sunDate" class="text-sm text-gray-400"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Сетка расписания -->
+      <div class="bg-gray-800/70 backdrop-blur-sm rounded-xl overflow-hidden border border-gray-700/50">
+        <div id="scheduleGrid" class="grid grid-cols-7 divide-x divide-gray-700/50 min-h-[600px]">
+          <!-- Заполнится JavaScript -->
+        </div>
+      </div>
+      
+      <!-- Легенда -->
+      <div class="mt-6 flex flex-wrap gap-4">
+        <div class="flex items-center">
+          <div class="w-4 h-4 bg-blue-500/50 rounded mr-2"></div>
+          <span class="text-sm text-gray-300">Рейды</span>
+        </div>
+        <div class="flex items-center">
+          <div class="w-4 h-4 bg-red-500/50 rounded mr-2"></div>
+          <span class="text-sm text-gray-300">PvP</span>
+        </div>
+        <div class="flex items-center">
+          <div class="w-4 h-4 bg-green-500/50 rounded mr-2"></div>
+          <span class="text-sm text-gray-300">Эвенты</span>
+        </div>
+        <div class="flex items-center">
+          <div class="w-4 h-4 bg-yellow-500/50 rounded mr-2"></div>
+          <span class="text-sm text-gray-300">Фарм</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HELP SECTION -->
+  <section id="help" class="py-8 hidden">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">
+          <i class="fas fa-hands-helping mr-3 text-green-500"></i>
+          <span data-ru="Система помощи" data-en="Help System">Система помощи</span>
+        </h2>
+        <button onclick="openNewHelpForm()" class="px-4 py-2 bg-red-700 hover:bg-red-600 rounded-lg transition">
+          <i class="fas fa-plus mr-2"></i>
+          <span data-ru="Новый запрос" data-en="New Request">Новый запрос</span>
+        </button>
+      </div>
+      
+      <!-- Форма создания запроса -->
+      <div id="newHelpForm" class="mb-8 bg-gray-800/70 backdrop-blur-sm rounded-xl p-6 border border-red-700/50 hidden">
+        <h3 class="text-xl font-semibold mb-4">📋 Новый запрос помощи</h3>
+        
+        <div class="grid md:grid-cols-2 gap-6 mb-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Тип активности</label>
+            <select id="activityType" class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700">
+              <option value="">Выберите активность</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Срочность</label>
+            <select id="urgency" class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700">
+              <option value="normal">Обычная</option>
+              <option value="high">Высокая</option>
+              <option value="urgent">СРОЧНО</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-300 mb-2">Описание проблемы</label>
+          <textarea id="problemDescription" rows="3" 
+                    class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700"
+                    placeholder="Опишите, с чем нужна помощь..."></textarea>
+        </div>
+        
+        <div class="flex justify-end space-x-3">
+          <button onclick="closeNewHelpForm()" 
+                  class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition">
+            Отмена
+          </button>
+          <button onclick="submitHelpRequest()" 
+                  class="px-4 py-2 bg-red-700 hover:bg-red-600 rounded-lg transition">
+            <i class="fas fa-paper-plane mr-2"></i>Отправить запрос
+          </button>
+        </div>
+      </div>
+      
+      <!-- Список активных запросов -->
+      <div id="helpContent">
+        <div class="text-center py-8 text-gray-400">
+          <i class="fas fa-spinner fa-spin mr-2"></i>
+          <span>Загрузка запросов...</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWS SECTION -->
+  <section id="news" class="py-8 hidden">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">
+          <i class="fas fa-newspaper mr-3 text-purple-500"></i>
+          <span data-ru="Новости гильдии" data-en="Guild News">Новости гильдии</span>
+        </h2>
+        <div class="flex items-center space-x-3">
+          <div class="text-sm text-gray-400">
+            <i class="fab fa-discord mr-1 text-blue-400"></i>
+            <span data-ru="Синхронизировано с Discord" data-en="Synced with Discord">Синхронизировано с Discord</span>
+          </div>
+          <button onclick="syncDiscordNews()" class="px-3 py-1 bg-blue-700 hover:bg-blue-600 rounded-lg text-sm transition">
+            <i class="fas fa-sync-alt mr-1"></i>
+            <span data-ru="Синхронизировать" data-en="Sync">Синхронизировать</span>
+          </button>
+        </div>
+      </div>
+      
+      <div id="newsContent">
+        <div class="text-center py-8 text-gray-400">
+          <i class="fas fa-spinner fa-spin mr-2"></i>
+          <span>Загрузка новостей...</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GUIDES SECTION -->
+  <section id="guides" class="py-8 hidden">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">
+          <i class="fas fa-graduation-cap mr-3 text-yellow-500"></i>
+          <span data-ru="База знаний" data-en="Knowledge Base">База знаний</span>
+        </h2>
+        <div class="flex items-center space-x-3">
+          <select id="guideCategoryFilter" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-600">
+            <option value="all" data-ru="Все категории" data-en="All Categories">Все категории</option>
+            <option value="pve" data-ru="PvE" data-en="PvE">PvE</option>
+            <option value="pvp" data-ru="PvP" data-en="PvP">PvP</option>
+            <option value="leveling" data-ru="Прокачка" data-en="Leveling">Прокачка</option>
+            <option value="gear" data-ru="Экипировка" data-en="Gear">Экипировка</option>
+            <option value="economy" data-ru="Экономика" data-en="Economy">Экономика</option>
+          </select>
+          <button onclick="refreshGuides()" class="px-3 py-2 bg-yellow-700 hover:bg-yellow-600 rounded-lg transition">
+            <i class="fas fa-sync-alt mr-1"></i>
+            <span data-ru="Обновить" data-en="Refresh">Обновить</span>
+          </button>
+          <button onclick="openCreateGuideModal()" 
+                  class="px-4 py-2 bg-yellow-700 hover:bg-yellow-600 rounded-lg transition">
+            <i class="fas fa-plus mr-2"></i>
+            <span data-ru="Создать гайд" data-en="Create Guide">Создать гайд</span>
+          </button>
+        </div>
+      </div>
+      
+      <div id="guidesContent">
+        <div class="text-center py-8 text-gray-400">
+          <i class="fas fa-spinner fa-spin mr-2"></i>
+          <span>Загрузка гайдов...</span>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
+
+<!-- МОДАЛЬНЫЕ ОКНА -->
+
+<!-- Модальное окно создания гайда -->
+<div id="createGuideModal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4">
+  <div class="bg-gray-900/95 backdrop-blur-xl p-6 rounded-2xl w-full max-w-2xl border border-yellow-700/50">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-xl font-bold">📝 Создать новый гайд</h3>
+      <button onclick="closeCreateGuideModal()" class="text-gray-400 hover:text-white">
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+    
+    <form id="guideForm" onsubmit="return submitGuideForm(event)">
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Заголовок</label>
+          <input type="text" name="title" required 
+                 class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-yellow-600 focus:border-transparent">
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Категория</label>
+            <select name="category" required 
+                    class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700">
+              <option value="pve">PvE</option>
+              <option value="pvp">PvP</option>
+              <option value="leveling">Прокачка</option>
+              <option value="gear">Экипировка</option>
+              <option value="economy">Экономика</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Сложность</label>
+            <select name="difficulty" required 
+                    class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700">
+              <option value="easy">Легко</option>
+              <option value="medium">Средне</option>
+              <option value="hard">Сложно</option>
+              <option value="expert">Эксперт</option>
+            </select>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Содержание</label>
+          <textarea name="content" rows="6" required 
+                    class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-yellow-600 focus:border-transparent"></textarea>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Теги (через запятую)</label>
+          <input type="text" name="tags" 
+                 placeholder="гайд, пве, босс, тактика"
+                 class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700">
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" onclick="closeCreateGuideModal()" 
+                  class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition">
+            Отмена
+          </button>
+          <button type="submit" 
+                  class="px-4 py-2 bg-yellow-700 hover:bg-yellow-600 rounded-lg transition">
+            <i class="fas fa-paper-plane mr-2"></i>Опубликовать
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Модальное окно добавления события -->
+<div id="addEventModal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4">
+  <div class="bg-gray-900/95 backdrop-blur-xl p-6 rounded-2xl w-full max-w-2xl border border-blue-700/50">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-xl font-bold">📅 Добавить новое событие</h3>
+      <button onclick="closeAddEventModal()" class="text-gray-400 hover:text-white">
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+    
+    <form id="eventForm">
+      <div class="space-y-4">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Дата</label>
+            <input type="date" id="eventDate" required 
+                   class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Время</label>
+            <input type="time" id="eventTime" required 
+                   class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700">
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Название события</label>
+          <input type="text" id="eventTitle" required 
+                 class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700">
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Тип события</label>
+            <select id="eventType" required 
+                    class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700">
+              <option value="raid">Рейд</option>
+              <option value="pvp">PvP</option>
+              <option value="event">Эвент</option>
+              <option value="farm">Фарм</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Организатор</label>
+            <input type="text" id="eventOrganizer" 
+                   class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700">
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Описание</label>
+          <textarea id="eventDescription" rows="3" 
+                    class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700"></textarea>
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" onclick="closeAddEventModal()" 
+                  class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition">
+            Отмена
+          </button>
+          <button type="button" onclick="submitEvent()" 
+                  class="px-4 py-2 bg-blue-700 hover:bg-blue-600 rounded-lg transition">
+            <i class="fas fa-calendar-plus mr-2"></i>Добавить событие
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
 
 <script>
 // ===== КОНФИГУРАЦИЯ =====
-// Используем конфиг из внешнего файла или значения по умолчанию
 const CONFIG = window.CONFIG || {
   API: {
     CHECK_PIN: '/api/check-pin'
+  },
+  SHEET_ID: '',
+  SHEETS: {
+    members: 'Members',
+    technical: 'Technical',
+    activity: 'Activity',
+    help: 'Help',
+    news: 'News',
+    guides: 'Guides'
+  },
+  LEVELS: {
+    novice: { min: 0, max: 49, name: { ru: 'Новичок', en: 'Novice' }, color: 'level-novice' },
+    member: { min: 50, max: 79, name: { ru: 'Участник', en: 'Member' }, color: 'level-member' },
+    veteran: { min: 80, max: 119, name: { ru: 'Ветеран', en: 'Veteran' }, color: 'level-veteran' },
+    elite: { min: 120, max: 179, name: { ru: 'Элита', en: 'Elite' }, color: 'level-elite' },
+    legend: { min: 180, max: 249, name: { ru: 'Легенда', en: 'Legend' }, color: 'level-legend' },
+    gm: { min: 250, max: 9999, name: { ru: 'ГМ', en: 'GM' }, color: 'level-gm' }
+  },
+  ROLE_NAMES: {
+    member: { ru: 'Участник', en: 'Member' },
+    officer: { ru: 'Офицер', en: 'Officer' },
+    gm: { ru: 'ГМ', en: 'GM' }
   }
 };
 
 let currentLang = 'ru';
 let currentRole = 'member';
 let currentSection = 'members';
+let dataCache = {};
+let technicalData = {};
+let currentWeek = 0;
 
-// ===== ОСНОВНЫЕ ФУНКЦИИ =====
-
-// Проверка PIN-кода (упрощенная версия для демо)
+// ===== ПРОВЕРКА PIN-КОДА =====
 async function checkPin() {
-  const pinInput = document.getElementById('pinInput');
-  const pinError = document.getElementById('pinError');
-  const pin = pinInput.value.trim();
-  
-  if (!pin || pin.length !== 4) {
-    pinError.textContent = 'Введите 4-значный PIN-код';
-    pinError.style.display = 'block';
-    return;
-  }
-  
-  // Для демо - простые PIN-коды
-  const demoPins = {
-    '1234': 'member',
-    '4321': 'officer',
-    '9999': 'gm'
-  };
-  
-  // Имитация загрузки
-  pinError.style.display = 'none';
-  document.getElementById('pinBtn').disabled = true;
-  document.getElementById('pinBtn').textContent = 'Проверка...';
-  
-  setTimeout(() => {
+  const pin = document.getElementById('pinInput').value;
+  if (!pin) return;
+
+  try {
+    // Демо-версия без сервера
+    const demoPins = {
+      '1234': 'member',
+      '4321': 'officer',
+      '9999': 'gm'
+    };
+
     if (demoPins[pin]) {
-      // Успешный вход
       currentRole = demoPins[pin];
       localStorage.setItem('userRole', currentRole);
       
-      // Показываем основное приложение
-      document.getElementById('pinScreen').style.opacity = '0';
-      
+      // Анимация скрытия PIN экрана
+      const pinScreen = document.getElementById('pinScreen');
+      pinScreen.style.opacity = '0';
       setTimeout(() => {
-        document.getElementById('pinScreen').style.display = 'none';
+        pinScreen.style.display = 'none';
         document.getElementById('siteHeader').classList.remove('hidden');
         document.getElementById('mainContent').classList.remove('hidden');
-        
-        // Показываем раздел участников
         showSection('members');
-        
-        // Загружаем данные
         loadDemoData();
       }, 300);
-      
     } else {
-      // Неверный PIN
-      pinError.textContent = 'Неверный PIN-код. Попробуйте: 1234 (member), 4321 (officer), 9999 (gm)';
-      pinError.style.display = 'block';
-      pinInput.value = '';
-      pinInput.focus();
+      throw new Error('Invalid PIN');
     }
-    
-    document.getElementById('pinBtn').disabled = false;
-    document.getElementById('pinBtn').textContent = 'Войти в систему';
-  }, 800);
+  } catch (error) {
+    document.getElementById('pinError').style.display = 'block';
+    document.getElementById('pinInput').value = '';
+  }
 }
 
-// Показать выбранную секцию
-function showSection(sectionId) {
-  // Скрыть все секции
-  document.querySelectorAll('.section').forEach(section => {
-    section.classList.add('hidden');
-  });
-  
-  // Показать выбранную секцию
-  document.getElementById(sectionId).classList.remove('hidden');
-  
-  // Обновить активную кнопку навигации
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    if (btn.dataset.section === sectionId) {
-      btn.style.background = 'rgba(255, 255, 255, 0.2)';
-    } else {
-      btn.style.background = 'rgba(255, 255, 255, 0.1)';
-    }
-  });
-  
-  currentSection = sectionId;
-}
-
-// Загрузка демо-данных
+// ===== ДЕМО-ДАННЫЕ =====
 function loadDemoData() {
-  // Демо данные участников
-  const members = [
-    { id: 1, name: 'ShadowX', class: 'Assassin', guild: 'Demonic Cult', kpi: 85, status: 'online' },
-    { id: 2, name: 'BloodMoon', class: 'Warrior', guild: 'Demonic Cult', kpi: 72, status: 'online' },
-    { id: 3, name: 'DarkLord', class: 'Mage', guild: 'Demonic Cult', kpi: 91, status: 'offline' },
-    { id: 4, name: 'Venom', class: 'Archer', guild: 'Demonic Cult', kpi: 64, status: 'online' },
-    { id: 5, name: 'Necro', class: 'Priest', guild: 'Demonic Cult', kpi: 78, status: 'away' }
+  // Демо данные для таблицы участников
+  const demoMembers = [
+    {
+      number: 1,
+      level: 'veteran',
+      discord: 'ShadowX#1234',
+      avatar: 'https://cdn.discordapp.com/embed/avatars/0.png',
+      nickname: 'ShadowX',
+      className: 'Assassin',
+      guild: 'Demonic Cult',
+      joinDate: '2024-01-15',
+      kpi: 85,
+      bmBonus: 12,
+      status: 'active'
+    },
+    {
+      number: 2,
+      level: 'member',
+      discord: 'BloodMoon#5678',
+      avatar: 'https://cdn.discordapp.com/embed/avatars/1.png',
+      nickname: 'BloodMoon',
+      className: 'Warrior',
+      guild: 'Demonic Cult',
+      joinDate: '2024-02-20',
+      kpi: 72,
+      bmBonus: 8,
+      status: 'active'
+    },
+    {
+      number: 3,
+      level: 'elite',
+      discord: 'DarkLord#9012',
+      avatar: 'https://cdn.discordapp.com/embed/avatars/2.png',
+      nickname: 'DarkLord',
+      className: 'Mage',
+      guild: 'Demonic Cult',
+      joinDate: '2024-01-05',
+      kpi: 95,
+      bmBonus: 18,
+      status: 'inactive'
+    },
+    {
+      number: 4,
+      level: 'novice',
+      discord: 'Venom#3456',
+      avatar: 'https://cdn.discordapp.com/embed/avatars/3.png',
+      nickname: 'Venom',
+      className: 'Archer',
+      guild: 'Demonic Cult',
+      joinDate: '2024-03-10',
+      kpi: 45,
+      bmBonus: 5,
+      status: 'active'
+    },
+    {
+      number: 5,
+      level: 'legend',
+      discord: 'Necro#7890',
+      avatar: 'https://cdn.discordapp.com/embed/avatars/4.png',
+      nickname: 'Necro',
+      className: 'Priest',
+      guild: 'Demonic Cult',
+      joinDate: '2023-12-01',
+      kpi: 185,
+      bmBonus: 25,
+      status: 'leave'
+    }
   ];
-  
-  // Заполняем таблицу участников
+
+  // Заполняем таблицу
   const tableBody = document.getElementById('membersTable');
   let html = '';
   
-  members.forEach(member => {
-    let statusColor = '#9ca3af';
-    let statusText = 'Неизвестно';
-    
-    switch(member.status) {
-      case 'online':
-        statusColor = '#10b981';
-        statusText = 'Онлайн';
-        break;
-      case 'offline':
-        statusColor = '#ef4444';
-        statusText = 'Оффлайн';
-        break;
-      case 'away':
-        statusColor = '#f59e0b';
-        statusText = 'Отошел';
-        break;
-    }
-    
-    let kpiColor = '#ef4444';
-    if (member.kpi >= 80) kpiColor = '#10b981';
-    else if (member.kpi >= 60) kpiColor = '#f59e0b';
+  demoMembers.forEach(member => {
+    const levelInfo = CONFIG.LEVELS[member.level];
+    const statusClass = getStatusClass(member.status);
+    const statusText = getStatusText(member.status);
+    const kpiClass = getKPIClass(member.kpi);
+    const bmBonusClass = getBMBonusClass(member.bmBonus);
     
     html += `
-      <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
-        <td>${member.id}</td>
-        <td>
-          <span style="background: rgba(139, 92, 246, 0.2); padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.85rem;">
-            ${member.kpi >= 80 ? 'Элита' : member.kpi >= 60 ? 'Ветеран' : 'Новичок'}
+      <tr class="hover:bg-gray-700/30 transition">
+        <td class="py-3 px-4 font-mono">${member.number}</td>
+        <td class="py-3 px-4">
+          <span class="px-3 py-1 rounded-full text-xs ${levelInfo.color}">
+            ${levelInfo.name[currentLang]}
           </span>
         </td>
-        <td style="font-weight: bold;">${member.name}</td>
-        <td>${member.class}</td>
-        <td>${member.guild}</td>
-        <td style="color: ${kpiColor}; font-weight: bold;">${member.kpi}</td>
-        <td>
-          <span style="color: ${statusColor};">● ${statusText}</span>
+        <td class="py-3 px-4">
+          <div class="flex items-center">
+            <i class="fab fa-discord mr-2 text-blue-400"></i>
+            ${member.discord}
+          </div>
+        </td>
+        <td class="py-3 px-4">
+          <img src="${member.avatar}" alt="${member.nickname}" class="discord-avatar discord-online">
+        </td>
+        <td class="py-3 px-4 font-medium">${member.nickname}</td>
+        <td class="py-3 px-4">
+          <span class="px-3 py-1 bg-gray-700/50 rounded text-sm">
+            ${member.className}
+          </span>
+        </td>
+        <td class="py-3 px-4">
+          <span class="px-2 py-1 bg-red-900/30 rounded text-sm">
+            ${member.guild}
+          </span>
+        </td>
+        <td class="py-3 px-4 text-sm text-gray-400">${formatDate(member.joinDate)}</td>
+        <td class="py-3 px-4 font-mono ${kpiClass}">
+          ${member.kpi}
+        </td>
+        <td class="py-3 px-4 font-mono ${bmBonusClass}">
+          +${member.bmBonus}
+        </td>
+        <td class="py-3 px-4">
+          <span class="px-3 py-1 rounded-full text-sm ${statusClass}">
+            ${statusText}
+          </span>
         </td>
       </tr>
     `;
@@ -451,60 +820,278 @@ function loadDemoData() {
   tableBody.innerHTML = html;
   
   // Обновляем статистику
-  document.getElementById('totalMembers').textContent = members.length;
-  document.getElementById('onlineMembers').textContent = members.filter(m => m.status === 'online').length;
+  document.getElementById('totalMembers').textContent = demoMembers.length;
+  const onlineCount = demoMembers.filter(m => m.status === 'active').length;
+  document.getElementById('onlineMembers').textContent = onlineCount;
   
-  const avgKPI = Math.round(members.reduce((sum, m) => sum + m.kpi, 0) / members.length);
+  const avgKPI = Math.round(demoMembers.reduce((sum, m) => sum + m.kpi, 0) / demoMembers.length);
   document.getElementById('avgKPI').textContent = avgKPI;
+  
+  // Обновляем роль пользователя
+  document.getElementById('currentRole').textContent = CONFIG.ROLE_NAMES[currentRole][currentLang];
+  
+  // Показываем кнопку статистики для админов
+  if (currentRole === 'officer' || currentRole === 'gm') {
+    document.getElementById('adminStatsBtn').classList.remove('hidden');
+    document.getElementById('addActivityBtn').classList.remove('hidden');
+  }
+}
+
+// ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+function getStatusClass(status) {
+  switch(status) {
+    case 'active': return 'status-active';
+    case 'inactive': return 'status-inactive';
+    case 'leave': return 'status-leave';
+    default: return 'status-pending';
+  }
+}
+
+function getStatusText(status) {
+  const texts = {
+    active: { ru: 'Активен', en: 'Active' },
+    inactive: { ru: 'Неактивен', en: 'Inactive' },
+    leave: { ru: 'В отпуске', en: 'On Leave' }
+  };
+  return texts[status] ? texts[status][currentLang] : status;
+}
+
+function getKPIClass(kpi) {
+  if (kpi >= 80) return 'kpi-good';
+  if (kpi >= 50) return 'kpi-medium';
+  return 'kpi-bad';
+}
+
+function getBMBonusClass(bmBonus) {
+  return bmBonus >= 0 ? 'growth-positive' : 'growth-negative';
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+}
+
+// ===== УПРАВЛЕНИЕ СЕКЦИЯМИ =====
+function showSection(sectionId) {
+  // Скрываем все секции
+  document.querySelectorAll('section').forEach(section => {
+    section.classList.add('hidden');
+  });
+  
+  // Показываем выбранную секцию
+  document.getElementById(sectionId).classList.remove('hidden');
+  
+  // Обновляем активные кнопки навигации
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    if (btn.dataset.section === sectionId) {
+      btn.classList.add('bg-gray-800/80', 'text-red-300');
+      btn.classList.remove('bg-gray-800/40', 'text-gray-300');
+    } else {
+      btn.classList.remove('bg-gray-800/80', 'text-red-300');
+      btn.classList.add('bg-gray-800/40', 'text-gray-300');
+    }
+  });
+  
+  currentSection = sectionId;
+}
+
+// ===== РАСПИСАНИЕ =====
+function updateWeekDisplay() {
+  const now = new Date();
+  const currentDay = now.getDay();
+  const diffToMonday = currentDay === 0 ? -6 : 1 - currentDay;
+  
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + diffToMonday + (currentWeek * 7));
+  
+  const weekDays = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
+  const dateElements = ['monDate', 'tueDate', 'wedDate', 'thuDate', 'friDate', 'satDate', 'sunDate'];
+  
+  weekDays.forEach((day, index) => {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + index);
+    document.getElementById(dateElements[index]).textContent = date.getDate();
+  });
+  
+  const startDate = new Date(monday);
+  const endDate = new Date(monday);
+  endDate.setDate(monday.getDate() + 6);
+  
+  document.getElementById('currentWeek').textContent = 
+    `${startDate.getDate()} ${startDate.toLocaleString('ru', { month: 'short' })} - ` +
+    `${endDate.getDate()} ${endDate.toLocaleString('ru', { month: 'short' })}`;
+}
+
+function prevWeek() {
+  currentWeek--;
+  updateWeekDisplay();
+}
+
+function nextWeek() {
+  currentWeek++;
+  updateWeekDisplay();
+}
+
+// ===== МОДАЛЬНЫЕ ОКНА =====
+function openCreateGuideModal() {
+  document.getElementById('createGuideModal').classList.remove('hidden');
+  document.getElementById('createGuideModal').classList.add('flex');
+}
+
+function closeCreateGuideModal() {
+  document.getElementById('createGuideModal').classList.add('hidden');
+  document.getElementById('createGuideModal').classList.remove('flex');
+  document.getElementById('guideForm').reset();
+}
+
+function openAddEventModal() {
+  const today = new Date();
+  const dateStr = today.toISOString().split('T')[0];
+  document.getElementById('eventDate').value = dateStr;
+  document.getElementById('eventTime').value = '19:00';
+  
+  document.getElementById('addEventModal').classList.remove('hidden');
+  document.getElementById('addEventModal').classList.add('flex');
+}
+
+function closeAddEventModal() {
+  document.getElementById('addEventModal').classList.add('hidden');
+  document.getElementById('addEventModal').classList.remove('flex');
+  document.getElementById('eventForm').reset();
+}
+
+function openNewHelpForm() {
+  document.getElementById('newHelpForm').classList.remove('hidden');
+}
+
+function closeNewHelpForm() {
+  document.getElementById('newHelpForm').classList.add('hidden');
+  document.getElementById('activityType').value = '';
+  document.getElementById('urgency').value = 'normal';
+  document.getElementById('problemDescription').value = '';
+}
+
+// ===== ОБРАБОТКА ФОРМ =====
+function submitGuideForm(event) {
+  event.preventDefault();
+  alert('Гайд сохранен! (В демо-режиме данные не сохраняются)');
+  closeCreateGuideModal();
+  return false;
+}
+
+function submitHelpRequest() {
+  const activity = document.getElementById('activityType').value;
+  const description = document.getElementById('problemDescription').value;
+  
+  if (!activity || !description) {
+    alert('Пожалуйста, заполните все обязательные поля');
+    return;
+  }
+  
+  alert('Запрос помощи отправлен! (В демо-режиме данные не сохраняются)');
+  closeNewHelpForm();
+}
+
+function submitEvent() {
+  const date = document.getElementById('eventDate').value;
+  const time = document.getElementById('eventTime').value;
+  const title = document.getElementById('eventTitle').value;
+  
+  if (!date || !time || !title) {
+    alert('Пожалуйста, заполните обязательные поля');
+    return;
+  }
+  
+  alert('Событие добавлено! (В демо-режиме данные не сохраняются)');
+  closeAddEventModal();
+}
+
+// ===== DISCORD СИНХРОНИЗАЦИЯ =====
+function syncDiscordNews() {
+  const button = document.querySelector('#news button[onclick*="syncDiscordNews"]');
+  const originalHTML = button.innerHTML;
+  
+  button.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Синхронизация...';
+  button.disabled = true;
+  
+  setTimeout(() => {
+    document.getElementById('newsContent').innerHTML = `
+      <div class="bg-gray-800/70 backdrop-blur-sm rounded-xl p-5">
+        <div class="flex items-start space-x-3">
+          <div class="flex-shrink-0">
+            <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="GM" 
+                 class="w-12 h-12 rounded-full border-2 border-blue-500">
+          </div>
+          <div class="flex-1">
+            <div class="flex justify-between items-start mb-2">
+              <div>
+                <h3 class="font-semibold">GM</h3>
+                <p class="text-sm text-gray-400">Только что</p>
+              </div>
+              <span class="px-2 py-1 bg-blue-900/30 text-blue-400 rounded text-xs">
+                📢 Новость
+              </span>
+            </div>
+            <p class="text-gray-300">🎉 Новости успешно синхронизированы с Discord!</p>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    button.innerHTML = originalHTML;
+    button.disabled = false;
+    
+    alert('Новости синхронизированы с Discord!');
+  }, 1500);
 }
 
 // ===== ИНИЦИАЛИЗАЦИЯ =====
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Сайт загружен!');
   
-  // Фокус на поле ввода PIN
-  document.getElementById('pinInput').focus();
-  
-  // Обработчик кнопки входа
+  // Обработчики PIN
   document.getElementById('pinBtn').addEventListener('click', checkPin);
-  
-  // Обработчик клавиши Enter в поле PIN
   document.getElementById('pinInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      checkPin();
-    }
+    if (e.key === 'Enter') checkPin();
   });
   
   // Обработчики навигации
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const sectionId = this.dataset.section;
-      showSection(sectionId);
+  document.getElementById('navMembers').addEventListener('click', () => showSection('members'));
+  document.getElementById('navActivity').addEventListener('click', () => {
+    showSection('activity');
+    updateWeekDisplay();
+  });
+  document.getElementById('navHelp').addEventListener('click', () => showSection('help'));
+  document.getElementById('navNews').addEventListener('click', () => showSection('news'));
+  document.getElementById('navGuides').addEventListener('click', () => showSection('guides'));
+  
+  // Обработчики кнопок
+  document.getElementById('refreshBtn').addEventListener('click', function() {
+    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    setTimeout(() => {
+      this.innerHTML = '<i class="fas fa-sync-alt"></i>';
+      loadDemoData();
+    }, 500);
+  });
+  
+  document.getElementById('langSwitch').addEventListener('change', function(e) {
+    currentLang = e.target.value;
+    document.querySelectorAll('[data-ru]').forEach(el => {
+      const text = el.dataset[currentLang];
+      if (text) el.textContent = text;
     });
   });
   
-  // Обработчик кнопки обновления
-  document.getElementById('refreshBtn').addEventListener('click', function() {
-    if (currentSection === 'members') {
-      loadDemoData();
-      this.textContent = '✓';
-      setTimeout(() => {
-        this.textContent = '🔄';
-      }, 1000);
-    }
-  });
+  // Фокус на поле PIN при загрузке
+  document.getElementById('pinInput').focus();
   
-  // Обработчик переключения языка
-  document.getElementById('langSwitch').addEventListener('change', function(e) {
-    currentLang = e.target.value;
-    // Здесь можно добавить перевод интерфейса
-    console.log('Язык изменен на:', currentLang);
-  });
-  
-  // Проверяем, есть ли сохраненная сессия (для демо - не используем)
+  // Проверяем сохраненную сессию (для разработки)
   const savedRole = localStorage.getItem('userRole');
   if (savedRole && window.location.hash === '#demo') {
-    // Только для демо - автоматический вход
     currentRole = savedRole;
     document.getElementById('pinScreen').style.display = 'none';
     document.getElementById('siteHeader').classList.remove('hidden');
@@ -513,77 +1100,6 @@ document.addEventListener('DOMContentLoaded', function() {
     loadDemoData();
   }
 });
-
-// Утилита для показа уведомлений
-function showNotification(message, type = 'info') {
-  const notification = document.createElement('div');
-  notification.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 1rem 1.5rem;
-    background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6'};
-    color: white;
-    border-radius: 0.5rem;
-    z-index: 1000;
-    animation: slideIn 0.3s ease;
-  `;
-  
-  notification.textContent = message;
-  document.body.appendChild(notification);
-  
-  setTimeout(() => {
-    notification.style.animation = 'slideOut 0.3s ease';
-    setTimeout(() => {
-      document.body.removeChild(notification);
-    }, 300);
-  }, 3000);
-}
-
-// Добавляем анимации
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes slideIn {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  
-  @keyframes slideOut {
-    from {
-      transform: translateX(0);
-      opacity: 1;
-    }
-    to {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-  }
-  
-  .nav-btn {
-    transition: all 0.2s ease;
-    cursor: pointer;
-  }
-  
-  .nav-btn:hover {
-    transform: translateY(-2px);
-  }
-  
-  table tr {
-    transition: background-color 0.2s ease;
-  }
-  
-  table tr:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-  }
-`;
-document.head.appendChild(style);
-
 </script>
 </body>
 </html>
