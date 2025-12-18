@@ -5,440 +5,585 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cult Game Community — Justice Mobile</title>
   
-  <!-- Tailwind CSS через CDN для тестирования (замени на /output.css после build) -->
-  <script src="https://cdn.tailwindcss.com/3.4.1"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
   <!-- Подключаем конфиг -->
   <script src="/config.js"></script>
   
+  <!-- Стили -->
   <style>
+    /* Основные стили Tailwind - будут добавлены при сборке */
+    body { margin: 0; font-family: system-ui, -apple-system, sans-serif; }
+    
+    /* Стили для PIN-экрана */
     #pinScreen {
-      transition: opacity 0.3s ease-in-out;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
     }
-    @media (max-width: 640px) {
-      nav {
-        flex-direction: column;
-        gap: 2px;
-      }
-      .nav-btn {
-        width: 100%;
-      }
+    
+    .pin-container {
+      background: rgba(30, 30, 40, 0.95);
+      padding: 2rem;
+      border-radius: 1rem;
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
     }
-    .nav-btn {
-      border: 1px solid transparent;
-      transition: all 0.3s ease;
+    
+    .pin-input {
+      width: 100%;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid #444;
+      border-radius: 0.5rem;
+      color: white;
+      font-size: 1.2rem;
+      text-align: center;
+      letter-spacing: 0.5rem;
     }
-    .nav-btn:hover {
-      border-color: rgba(239, 68, 68, 0.3);
-      transform: translateY(-1px);
+    
+    .pin-btn {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.2s;
     }
-    .nav-btn.active {
-      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(139, 92, 246, 0.2));
-      border-color: rgba(239, 68, 68, 0.5);
+    
+    .pin-btn:hover {
+      transform: translateY(-2px);
     }
-    table th {
+    
+    /* Базовые стили для скрытия/показа */
+    .hidden {
+      display: none !important;
+    }
+    
+    /* Стили для header */
+    #siteHeader {
+      position: sticky;
+      top: 0;
+      background: rgba(30, 30, 40, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Основные цвета и стили */
+    .text-red-500 { color: #ef4444; }
+    .text-blue-500 { color: #3b82f6; }
+    .text-green-500 { color: #10b981; }
+    .text-purple-500 { color: #8b5cf6; }
+    .text-yellow-500 { color: #f59e0b; }
+    
+    .bg-gray-900 { background-color: #111827; }
+    .bg-gray-800 { background-color: #1f2937; }
+    .bg-gray-700 { background-color: #374151; }
+    
+    /* Таблицы */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    th {
+      background: rgba(0, 0, 0, 0.3);
       font-weight: 600;
-      color: #d1d5db;
-      text-transform: uppercase;
-      font-size: 0.75rem;
-      letter-spacing: 0.05em;
     }
-    table td, table th {
-      padding: 0.75rem 1rem;
-    }
-    .status-pending { background-color: rgba(245, 158, 11, 0.2); color: #fbbf24; }
-    .status-active { background-color: rgba(34, 197, 94, 0.2); color: #4ade80; }
-    .status-inactive { background-color: rgba(239, 68, 68, 0.2); color: #f87171; }
-    .status-leave { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; }
-    .level-novice { background: linear-gradient(135deg, #6b7280, #374151); }
-    .level-member { background: linear-gradient(135deg, #059669, #047857); }
-    .level-veteran { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
-    .level-elite { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
-    .level-legend { background: linear-gradient(135deg, #f59e0b, #d97706); }
-    .level-gm { background: linear-gradient(135deg, #dc2626, #b91c1c); }
-    .kpi-good { color: #4ade80; }
-    .kpi-medium { color: #fbbf24; }
-    .kpi-bad { color: #f87171; }
-    .growth-positive { color: #4ade80; }
-    .growth-negative { color: #f87171; }
-    .activity-category { 
-      border-left: 4px solid;
-      padding-left: 12px;
-    }
-    .activity-pve { border-color: #10b981; }
-    .activity-pvp { border-color: #ef4444; }
-    .activity-event { border-color: #8b5cf6; }
   </style>
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen">
+<body class="bg-gray-900 text-white">
 
-<!-- BACKGROUND VIDEO -->
-<video autoplay muted loop playsinline class="fixed inset-0 w-full h-full object-cover z-0 opacity-50" id="backgroundVideo">
-  <source src="videos/background.mp4" type="video/mp4">
-</video>
-<div class="fixed inset-0 bg-black/70 z-0"></div>
-
-<!-- PIN ACCESS SCREEN -->
-<div id="pinScreen" class="fixed inset-0 flex items-center justify-center z-50 bg-black/90">
-  <div class="bg-gray-800 p-8 rounded-lg shadow-xl max-w-sm w-full">
-    <h1 class="text-2xl font-bold mb-4 text-center">Вход в Cult Community</h1>
-    <input type="password" id="pinInput" class="w-full p-3 mb-4 bg-gray-700 border border-gray-600 rounded" placeholder="Введите PIN">
-    <button id="pinBtn" class="w-full bg-red-600 hover:bg-red-700 p-3 rounded font-bold">Войти</button>
-    <p id="pinError" class="text-red-500 mt-2 hidden">Неверный PIN. Попробуйте снова.</p>
+<!-- PIN ACCESS ЭКРАН -->
+<div id="pinScreen">
+  <div class="pin-container">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <div style="font-size: 3rem; color: #ef4444; margin-bottom: 1rem;">🔒</div>
+      <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;">Cult Game Community</h2>
+      <p style="color: #9ca3af;">Justice Mobile</p>
+    </div>
+    
+    <div style="margin-bottom: 1.5rem;">
+      <label style="display: block; text-align: left; color: #d1d5db; margin-bottom: 0.5rem;">
+        Введите PIN-код доступа
+      </label>
+      <input type="password" id="pinInput" class="pin-input" placeholder="****" maxlength="4">
+      <div id="pinError" style="color: #ef4444; margin-top: 0.5rem; display: none;">
+        Неверный PIN-код. Попробуйте снова.
+      </div>
+    </div>
+    
+    <button id="pinBtn" class="pin-btn">Войти в систему</button>
+    
+    <div style="margin-top: 1.5rem; color: #6b7280; font-size: 0.9rem;">
+      Обратитесь к офицеру гильдии для получения доступа
+    </div>
   </div>
 </div>
 
-<!-- SITE HEADER -->
-<header id="siteHeader" class="bg-gray-900/95 backdrop-blur-lg shadow-lg sticky top-0 z-40 hidden flex items-center justify-between px-4 py-3">
-  <div class="flex items-center space-x-4">
-    <h1 class="text-xl font-bold">Demonic Cult Portal</h1>
-    <nav class="flex space-x-2">
-      <button id="navMembers" class="nav-btn px-4 py-2 rounded bg-gray-800 hover:bg-gray-700">Участники</button>
-      <button id="navActivity" class="nav-btn px-4 py-2 rounded bg-gray-800 hover:bg-gray-700">Активность</button>
-      <button id="navHelp" class="nav-btn px-4 py-2 rounded bg-gray-800 hover:bg-gray-700">Помощь</button>
-      <button id="navNews" class="nav-btn px-4 py-2 rounded bg-gray-800 hover:bg-gray-700">Новости</button>
-      <button id="navGuides" class="nav-btn px-4 py-2 rounded bg-gray-800 hover:bg-gray-700">Гайды</button>
+<!-- HEADER (изначально скрыт) -->
+<header id="siteHeader" class="hidden">
+  <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+    <!-- Лого -->
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #ef4444, #8b5cf6); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+        <span style="font-size: 1.5rem;">⚔️</span>
+      </div>
+      <div>
+        <div style="font-weight: bold; font-size: 1.2rem;">Demonic Cult</div>
+        <div style="font-size: 0.8rem; color: #9ca3af;">Justice Mobile</div>
+      </div>
+    </div>
+    
+    <!-- Навигация -->
+    <nav style="display: flex; gap: 0.5rem;">
+      <button data-section="members" class="nav-btn" style="padding: 0.5rem 1rem; background: rgba(239, 68, 68, 0.2); border-radius: 0.5rem; border: 1px solid rgba(239, 68, 68, 0.5);">
+        👥 Участники
+      </button>
+      <button data-section="activity" class="nav-btn" style="padding: 0.5rem 1rem; background: rgba(59, 130, 246, 0.2); border-radius: 0.5rem; border: 1px solid rgba(59, 130, 246, 0.5);">
+        📅 Расписание
+      </button>
+      <button data-section="help" class="nav-btn" style="padding: 0.5rem 1rem; background: rgba(34, 197, 94, 0.2); border-radius: 0.5rem; border: 1px solid rgba(34, 197, 94, 0.5);">
+        🆘 Помощь
+      </button>
+      <button data-section="news" class="nav-btn" style="padding: 0.5rem 1rem; background: rgba(168, 85, 247, 0.2); border-radius: 0.5rem; border: 1px solid rgba(168, 85, 247, 0.5);">
+        📰 Новости
+      </button>
+      <button data-section="guides" class="nav-btn" style="padding: 0.5rem 1rem; background: rgba(245, 158, 11, 0.2); border-radius: 0.5rem; border: 1px solid rgba(245, 158, 11, 0.5);">
+        📚 Гайды
+      </button>
     </nav>
-  </div>
-  <div class="flex items-center space-x-4">
-    <select id="langSwitch" class="bg-gray-700 p-2 rounded">
-      <option value="ru">RU</option>
-      <option value="en">EN</option>
-    </select>
-    <button id="refreshBtn" class="bg-blue-600 hover:bg-blue-700 p-2 rounded"><i class="fas fa-sync"></i></button>
+    
+    <!-- Управление -->
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <button id="refreshBtn" style="padding: 0.5rem; border-radius: 0.5rem; background: rgba(255, 255, 255, 0.1);">
+        🔄
+      </button>
+      <select id="langSwitch" style="padding: 0.5rem; border-radius: 0.5rem; background: rgba(255, 255, 255, 0.1); border: none; color: white;">
+        <option value="ru">🇷🇺 RU</option>
+        <option value="en">🇬🇧 EN</option>
+      </select>
+    </div>
   </div>
 </header>
 
-<!-- MAIN CONTENT -->
-<main id="mainContent" class="max-w-7xl mx-auto px-4 py-6 relative z-20 hidden">
-  <!-- Раздел Участники -->
-  <section id="members" class="hidden">
-    <h2 class="text-2xl font-bold mb-4">Участники</h2>
-    <table class="w-full bg-gray-800 rounded-lg overflow-hidden">
-      <thead>
-        <tr>
-          <th>Имя</th>
-          <th>Уровень</th>
-          <th>Статус</th>
-        </tr>
-      </thead>
-      <tbody id="membersTableBody"></tbody>
-    </table>
+<!-- MAIN CONTENT (изначально скрыт) -->
+<main id="mainContent" class="hidden" style="max-width: 1200px; margin: 2rem auto; padding: 0 1rem;">
+  
+  <!-- MEMBERS SECTION -->
+  <section id="members" class="section">
+    <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+      <span style="color: #ef4444;">👥</span> Список участников
+    </h2>
+    
+    <div style="background: rgba(30, 30, 40, 0.8); border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem;">
+      <!-- Статистика -->
+      <div style="display: flex; gap: 2rem; margin-bottom: 1rem;">
+        <div>
+          <div style="color: #9ca3af;">Всего участников:</div>
+          <div id="totalMembers" style="font-size: 1.5rem; font-weight: bold;">0</div>
+        </div>
+        <div>
+          <div style="color: #9ca3af;">Онлайн:</div>
+          <div id="onlineMembers" style="font-size: 1.5rem; font-weight: bold; color: #10b981;">0</div>
+        </div>
+        <div>
+          <div style="color: #9ca3af;">Средний KPI:</div>
+          <div id="avgKPI" style="font-size: 1.5rem; font-weight: bold;">0</div>
+        </div>
+      </div>
+      
+      <!-- Таблица -->
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>Уровень</th>
+              <th>Никнейм</th>
+              <th>Класс</th>
+              <th>Гильдия</th>
+              <th>KPI</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody id="membersTable">
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 2rem; color: #9ca3af;">
+                Загрузка данных...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+  
+  <!-- ACTIVITY SECTION -->
+  <section id="activity" class="section hidden">
+    <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+      <span style="color: #3b82f6;">📅</span> Расписание на неделю
+    </h2>
+    
+    <div style="background: rgba(30, 30, 40, 0.8); border-radius: 1rem; padding: 1.5rem;">
+      <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1rem; margin-bottom: 2rem;">
+        <!-- Дни недели будут заполнены JS -->
+      </div>
+      
+      <div style="color: #9ca3af; font-size: 0.9rem;">
+        Используйте кнопки навигации для просмотра разных недель
+      </div>
+    </div>
+  </section>
+  
+  <!-- HELP SECTION -->
+  <section id="help" class="section hidden">
+    <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+      <span style="color: #10b981;">🆘</span> Система помощи
+    </h2>
+    
+    <div style="background: rgba(30, 30, 40, 0.8); border-radius: 1rem; padding: 1.5rem;">
+      <div style="text-align: center; padding: 2rem; color: #9ca3af;">
+        Система помощи будет загружена после входа
+      </div>
+    </div>
+  </section>
+  
+  <!-- NEWS SECTION -->
+  <section id="news" class="section hidden">
+    <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+      <span style="color: #8b5cf6;">📰</span> Новости гильдии
+    </h2>
+    
+    <div style="background: rgba(30, 30, 40, 0.8); border-radius: 1rem; padding: 1.5rem;">
+      <div style="text-align: center; padding: 2rem; color: #9ca3af;">
+        Новости загружаются...
+      </div>
+    </div>
+  </section>
+  
+  <!-- GUIDES SECTION -->
+  <section id="guides" class="section hidden">
+    <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+      <span style="color: #f59e0b;">📚</span> База знаний
+    </h2>
+    
+    <div style="background: rgba(30, 30, 40, 0.8); border-radius: 1rem; padding: 1.5rem;">
+      <div style="text-align: center; padding: 2rem; color: #9ca3af;">
+        Гайды загружаются...
+      </div>
+    </div>
   </section>
 
-  <!-- Раздел Активность -->
-  <section id="activity" class="hidden">
-    <h2 class="text-2xl font-bold mb-4">Активность</h2>
-    <div id="activityList"></div>
-  </section>
-
-  <!-- Раздел Помощь -->
-  <section id="help" class="hidden">
-    <h2 class="text-2xl font-bold mb-4">Помощь</h2>
-  </section>
-
-  <!-- Раздел Новости -->
-  <section id="news" class="hidden">
-    <h2 class="text-2xl font-bold mb-4">Новости</h2>
-    <div id="newsList"></div>
-  </section>
-
-  <!-- Раздел Гайды -->
-  <section id="guides" class="hidden">
-    <h2 class="text-2xl font-bold mb-4">Гайды</h2>
-    <select id="guideCategoryFilter" class="mb-4 bg-gray-700 p-2 rounded">
-      <option value="all">Все</option>
-    </select>
-    <div id="guidesList"></div>
-  </section>
 </main>
 
 <script>
-// === ФУНКЦИИ ЗАГРУЗКИ ДАННЫХ ===
-async function loadData(sheetName) {
-  try {
-    const url = `${CONFIG.API.GOOGLE_SHEETS_PROXY}?sheet=${sheetName}&id=${CONFIG.SHEET_ID}`;
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('Error loading data');
-    return await response.json();
-  } catch (error) {
-    console.error('Load data error:', error);
-    return [];
+// ===== КОНФИГУРАЦИЯ =====
+// Используем конфиг из внешнего файла или значения по умолчанию
+const CONFIG = window.CONFIG || {
+  API: {
+    CHECK_PIN: '/api/check-pin'
   }
-}
+};
 
-// === ПРОВЕРКА PIN ===
+let currentLang = 'ru';
+let currentRole = 'member';
+let currentSection = 'members';
+
+// ===== ОСНОВНЫЕ ФУНКЦИИ =====
+
+// Проверка PIN-кода (упрощенная версия для демо)
 async function checkPin() {
-  const pin = document.getElementById('pinInput').value;
-  if (!pin) return;
-
-  try {
-    const response = await fetch('/api/check-pin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pin })
-    });
-
-    if (!response.ok) {
-      throw new Error('Invalid PIN');
-    }
-
-    const { role } = await response.json();
-    localStorage.setItem('userRole', role);
-
-    const pinScreen = document.getElementById('pinScreen');
-    pinScreen.style.opacity = '0';
-    setTimeout(() => {
-      pinScreen.style.display = 'none';
-      document.getElementById('siteHeader').style.display = 'flex';
-      document.getElementById('mainContent').style.display = 'block';
-      showSection('members');
-    }, 300);
-  } catch (error) {
-    document.getElementById('pinError').style.display = 'block';
-    document.getElementById('pinInput').value = '';
-  }
-}
-
-// === ПЕРЕКЛЮЧЕНИЕ ВИДЕО ===
-function toggleBackgroundVideo() {
-  const video = document.getElementById('backgroundVideo');
-  if (window.innerWidth < 768) {
-    video.pause();
-    video.src = '';
-  } else {
-    video.src = 'videos/background.mp4';
-    video.play();
-  }
-}
-
-// === ПОКАЗ РАЗДЕЛА ===
-function showSection(sectionId) {
-  document.querySelectorAll('main > section').forEach(sec => sec.style.display = 'none');
-  document.getElementById(sectionId).style.display = 'block';
-  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-  document.getElementById(`nav${sectionId.charAt(0).toUpperCase() + sectionId.slice(1)}`).classList.add('active');
-  recordVisit(sectionId);
-  if (sectionId === 'members') loadMembers();
-  else if (sectionId === 'activity') loadActivity();
-  else if (sectionId === 'help') loadHelp();
-  else if (sectionId === 'news') loadNews();
-  else if (sectionId === 'guides') loadGuides();
-}
-
-// === ЗАГРУЗКА УЧАСТНИКОВ ===
-async function loadMembers() {
-  const data = await loadData(CONFIG.SHEETS.members);
-  const tbody = document.getElementById('membersTableBody');
-  tbody.innerHTML = '';
-  data.slice(1).forEach(row => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${row[0] || ''}</td>
-      <td class="${CONFIG.LEVELS[row[1]?.toLowerCase() || 'novice'].color}">${CONFIG.LEVELS[row[1]?.toLowerCase() || 'novice'].name.ru}</td>
-      <td class="status-${row[2]?.toLowerCase() || 'pending'}">${row[2] || ''}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-// === ЗАГРУЗКА АКТИВНОСТИ ===
-async function loadActivity() {
-  const data = await loadData(CONFIG.SHEETS.activity);
-  const list = document.getElementById('activityList');
-  list.innerHTML = '';
-  data.slice(1).forEach(row => {
-    const div = document.createElement('div');
-    div.className = 'activity-category activity-pve';  // Адаптируй класс
-    div.innerHTML = `<p>${row[0]} - ${row[1]}</p>`;
-    list.appendChild(div);
-  });
-}
-
-// === ЗАГРУЗКА ПОМОЩИ ===
-async function loadHelp() {
-  const data = await loadData(CONFIG.SHEETS.help);
-  // Рендер помощи, пример
-  const section = document.getElementById('help');
-  section.innerHTML = '<h2 class="text-2xl font-bold mb-4">Помощь</h2>';
-  data.slice(1).forEach(row => {
-    const p = document.createElement('p');
-    p.textContent = row[0];
-    section.appendChild(p);
-  });
-}
-
-// === ЗАГРУЗКА НОВОСТЕЙ ===
-async function loadNews() {
-  const data = await loadData(CONFIG.SHEETS.news);
-  const list = document.getElementById('newsList');
-  list.innerHTML = '';
-  data.slice(1).forEach(row => {
-    const div = document.createElement('div');
-    div.innerHTML = `<h3>${row[0]}</h3><p>${row[1]}</p>`;
-    list.appendChild(div);
-  });
-}
-
-// === ЗАГРУЗКА ГАЙДОВ ===
-async function loadGuides() {
-  const data = await loadData(CONFIG.SHEETS.guides);
-  renderGuides(data);
-}
-
-// === РЕНДЕР ГАЙДОВ ===
-function renderGuides(data) {
-  const filter = document.getElementById('guideCategoryFilter').value;
-  const list = document.getElementById('guidesList');
-  list.innerHTML = '';
-  data.slice(1).forEach(row => {
-    if (filter === 'all' || row[0] === filter) {
-      const div = document.createElement('div');
-      div.innerHTML = `<h3>${row[1]}</h3><p>${row[2]}</p>`;
-      list.appendChild(div);
-    }
-  });
-}
-
-// === СМЕНА ЯЗЫКА ===
-function applyLanguage(lang) {
-  // Адаптируй для смены текстов
-  console.log(`Смена языка на ${lang}`);
-  // Пример: document.querySelectorAll('[data-ru]').forEach(el => el.textContent = el.dataset[lang]);
-}
-
-// === ОБНОВЛЕНИЕ ДАННЫХ ===
-function refreshAllData() {
-  loadMembers();
-  loadActivity();
-  loadHelp();
-  loadNews();
-  loadGuides();
-}
-
-// === СТАТИСТИКА ===
-function getStats() {
-  return JSON.parse(localStorage.getItem(CONFIG.STATS_KEY)) || { totalVisits: 0, sessions: [], dailyVisits: {} };
-}
-
-function saveStats(stats) {
-  localStorage.setItem(CONFIG.STATS_KEY, JSON.stringify(stats));
-}
-
-function recordVisit(section) {
-  const stats = getStats();
-  stats.totalVisits = (stats.totalVisits || 0) + 1;
-  const now = new Date();
-  const day = now.toISOString().split('T')[0];
-  stats.dailyVisits[day] = (stats.dailyVisits[day] || 0) + 1;
-  stats.sessions.push({
-    id: Date.now().toString(36) + Math.random().toString(36).substr(2),
-    startTime: now.toISOString(),
-    role: localStorage.getItem('userRole'),
-    section
-  });
-  saveStats(stats);
-}
-
-function showAdminStats() {
-  const stats = getStats();
-  let uniqueVisitors = new Set(stats.sessions.map(s => s.id)).size;
-  let totalDuration = 0;
-  let sessionCount = 0;
-  stats.sessions.forEach(s => {
-    if (s.endTime) {
-      totalDuration += (new Date(s.endTime) - new Date(s.startTime)) / 60000;
-      sessionCount++;
-    }
-  });
-  const avgTime = sessionCount > 0 ? (totalDuration / sessionCount).toFixed(1) + 'м' : 'N/A';
-  let maxDay = 'N/A';
-  let maxVisits = 0;
-  Object.entries(stats.dailyVisits).forEach(([day, visits]) => {
-    if (visits > maxVisits) {
-      maxVisits = visits;
-      maxDay = day;
-    }
-  });
-
-  const modalHtml = `
-    <div id="adminStatsModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
-      <div class="bg-gray-900 p-6 rounded-2xl w-full max-w-4xl">
-        <h3 class="text-xl font-bold mb-6">Статистика</h3>
-        <div class="grid md:grid-cols-4 gap-4">
-          <div class="bg-gray-800 p-4 text-center">
-            <div class="text-2xl font-bold text-green-400">${stats.totalVisits}</div>
-            <div>Всего посещений</div>
-          </div>
-          <div class="bg-gray-800 p-4 text-center">
-            <div class="text-2xl font-bold text-blue-400">${uniqueVisitors}</div>
-            <div>Уникальных посетителей</div>
-          </div>
-          <div class="bg-gray-800 p-4 text-center">
-            <div class="text-2xl font-bold text-yellow-400">${avgTime}</div>
-            <div>Среднее время</div>
-          </div>
-          <div class="bg-gray-800 p-4 text-center">
-            <div class="text-2xl font-bold text-purple-400">${maxDay}</div>
-            <div>Самый активный день</div>
-          </div>
-        </div>
-        <button onclick="document.getElementById('adminStatsModal').remove()" class="mt-4 text-gray-400 hover:text-white">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-    </div>
-  `;
-  document.body.insertAdjacentHTML('beforeend', modalHtml);
-}
-
-// === ИНИЦИАЛИЗАЦИЯ ===
-document.addEventListener('DOMContentLoaded', () => {
-  console.log("Сайт загружен!");
-
   const pinInput = document.getElementById('pinInput');
-  const pinBtn = document.getElementById('pinBtn');
+  const pinError = document.getElementById('pinError');
+  const pin = pinInput.value.trim();
+  
+  if (!pin || pin.length !== 4) {
+    pinError.textContent = 'Введите 4-значный PIN-код';
+    pinError.style.display = 'block';
+    return;
+  }
+  
+  // Для демо - простые PIN-коды
+  const demoPins = {
+    '1234': 'member',
+    '4321': 'officer',
+    '9999': 'gm'
+  };
+  
+  // Имитация загрузки
+  pinError.style.display = 'none';
+  document.getElementById('pinBtn').disabled = true;
+  document.getElementById('pinBtn').textContent = 'Проверка...';
+  
+  setTimeout(() => {
+    if (demoPins[pin]) {
+      // Успешный вход
+      currentRole = demoPins[pin];
+      localStorage.setItem('userRole', currentRole);
+      
+      // Показываем основное приложение
+      document.getElementById('pinScreen').style.opacity = '0';
+      
+      setTimeout(() => {
+        document.getElementById('pinScreen').style.display = 'none';
+        document.getElementById('siteHeader').classList.remove('hidden');
+        document.getElementById('mainContent').classList.remove('hidden');
+        
+        // Показываем раздел участников
+        showSection('members');
+        
+        // Загружаем данные
+        loadDemoData();
+      }, 300);
+      
+    } else {
+      // Неверный PIN
+      pinError.textContent = 'Неверный PIN-код. Попробуйте: 1234 (member), 4321 (officer), 9999 (gm)';
+      pinError.style.display = 'block';
+      pinInput.value = '';
+      pinInput.focus();
+    }
+    
+    document.getElementById('pinBtn').disabled = false;
+    document.getElementById('pinBtn').textContent = 'Войти в систему';
+  }, 800);
+}
 
-  pinInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') checkPin();
+// Показать выбранную секцию
+function showSection(sectionId) {
+  // Скрыть все секции
+  document.querySelectorAll('.section').forEach(section => {
+    section.classList.add('hidden');
   });
-  pinBtn.addEventListener('click', checkPin);
+  
+  // Показать выбранную секцию
+  document.getElementById(sectionId).classList.remove('hidden');
+  
+  // Обновить активную кнопку навигации
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    if (btn.dataset.section === sectionId) {
+      btn.style.background = 'rgba(255, 255, 255, 0.2)';
+    } else {
+      btn.style.background = 'rgba(255, 255, 255, 0.1)';
+    }
+  });
+  
+  currentSection = sectionId;
+}
 
-  // Навигация
-  document.getElementById('navMembers').addEventListener('click', () => showSection('members'));
-  document.getElementById('navActivity').addEventListener('click', () => showSection('activity'));
-  document.getElementById('navHelp').addEventListener('click', () => showSection('help'));
-  document.getElementById('navNews').addEventListener('click', () => showSection('news'));
-  document.getElementById('navGuides').addEventListener('click', () => showSection('guides'));
+// Загрузка демо-данных
+function loadDemoData() {
+  // Демо данные участников
+  const members = [
+    { id: 1, name: 'ShadowX', class: 'Assassin', guild: 'Demonic Cult', kpi: 85, status: 'online' },
+    { id: 2, name: 'BloodMoon', class: 'Warrior', guild: 'Demonic Cult', kpi: 72, status: 'online' },
+    { id: 3, name: 'DarkLord', class: 'Mage', guild: 'Demonic Cult', kpi: 91, status: 'offline' },
+    { id: 4, name: 'Venom', class: 'Archer', guild: 'Demonic Cult', kpi: 64, status: 'online' },
+    { id: 5, name: 'Necro', class: 'Priest', guild: 'Demonic Cult', kpi: 78, status: 'away' }
+  ];
+  
+  // Заполняем таблицу участников
+  const tableBody = document.getElementById('membersTable');
+  let html = '';
+  
+  members.forEach(member => {
+    let statusColor = '#9ca3af';
+    let statusText = 'Неизвестно';
+    
+    switch(member.status) {
+      case 'online':
+        statusColor = '#10b981';
+        statusText = 'Онлайн';
+        break;
+      case 'offline':
+        statusColor = '#ef4444';
+        statusText = 'Оффлайн';
+        break;
+      case 'away':
+        statusColor = '#f59e0b';
+        statusText = 'Отошел';
+        break;
+    }
+    
+    let kpiColor = '#ef4444';
+    if (member.kpi >= 80) kpiColor = '#10b981';
+    else if (member.kpi >= 60) kpiColor = '#f59e0b';
+    
+    html += `
+      <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <td>${member.id}</td>
+        <td>
+          <span style="background: rgba(139, 92, 246, 0.2); padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.85rem;">
+            ${member.kpi >= 80 ? 'Элита' : member.kpi >= 60 ? 'Ветеран' : 'Новичок'}
+          </span>
+        </td>
+        <td style="font-weight: bold;">${member.name}</td>
+        <td>${member.class}</td>
+        <td>${member.guild}</td>
+        <td style="color: ${kpiColor}; font-weight: bold;">${member.kpi}</td>
+        <td>
+          <span style="color: ${statusColor};">● ${statusText}</span>
+        </td>
+      </tr>
+    `;
+  });
+  
+  tableBody.innerHTML = html;
+  
+  // Обновляем статистику
+  document.getElementById('totalMembers').textContent = members.length;
+  document.getElementById('onlineMembers').textContent = members.filter(m => m.status === 'online').length;
+  
+  const avgKPI = Math.round(members.reduce((sum, m) => sum + m.kpi, 0) / members.length);
+  document.getElementById('avgKPI').textContent = avgKPI;
+}
 
-  // Смена языка
-  document.getElementById('langSwitch').addEventListener('change', (e) => applyLanguage(e.target.value));
-
-  // Обновление
-  document.getElementById('refreshBtn').addEventListener('click', refreshAllData);
-
-  // Фильтр гайдов
-  const categoryFilter = document.getElementById('guideCategoryFilter');
-  if (categoryFilter) categoryFilter.addEventListener('change', () => renderGuides());
-
-  pinInput.focus();
-  toggleBackgroundVideo();
-  window.addEventListener('resize', toggleBackgroundVideo);
-
-  console.log("PIN система готова");
-});
-
-// Завершение сессии для статистики
-window.addEventListener('beforeunload', () => {
-  const stats = getStats();
-  const currentSession = stats.sessions[stats.sessions.length - 1];
-  if (currentSession) {
-    currentSession.endTime = new Date().toISOString();
-    saveStats(stats);
+// ===== ИНИЦИАЛИЗАЦИЯ =====
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Сайт загружен!');
+  
+  // Фокус на поле ввода PIN
+  document.getElementById('pinInput').focus();
+  
+  // Обработчик кнопки входа
+  document.getElementById('pinBtn').addEventListener('click', checkPin);
+  
+  // Обработчик клавиши Enter в поле PIN
+  document.getElementById('pinInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      checkPin();
+    }
+  });
+  
+  // Обработчики навигации
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const sectionId = this.dataset.section;
+      showSection(sectionId);
+    });
+  });
+  
+  // Обработчик кнопки обновления
+  document.getElementById('refreshBtn').addEventListener('click', function() {
+    if (currentSection === 'members') {
+      loadDemoData();
+      this.textContent = '✓';
+      setTimeout(() => {
+        this.textContent = '🔄';
+      }, 1000);
+    }
+  });
+  
+  // Обработчик переключения языка
+  document.getElementById('langSwitch').addEventListener('change', function(e) {
+    currentLang = e.target.value;
+    // Здесь можно добавить перевод интерфейса
+    console.log('Язык изменен на:', currentLang);
+  });
+  
+  // Проверяем, есть ли сохраненная сессия (для демо - не используем)
+  const savedRole = localStorage.getItem('userRole');
+  if (savedRole && window.location.hash === '#demo') {
+    // Только для демо - автоматический вход
+    currentRole = savedRole;
+    document.getElementById('pinScreen').style.display = 'none';
+    document.getElementById('siteHeader').classList.remove('hidden');
+    document.getElementById('mainContent').classList.remove('hidden');
+    showSection('members');
+    loadDemoData();
   }
 });
+
+// Утилита для показа уведомлений
+function showNotification(message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6'};
+    color: white;
+    border-radius: 0.5rem;
+    z-index: 1000;
+    animation: slideIn 0.3s ease;
+  `;
+  
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.style.animation = 'slideOut 0.3s ease';
+    setTimeout(() => {
+      document.body.removeChild(notification);
+    }, 300);
+  }, 3000);
+}
+
+// Добавляем анимации
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideOut {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+  
+  .nav-btn {
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .nav-btn:hover {
+    transform: translateY(-2px);
+  }
+  
+  table tr {
+    transition: background-color 0.2s ease;
+  }
+  
+  table tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+`;
+document.head.appendChild(style);
+
 </script>
 </body>
 </html>
