@@ -1,15 +1,8 @@
 // CONFIG.js - Настройки приложения
-// CONFIG.js - Настройки приложения
 window.CONFIG = {
+  PINS: { member: '1234', officer: '+ZkolZ+', gm: '!CGCZZK256' },
   SHEET_ID: '1-ay4I-83j1mSMsU9Y5Txt_vdnEH6IVZTLnHpJbwIbJk',
-  DISCORD: { USE_PROXY: true },
-  API: {
-    DISCORD_PROXY: '/api/discord-proxy',
-    GOOGLE_SHEETS_PROXY: '/api/google-proxy'
-  },
-  // ... остальное без изменений
-};
-
+  
   // === РОЛИ ===
   ROLE_NAMES: {
     member: { ru: 'Участник', en: 'Member' },
@@ -28,7 +21,6 @@ window.CONFIG = {
   },
   
   // === GOOGLE SHEETS ===
-  SHEET_ID: '1-ay4I-83j1mSMsU9Y5Txt_vdnEH6IVZTLnHpJbwIbJk',
   SHEETS: {
     members: 'Заявки',
     technical: 'Техническая Таблица',
@@ -39,19 +31,19 @@ window.CONFIG = {
   },
   
   // === DISCORD (опционально) ===
-DISCORD: {
-  BOT_TOKEN: process.env.DISCORD_BOT_TOKEN || '', // Теперь берём из Vercel
-  GUILD_ID: process.env.DISCORD_GUILD_ID || '',
-  NEWS_CHANNEL_ID: process.env.DISCORD_NEWS_CHANNEL_ID || '',
-  AVATAR_BASE_URL: 'https://cdn.discordapp.com/avatars',
-  USE_PROXY: true // Используем Vercel Functions
- },
+  DISCORD: {
+    BOT_TOKEN: process.env.DISCORD_BOT_TOKEN || '', // Теперь берём из Netlify/Vercel
+    GUILD_ID: process.env.DISCORD_GUILD_ID || '',
+    NEWS_CHANNEL_ID: process.env.DISCORD_NEWS_CHANNEL_ID || '',
+    AVATAR_BASE_URL: 'https://cdn.discordapp.com/avatars',
+    USE_PROXY: true // Используем прокси (Netlify/Vercel Functions)
+  },
   
   // === API ENDPOINTS ===
   API: {
-  DISCORD_PROXY: '/api/discord-proxy',  // Vercel путь
-  GOOGLE_SHEETS_PROXY: '/api/google-proxy'  // Изменено на Vercel путь
- }
+    DISCORD_PROXY: '/api/discord-proxy', // Обновлено для Vercel (было /.netlify/functions)
+    GOOGLE_SHEETS_PROXY: '/api/google-proxy' // Обновлено для Vercel
+  },
   
   // === НАСТРОЙКИ ===
   CACHE_DURATION: 5 * 60 * 1000, // 5 минут
