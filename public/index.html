@@ -715,23 +715,6 @@ function checkPin() {
   showSection('members');
   applyLanguage(currentLang);
   pinInput.value = '';
-    // Проверка после загрузки CONFIG
-  document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM loaded');
-  console.log('CONFIG exists?', !!window.CONFIG);
-  console.log('SHEETS exists?', window.CONFIG?.SHEETS);
-  
-  // Тест загрузки данных
-  if (window.CONFIG?.SHEET_ID) {
-    const testUrl = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Заявки`;
-    console.log('Test URL:', testUrl);
-    
-    fetch(testUrl)
-      .then(r => console.log('Fetch test:', r.status, r.ok ? 'OK' : 'FAIL'))
-      .catch(e => console.error('Fetch error:', e));
-  }
-});
-
   
   console.log('PIN принят, показываю интерфейс');
 }
@@ -753,30 +736,7 @@ function getSheetURL(sheetName) {
 
 async function loadData(sheetType) {
   const url = getSheetURL(CONFIG.SHEETS[sheetType]);
-  console.log('Loading from URL:', url);
-  
-  try {
-    const response = await fetch(url);
-    console.log('Response status:', response.status);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    
-    const csv = await response.text();
-    console.log('CSV received, length:', csv.length);
-    
-    const data = parseCSV(csv);
-    console.log('Parsed rows:', data.length);
-    
-    return data;
-  } catch (error) {
-    console.error(`Ошибка загрузки ${sheetType}:`, error);
-    
-    // Пока не используем прокси
-    return null;
-  }
-}
+  const now = Date.now();
   
   // Проверяем кэш
   if (dataCache[sheetType] && (now - dataCache[sheetType].timestamp) < CONFIG.CACHE_DURATION) {
