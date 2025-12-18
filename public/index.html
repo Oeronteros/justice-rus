@@ -728,6 +728,7 @@ function getRoleColor() {
 
 // ===== ЗАГРУЗКА ДАННЫХ ИЗ GOOGLE SHEETS =====
 function getSheetURL(sheetName) {
+  // Используем прямой URL к Google Sheets
   const encodedName = encodeURIComponent(sheetName);
   return `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodedName}`;
 }
