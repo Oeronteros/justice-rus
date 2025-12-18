@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cult Game Community — Justice Mobile</title>
   
-  <!-- Tailwind CSS через CDN (стабильная версия) -->
+  <!-- Tailwind CSS через CDN (или output.css после build) -->
   <script src="https://cdn.tailwindcss.com/3.4.1"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -15,7 +14,18 @@
   <script src="/config.js"></script>
   
   <style>
+   transition: opacity 0.3s ease-in-out;
+    }
     /* Все ваши кастомные стили остаются здесь без изменений */
+	@media (max-width: 640px) {
+  nav {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .nav-btn {
+    width: 100%;  // Полная ширина на мобильных
+  }
+}
     .nav-btn {
       border: 1px solid transparent;
       transition: all 0.3s ease;
@@ -685,6 +695,11 @@ function checkPin() {
   
   // Записываем посещение
   recordVisit();
+  stats.sessions.push({
+  id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+  startTime: now.toISOString(),
+  role: localStorage.getItem('userRole'),  // Теперь роль из storage
+  section: currentSection
   
   // Показываем основной интерфейс
   document.getElementById('pinScreen').style.display = 'none';
@@ -716,7 +731,47 @@ function checkPin() {
   pinInput.value = '';
   
   console.log('PIN принят, показываю интерфейс');
+  
+  // Добавь end сессии
+window.addEventListener('beforeunload', () => {
+  const stats = getStats();
+  const currentSession = stats.sessions[stats.sessions.length - 1];
+  if (currentSession) {
+    currentSession.endTime = new Date().toISOString();
+    saveStats(stats);
+  }
+});
+function showAdminStats() {
+  const stats = getStats();
+  
+// Уникальные посетители (по уникальным session.id, approx)
+  const uniqueVisitors = new Set(stats.sessions.map(s => s.id)).size;
+
+  // Среднее время сессии
+  let totalDuration = 0;
+  let sessionCount = 0;
+  stats.sessions.forEach(s => {
+    if (s.endTime) {
+      const duration = (new Date(s.endTime) - new Date(s.startTime)) / 1000 / 60;  // Минуты
+      totalDuration += duration;
+      sessionCount++;
+    }
+  });
+  const avgTime = sessionCount > 0 ? (totalDuration / sessionCount).toFixed(1) + 'м' : 'N/A';
+
+  // Самый активный день
+  let maxDay = 'N/A';
+  let maxVisits = 0;
+  if (stats.dailyVisits) {
+    Object.entries(stats.dailyVisits).forEach(([day, visits]) => {
+      if (visits > maxVisits) {
+        maxVisits = visits;
+        maxDay = day;
+      }
+    });
+  }  
 }
+
 
 function getRoleColor() {
   switch(currentRole) {
@@ -2079,7 +2134,7 @@ function saveStats(stats) {
 function showAdminStats() {
   const stats = getStats();
   
-  const modalHtml = `
+const modalHtml = `
     <div id="adminStatsModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
       <div class="bg-gray-900/95 backdrop-blur-xl p-6 rounded-2xl shadow-2xl w-full max-w-4xl border border-purple-700/50">
         <div class="flex justify-between items-center mb-6">
@@ -2096,15 +2151,15 @@ function showAdminStats() {
               <div class="text-sm text-gray-400">Всего посещений</div>
             </div>
             <div class="bg-gray-800/50 rounded-lg p-4 text-center">
-              <div class="text-2xl font-bold text-blue-400">${stats.sessions ? new Set(stats.sessions.map(s => s.role)).size : 0}</div>
+              <div class="text-2xl font-bold text-blue-400">${uniqueVisitors}</div>
               <div class="text-sm text-gray-400">Уникальных посетителей</div>
             </div>
             <div class="bg-gray-800/50 rounded-lg p-4 text-center">
-              <div class="text-2xl font-bold text-yellow-400">5м</div>
+              <div class="text-2xl font-bold text-yellow-400">${avgTime}</div>
               <div class="text-sm text-gray-400">Среднее время</div>
             </div>
             <div class="bg-gray-800/50 rounded-lg p-4 text-center">
-              <div class="text-2xl font-bold text-purple-400">Сегодня</div>
+              <div class="text-2xl font-bold text-purple-400">${maxDay}</div>
               <div class="text-sm text-gray-400">Самый активный день</div>
             </div>
           </div>
