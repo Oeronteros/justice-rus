@@ -14,6 +14,23 @@
   <!-- Подключаем конфиг -->
   <script src="/config.js"></script>
   
+  // Проверка после загрузки CONFIG
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM loaded');
+  console.log('CONFIG exists?', !!window.CONFIG);
+  console.log('SHEETS exists?', window.CONFIG?.SHEETS);
+  
+  // Тест загрузки данных
+  if (window.CONFIG?.SHEET_ID) {
+    const testUrl = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Заявки`;
+    console.log('Test URL:', testUrl);
+    
+    fetch(testUrl)
+      .then(r => console.log('Fetch test:', r.status, r.ok ? 'OK' : 'FAIL'))
+      .catch(e => console.error('Fetch error:', e));
+  }
+});
+
   <style>
     /* Все ваши кастомные стили остаются здесь без изменений */
     .nav-btn {
