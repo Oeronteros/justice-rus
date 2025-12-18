@@ -15,7 +15,7 @@
   <script src="/config.js"></script>
   
   <style>
-.nav-btn {
+    .nav-btn {
       border: 1px solid transparent;
       transition: all 0.3s ease;
     }
@@ -92,20 +92,99 @@
 
 <!-- PIN ACCESS -->
 <div id="pinScreen" class="fixed inset-0 flex items-center justify-center z-20">
-  <!-- Твой HTML для PIN экрана, без изменений -->
+  <div class="bg-gray-900/95 backdrop-blur-xl p-8 rounded-2xl shadow-2xl w-full max-w-md border border-red-700/50">
+    <div class="text-center mb-6">
+      <i class="fas fa-shield-alt text-5xl text-red-500 mb-4"></i>
+      <h2 class="text-2xl font-bold">Cult Game Community</h2>
+      <p class="text-gray-400 mt-2">Доступ ограничен</p>
+    </div>
+    
+    <div class="mb-6">
+      <label class="block text-sm font-medium text-gray-300 mb-3">
+        <i class="fas fa-key mr-2"></i>Введите PIN-код
+      </label>
+      <input type="password" id="pinInput" 
+             class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-500/50 outline-none transition"
+             placeholder="Введите 4-значный код"
+             maxlength="4">
+      <p id="pinError" class="text-red-400 text-sm mt-2 hidden">
+        <i class="fas fa-exclamation-circle mr-1"></i>Неверный PIN-код
+      </p>
+    </div>
+    
+    <button id="pinBtn" 
+            class="w-full py-3 bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 rounded-lg font-semibold transition-all duration-300 transform hover:-translate-y-1">
+      <i class="fas fa-unlock mr-2"></i>Войти
+    </button>
+    
+    <div class="mt-6 text-center text-sm text-gray-500">
+      <i class="fas fa-info-circle mr-1"></i>
+      Обратитесь к офицеру гильдии для получения доступа
+    </div>
+  </div>
 </div>
 
 <!-- HEADER -->
 <header class="bg-gray-900/95 backdrop-blur-lg shadow-lg sticky top-0 z-40 hidden" id="siteHeader">
-  <!-- Твой header HTML -->
+  <div class="max-w-7xl mx-auto px-4 py-3">
+    <div class="flex items-center justify-between">
+      <!-- Логотип -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-gradient-to-r from-red-700 to-purple-700 rounded-lg flex items-center justify-center">
+          <i class="fas fa-skull-crossbones text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold">Demonic Cult</h1>
+          <p class="text-xs text-gray-400">Justice Mobile</p>
+        </div>
+      </div>
+      
+      <!-- Навигация -->
+      <nav class="flex space-x-1">
+        <button id="navMembers" data-section="members" 
+                class="nav-btn px-4 py-2 rounded-lg bg-gray-800/80 text-red-300">
+          <i class="fas fa-users mr-2"></i>
+          <span data-ru="Участники" data-en="Members">Участники</span>
+        </button>
+        <button id="navActivity" data-section="activity" 
+                class="nav-btn px-4 py-2 rounded-lg bg-gray-800/40 text-gray-300">
+          <i class="fas fa-calendar-alt mr-2"></i>
+          <span data-ru="Расписание" data-en="Schedule">Расписание</span>
+        </button>
+        <button id="navHelp" data-section="help" 
+                class="nav-btn px-4 py-2 rounded-lg bg-gray-800/40 text-gray-300">
+          <i class="fas fa-hands-helping mr-2"></i>
+          <span data-ru="Помощь" data-en="Help">Помощь</span>
+        </button>
+        <button id="navNews" data-section="news" 
+                class="nav-btn px-4 py-2 rounded-lg bg-gray-800/40 text-gray-300">
+          <i class="fas fa-newspaper mr-2"></i>
+          <span data-ru="Новости" data-en="News">Новости</span>
+        </button>
+        <button id="navGuides" data-section="guides" 
+                class="nav-btn px-4 py-2 rounded-lg bg-gray-800/40 text-gray-300">
+          <i class="fas fa-graduation-cap mr-2"></i>
+          <span data-ru="Гайды" data-en="Guides">Гайды</span>
+        </button>
+      </nav>
+      
+      <!-- Управление -->
+      <div class="flex items-center space-x-3">
+        <button id="refreshBtn" class="p-2 hover:bg-gray-800 rounded-lg transition">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+        <select id="langSwitch" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-600">
+          <option value="ru">🇷🇺 RU</option>
+          <option value="en">🇬🇧 EN</option>
+        </select>
+        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-red-700 to-red-900"></div>
+      </div>
+    </div>
+  </div>
 </header>
 
 <!-- MAIN CONTENT -->
 <main id="mainContent" class="max-w-7xl mx-auto px-4 py-6 relative z-20 hidden">
-  <!-- Все разделы (members, activity и т.д.) -->
-</main>
-
-<script>
   <!-- MEMBERS SECTION -->
   <section id="members" class="py-8">
     <div class="max-w-7xl mx-auto px-4">
@@ -541,7 +620,6 @@
 
 <script>
 // ===== КОНФИГУРАЦИЯ =====
-// ===== КОНФИГУРАЦИЯ =====
 // Используем конфиг из внешнего файла
 const CONFIG = window.CONFIG;
 
@@ -598,77 +676,6 @@ function toggleBackgroundVideo() {
     video.play();
   }
 }
-
-// Инициализация
-document.addEventListener('DOMContentLoaded', () => {
-  console.log("Сайт загружен!");
-  
-  const pinInput = document.getElementById('pinInput');
-  const pinBtn = document.getElementById('pinBtn');
-  
-  pinInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') checkPin();
-  });
-  pinBtn.addEventListener('click', checkPin);
-  
-  // Другие слушатели: navMembers, activity, etc.
-  document.getElementById('navMembers').addEventListener('click', () => showSection('members'));
-  // ... (добавь все остальные)
-
-  // Lang switch, refresh, etc.
-  document.getElementById('langSwitch').addEventListener('change', (e) => applyLanguage(e.target.value));
-  document.getElementById('refreshBtn').addEventListener('click', refreshAllData);
-  
-  const categoryFilter = document.getElementById('guideCategoryFilter');
-  if (categoryFilter) categoryFilter.addEventListener('change', renderGuides);
-  
-  pinInput.focus();
-  toggleBackgroundVideo();
-  window.addEventListener('resize', toggleBackgroundVideo);
-  
-  console.log("PIN система готова");
-});
-  
-  // Добавь end сессии
-window.addEventListener('beforeunload', () => {
-  const stats = getStats();
-  const currentSession = stats.sessions[stats.sessions.length - 1];
-  if (currentSession) {
-    currentSession.endTime = new Date().toISOString();
-    saveStats(stats);
-  }
-});
-function showAdminStats() {
-  const stats = getStats();
-  
-// Уникальные посетители (по уникальным session.id, approx)
-  const uniqueVisitors = new Set(stats.sessions.map(s => s.id)).size;
-
-  // Среднее время сессии
-  let totalDuration = 0;
-  let sessionCount = 0;
-  stats.sessions.forEach(s => {
-    if (s.endTime) {
-      const duration = (new Date(s.endTime) - new Date(s.startTime)) / 1000 / 60;  // Минуты
-      totalDuration += duration;
-      sessionCount++;
-    }
-  });
-  const avgTime = sessionCount > 0 ? (totalDuration / sessionCount).toFixed(1) + 'м' : 'N/A';
-
-  // Самый активный день
-  let maxDay = 'N/A';
-  let maxVisits = 0;
-  if (stats.dailyVisits) {
-    Object.entries(stats.dailyVisits).forEach(([day, visits]) => {
-      if (visits > maxVisits) {
-        maxVisits = visits;
-        maxDay = day;
-      }
-    });
-  }  
-}
-
 
 function getRoleColor() {
   switch(currentRole) {
@@ -993,42 +1000,6 @@ function extractDiscordId(discordTag) {
   // Формат: username#1234 или username
   const match = discordTag.match(/(\d+)/);
   return match ? match[0] : null;
-}
-
-async function getDiscordAvatar(discordId, fallbackIndex) {
-  if (!discordId || !CONFIG.DISCORD.BOT_TOKEN) {
-    return `https://cdn.discordapp.com/embed/avatars/${fallbackIndex % 5}.png`;
-  }
-  
-  try {
-    // Кэшируем в sessionStorage
-    const cacheKey = `avatar_${discordId}`;
-    const cached = sessionStorage.getItem(cacheKey);
-    if (cached) return cached;
-    
-    const response = await fetch(
-      `https://discord.com/api/v10/users/${discordId}`,
-      {
-        headers: {
-          'Authorization': `Bot ${CONFIG.DISCORD.BOT_TOKEN}`
-        }
-      }
-    );
-    
-    if (response.ok) {
-      const user = await response.json();
-      const avatarUrl = user.avatar 
-        ? `https://cdn.discordapp.com/avatars/${discordId}/${user.avatar}.png?size=64`
-        : `https://cdn.discordapp.com/embed/avatars/${user.discriminator % 5}.png`;
-      
-      sessionStorage.setItem(cacheKey, avatarUrl);
-      return avatarUrl;
-    }
-  } catch (error) {
-    console.warn('Не удалось загрузить аватар для', discordId);
-  }
-  
-  return `https://cdn.discordapp.com/embed/avatars/${fallbackIndex % 5}.png`;
 }
 
 // ===== РАСПИСАНИЕ АКТИВНОСТИ =====
@@ -2031,7 +2002,34 @@ function saveStats(stats) {
 function showAdminStats() {
   const stats = getStats();
   
-const modalHtml = `
+  // Уникальные посетители (по уникальным session.id, approx)
+  const uniqueVisitors = new Set(stats.sessions.map(s => s.id)).size;
+
+  // Среднее время сессии
+  let totalDuration = 0;
+  let sessionCount = 0;
+  stats.sessions.forEach(s => {
+    if (s.endTime) {
+      const duration = (new Date(s.endTime) - new Date(s.startTime)) / 1000 / 60;  // Минуты
+      totalDuration += duration;
+      sessionCount++;
+    }
+  });
+  const avgTime = sessionCount > 0 ? (totalDuration / sessionCount).toFixed(1) + 'м' : 'N/A';
+
+  // Самый активный день
+  let maxDay = 'N/A';
+  let maxVisits = 0;
+  if (stats.dailyVisits) {
+    Object.entries(stats.dailyVisits).forEach(([day, visits]) => {
+      if (visits > maxVisits) {
+        maxVisits = visits;
+        maxDay = day;
+      }
+    });
+  }
+
+  const modalHtml = `
     <div id="adminStatsModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
       <div class="bg-gray-900/95 backdrop-blur-xl p-6 rounded-2xl shadow-2xl w-full max-w-4xl border border-purple-700/50">
         <div class="flex justify-between items-center mb-6">
@@ -2070,6 +2068,8 @@ const modalHtml = `
 
 // ===== ИНИЦИАЛИЗАЦИЯ =====
 document.addEventListener('DOMContentLoaded', () => {
+  console.log("Сайт загружен!");
+  
   // PIN input handling
   const pinInput = document.getElementById('pinInput');
   const pinBtn = document.getElementById('pinBtn');
@@ -2105,80 +2105,21 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Focus PIN input on load
   pinInput.focus();
-  });
-  document.getElementById('pinBtn').addEventListener('click', checkPin);
-
-  document.getElementById('pinInput').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    checkPin();
-  }
-  });
-
-</script>
-<script>
-// === ПРОСТАЯ ПРОВЕРКА PIN ===
-async function checkPin() {
-  const pin = document.getElementById('pinInput').value;
-  if (!pin) return;
-
-  try {
-    const response = await fetch('/api/check-pin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pin })
-    });
-
-    if (!response.ok) {
-      throw new Error('Invalid PIN');
-    }
-
-    const { role } = await response.json();
-    localStorage.setItem('userRole', role);  // Сохраняем роль
-
-    // Скрываем PIN экран с анимацией (см. пункт 4)
-    const pinScreen = document.getElementById('pinScreen');
-    pinScreen.style.opacity = '0';
-    setTimeout(() => {
-      pinScreen.style.display = 'none';
-      document.getElementById('siteHeader').classList.remove('hidden');
-      document.getElementById('mainContent').classList.remove('hidden');
-      showSection('members');  // Показываем default раздел
-    }, 300);  // Время анимации
-  } catch (error) {
-    document.getElementById('pinError').style.display = 'block';
-    document.getElementById('pinInput').value = '';
-  }
-}
-
-// === ИНИЦИАЛИЗАЦИЯ ===
-document.addEventListener('DOMContentLoaded', function() {
-  console.log("Сайт загружен!");
-  
-  // Вешаем обработчики
-  document.getElementById('pinBtn').onclick = checkPin;
-  
-  document.getElementById('pinInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      checkPin();
-    }
-  });
+  toggleBackgroundVideo();
+  window.addEventListener('resize', toggleBackgroundVideo);
   
   console.log("PIN система готова");
 });
-function toggleBackgroundVideo() {
-  const video = document.getElementById('backgroundVideo');
-  if (window.innerWidth < 768) {
-    video.pause();
-    video.src = '';  // Очищаем src для остановки загрузки
-  } else {
-    video.src = 'videos/background.mp4';
-    video.play();
-  }
-}
 
-// Инициализация и resize
-window.addEventListener('resize', toggleBackgroundVideo);
-toggleBackgroundVideo();
+// Добавь end сессии
+window.addEventListener('beforeunload', () => {
+  const stats = getStats();
+  const currentSession = stats.sessions[stats.sessions.length - 1];
+  if (currentSession) {
+    currentSession.endTime = new Date().toISOString();
+    saveStats(stats);
+  }
+});
 </script>
 </body>
 </html>
