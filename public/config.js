@@ -1,5 +1,12 @@
-
+// CONFIG.js - Настройки приложения
 window.CONFIG = {
+  // === ПИН-КОДЫ (для теста) ===
+  PINS: {
+    member: '1234',
+    officer: '5678',
+    gm: '9999'
+  },
+  
   // === РОЛИ ===
   ROLE_NAMES: {
     member: { ru: 'Участник', en: 'Member' },
@@ -28,23 +35,27 @@ window.CONFIG = {
     guides: 'Guides'
   },
   
-  // === DISCORD (опционально) ===
-DISCORD: {
-  BOT_TOKEN: process.env.DISCORD_BOT_TOKEN || '', // Теперь берём из Vercel
-  GUILD_ID: process.env.DISCORD_GUILD_ID || '',
-  NEWS_CHANNEL_ID: process.env.DISCORD_NEWS_CHANNEL_ID || '',
-  AVATAR_BASE_URL: 'https://cdn.discordapp.com/avatars',
-  USE_PROXY: true // Используем Vercel Functions
- },
+  // === DISCORD (отключим временно) ===
+  DISCORD: {
+    USE_PROXY: false,
+    BOT_TOKEN: '',
+    GUILD_ID: '',
+    NEWS_CHANNEL_ID: '',
+    AVATAR_BASE_URL: 'https://cdn.discordapp.com/embed/avatars'
+  },
   
   // === API ENDPOINTS ===
   API: {
-  DISCORD_PROXY: '/api/discord-proxy',  // Vercel путь
-  GOOGLE_SHEETS_PROXY: '/api/google-proxy'  // Изменено на Vercel путь
- }
+    DISCORD_PROXY: '/api/discord-proxy',
+    GOOGLE_SHEETS_PROXY: '/api/google-proxy'
+  },
   
   // === НАСТРОЙКИ ===
   CACHE_DURATION: 5 * 60 * 1000, // 5 минут
   STATS_KEY: 'demonic_cult_stats',
   VERSION: '1.0.0'
 };
+
+// Проверка загрузки
+console.log('CONFIG loaded:', window.CONFIG ? 'YES' : 'NO');
+console.log('SHEETS:', window.CONFIG.SHEETS);
