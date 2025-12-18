@@ -2213,6 +2213,20 @@ document.addEventListener('DOMContentLoaded', function() {
   
   console.log("PIN система готова");
 });
+function toggleBackgroundVideo() {
+  const video = document.getElementById('backgroundVideo');
+  if (window.innerWidth < 768) {
+    video.pause();
+    video.src = '';  // Очищаем src для остановки загрузки
+  } else {
+    video.src = 'videos/background.mp4';
+    video.play();
+  }
+}
+
+// Инициализация и resize
+window.addEventListener('resize', toggleBackgroundVideo);
+toggleBackgroundVideo();
 </script>
 </body>
 </html>
