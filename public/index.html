@@ -2165,30 +2165,36 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 <script>
 // === ПРОСТАЯ ПРОВЕРКА PIN ===
-function checkPin() {
-  console.log("Проверяем PIN...");
-  
+async function checkPin() {
   const pin = document.getElementById('pinInput').value;
-  console.log("Введён PIN:", pin);
-  
-  if (pin === '1234' || pin === '6933' || pin === '5934') {
-    console.log("PIN верный!");
-    
-    // Скрываем PIN экран
-    document.getElementById('pinScreen').style.display = 'none';
-    
-    // Показываем основной интерфейс
-    document.getElementById('siteHeader').style.display = 'flex';
-    document.getElementById('mainContent').style.display = 'block';
-    
-    // Показываем раздел участников
-    document.getElementById('members').style.display = 'block';
-    
-    
-  } else {
+  if (!pin) return;
+
+  try {
+    const response = await fetch('/api/check-pin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin })
+    });
+
+    if (!response.ok) {
+      throw new Error('Invalid PIN');
+    }
+
+    const { role } = await response.json();
+    localStorage.setItem('userRole', role);  // Сохраняем роль
+
+    // Скрываем PIN экран с анимацией (см. пункт 4)
+    const pinScreen = document.getElementById('pinScreen');
+    pinScreen.style.opacity = '0';
+    setTimeout(() => {
+      pinScreen.style.display = 'none';
+      document.getElementById('siteHeader').classList.remove('hidden');
+      document.getElementById('mainContent').classList.remove('hidden');
+      showSection('members');  // Показываем default раздел
+    }, 300);  // Время анимации
+  } catch (error) {
     document.getElementById('pinError').style.display = 'block';
     document.getElementById('pinInput').value = '';
-    console.log("Неверный PIN");
   }
 }
 

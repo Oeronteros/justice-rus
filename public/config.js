@@ -1,9 +1,13 @@
 // CONFIG.js - Настройки приложения
+// CONFIG.js - Настройки приложения
 window.CONFIG = {
-  PINS: { member: '1234', officer: '6933', gm: '5934' },
   SHEET_ID: '1-ay4I-83j1mSMsU9Y5Txt_vdnEH6IVZTLnHpJbwIbJk',
-  DISCORD: { USE_PROXY: false }, // Отключаем Discord для начала
-  API: { DISCORD_PROXY: '/api/discord-proxy' }  // Изменено на Vercel путь
+  DISCORD: { USE_PROXY: true },
+  API: {
+    DISCORD_PROXY: '/api/discord-proxy',
+    GOOGLE_SHEETS_PROXY: '/api/google-proxy'
+  },
+  // ... остальное без изменений
 };
 
   // === РОЛИ ===
