@@ -2163,5 +2163,50 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 </script>
+<script>
+// === ПРОСТАЯ ПРОВЕРКА PIN ===
+function checkPin() {
+  console.log("Проверяем PIN...");
+  
+  const pin = document.getElementById('pinInput').value;
+  console.log("Введён PIN:", pin);
+  
+  if (pin === '1234' || pin === '6933' || pin === '5934') {
+    console.log("PIN верный!");
+    
+    // Скрываем PIN экран
+    document.getElementById('pinScreen').style.display = 'none';
+    
+    // Показываем основной интерфейс
+    document.getElementById('siteHeader').style.display = 'flex';
+    document.getElementById('mainContent').style.display = 'block';
+    
+    // Показываем раздел участников
+    document.getElementById('members').style.display = 'block';
+    
+    alert("Добро пожаловать в Demonic Cult!");
+  } else {
+    document.getElementById('pinError').style.display = 'block';
+    document.getElementById('pinInput').value = '';
+    console.log("Неверный PIN");
+  }
+}
+
+// === ИНИЦИАЛИЗАЦИЯ ===
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("Сайт загружен!");
+  
+  // Вешаем обработчики
+  document.getElementById('pinBtn').onclick = checkPin;
+  
+  document.getElementById('pinInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      checkPin();
+    }
+  });
+  
+  console.log("PIN система готова");
+});
+</script>
 </body>
 </html>
