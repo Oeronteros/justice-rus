@@ -304,348 +304,133 @@ function renderGuides(data) {
 
 // === СМЕНА ЯЗЫКА ===
 function applyLanguage(lang) {
-  currentLang = lang;
-  document.documentElement.lang = lang;
-  
-  // Обновляем все элементы с data атрибутами
-  document.querySelectorAll('[data-ru]').forEach(el => {
-    const text = el.dataset[lang];
-    if (text) el.textContent = text;
-  });
-  
-  // Обновляем отображение роли
-  const roleDisplay = document.getElementById('currentRole');
-  if (roleDisplay) {
-    roleDisplay.textContent = CONFIG.ROLE_NAMES[currentRole][lang];
-  }
-  
-  // Обновляем язык в селекторе
-  document.getElementById('langSwitch').value = lang;
-  
-  // Обновляем опции фильтра категорий
-  const filter = document.getElementById('guideCategoryFilter');
-  if (filter) {
-    Array.from(filter.options).forEach(option => {
-      const text = option.dataset[lang];
-      if (text) option.textContent = text;
-    });
-  }
+  // Адаптируй для смены текстов
+  console.log(`Смена языка на ${lang}`);
+  // Пример: document.querySelectorAll('[data-ru]').forEach(el => el.textContent = el.dataset[lang]);
 }
 
+// === ОБНОВЛЕНИЕ ДАННЫХ ===
 function refreshAllData() {
-  // Очищаем кэш
-  dataCache = {};
-  const refreshBtn = document.getElementById('refreshBtn');
-  refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-  refreshBtn.disabled = true;
-  
-  // Перезагружаем текущую секцию
-  loadSectionData(currentSection).finally(() => {
-    setTimeout(() => {
-      refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
-      refreshBtn.disabled = false;
-    }, 500);
-  });
+  loadMembers();
+  loadActivity();
+  loadHelp();
+  loadNews();
+  loadGuides();
 }
 
-function refreshGuides() {
-  if (dataCache['guides']) {
-    delete dataCache['guides'];
-  }
-  renderGuides();
-}
-
-// ===== МОДАЛЬНЫЕ ОКНА =====
-function openCreateGuideModal() {
-  document.getElementById('createGuideModal').classList.remove('hidden');
-  document.getElementById('createGuideModal').classList.add('flex');
-}
-
-function closeCreateGuideModal() {
-  document.getElementById('createGuideModal').classList.add('hidden');
-  document.getElementById('createGuideModal').classList.remove('flex');
-  document.getElementById('guideForm').reset();
-}
-
-function openNewHelpForm() {
-  document.getElementById('newHelpForm').classList.remove('hidden');
-}
-
-function closeNewHelpForm() {
-  document.getElementById('newHelpForm').classList.add('hidden');
-  document.getElementById('activityType').value = '';
-  document.getElementById('urgency').value = 'normal';
-  document.getElementById('problemDescription').value = '';
-}
-
-function openAddEventModal() {
-  // Устанавливаем текущую дату по умолчанию
-  const today = new Date();
-  const dateStr = today.toISOString().split('T')[0];
-  document.getElementById('eventDate').value = dateStr;
-  
-  // Устанавливаем время по умолчанию (19:00)
-  document.getElementById('eventTime').value = '19:00';
-  
-  document.getElementById('addEventModal').classList.remove('hidden');
-  document.getElementById('addEventModal').classList.add('flex');
-}
-
-function closeAddEventModal() {
-  document.getElementById('addEventModal').classList.add('hidden');
-  document.getElementById('addEventModal').classList.remove('flex');
-  document.getElementById('eventForm').reset();
-}
-
-// ===== ОБРАБОТКА ФОРМ =====
-function submitGuideForm(event) {
-  event.preventDefault();
-  
-  const form = event.target;
-  const formData = new FormData(form);
-  
-  // В реальном приложении здесь был бы запрос к Google Apps Script
-  alert('Функция отправки гайда будет работать после настройки Google Apps Script');
-  
-  closeCreateGuideModal();
-  // Обновляем список гайдов
-  setTimeout(() => {
-    if (dataCache['guides']) delete dataCache['guides'];
-    renderGuides();
-  }, 1000);
-}
-
-function submitHelpRequest() {
-  const activity = document.getElementById('activityType').value;
-  const urgency = document.getElementById('urgency').value;
-  const description = document.getElementById('problemDescription').value;
-  
-  if (!activity || !description) {
-    alert('Пожалуйста, заполните все обязательные поля');
-    return;
-  }
-  
-  // В реальном приложении здесь был бы запрос к Google Apps Script
-  alert('Запрос помощи отправлен! В реальной версии он сохранится в Google Таблице');
-  
-  closeNewHelpForm();
-  // Обновляем список запросов
-  setTimeout(() => {
-    if (dataCache['help']) delete dataCache['help'];
-    renderHelp();
-  }, 1000);
-}
-
-function submitEvent() {
-  const date = document.getElementById('eventDate').value;
-  const time = document.getElementById('eventTime').value;
-  const title = document.getElementById('eventTitle').value;
-  const type = document.getElementById('eventType').value;
-  const description = document.getElementById('eventDescription').value;
-  const organizer = document.getElementById('eventOrganizer').value;
-  
-  if (!date || !time || !title) {
-    alert('Пожалуйста, заполните обязательные поля');
-    return;
-  }
-  
-  // В реальном приложении здесь был бы запрос к Google Apps Script
-  alert('Событие добавлено! В реальной версии оно сохранится в Google Таблице');
-  
-  closeAddEventModal();
-  // Обновляем расписание
-  setTimeout(() => {
-    if (dataCache['activity']) delete dataCache['activity'];
-    renderActivity();
-  }, 1000);
-}
-
-// ===== DISCORD СИНХРОНИЗАЦИЯ =====
-function syncDiscordNews() {
-  const button = document.querySelector('#news button[onclick*="syncDiscordNews"]');
-  const originalHTML = button.innerHTML;
-  
-  button.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Синхронизация...';
-  button.disabled = true;
-  
-  // Имитация синхронизации
-  setTimeout(() => {
-    // Обновляем время последней синхронизации
-    const timeEl = document.getElementById('lastSyncTime');
-    if (timeEl) {
-      timeEl.textContent = new Date().toLocaleTimeString('ru-RU', 
-        { hour: '2-digit', minute: '2-digit', second: '2-digit' }
-      );
-    }
-    
-    button.innerHTML = originalHTML;
-    button.disabled = false;
-    
-    // Обновляем новости
-    if (dataCache['news']) delete dataCache['news'];
-    renderNews();
-    
-    alert('Новости синхронизированы с Discord!');
-  }, 1500);
-}
-
-// ===== СТАТИСТИКА =====
-function recordVisit() {
-  const stats = getStats();
-  const now = new Date();
-  const dateKey = now.toISOString().split('T')[0];
-  const hour = now.getHours();
-  
-  // Обновляем статистику
-  stats.totalVisits = (stats.totalVisits || 0) + 1;
-  
-  // Ежедневные посещения
-  stats.dailyVisits = stats.dailyVisits || {};
-  stats.dailyVisits[dateKey] = (stats.dailyVisits[dateKey] || 0) + 1;
-  
-  // Почасовые посещения
-  stats.hourlyActivity = stats.hourlyActivity || {};
-  stats.hourlyActivity[hour] = (stats.hourlyActivity[hour] || 0) + 1;
-  
-  // Сессии
-  stats.sessions = stats.sessions || [];
-  stats.sessions.push({
-    id: Date.now().toString(36) + Math.random().toString(36).substr(2),
-    startTime: now.toISOString(),
-    role: currentRole,
-    section: currentSection
-  });
-  
-  // Ограничиваем количество сессий
-  if (stats.sessions.length > 100) {
-    stats.sessions = stats.sessions.slice(-100);
-  }
-  
-  saveStats(stats);
-}
-
+// === СТАТИСТИКА ===
 function getStats() {
-  const statsJson = localStorage.getItem(CONFIG.STATS_KEY);
-  return statsJson ? JSON.parse(statsJson) : {};
+  return JSON.parse(localStorage.getItem(CONFIG.STATS_KEY)) || { totalVisits: 0, sessions: [], dailyVisits: {} };
 }
 
 function saveStats(stats) {
   localStorage.setItem(CONFIG.STATS_KEY, JSON.stringify(stats));
 }
 
+function recordVisit(section) {
+  const stats = getStats();
+  stats.totalVisits = (stats.totalVisits || 0) + 1;
+  const now = new Date();
+  const day = now.toISOString().split('T')[0];
+  stats.dailyVisits[day] = (stats.dailyVisits[day] || 0) + 1;
+  stats.sessions.push({
+    id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+    startTime: now.toISOString(),
+    role: localStorage.getItem('userRole'),
+    section
+  });
+  saveStats(stats);
+}
+
 function showAdminStats() {
   const stats = getStats();
-  
-  // Уникальные посетители (по уникальным session.id, approx)
-  const uniqueVisitors = new Set(stats.sessions.map(s => s.id)).size;
-
-  // Среднее время сессии
+  let uniqueVisitors = new Set(stats.sessions.map(s => s.id)).size;
   let totalDuration = 0;
   let sessionCount = 0;
   stats.sessions.forEach(s => {
     if (s.endTime) {
-      const duration = (new Date(s.endTime) - new Date(s.startTime)) / 1000 / 60;  // Минуты
-      totalDuration += duration;
+      totalDuration += (new Date(s.endTime) - new Date(s.startTime)) / 60000;
       sessionCount++;
     }
   });
   const avgTime = sessionCount > 0 ? (totalDuration / sessionCount).toFixed(1) + 'м' : 'N/A';
-
-  // Самый активный день
   let maxDay = 'N/A';
   let maxVisits = 0;
-  if (stats.dailyVisits) {
-    Object.entries(stats.dailyVisits).forEach(([day, visits]) => {
-      if (visits > maxVisits) {
-        maxVisits = visits;
-        maxDay = day;
-      }
-    });
-  }
+  Object.entries(stats.dailyVisits).forEach(([day, visits]) => {
+    if (visits > maxVisits) {
+      maxVisits = visits;
+      maxDay = day;
+    }
+  });
 
   const modalHtml = `
     <div id="adminStatsModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
-      <div class="bg-gray-900/95 backdrop-blur-xl p-6 rounded-2xl shadow-2xl w-full max-w-4xl border border-purple-700/50">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-xl font-bold">Статистика посещаемости</h3>
-          <button onclick="document.getElementById('adminStatsModal').remove()" class="text-gray-400 hover:text-white">
-            <i class="fas fa-times text-xl"></i>
-          </button>
-        </div>
-        
-        <div class="space-y-6">
-          <div class="grid md:grid-cols-4 gap-4">
-            <div class="bg-gray-800/50 rounded-lg p-4 text-center">
-              <div class="text-2xl font-bold text-green-400">${stats.totalVisits || 0}</div>
-              <div class="text-sm text-gray-400">Всего посещений</div>
-            </div>
-            <div class="bg-gray-800/50 rounded-lg p-4 text-center">
-              <div class="text-2xl font-bold text-blue-400">${uniqueVisitors}</div>
-              <div class="text-sm text-gray-400">Уникальных посетителей</div>
-            </div>
-            <div class="bg-gray-800/50 rounded-lg p-4 text-center">
-              <div class="text-2xl font-bold text-yellow-400">${avgTime}</div>
-              <div class="text-sm text-gray-400">Среднее время</div>
-            </div>
-            <div class="bg-gray-800/50 rounded-lg p-4 text-center">
-              <div class="text-2xl font-bold text-purple-400">${maxDay}</div>
-              <div class="text-sm text-gray-400">Самый активный день</div>
-            </div>
+      <div class="bg-gray-900 p-6 rounded-2xl w-full max-w-4xl">
+        <h3 class="text-xl font-bold mb-6">Статистика</h3>
+        <div class="grid md:grid-cols-4 gap-4">
+          <div class="bg-gray-800 p-4 text-center">
+            <div class="text-2xl font-bold text-green-400">${stats.totalVisits}</div>
+            <div>Всего посещений</div>
+          </div>
+          <div class="bg-gray-800 p-4 text-center">
+            <div class="text-2xl font-bold text-blue-400">${uniqueVisitors}</div>
+            <div>Уникальных посетителей</div>
+          </div>
+          <div class="bg-gray-800 p-4 text-center">
+            <div class="text-2xl font-bold text-yellow-400">${avgTime}</div>
+            <div>Среднее время</div>
+          </div>
+          <div class="bg-gray-800 p-4 text-center">
+            <div class="text-2xl font-bold text-purple-400">${maxDay}</div>
+            <div>Самый активный день</div>
           </div>
         </div>
+        <button onclick="document.getElementById('adminStatsModal').remove()" class="mt-4 text-gray-400 hover:text-white">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
     </div>
   `;
-  
   document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 
-// ===== ИНИЦИАЛИЗАЦИЯ =====
+// === ИНИЦИАЛИЗАЦИЯ ===
 document.addEventListener('DOMContentLoaded', () => {
   console.log("Сайт загружен!");
-  
-  // PIN input handling
+
   const pinInput = document.getElementById('pinInput');
   const pinBtn = document.getElementById('pinBtn');
-  
+
   pinInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      checkPin();
-    }
+    if (e.key === 'Enter') checkPin();
   });
-  
   pinBtn.addEventListener('click', checkPin);
-  
-  // Navigation
+
+  // Навигация
   document.getElementById('navMembers').addEventListener('click', () => showSection('members'));
   document.getElementById('navActivity').addEventListener('click', () => showSection('activity'));
   document.getElementById('navHelp').addEventListener('click', () => showSection('help'));
   document.getElementById('navNews').addEventListener('click', () => showSection('news'));
   document.getElementById('navGuides').addEventListener('click', () => showSection('guides'));
-  
-  // Language switch
-  document.getElementById('langSwitch').addEventListener('change', (e) => {
-    applyLanguage(e.target.value);
-  });
-  
-  // Refresh button
+
+  // Смена языка
+  document.getElementById('langSwitch').addEventListener('change', (e) => applyLanguage(e.target.value));
+
+  // Обновление
   document.getElementById('refreshBtn').addEventListener('click', refreshAllData);
-  
-  // Guide category filter
+
+  // Фильтр гайдов
   const categoryFilter = document.getElementById('guideCategoryFilter');
-  if (categoryFilter) {
-    categoryFilter.addEventListener('change', renderGuides);
-  }
-  
-  // Focus PIN input on load
+  if (categoryFilter) categoryFilter.addEventListener('change', () => renderGuides());
+
   pinInput.focus();
   toggleBackgroundVideo();
   window.addEventListener('resize', toggleBackgroundVideo);
-  
+
   console.log("PIN система готова");
 });
 
-// Добавь end сессии
+// Завершение сессии для статистики
 window.addEventListener('beforeunload', () => {
   const stats = getStats();
   const currentSession = stats.sessions[stats.sessions.length - 1];
