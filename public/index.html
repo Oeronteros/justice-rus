@@ -1552,110 +1552,56 @@ function renderStaticNews(container) {
 }
 
 // ===== ГАЙДЫ =====
-async function submitGuideForm(event) {
-  event.preventDefault();
-  
-  const form = event.target;
-  const formData = new FormData(form);
-  
-  const guideData = {
-    title: formData.get('title'),
-    category: formData.get('category'),
-    content: formData.get('content'),
-    difficulty: formData.get('difficulty'),
-    tags: formData.get('tags') || '',
-    author: localStorage.getItem('userRole') === 'gm' ? 'GM' : 
-            localStorage.getItem('userRole') === 'officer' ? 'Офицер' : 'Участник',
-    date: new Date().toISOString().split('T')[0],
-    status: 'pending'
-  };
+async function renderGuides() {
+  const container = document.getElementById('guidesContent');
+  const categoryFilter = document.getElementById('guideCategoryFilter')?.value || 'all';
   
   try {
-    // Создаем CSV строку
-    const csvRow = [
-      `"${guideData.title.replace(/"/g, '""')}"`,
-      `"${guideData.category.replace(/"/g, '""')}"`,
-      `"${guideData.content.replace(/"/g, '""')}"`,
-      `"${guideData.author.replace(/"/g, '""')}"`,
-      `"${guideData.date}"`,
-      `"${guideData.difficulty.replace(/"/g, '""')}"`,
-      `"${guideData.tags.replace(/"/g, '""')}"`,
-      `"${guideData.status}"`
-    ].join(',') + '\n';
+    const guidesData = await loadData('guides');
     
-    // Для работы с Google Sheets нужен Apps Script
-    // Временное решение: сохранять в localStorage
-    saveGuideToLocalStorage(guideData);
+    if (!guidesData || guidesData.length < 2) {
+      container.innerHTML = `
+        <div class="bg-gray-800/70 backdrop-blur-sm rounded-xl p-8 border border-gray-700/50 text-center">
+          <i class="fas fa-book-open text-4xl text-gray-600 mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Гайды не найдены</h3>
+          <p class="text-gray-400">Добавьте гайды в таблицу Guides</p>
+        </div>
+      `;
+      return;
+    }
     
-    // Показываем сообщение
-    showNotification('Гайд сохранен локально! Для публикации в Google Таблице настройте Apps Script.', 'info');
+    // Парсим заголовки столбцов
+    const headers = guidesData[0].map(h => h.toLowerCase());
     
-    closeCreateGuideModal();
+    // Находим индексы нужных столбцов
+    const getIndex = (name) => headers.findIndex(h => h.includes(name.toLowerCase()));
     
-    // Обновляем список гайдов
-    setTimeout(() => {
-      if (dataCache['guides']) delete dataCache['guides'];
-      renderGuides();
-    }, 1000);
+    const titleIndex = getIndex('title') !== -1 ? getIndex('title') : 0;
+    const categoryIndex = getIndex('category') !== -1 ? getIndex('category') : 1;
+    const contentIndex = getIndex('content') !== -1 ? getIndex('content') : 2;
+    const authorIndex = getIndex('author') !== -1 ? getIndex('author') : 3;
+    const dateIndex = getIndex('date') !== -1 ? getIndex('date') : 4;
+    const difficultyIndex = getIndex('difficulty') !== -1 ? getIndex('difficulty') : 5;
+    const tagsIndex = getIndex('tags') !== -1 ? getIndex('tags') : 6;
     
-  } catch (error) {
-    console.error('Ошибка сохранения гайда:', error);
-    showNotification('Ошибка сохранения гайда', 'error');
-  }
-}
-
-function saveGuideToLocalStorage(guideData) {
-  try {
-    // Получаем существующие гайды из localStorage
-    const guides = JSON.parse(localStorage.getItem('localGuides') || '[]');
+    // Фильтруем гайды по категории
+    const guides = guidesData.slice(1)
+      .filter(row => {
+        if (categoryFilter === 'all') return true;
+        const category = (row[categoryIndex] || '').toLowerCase();
+        return category.includes(categoryFilter);
+      });
     
-    // Добавляем новый гайд
-    guides.push({
-      ...guideData,
-      id: Date.now().toString(),
-      timestamp: new Date().toISOString()
-    });
-    
-    // Сохраняем обратно
-    localStorage.setItem('localGuides', JSON.stringify(guides));
-    
-    console.log('Гайд сохранен локально:', guideData.title);
-    return true;
-  } catch (error) {
-    console.error('Ошибка сохранения в localStorage:', error);
-    return false;
-  }
-}
-
-function showNotification(message, type = 'info') {
-  // Создаем элемент уведомления
-  const notification = document.createElement('div');
-  notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg ${
-    type === 'error' ? 'bg-red-900/90 text-red-100' : 
-    type === 'success' ? 'bg-green-900/90 text-green-100' : 
-    'bg-blue-900/90 text-blue-100'
-  }`;
-  notification.innerHTML = `
-    <div class="flex items-center">
-      <i class="fas ${
-        type === 'error' ? 'fa-exclamation-circle' : 
-        type === 'success' ? 'fa-check-circle' : 
-        'fa-info-circle'
-      } mr-2"></i>
-      <span>${message}</span>
-    </div>
-  `;
-  
-  // Добавляем в DOM
-  document.body.appendChild(notification);
-  
-  // Удаляем через 5 секунд
-  setTimeout(() => {
-    notification.style.opacity = '0';
-    notification.style.transition = 'opacity 0.5s';
-    setTimeout(() => notification.remove(), 500);
-  }, 5000);
-}
+    if (guides.length === 0) {
+      container.innerHTML = `
+        <div class="bg-gray-800/70 backdrop-blur-sm rounded-xl p-8 border border-gray-700/50 text-center">
+          <i class="fas fa-filter text-4xl text-gray-600 mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Нет гайдов в этой категории</h3>
+          <p class="text-gray-400">Попробуйте другую категорию</p>
+        </div>
+      `;
+      return;
+    }
     
     // Формируем HTML
     let html = '<div class="grid md:grid-cols-2 gap-6">';
