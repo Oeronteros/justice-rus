@@ -10,6 +10,6 @@
     "tailwindcss": "^3.4.1"
   },
   "scripts": {
-    "build": "npx tailwindcss -i ./input.css -o ./output.css --minify"  // Создай input.css с @tailwind base; @tailwind components; etc.
+    "build": "npx tailwindcss -i ./input.css -o ./output.css --minify"  
   }
 }
