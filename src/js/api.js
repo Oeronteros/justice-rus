@@ -80,7 +80,7 @@ class ApiService {
   async getMembers() {
     try {
       // Пробуем получить из Google Sheets
-      const sheetId = process.env.GOOGLE_SHEET_ID || 'YOUR_SPREADSHEET_ID';
+      const sheetId = '1-ay4I-83j1mSMsU9Y5Txt_vdnEH6IVZTLnHpJbwIbJk'
       return await this.request(`google-proxy?sheet=Members&id=${sheetId}`);
     } catch (error) {
       // Если не получилось, используем демо-данные
