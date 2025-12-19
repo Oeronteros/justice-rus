@@ -1,53 +1,48 @@
-import { showError, showSuccess } from './notifications.js';
+import { showError, showSuccess, showWarning } from './notifications.js';
 
-// Базовый URL для API
-const API_BASE = '/api';
-
-// Класс для работы с API
 class ApiService {
   constructor() {
+    this.baseUrl = '/api';
     this.cache = new Map();
-    this.cacheDuration = 5 * 60 * 1000; // 5 минут
+    this.useDemoData = false; // Флаг для использования демо-данных
   }
 
-  // Получение токена
-  getAuthToken() {
-    return localStorage.getItem('auth_token');
-  }
-
-  // Базовый метод запроса
   async request(endpoint, options = {}) {
-    const url = `${API_BASE}/${endpoint}`;
+    // Если включен демо-режим, используем тестовые данные
+    if (this.useDemoData && endpoint.includes('google-proxy')) {
+      return this.getDemoData(endpoint);
+    }
+
+    const url = `${this.baseUrl}/${endpoint}`;
     const cacheKey = `${url}_${JSON.stringify(options)}`;
     
-    // Проверка кэша
+    // Проверка кэша (5 минут)
     const cached = this.cache.get(cacheKey);
-    if (cached && Date.now() - cached.timestamp < this.cacheDuration) {
+    if (cached && Date.now() - cached.timestamp < 300000) {
       return cached.data;
-    }
-    
-    const headers = {
-      'Content-Type': 'application/json',
-      ...options.headers
-    };
-    
-    const token = this.getAuthToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
     }
     
     try {
       const response = await fetch(url, {
         ...options,
-        headers
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers
+        }
       });
       
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
-        throw new Error(error.message || `HTTP ${response.status}`);
-      }
-      
       const data = await response.json();
+      
+      if (!response.ok) {
+        // Если ошибка 404, предлагаем использовать демо-данные
+        if (response.status === 404 && endpoint.includes('google-proxy')) {
+          showWarning('Google Sheet not found. Using demo data. Check your spreadsheet ID.');
+          this.useDemoData = true;
+          return this.getDemoData(endpoint);
+        }
+        
+        throw new Error(data.error || data.message || `HTTP ${response.status}`);
+      }
       
       // Сохраняем в кэш
       this.cache.set(cacheKey, {
@@ -56,107 +51,80 @@ class ApiService {
       });
       
       return data;
+      
     } catch (error) {
       console.error(`API Error (${endpoint}):`, error);
+      
+      // При сетевой ошибке пробуем демо-данные
+      if (endpoint.includes('google-proxy')) {
+        showWarning('Network error. Using demo data.');
+        this.useDemoData = true;
+        return this.getDemoData(endpoint);
+      }
+      
       showError(`API Error: ${error.message}`);
       throw error;
     }
   }
 
+  // Получение демо-данных
+  async getDemoData(endpoint) {
+    const params = new URLSearchParams(endpoint.split('?')[1] || '');
+    const sheet = params.get('sheet') || 'members';
+    
+    const response = await fetch(`/api/demo-data?sheet=${sheet}`);
+    return await response.json();
+  }
+
   // Получение участников
   async getMembers() {
-    return this.request('google-proxy?sheet=Members&id=YOUR_SHEET_ID');
+    try {
+      // Пробуем получить из Google Sheets
+      const sheetId = process.env.GOOGLE_SHEET_ID || 'YOUR_SPREADSHEET_ID';
+      return await this.request(`google-proxy?sheet=Members&id=${sheetId}`);
+    } catch (error) {
+      // Если не получилось, используем демо-данные
+      return this.getDemoData('?sheet=members');
+    }
   }
 
   // Получение активности
   async getActivity() {
-    return this.request('google-proxy?sheet=Activity&id=YOUR_SHEET_ID');
+    try {
+      const sheetId = process.env.GOOGLE_SHEET_ID || 'YOUR_SPREADSHEET_ID';
+      return await this.request(`google-proxy?sheet=Activity&id=${sheetId}`);
+    } catch (error) {
+      return this.getDemoData('?sheet=activity');
+    }
   }
 
-  // Получение новостей Discord
-  async getDiscordNews() {
-    return this.request('discord-news');
-  }
-
-  // Получение данных пользователя Discord
-  async getDiscordUser(userId) {
-    return this.request(`discord-proxy?endpoint=user&id=${userId}`);
-  }
-
-  // Получение сообщений канала
-  async getChannelMessages(channelId, limit = 10) {
-    return this.request(`discord-proxy?endpoint=messages&id=${channelId}&limit=${limit}`);
-  }
-
-  // Работа с гайдами через GAS
+  // Получение гайдов
   async getGuides() {
-    return this.request('gas-proxy', {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'getGuides'
-      })
-    });
+    try {
+      const sheetId = process.env.GOOGLE_SHEET_ID || 'YOUR_SPREADSHEET_ID';
+      const data = await this.request(`google-proxy?sheet=Guides&id=${sheetId}`);
+      
+      // Преобразуем CSV в объекты
+      return this.transformGuidesData(data);
+    } catch (error) {
+      const demoData = await this.getDemoData('?sheet=guides');
+      return this.transformGuidesData(demoData);
+    }
   }
 
-  async createGuide(guideData) {
-    return this.request('gas-proxy', {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'createGuide',
-        ...guideData
-      })
-    });
-  }
-
-  async updateGuide(guideId, guideData) {
-    return this.request('gas-proxy', {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'updateGuide',
-        id: guideId,
-        ...guideData
-      })
-    });
-  }
-
-  async deleteGuide(guideId) {
-    return this.request('gas-proxy', {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'deleteGuide',
-        id: guideId
-      })
-    });
-  }
-
-  // Работа с отсутствиями
-  async getAbsences() {
-    return this.request('gas-proxy', {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'getAbsences'
-      })
-    });
-  }
-
-  async createAbsence(absenceData) {
-    return this.request('gas-proxy', {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'createAbsence',
-        ...absenceData
-      })
-    });
-  }
-
-  async updateAbsenceStatus(absenceId, status) {
-    return this.request('gas-proxy', {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'updateAbsence',
-        id: absenceId,
-        status
-      })
+  // Преобразование данных гайдов
+  transformGuidesData(data) {
+    if (!data || data.length < 2) return [];
+    
+    const headers = data[0];
+    const rows = data.slice(1);
+    
+    return rows.map(row => {
+      const guide = {};
+      headers.forEach((header, index) => {
+        guide[header.toLowerCase()] = row[index] || '';
+      });
+      return guide;
     });
   }
 
@@ -166,12 +134,13 @@ class ApiService {
     showSuccess('Cache cleared');
   }
 
-  // Очистка кэша для конкретного endpoint
-  clearCacheFor(endpoint) {
-    for (const key of this.cache.keys()) {
-      if (key.startsWith(`${API_BASE}/${endpoint}`)) {
-        this.cache.delete(key);
-      }
+  // Включение/выключение демо-режима
+  toggleDemoMode(enabled) {
+    this.useDemoData = enabled;
+    if (enabled) {
+      showWarning('Demo mode enabled. Using test data.');
+    } else {
+      showSuccess('Demo mode disabled. Using real data.');
     }
   }
 }
@@ -179,38 +148,44 @@ class ApiService {
 // Глобальный экземпляр
 window.api = new ApiService();
 
-// Утилитарные функции
-export async function fetchWithRetry(endpoint, retries = 3, delay = 1000) {
-  for (let i = 0; i < retries; i++) {
-    try {
-      return await window.api.request(endpoint);
-    } catch (error) {
-      if (i === retries - 1) throw error;
-      await new Promise(resolve => setTimeout(resolve, delay * (i + 1)));
-    }
+// Экспорт утилит
+export function formatDate(dateStr) {
+  if (!dateStr) return 'N/A';
+  
+  try {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  } catch {
+    return dateStr;
   }
 }
 
-export function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-export function formatDate(date, lang = 'ru') {
-  const d = new Date(date);
-  const options = {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+export function getLevelClass(level) {
+  const levelMap = {
+    'novice': 'level-novice',
+    'member': 'level-member',
+    'veteran': 'level-veteran',
+    'elite': 'level-elite',
+    'legend': 'level-legend',
+    'gm': 'level-gm'
   };
   
-  return d.toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'en-US', options);
+  const lowerLevel = level?.toLowerCase();
+  return levelMap[lowerLevel] || 'bg-gray-700';
 }
 
-export function formatNumber(num) {
-  if (typeof num !== 'number') return '0';
-  return new Intl.NumberFormat().format(num);
+export function getStatusClass(status) {
+  const statusMap = {
+    'active': 'status-active',
+    'inactive': 'status-inactive',
+    'pending': 'status-pending',
+    'leave': 'status-leave'
+  };
+  
+  const lowerStatus = status?.toLowerCase();
+  return statusMap[lowerStatus] || 'bg-gray-700';
 }
