@@ -2,23 +2,8 @@ window.CONFIG = {
   // PIN коды для разных ролей
   PINS: {
     member: "1111",
-    officer: "2222",
+    officer: "2222", 
     gm: "3333"
-  },
-  
-  // ID Google таблицы
-  SHEET_ID: "ВАШ_ID_ТАБЛИЦЫ",
-  
-  // Имена листов в Google таблице
-  SHEETS: {
-    members: "Members",
-    technical: "Technical",
-    activity: "Activity",
-    help: "Help",
-    news: "News",
-    guides: "Guides",
-    absences: "Absences",
-    guide_likes: "GuideLikes"
   },
   
   // Названия ролей на разных языках
@@ -64,10 +49,10 @@ window.CONFIG = {
   
   // URL Google Apps Script (Web App)
   API: {
-    GAS_URL: "https://script.google.com/macros/s/ВАШ_SCRIPT_ID/exec"
+    GAS_URL: "https://script.google.com/macros/s/AKfycbzJIYEE3ffqOWdrbVf-kiNOVUVxeKknMf1qOs9Kw3AHiajlkwgjgRswsyrwZWuYy7cXBw/exec"
   },
   
-  // Настройки кэша (в миллисекундах)
+  // Настройки кэша
   CACHE_DURATION: 300000, // 5 минут
   
   // Ключ для статистики в localStorage
