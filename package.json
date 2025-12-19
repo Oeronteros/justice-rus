@@ -1,9 +1,23 @@
 {
   "name": "justice-rus",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
-  "engines": {"node": "24.x"},
+  "engines": {"node": "18.x"},
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && vercel --prod"
+  },
   "dependencies": {
-    "node-fetch": "3.3.2"
+    "jsonwebtoken": "^9.0.0",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "vite": "^4.4.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.3.0",
+    "eslint": "^8.0.0"
   }
 }

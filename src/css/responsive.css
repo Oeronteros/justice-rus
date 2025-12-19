@@ -1,0 +1,168 @@
+/* Мобильная адаптивность */
+
+/* Скрытие элементов на мобильных */
+@media (max-width: 640px) {
+  .mobile-hidden {
+    display: none !important;
+  }
+
+  .mobile-full-width {
+    width: 100% !important;
+  }
+
+  /* Навигация */
+  nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-btn {
+    flex: 1 0 calc(50% - 0.5rem);
+    min-width: 120px;
+    margin: 0.25rem;
+    font-size: 14px;
+    padding: 0.5rem;
+  }
+
+  /* Таблицы */
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  /* Карточки */
+  .mobile-card {
+    margin: 0.5rem;
+    padding: 1rem;
+  }
+
+  /* Модальные окна */
+  .modal-content {
+    margin: 1rem;
+    padding: 1rem;
+    width: calc(100% - 2rem);
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  /* Grid адаптация */
+  .mobile-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Кнопки действий */
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .action-buttons button {
+    width: 100%;
+  }
+}
+
+/* Планшеты */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tablet-hidden {
+    display: none !important;
+  }
+
+  .nav-btn {
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+  }
+
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Адаптивные тексты */
+.responsive-text {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+}
+
+.responsive-heading {
+  font-size: clamp(1.25rem, 3vw, 2rem);
+}
+
+/* Адаптивные отступы */
+.responsive-padding {
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+/* Свайп-меню для мобильных */
+.mobile-swipe-menu {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(17, 24, 39, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 0.75rem;
+  z-index: 40;
+  border-top: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.mobile-swipe-menu .nav-btn {
+  flex: 1;
+  text-align: center;
+  padding: 0.75rem 0.5rem;
+}
+
+/* Горизонтальный скролл для навигации на мобильных */
+.nav-scroll-container {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.nav-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Адаптивные иконки */
+.mobile-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Адаптивная высота элементов */
+.responsive-height {
+  height: auto;
+  min-height: 200px;
+  max-height: 70vh;
+}
+
+@media (max-width: 640px) {
+  .responsive-height {
+    max-height: 60vh;
+  }
+}
+
+/* Touch-friendly элементы */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.touch-padding {
+  padding: 0.75rem;
+}
+
+/* Адаптивные границы */
+@media (max-width: 640px) {
+  .mobile-border {
+    border: 1px solid rgba(75, 85, 99, 0.3);
+    border-radius: 0.75rem;
+  }
+}
