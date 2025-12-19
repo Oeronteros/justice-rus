@@ -1,61 +1,75 @@
-// CONFIG.js - Настройки приложения
 window.CONFIG = {
-  // === ПИН-КОДЫ (для теста) ===
+  // PIN коды для разных ролей
   PINS: {
-    member: '1234',
-    officer: '5678',
-    gm: '9999'
+    member: "1111",
+    officer: "2222",
+    gm: "3333"
   },
   
-  // === РОЛИ ===
-  ROLE_NAMES: {
-    member: { ru: 'Участник', en: 'Member' },
-    officer: { ru: 'Офицер', en: 'Officer' },
-    gm: { ru: 'ГМ', en: 'GM' }
-  },
+  // ID Google таблицы
+  SHEET_ID: "ВАШ_ID_ТАБЛИЦЫ",
   
-  // === УРОВНИ ===
-  LEVELS: {
-    novice: { min: 0, max: 99, name: { ru: 'Новичок', en: 'Novice' }, color: 'level-novice' },
-    member: { min: 100, max: 499, name: { ru: 'Участник', en: 'Member' }, color: 'level-member' },
-    veteran: { min: 500, max: 999, name: { ru: 'Ветеран', en: 'Veteran' }, color: 'level-veteran' },
-    elite: { min: 1000, max: 1999, name: { ru: 'Элита', en: 'Elite' }, color: 'level-elite' },
-    legend: { min: 2000, max: 4999, name: { ru: 'Легенда', en: 'Legend' }, color: 'level-legend' },
-    gm: { min: 5000, max: 9999, name: { ru: 'ГМ', en: 'GM' }, color: 'level-gm' }
-  },
-  
-  // === GOOGLE SHEETS ===
-  SHEET_ID: '1-ay4I-83j1mSMsU9Y5Txt_vdnEH6IVZTLnHpJbwIbJk',
+  // Имена листов в Google таблице
   SHEETS: {
-    members: 'Заявки',
-    technical: 'Техническая Таблица',
-    activity: 'Activity',
-    help: 'HelpRequests',
-    news: 'News',
-    guides: 'Guides'
+    members: "Members",
+    technical: "Technical",
+    activity: "Activity",
+    help: "Help",
+    news: "News",
+    guides: "Guides",
+    absences: "Absences",
+    guide_likes: "GuideLikes"
   },
   
-  // === DISCORD (отключим временно) ===
-  DISCORD: {
-    USE_PROXY: false,
-    BOT_TOKEN: '',
-    GUILD_ID: '',
-    NEWS_CHANNEL_ID: '',
-    AVATAR_BASE_URL: 'https://cdn.discordapp.com/embed/avatars'
+  // Названия ролей на разных языках
+  ROLE_NAMES: {
+    member: { ru: "Участник", en: "Member" },
+    officer: { ru: "Офицер", en: "Officer" },
+    gm: { ru: "ГМ", en: "GM" }
   },
   
-  // === API ENDPOINTS ===
+  // Уровни участников
+  LEVELS: {
+    novice: { 
+      name: { ru: "Новичок", en: "Novice" }, 
+      color: "level-novice",
+      min: 0, max: 499
+    },
+    member: { 
+      name: { ru: "Участник", en: "Member" }, 
+      color: "level-member",
+      min: 500, max: 1999
+    },
+    veteran: { 
+      name: { ru: "Ветеран", en: "Veteran" }, 
+      color: "level-veteran",
+      min: 2000, max: 4999
+    },
+    elite: { 
+      name: { ru: "Элита", en: "Elite" }, 
+      color: "level-elite",
+      min: 5000, max: 9999
+    },
+    legend: { 
+      name: { ru: "Легенда", en: "Legend" }, 
+      color: "level-legend",
+      min: 10000, max: 19999
+    },
+    gm: { 
+      name: { ru: "ГМ", en: "GM" }, 
+      color: "level-gm",
+      min: 20000, max: 999999
+    }
+  },
+  
+  // URL Google Apps Script (Web App)
   API: {
-    DISCORD_PROXY: '/api/discord-proxy',
-    GOOGLE_SHEETS_PROXY: '/api/google-proxy'
+    GAS_URL: "https://script.google.com/macros/s/ВАШ_SCRIPT_ID/exec"
   },
   
-  // === НАСТРОЙКИ ===
-  CACHE_DURATION: 5 * 60 * 1000, // 5 минут
-  STATS_KEY: 'demonic_cult_stats',
-  VERSION: '1.0.0'
+  // Настройки кэша (в миллисекундах)
+  CACHE_DURATION: 300000, // 5 минут
+  
+  // Ключ для статистики в localStorage
+  STATS_KEY: "guild_portal_stats"
 };
-
-// Проверка загрузки
-console.log('CONFIG loaded:', window.CONFIG ? 'YES' : 'NO');
-console.log('SHEETS:', window.CONFIG.SHEETS);
