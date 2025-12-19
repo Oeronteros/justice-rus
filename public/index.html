@@ -1326,29 +1326,26 @@ async function renderHelp() {
 }
 
 async function loadActivities() {
-  try {
-    const techData = await loadData('technical');
-    if (!techData || techData.length < 2) return [];
-    
-    const activities = new Set();
-    
-    // Столбцы H-K: Outer City Heroic (7), Абисс (8), Inner City (9), Хроники (10)
-    techData.slice(1).forEach(row => {
-      if (row.length > 10) {
-        for (let i = 7; i <= 10; i++) {
-          if (row[i] && row[i].trim()) {
-            activities.add(row[i].trim());
-          }
-        }
+  const techData = await loadData('technical');
+  if (!techData || techData.length < 2) return [];
+
+  const activities = new Set();
+
+  techData.slice(1).forEach(row => {
+    for (let i = 7; i <= 10; i++) { // H-K
+      if (row[i] && row[i].trim()) {
+        activities.add(row[i].trim());
       }
-    });
-    
-    return Array.from(activities);
-  } catch (error) {
-    console.error('Ошибка загрузки активностей:', error);
-    return [];
-  }
+    }
+  });
+
+  return [...activities];
 }
+const activities = await loadActivities();
+activitySelect.innerHTML =
+  `<option value="">Выберите активность</option>` +
+  activities.map(a => `<option value="${a}">${a}</option>`).join('');
+
 
 // ===== НОВОСТИ ИЗ DISCORD =====
 async function renderNews() {
@@ -1922,21 +1919,35 @@ function closeAddEventModal() {
 }
 
 // ===== ОБРАБОТКА ФОРМ =====
-function submitGuideForm(event) {
-  event.preventDefault();
-  
-  const form = event.target;
-  const formData = new FormData(form);
-  
-  // В реальном приложении здесь был бы запрос к Google Apps Script
-  alert('Функция отправки гайда будет работать после настройки Google Apps Script');
-  
-  closeCreateGuideModal();
-  // Обновляем список гайдов
-  setTimeout(() => {
-    if (dataCache['guides']) delete dataCache['guides'];
+async function submitGuideForm(e) {
+  e.preventDefault();
+
+  const form = e.target;
+  const data = {
+    title: form.title.value,
+    category: form.category.value,
+    difficulty: form.difficulty.value,
+    content: form.content.value,
+    tags: form.tags.value,
+    author: currentRole
+  };
+
+  const res = await fetch(CONFIG.API.GAS_GUIDES_URL, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+
+  if (res.ok) {
+    alert('Гайд опубликован');
+    closeCreateGuideModal();
     renderGuides();
-  }, 1000);
+  } else {
+    alert('Ошибка отправки гайда');
+  }
+}
+async function loadDiscordNews() {
+  const res = await fetch('/api/discord-news');
+  return await res.json();
 }
 
 function submitHelpRequest() {
