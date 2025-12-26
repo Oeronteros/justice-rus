@@ -14,6 +14,7 @@ const sections: { id: Section; label: string; icon: string }[] = [
   { id: 'news', label: 'News', icon: 'fa-newspaper' },
   { id: 'guides', label: 'Guides', icon: 'fa-graduation-cap' },
   { id: 'absences', label: 'Absences', icon: 'fa-calendar-times' },
+  { id: 'calculator', label: 'Calculator', icon: 'fa-calculator' },
 ];
 
 export default function MobileNav({ currentSection, onSectionChange }: MobileNavProps) {

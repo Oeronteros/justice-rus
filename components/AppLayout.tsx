@@ -33,6 +33,13 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
         return <GuidesSection user={user} />;
       case 'absences':
         return <AbsencesSection user={user} />;
+      case 'calculator':
+        // Рендерим калькулятор напрямую, так как он в app router
+        if (typeof window !== 'undefined') {
+          window.location.href = '/calculator';
+          return null;
+        }
+        return null;
       default:
         return <RegistrationSection user={user} />;
     }

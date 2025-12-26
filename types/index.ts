@@ -1,7 +1,7 @@
 // Типы данных для приложения
 
 export type UserRole = 'member' | 'officer' | 'gm';
-export type Section = 'registration' | 'schedule' | 'help' | 'news' | 'guides' | 'absences';
+export type Section = 'registration' | 'schedule' | 'help' | 'news' | 'guides' | 'absences' | 'calculator';
 
 export interface User {
   role: UserRole;
