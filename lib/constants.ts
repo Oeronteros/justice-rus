@@ -1,19 +1,24 @@
 // Константы приложения
 
+const requireEnv = (name: string): string => {
+  const value = process.env[name];
+  if (!value || !value.trim()) {
+    throw new Error(`Missing required env var: ${name}`);
+  }
+  return value.trim();
+};
+
+
 // Отладка: выводим значения переменных окружения при запуске (только для отладки)
-console.log('[CONSTANTS] MEMBER_PASSWORD from env:', process.env.MEMBER_PASSWORD);
-console.log('[CONSTANTS] OFFICER_PASSWORD from env:', process.env.OFFICER_PASSWORD);
-console.log('[CONSTANTS] GM_PASSWORD from env:', process.env.GM_PASSWORD);
 
 export const PASSWORDS = {
-  member: (process.env.MEMBER_PASSWORD || '1111').trim(),
-  officer: (process.env.OFFICER_PASSWORD || '2222').trim(),
-  gm: (process.env.GM_PASSWORD || '3333').trim(),
+  member: requireEnv('MEMBER_PASSWORD'),
+  officer: requireEnv('OFFICER_PASSWORD'),
+  gm: requireEnv('GM_PASSWORD'),
 } as const;
 
-console.log('[CONSTANTS] PASSWORDS after processing:', PASSWORDS);
 
-export const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+export const JWT_SECRET = requireEnv('JWT_SECRET');
 
 export const JWT_EXPIRES_IN = '24h';
 

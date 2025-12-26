@@ -78,7 +78,6 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
               onChange={(e) => setPin(e.target.value)}
               className="input-field text-center text-2xl tracking-widest py-5"
               placeholder="****"
-              maxLength={4}
               disabled={loading}
             />
           </div>

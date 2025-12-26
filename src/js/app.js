@@ -62,7 +62,6 @@ function showPinScreen() {
               type="password" 
               class="w-full px-4 py-3 rounded-lg bg-gray-800/70 border border-gray-700 text-center text-lg focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
               placeholder="****"
-              maxlength="4"
             />
           </div>
           

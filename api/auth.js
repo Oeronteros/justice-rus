@@ -1,20 +1,23 @@
 // api/auth.js - Серверная аутентификация с JWT
 import jwt from 'jsonwebtoken';
 
-// Отладка: выводим значения переменных окружения
-console.log('[AUTH] MEMBER_PASSWORD from env:', process.env.MEMBER_PASSWORD);
-console.log('[AUTH] OFFICER_PASSWORD from env:', process.env.OFFICER_PASSWORD);
-console.log('[AUTH] GM_PASSWORD from env:', process.env.GM_PASSWORD);
-
-const PASSWORDS = {
-  member: process.env.MEMBER_PASSWORD || '1111',
-  officer: process.env.OFFICER_PASSWORD || '2222',
-  gm: process.env.GM_PASSWORD || '3333'
+const requireEnv = (name) => {
+  const value = process.env[name];
+  if (!value || !value.trim()) {
+    throw new Error(`Missing required env var: ${name}`);
+  }
+  return value.trim();
 };
 
-console.log('[AUTH] PASSWORDS after processing:', PASSWORDS);
+// Отладка: выводим значения переменных окружения
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const PASSWORDS = {
+  member: requireEnv('MEMBER_PASSWORD'),
+  officer: requireEnv('OFFICER_PASSWORD'),
+  gm: requireEnv('GM_PASSWORD'),
+};
+
+const JWT_SECRET = requireEnv('JWT_SECRET');
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -32,62 +35,29 @@ export default async function handler(req, res) {
   try {
     const { password, discordId } = req.body;
 
+    const normalizedPassword = String(password).trim();
+
     if (!password) {
       return res.status(400).json({ error: 'Password required' });
     }
 
-    // Проверяем пароль
+    // DY??D_D?D?????D?D? D?D???D_D??O
     let role = null;
 
-    // Отладка: выводим полученный пароль и ожидаемые значения
-    console.log('[AUTH] Incoming Password:', password);
-    console.log('[AUTH] Incoming Password length:', password.length);
-    console.log('[AUTH] Incoming Password char codes:', Array.from(password).map(c => c.charCodeAt(0)));
-    console.log('[AUTH] Expected MEMBER_PASSWORD:', PASSWORDS.member);
-    console.log('[AUTH] Expected MEMBER_PASSWORD length:', PASSWORDS.member.length);
-    console.log('[AUTH] Expected MEMBER_PASSWORD char codes:', Array.from(PASSWORDS.member).map(c => c.charCodeAt(0)));
-    console.log('[AUTH] Expected OFFICER_PASSWORD:', PASSWORDS.officer);
-    console.log('[AUTH] Expected OFFICER_PASSWORD length:', PASSWORDS.officer.length);
-    console.log('[AUTH] Expected OFFICER_PASSWORD char codes:', Array.from(PASSWORDS.officer).map(c => c.charCodeAt(0)));
-    console.log('[AUTH] Expected GM_PASSWORD:', PASSWORDS.gm);
-    console.log('[AUTH] Expected GM_PASSWORD length:', PASSWORDS.gm.length);
-    console.log('[AUTH] Expected GM_PASSWORD char codes:', Array.from(PASSWORDS.gm).map(c => c.charCodeAt(0)));
-
-    if (password === PASSWORDS.member) {
-      console.log('[AUTH] Match MEMBER: true');
+    if (normalizedPassword === PASSWORDS.member) {
       role = 'member';
-    } else if (password === PASSWORDS.officer) {
-      console.log('[AUTH] Match OFFICER: true');
+    } else if (normalizedPassword === PASSWORDS.officer) {
       role = 'officer';
-    } else if (password === PASSWORDS.gm) {
-      console.log('[AUTH] Match GM: true');
+    } else if (normalizedPassword === PASSWORDS.gm) {
       role = 'gm';
-    } else {
-      console.log('[AUTH] No role matched');
     }
 
     if (!role) {
-      console.log('[AUTH] FAILED: No role matched');
       return res.status(401).json({
-        error: 'Invalid password',
-        debug: {
-          incomingPassword: password,
-          incomingPasswordLength: password.length,
-          incomingPasswordCharCodes: Array.from(password).map(c => c.charCodeAt(0)),
-          expectedMember: PASSWORDS.member,
-          expectedMemberLength: PASSWORDS.member.length,
-          expectedMemberCharCodes: Array.from(PASSWORDS.member).map(c => c.charCodeAt(0)),
-          expectedOfficer: PASSWORDS.officer,
-          expectedOfficerLength: PASSWORDS.officer.length,
-          expectedOfficerCharCodes: Array.from(PASSWORDS.officer).map(c => c.charCodeAt(0)),
-          expectedGm: PASSWORDS.gm,
-          expectedGmLength: PASSWORDS.gm.length,
-          expectedGmCharCodes: Array.from(PASSWORDS.gm).map(c => c.charCodeAt(0)),
-        }
+        error: 'Invalid password'
       });
     }
 
-    // Создаем JWT токен
     const token = jwt.sign(
       {
         role,
@@ -96,8 +66,6 @@ export default async function handler(req, res) {
       },
       JWT_SECRET
     );
-
-    console.log('[AUTH] SUCCESS: Token generated for role:', role);
     return res.status(200).json({
       success: true,
       role,
