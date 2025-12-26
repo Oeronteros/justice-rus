@@ -1,0 +1,83 @@
+// Типы данных для приложения
+
+export type UserRole = 'member' | 'officer' | 'gm';
+export type Section = 'registration' | 'schedule' | 'help' | 'news' | 'guides' | 'absences';
+
+export interface User {
+  role: UserRole;
+  discordId?: string | null;
+  exp?: number;
+}
+
+export interface Registration {
+  discord: string;
+  nickname: string;
+  rank: MemberRank;
+  class: string;
+  guild: string;
+  joinDate: string;
+  kpi: number;
+  status: MemberStatus;
+}
+
+// Deprecated: используйте Registration
+export interface Member extends Registration {}
+
+export type MemberRank = 'novice' | 'member' | 'veteran' | 'elite' | 'legend' | 'gm';
+export type MemberStatus = 'active' | 'inactive' | 'pending' | 'leave';
+
+export interface Schedule {
+  date: string;
+  registration: string;
+  type: string;
+  description: string;
+}
+
+// Deprecated: используйте Schedule
+export interface Activity extends Schedule {}
+
+export interface News {
+  id: string;
+  title: string;
+  content: string;
+  author: string;
+  date: string;
+  pinned?: boolean;
+}
+
+export interface Guide {
+  id: string;
+  title: string;
+  content: string;
+  category: string;
+  author: string;
+  date: string;
+}
+
+export interface Absence {
+  id: string;
+  member: string;
+  startDate: string;
+  endDate: string;
+  reason: string;
+  status: 'pending' | 'approved' | 'rejected';
+}
+
+export interface ApiResponse<T> {
+  data?: T;
+  error?: string;
+  message?: string;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  role: UserRole;
+  token: string;
+}
+
+export interface VerifyAuthResponse {
+  valid: boolean;
+  role: UserRole;
+  discordId?: string | null;
+}
+
