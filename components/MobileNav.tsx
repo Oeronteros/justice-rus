@@ -1,23 +1,25 @@
 'use client';
 
 import { Section } from '@/types';
+import { Language, sectionLabels } from '@/lib/i18n';
 
 interface MobileNavProps {
   currentSection: Section;
   onSectionChange: (section: Section) => void;
+  language: Language;
 }
 
-const sections: { id: Section; label: string; icon: string }[] = [
-  { id: 'registration', label: 'Registration', icon: 'fa-users' },
-  { id: 'schedule', label: 'Schedule', icon: 'fa-calendar-alt' },
-  { id: 'help', label: 'Help', icon: 'fa-hands-helping' },
-  { id: 'news', label: 'News', icon: 'fa-newspaper' },
-  { id: 'guides', label: 'Guides', icon: 'fa-graduation-cap' },
-  { id: 'absences', label: 'Absences', icon: 'fa-calendar-times' },
-  { id: 'calculator', label: 'Calculator', icon: 'fa-calculator' },
+const sections: { id: Section; icon: string }[] = [
+  { id: 'registration', icon: 'fa-users' },
+  { id: 'schedule', icon: 'fa-calendar-alt' },
+  { id: 'help', icon: 'fa-hands-helping' },
+  { id: 'news', icon: 'fa-newspaper' },
+  { id: 'guides', icon: 'fa-graduation-cap' },
+  { id: 'absences', icon: 'fa-calendar-times' },
+  { id: 'calculator', icon: 'fa-calculator' },
 ];
 
-export default function MobileNav({ currentSection, onSectionChange }: MobileNavProps) {
+export default function MobileNav({ currentSection, onSectionChange, language }: MobileNavProps) {
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900/90 to-black/70 backdrop-blur-xl border-t border-red-900/30 z-40 shadow-2xl shadow-red-900/20">
       <div className="flex justify-around py-3 px-2">
@@ -32,11 +34,10 @@ export default function MobileNav({ currentSection, onSectionChange }: MobileNav
             }`}
           >
             <i className={`fas ${section.icon} text-xl mb-1`}></i>
-            <span className="text-xs font-medium">{section.label}</span>
+            <span className="text-xs font-medium">{sectionLabels[language][section.id]}</span>
           </button>
         ))}
       </div>
     </div>
   );
 }
-

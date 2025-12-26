@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from './Header';
 import MobileNav from './MobileNav';
 import RegistrationSection from './sections/RegistrationSection';
@@ -10,6 +10,7 @@ import NewsSection from './sections/NewsSection';
 import GuidesSection from './sections/GuidesSection';
 import AbsencesSection from './sections/AbsencesSection';
 import { User, Section } from '@/types';
+import { Language } from '@/lib/i18n';
 
 interface AppLayoutProps {
   user: User;
@@ -18,6 +19,22 @@ interface AppLayoutProps {
 
 export default function AppLayout({ user, onLogout }: AppLayoutProps) {
   const [currentSection, setCurrentSection] = useState<Section>('registration');
+  const [language, setLanguage] = useState<Language>('ru');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const stored = localStorage.getItem('guild_portal_lang');
+    if (stored === 'ru' || stored === 'en') {
+      setLanguage(stored);
+    }
+  }, []);
+
+  const handleLanguageChange = (lang: Language) => {
+    setLanguage(lang);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('guild_portal_lang', lang);
+    }
+  };
 
   const renderSection = () => {
     switch (currentSection) {
@@ -51,13 +68,15 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
         currentSection={currentSection}
         onSectionChange={setCurrentSection}
         onLogout={onLogout}
+        language={language}
+        onLanguageChange={handleLanguageChange}
       />
       <main className="min-h-screen">{renderSection()}</main>
       <MobileNav
         currentSection={currentSection}
         onSectionChange={setCurrentSection}
+        language={language}
       />
     </div>
   );
 }
-

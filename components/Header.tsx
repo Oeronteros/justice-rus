@@ -1,24 +1,33 @@
 'use client';
 
 import { Section } from '@/types';
+import { Language, sectionLabels } from '@/lib/i18n';
 
 interface HeaderProps {
   currentSection: Section;
   onSectionChange: (section: Section) => void;
   onLogout: () => void;
+  language: Language;
+  onLanguageChange: (language: Language) => void;
 }
 
-const sections: { id: Section; label: string; icon: string }[] = [
-  { id: 'registration', label: 'Registration', icon: 'fa-users' },
-  { id: 'schedule', label: 'Schedule', icon: 'fa-calendar-alt' },
-  { id: 'help', label: 'Help', icon: 'fa-hands-helping' },
-  { id: 'news', label: 'News', icon: 'fa-newspaper' },
-  { id: 'guides', label: 'Guides', icon: 'fa-graduation-cap' },
-  { id: 'absences', label: 'Absences', icon: 'fa-calendar-times' },
-  { id: 'calculator', label: 'Calculator', icon: 'fa-calculator' },
+const sections: { id: Section; icon: string }[] = [
+  { id: 'registration', icon: 'fa-users' },
+  { id: 'schedule', icon: 'fa-calendar-alt' },
+  { id: 'help', icon: 'fa-hands-helping' },
+  { id: 'news', icon: 'fa-newspaper' },
+  { id: 'guides', icon: 'fa-graduation-cap' },
+  { id: 'absences', icon: 'fa-calendar-times' },
+  { id: 'calculator', icon: 'fa-calculator' },
 ];
 
-export default function Header({ currentSection, onSectionChange, onLogout }: HeaderProps) {
+export default function Header({
+  currentSection,
+  onSectionChange,
+  onLogout,
+  language,
+  onLanguageChange,
+}: HeaderProps) {
   const handleRefresh = () => {
     window.location.reload();
   };
@@ -53,12 +62,14 @@ export default function Header({ currentSection, onSectionChange, onLogout }: He
               }`}
             >
               <i className={`fas ${section.icon} mr-2`}></i>
-              <span>{section.label}</span>
+              <span>{sectionLabels[language][section.id]}</span>
             </button>
           ))}
 
           <select
             id="langSwitch"
+            value={language}
+            onChange={(e) => onLanguageChange(e.target.value as Language)}
             className="ml-3 bg-gray-800/50 border border-gray-700/50 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-600/50 transition-all font-medium"
           >
             <option value="ru">RU</option>
@@ -85,4 +96,3 @@ export default function Header({ currentSection, onSectionChange, onLogout }: He
     </header>
   );
 }
-
