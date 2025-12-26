@@ -1,15 +1,5 @@
 {
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
-  "framework": "nextjs",
-  "nodeVersion": "20.x",
-  "env": {
-    "NEXT_PUBLIC_API_URL": "@next_public_api_url"
-  },
-  "rewrites": [
-    {
-      "source": "/:path((?!_next|api|public).*)",
-      "destination": "/index.html"
-    }
-  ]
+  "framework": "nextjs"
 }
