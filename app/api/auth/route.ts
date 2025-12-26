@@ -17,11 +17,23 @@ export async function POST(request: NextRequest) {
 
     // Проверяем PIN
     let role: 'member' | 'officer' | 'gm' | null = null;
-    if (pin === PIN_CODES.member) role = 'member';
-    else if (pin === PIN_CODES.officer) role = 'officer';
-    else if (pin === PIN_CODES.gm) role = 'gm';
+    
+    // Debug logging
+    const normalizedPin = String(pin).trim();
+    console.log('[AUTH] Incoming PIN:', normalizedPin);
+    console.log('[AUTH] Expected MEMBER_PIN:', PIN_CODES.member);
+    console.log('[AUTH] Expected OFFICER_PIN:', PIN_CODES.officer);
+    console.log('[AUTH] Expected GM_PIN:', PIN_CODES.gm);
+    console.log('[AUTH] Match MEMBER?', normalizedPin === PIN_CODES.member);
+    console.log('[AUTH] Match OFFICER?', normalizedPin === PIN_CODES.officer);
+    console.log('[AUTH] Match GM?', normalizedPin === PIN_CODES.gm);
+    
+    if (normalizedPin === PIN_CODES.member) role = 'member';
+    else if (normalizedPin === PIN_CODES.officer) role = 'officer';
+    else if (normalizedPin === PIN_CODES.gm) role = 'gm';
 
     if (!role) {
+      console.log('[AUTH] FAILED: No role matched');
       return NextResponse.json(
         { error: 'Invalid PIN' },
         { status: 401 }
