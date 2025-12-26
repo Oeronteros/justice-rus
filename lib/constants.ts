@@ -1,10 +1,17 @@
 // Константы приложения
 
+// Отладка: выводим значения переменных окружения при запуске (только для отладки)
+console.log('[CONSTANTS] MEMBER_PIN from env:', process.env.MEMBER_PIN);
+console.log('[CONSTANTS] OFFICER_PIN from env:', process.env.OFFICER_PIN);
+console.log('[CONSTANTS] GM_PIN from env:', process.env.GM_PIN);
+
 export const PIN_CODES = {
   member: (process.env.MEMBER_PIN || '1111').trim(),
   officer: (process.env.OFFICER_PIN || '2222').trim(),
   gm: (process.env.GM_PIN || '3333').trim(),
 } as const;
+
+console.log('[CONSTANTS] PIN_CODES after processing:', PIN_CODES);
 
 export const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
