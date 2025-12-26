@@ -12,28 +12,21 @@ let quillEditor = null;
 async function initApp() {
   console.log('Initializing Justice Portal...');
   
-  // Проверяем авторизацию
-  const token = localStorage.getItem('auth_token');
-  if (token) {
-    try {
-      const response = await fetch('/api/verify-auth', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        currentUser = data;
-        showApp();
-        loadSection('members');
-      } else {
-        showPinScreen();
-      }
-    } catch (error) {
+  // Проверяем авторизацию 
+  try {
+    const response = await fetch('/api/verify-auth', {
+      credentials: 'include'
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      currentUser = data;
+      showApp();
+      loadSection('members');
+    } else {
       showPinScreen();
     }
-  } else {
+  } catch (error) {
     showPinScreen();
   }
   
@@ -106,6 +99,7 @@ async function handlePinSubmit() {
   try {
     const response = await fetch('/api/auth', {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -119,7 +113,6 @@ async function handlePinSubmit() {
     const data = await response.json();
     
     // Сохраняем токен
-    localStorage.setItem('auth_token', data.token);
     currentUser = { role: data.role };
     
     showSuccess('Access granted!');
@@ -360,12 +353,20 @@ function applyLanguage(lang) {
 }
 
 // Выход
-function logout() {
-  localStorage.removeItem('auth_token');
-  currentUser = null;
-  document.getElementById('app').classList.add('hidden');
-  showPinScreen();
-  showSuccess('Logged out successfully');
+async function logout() {
+  try {
+    await fetch('/api/logout', {
+      method: 'POST',
+      credentials: 'include'
+    });
+  } catch (error) {
+    console.error('Logout failed:', error);
+  } finally {
+    currentUser = null;
+    document.getElementById('app').classList.add('hidden');
+    showPinScreen();
+    showSuccess('Logged out successfully');
+  }
 }
 
 // Запуск приложения

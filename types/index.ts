@@ -76,7 +76,6 @@ export interface ApiResponse<T> {
 export interface AuthResponse {
   success: boolean;
   role: UserRole;
-  token: string;
 }
 
 export interface VerifyAuthResponse {

@@ -35,12 +35,22 @@ export async function POST(request: NextRequest) {
 
     const token = generateToken(role, discordId);
 
-    const response: AuthResponse = {
+    const responseBody: AuthResponse = {
       success: true,
       role,
-      token,
     };
-    return NextResponse.json(response);
+
+    const response = NextResponse.json(responseBody);
+    response.cookies.set({
+      name: 'auth_token',
+      value: token,
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 60 * 60 * 24,
+    });
+    return response;
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

@@ -1,17 +1,24 @@
 // API Route: /api/discord-proxy/absences
 // Прокси для получения отсутствий через Discord бота
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyToken } from '@/lib/auth';
 
 const DISCORD_BOT_API_URL = process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 
 export async function GET(request: NextRequest) {
   try {
-    const token = request.headers.get('authorization');
-    
+    const headerToken = request.headers.get('authorization');
+    const cookieToken = request.cookies.get('auth_token')?.value;
+    const token = cookieToken || (headerToken && headerToken.startsWith('Bearer ') ? headerToken.slice(7) : null);
+
+    if (!token || !verifyToken(token)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const response = await fetch(`${DISCORD_BOT_API_URL}/api/absences`, {
       headers: {
         'Content-Type': 'application/json',
-        ...(token && { Authorization: token }),
+        Authorization: `Bearer ${token}`,
       },
     });
 

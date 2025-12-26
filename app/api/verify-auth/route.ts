@@ -5,7 +5,9 @@ import { VerifyAuthResponse } from '@/types';
 
 export async function GET(request: NextRequest) {
   try {
-    const token = getTokenFromRequest(request);
+    const cookieToken = request.cookies.get('auth_token')?.value;
+    const headerToken = getTokenFromRequest(request);
+    const token = cookieToken || headerToken;
     
     if (!token) {
       return NextResponse.json(

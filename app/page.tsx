@@ -18,29 +18,21 @@ export default function Home() {
       setLoading(false);
       return;
     }
-    
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
-      setLoading(false);
-      return;
-    }
 
     try {
       const response = await fetch('/api/verify-auth', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
 
       if (response.ok) {
         const data = await response.json();
         setUser(data);
       } else {
-        localStorage.removeItem('auth_token');
+        setUser(null);
       }
     } catch (error) {
       console.error('Auth check failed:', error);
-      localStorage.removeItem('auth_token');
+      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -50,11 +42,17 @@ export default function Home() {
     setUser(userData);
   };
 
-  const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('auth_token');
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      setUser(null);
     }
-    setUser(null);
   };
 
   if (loading) {

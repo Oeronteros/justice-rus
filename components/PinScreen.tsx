@@ -26,6 +26,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
     try {
       const response = await fetch('/api/auth', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -38,8 +39,6 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
 
       const data = await response.json();
 
-      // Сохраняем токен
-      localStorage.setItem('auth_token', data.token);
       onAuthSuccess({ role: data.role });
 
     } catch (error) {

@@ -23,15 +23,10 @@ class DiscordBotApiService {
     }
     
     try {
-      const token = typeof window !== 'undefined' 
-        ? localStorage.getItem('auth_token') 
-        : null;
-
       const response = await fetch(url, {
         ...options,
         headers: {
           'Content-Type': 'application/json',
-          ...(token && { Authorization: `Bearer ${token}` }),
           ...options.headers,
         },
       });

@@ -65,9 +65,9 @@ DISCORD_BOT_API_URL=https://your-bot-url.example.com
 
 # Для локальной разработки (.env.local)
 JWT_SECRET=your-secret-key-change-in-production
-MEMBER_PIN=1111
-OFFICER_PIN=2222
-GM_PIN=3333
+MEMBER_PASSWORD=1111
+OFFICER_PASSWORD=2222
+GM_PASSWORD=3333
 ```
 
 ### Если используете Discord бота локально:
@@ -84,7 +84,6 @@ DISCORD_BOT_API_URL=https://your-localtunnel-url.loca.lt
 ```
 justice-ru/
 ├── app/                     # Next.js App Router
-│   ├── api/                 # API маршруты (прокси к Discord боту)
 │   ├── layout.tsx           # Root layout
 │   └── page.tsx             # Главная страница
 ├── components/              # React компоненты
@@ -149,9 +148,9 @@ npm run type-check  # TypeScript проверка
 
 ## 🔐 Безопасность
 
-- JWT токены хранятся в `localStorage` (браузер)
+- JWT tokens are stored in httpOnly cookies (not accessible to JS).
 - PIN коды хранятся как переменные окружения
-- Все API требуют токен в Header `Authorization: Bearer <token>`
+- API endpoints rely on cookie auth; Authorization headers are optional for legacy clients.
 
 ---
 
