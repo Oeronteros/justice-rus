@@ -5,6 +5,12 @@ import { PIN_CODES } from '@/lib/constants';
 import { AuthResponse } from '@/types';
 import { z } from 'zod';
 
+// Отладка: выводим значения переменных окружения
+console.log('[APP AUTH] MEMBER_PIN from env:', process.env.MEMBER_PIN);
+console.log('[APP AUTH] OFFICER_PIN from env:', process.env.OFFICER_PIN);
+console.log('[APP AUTH] GM_PIN from env:', process.env.GM_PIN);
+console.log('[APP AUTH] PIN_CODES after processing:', PIN_CODES);
+
 const authSchema = z.object({
   pin: z.string().min(1),
   discordId: z.string().optional(),
@@ -20,28 +26,34 @@ export async function POST(request: NextRequest) {
 
     // Debug logging
     const normalizedPin = String(pin).trim();
-    console.log('[AUTH] Incoming PIN:', normalizedPin);
-    console.log('[AUTH] Incoming PIN length:', normalizedPin.length);
-    console.log('[AUTH] Incoming PIN char codes:', Array.from(normalizedPin).map(c => c.charCodeAt(0)));
-    console.log('[AUTH] Expected MEMBER_PIN:', PIN_CODES.member);
-    console.log('[AUTH] Expected MEMBER_PIN length:', PIN_CODES.member.length);
-    console.log('[AUTH] Expected MEMBER_PIN char codes:', Array.from(PIN_CODES.member).map(c => c.charCodeAt(0)));
-    console.log('[AUTH] Expected OFFICER_PIN:', PIN_CODES.officer);
-    console.log('[AUTH] Expected OFFICER_PIN length:', PIN_CODES.officer.length);
-    console.log('[AUTH] Expected OFFICER_PIN char codes:', Array.from(PIN_CODES.officer).map(c => c.charCodeAt(0)));
-    console.log('[AUTH] Expected GM_PIN:', PIN_CODES.gm);
-    console.log('[AUTH] Expected GM_PIN length:', PIN_CODES.gm.length);
-    console.log('[AUTH] Expected GM_PIN char codes:', Array.from(PIN_CODES.gm).map(c => c.charCodeAt(0)));
-    console.log('[AUTH] Match MEMBER?', normalizedPin === PIN_CODES.member);
-    console.log('[AUTH] Match OFFICER?', normalizedPin === PIN_CODES.officer);
-    console.log('[AUTH] Match GM?', normalizedPin === PIN_CODES.gm);
+    console.log('[APP AUTH] Incoming PIN:', normalizedPin);
+    console.log('[APP AUTH] Incoming PIN length:', normalizedPin.length);
+    console.log('[APP AUTH] Incoming PIN char codes:', Array.from(normalizedPin).map(c => c.charCodeAt(0)));
+    console.log('[APP AUTH] Expected MEMBER_PIN:', PIN_CODES.member);
+    console.log('[APP AUTH] Expected MEMBER_PIN length:', PIN_CODES.member.length);
+    console.log('[APP AUTH] Expected MEMBER_PIN char codes:', Array.from(PIN_CODES.member).map(c => c.charCodeAt(0)));
+    console.log('[APP AUTH] Expected OFFICER_PIN:', PIN_CODES.officer);
+    console.log('[APP AUTH] Expected OFFICER_PIN length:', PIN_CODES.officer.length);
+    console.log('[APP AUTH] Expected OFFICER_PIN char codes:', Array.from(PIN_CODES.officer).map(c => c.charCodeAt(0)));
+    console.log('[APP AUTH] Expected GM_PIN:', PIN_CODES.gm);
+    console.log('[APP AUTH] Expected GM_PIN length:', PIN_CODES.gm.length);
+    console.log('[APP AUTH] Expected GM_PIN char codes:', Array.from(PIN_CODES.gm).map(c => c.charCodeAt(0)));
 
-    if (normalizedPin === PIN_CODES.member) role = 'member';
-    else if (normalizedPin === PIN_CODES.officer) role = 'officer';
-    else if (normalizedPin === PIN_CODES.gm) role = 'gm';
+    if (normalizedPin === PIN_CODES.member) {
+      console.log('[APP AUTH] Match MEMBER: true');
+      role = 'member';
+    } else if (normalizedPin === PIN_CODES.officer) {
+      console.log('[APP AUTH] Match OFFICER: true');
+      role = 'officer';
+    } else if (normalizedPin === PIN_CODES.gm) {
+      console.log('[APP AUTH] Match GM: true');
+      role = 'gm';
+    } else {
+      console.log('[APP AUTH] No role matched');
+    }
 
     if (!role) {
-      console.log('[AUTH] FAILED: No role matched');
+      console.log('[APP AUTH] FAILED: No role matched');
       return NextResponse.json(
         {
           error: 'Invalid PIN',
@@ -58,9 +70,6 @@ export async function POST(request: NextRequest) {
             expectedGm: PIN_CODES.gm,
             expectedGmLength: PIN_CODES.gm.length,
             expectedGmCharCodes: Array.from(PIN_CODES.gm).map(c => c.charCodeAt(0)),
-            matchMember: normalizedPin === PIN_CODES.member,
-            matchOfficer: normalizedPin === PIN_CODES.officer,
-            matchGm: normalizedPin === PIN_CODES.gm,
           }
         },
         { status: 401 }
@@ -76,7 +85,7 @@ export async function POST(request: NextRequest) {
       token,
     };
 
-    console.log('[AUTH] SUCCESS: Role assigned:', role);
+    console.log('[APP AUTH] SUCCESS: Role assigned:', role);
     return NextResponse.json(response);
   } catch (error) {
     if (error instanceof z.ZodError) {
