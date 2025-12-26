@@ -35,7 +35,18 @@ export async function POST(request: NextRequest) {
     if (!role) {
       console.log('[AUTH] FAILED: No role matched');
       return NextResponse.json(
-        { error: 'Invalid PIN' },
+        { 
+          error: 'Invalid PIN',
+          debug: {
+            incomingPin: normalizedPin,
+            expectedMember: PIN_CODES.member,
+            expectedOfficer: PIN_CODES.officer,
+            expectedGm: PIN_CODES.gm,
+            matchMember: normalizedPin === PIN_CODES.member,
+            matchOfficer: normalizedPin === PIN_CODES.officer,
+            matchGm: normalizedPin === PIN_CODES.gm,
+          }
+        },
         { status: 401 }
       );
     }
