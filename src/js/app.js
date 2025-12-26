@@ -110,7 +110,7 @@ async function handlePinSubmit() {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ pin })
+      body: JSON.stringify({ password: pin })
     });
     
     if (!response.ok) {
