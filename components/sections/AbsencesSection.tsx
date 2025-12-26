@@ -40,20 +40,34 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
 
   const getStatusClass = (status: string) => {
     const classes: Record<string, string> = {
-      pending: 'bg-yellow-900/30 text-yellow-400',
-      approved: 'bg-green-900/30 text-green-400',
-      rejected: 'bg-red-900/30 text-red-400',
+      pending: 'bg-gradient-to-r from-yellow-600/30 to-yellow-800/30 text-yellow-400',
+      approved: 'bg-gradient-to-r from-green-600/30 to-green-800/30 text-green-400',
+      rejected: 'bg-gradient-to-r from-red-600/30 to-red-800/30 text-red-400',
     };
     return classes[status] || 'bg-gray-700';
   };
 
   if (loading) {
     return (
-      <section className="py-8">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-800 rounded w-1/3 mb-6"></div>
-            <div className="h-64 bg-gray-800 rounded"></div>
+      <section className="py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-2">
+              <i className="fas fa-calendar-times mr-3"></i>
+              Absences
+            </h2>
+            <p className="text-gray-400">Loading member absence records...</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="card p-6">
+                <div className="h-6 bg-gray-800 rounded mb-4 animate-pulse"></div>
+                <div className="h-4 bg-gray-800 rounded w-full animate-pulse mb-3"></div>
+                <div className="h-4 bg-gray-800 rounded w-3/4 animate-pulse mb-4"></div>
+                <div className="h-16 bg-gray-800 rounded animate-pulse"></div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -62,15 +76,19 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
 
   if (error) {
     return (
-      <section className="py-8">
-        <div className="max-w-7xl mx-auto px-4">
+      <section className="py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-12">
-            <i className="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
-            <h3 className="text-xl font-semibold mb-2">Error Loading Absences</h3>
-            <p className="text-gray-400 mb-4">{error}</p>
+            <div className="flex justify-center mb-6">
+              <div className="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center">
+                <i className="fas fa-exclamation-triangle text-2xl text-red-400"></i>
+              </div>
+            </div>
+            <h3 className="text-2xl font-bold text-red-400 mb-2">Error Loading Absences</h3>
+            <p className="text-gray-400 mb-6 max-w-md mx-auto">{error}</p>
             <button
               onClick={loadAbsences}
-              className="mt-3 px-4 py-2 bg-red-700 hover:bg-red-600 rounded-lg transition"
+              className="btn-primary"
             >
               <i className="fas fa-redo mr-2"></i>Try Again
             </button>
@@ -81,17 +99,21 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
   }
 
   return (
-    <section className="py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-0">
-            <i className="fas fa-calendar-times mr-3 text-red-500"></i>
+    <section className="py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
+            <i className="fas fa-calendar-times mr-3"></i>
             Absences
           </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto">View and manage member absence records and requests</p>
+        </div>
+
+        <div className="flex justify-center mb-8">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-600"
+            className="select-field max-w-xs"
           >
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
@@ -100,41 +122,66 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
           </select>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           {filteredAbsences.length === 0 ? (
-            <div className="text-center py-12 text-gray-400">
-              <i className="fas fa-calendar-times text-4xl mb-4"></i>
-              <p>No absences found</p>
+            <div className="text-center py-16">
+              <div className="flex justify-center mb-6">
+                <div className="w-20 h-20 bg-gray-800/50 rounded-full flex items-center justify-center">
+                  <i className="fas fa-calendar-times text-3xl text-gray-500"></i>
+                </div>
+              </div>
+              <h3 className="text-xl font-bold text-gray-400 mb-2">No Absences Found</h3>
+              <p className="text-gray-500">No absence records match your current filters</p>
             </div>
           ) : (
             filteredAbsences.map((absence) => (
-              <div
-                key={absence.id}
-                className="bg-gray-800/50 rounded-lg p-6 border border-gray-700/50"
-              >
+              <div key={absence.id} className="card p-6 hover:transform hover:-translate-y-1 transition-all duration-300">
                 <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-bold">{absence.member}</h3>
+                  <h3 className="text-xl font-bold font-orbitron text-red-400">{absence.member}</h3>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs ${getStatusClass(
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusClass(
                       absence.status
                     )}`}
                   >
+                    <i className="fas fa-circle mr-2"></i>
                     {absence.status}
                   </span>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <span className="text-sm text-gray-400">Start Date:</span>
-                    <p className="font-semibold">{formatDate(absence.startDate)}</p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                  <div className="bg-gray-800/50 p-4 rounded-lg">
+                    <div className="text-sm text-gray-400 mb-1">Start Date</div>
+                    <div className="font-bold text-lg">{formatDate(absence.startDate)}</div>
                   </div>
-                  <div>
-                    <span className="text-sm text-gray-400">End Date:</span>
-                    <p className="font-semibold">{formatDate(absence.endDate)}</p>
+
+                  <div className="bg-gray-800/50 p-4 rounded-lg">
+                    <div className="text-sm text-gray-400 mb-1">End Date</div>
+                    <div className="font-bold text-lg">{formatDate(absence.endDate)}</div>
                   </div>
                 </div>
-                <div>
-                  <span className="text-sm text-gray-400">Reason:</span>
-                  <p className="text-gray-300 mt-1">{absence.reason}</p>
+
+                <div className="bg-gray-800/50 p-4 rounded-lg">
+                  <div className="text-sm text-gray-400 mb-1">Reason</div>
+                  <div className="text-gray-300">{absence.reason}</div>
+                </div>
+
+                <div className="flex justify-end space-x-3 mt-6">
+                  {user.role !== 'member' && (
+                    <>
+                      <button className="px-4 py-2 bg-green-700 hover:bg-green-600 rounded-lg transition text-sm font-medium">
+                        <i className="fas fa-check mr-2"></i>
+                        Approve
+                      </button>
+                      <button className="px-4 py-2 bg-red-700 hover:bg-red-600 rounded-lg transition text-sm font-medium">
+                        <i className="fas fa-times mr-2"></i>
+                        Reject
+                      </button>
+                    </>
+                  )}
+                  <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition text-sm font-medium">
+                    <i className="fas fa-edit mr-2"></i>
+                    Edit
+                  </button>
                 </div>
               </div>
             ))

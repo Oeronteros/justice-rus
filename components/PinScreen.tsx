@@ -51,24 +51,32 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-20">
-      <div className="bg-gray-900/90 backdrop-blur-xl p-8 rounded-2xl shadow-2xl text-center w-full max-w-md border border-red-700/50">
-        <div className="mb-6">
-          <i className="fas fa-skull-crossbones text-4xl text-red-600 mb-3"></i>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-red-600 to-purple-600 bg-clip-text text-transparent">
+    <div className="fixed inset-0 flex items-center justify-center z-20 bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      <div className="card p-10 text-center w-full max-w-md relative overflow-hidden">
+        {/* Анимированный фон для карточки */}
+        <div className="absolute inset-0 bg-gradient-to-br from-red-900/10 to-purple-900/10 rounded-2xl -z-10"></div>
+
+        <div className="mb-8">
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 bg-gradient-to-r from-red-600 to-purple-600 rounded-full flex items-center justify-center shadow-lg shadow-red-600/30">
+              <i className="fas fa-skull-crossbones text-3xl text-white"></i>
+            </div>
+          </div>
+
+          <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 via-purple-400 to-red-400 mb-3">
             Cult Game Community
           </h2>
-          <p className="text-gray-400 mt-2">Guild Portal - Justice Mobile</p>
+          <p className="text-gray-400 text-lg">Guild Portal - Justice Mobile</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <p className="text-sm text-gray-400 mb-3">Enter PIN code to access</p>
+            <p className="text-sm text-gray-400 mb-4 font-medium">Enter PIN code to access</p>
             <input
               type="password"
               value={pin}
               onChange={(e) => setPin(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg bg-gray-800/70 border border-gray-700 text-center text-lg focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
+              className="input-field text-center text-2xl tracking-widest py-5"
               placeholder="****"
               maxLength={4}
               disabled={loading}
@@ -78,28 +86,27 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-red-700 to-red-800 hover:from-red-600 hover:to-red-700 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary w-full py-4 text-lg font-bold"
           >
             {loading ? (
-              <i className="fas fa-spinner fa-spin mr-2"></i>
+              <span><i className="fas fa-spinner fa-spin mr-3"></i>Loading...</span>
             ) : (
-              <i className="fas fa-unlock-alt mr-2"></i>
+              <span><i className="fas fa-lock-open mr-3"></i>Enter Portal</span>
             )}
-            Enter Portal
           </button>
 
           {error && (
-            <div className="text-red-400 text-sm mt-2 p-3 bg-red-900/30 rounded-lg">
+            <div className="text-red-400 text-sm mt-2 p-4 bg-red-900/30 rounded-xl border border-red-800/50">
               <i className="fas fa-exclamation-triangle mr-2"></i>
               {error}
             </div>
           )}
         </form>
 
-        <div className="mt-6 pt-6 border-t border-gray-800">
-          <p className="text-xs text-gray-500">
-            <i className="fas fa-info-circle mr-1"></i>
-            Contact guild leadership for access
+        <div className="mt-8 pt-6 border-t border-gray-800">
+          <p className="text-xs text-gray-500 font-medium">
+            <i className="fas fa-shield-alt mr-2"></i>
+            Secure Guild Access
           </p>
         </div>
       </div>

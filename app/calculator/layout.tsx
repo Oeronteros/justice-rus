@@ -1,15 +1,13 @@
-import { ReactNode } from 'react'; 
-  
-interface CalculatorLayoutProps {  
-  children: ReactNode;  
-}  
-  
-export default function CalculatorLayout({ children }: CalculatorLayoutProps) {  
-  return (  
-    <div className="min-h-screen bg-gray-50">  
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">  
-        {children}  
-      </div>  
-    </div>  
-  );  
-} 
+import { ReactNode } from 'react';
+
+interface CalculatorLayoutProps {
+  children: ReactNode;
+}
+
+export default function CalculatorLayout({ children }: CalculatorLayoutProps) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      {children}
+    </div>
+  );
+}

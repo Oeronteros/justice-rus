@@ -19,18 +19,20 @@ const sections: { id: Section; label: string; icon: string }[] = [
 
 export default function MobileNav({ currentSection, onSectionChange }: MobileNavProps) {
   return (
-    <div className="mobile-swipe-menu md:hidden fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-lg border-t border-gray-800 z-40">
-      <div className="nav-scroll-container flex justify-around py-2 overflow-x-auto">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900/90 to-black/70 backdrop-blur-xl border-t border-red-900/30 z-40 shadow-2xl shadow-red-900/20">
+      <div className="flex justify-around py-3 px-2">
         {sections.map((section) => (
           <button
             key={section.id}
             onClick={() => onSectionChange(section.id)}
-            className={`mobile-nav-btn ${
-              currentSection === section.id ? 'active' : ''
+            className={`flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 ${
+              currentSection === section.id
+                ? 'bg-gradient-to-b from-red-700/50 to-purple-700/50 border border-red-500/50 shadow-lg shadow-red-900/30'
+                : 'bg-gray-800/30 hover:bg-gray-700/50 border border-gray-700/30'
             }`}
           >
-            <i className={`fas ${section.icon} mobile-icon text-xl`}></i>
-            <span className="text-xs mt-1">{section.label}</span>
+            <i className={`fas ${section.icon} text-xl mb-1`}></i>
+            <span className="text-xs font-medium">{section.label}</span>
           </button>
         ))}
       </div>

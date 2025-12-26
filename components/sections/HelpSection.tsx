@@ -8,68 +8,163 @@ interface HelpSectionProps {
 
 export default function HelpSection({ user }: HelpSectionProps) {
   return (
-    <section className="py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-6">
-          <i className="fas fa-hands-helping mr-3 text-red-500"></i>
-          Help & Support
-        </h2>
+    <section className="py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
+            <i className="fas fa-hands-helping mr-3"></i>
+            Help & Support
+          </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto">Find answers to common questions and get support from the guild community</p>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700/50">
-            <h3 className="text-xl font-bold mb-4">
-              <i className="fas fa-question-circle text-red-500 mr-2"></i>
-              Frequently Asked Questions
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-semibold mb-2">How do I join the guild?</h4>
-                <p className="text-gray-300 text-sm">
-                  Contact one of the officers or guild master through Discord.
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="card p-8 hover:transform hover:-translate-y-1 transition-all duration-300">
+            <div className="flex items-center mb-6">
+              <div className="w-12 h-12 bg-gradient-to-r from-red-600/30 to-red-800/30 rounded-full flex items-center justify-center mr-4">
+                <i className="fas fa-question-circle text-2xl text-red-400"></i>
+              </div>
+              <h3 className="text-2xl font-bold font-orbitron text-red-400">Frequently Asked Questions</h3>
+            </div>
+
+            <div className="space-y-6">
+              <div className="p-4 bg-gray-800/50 rounded-lg">
+                <h4 className="font-bold text-lg mb-2 text-gray-300">How do I join the guild?</h4>
+                <p className="text-gray-400">
+                  Contact one of the officers or guild master through Discord. You'll need to meet our basic requirements and participate in a trial period.
                 </p>
               </div>
-              <div>
-                <h4 className="font-semibold mb-2">What are the requirements?</h4>
-                <p className="text-gray-300 text-sm">
-                  Active participation, following guild rules, and maintaining good KPI.
+
+              <div className="p-4 bg-gray-800/50 rounded-lg">
+                <h4 className="font-bold text-lg mb-2 text-gray-300">What are the requirements?</h4>
+                <p className="text-gray-400">
+                  Active participation in guild activities, following guild rules, maintaining good KPI, and regular attendance at scheduled events.
+                </p>
+              </div>
+
+              <div className="p-4 bg-gray-800/50 rounded-lg">
+                <h4 className="font-bold text-lg mb-2 text-gray-300">How do I report absences?</h4>
+                <p className="text-gray-400">
+                  Use the Absences section to submit your absence requests in advance. Make sure to provide a valid reason for your absence.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700/50">
-            <h3 className="text-xl font-bold mb-4">
-              <i className="fas fa-headset text-red-500 mr-2"></i>
-              Contact Support
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-semibold mb-2">Discord</h4>
-                <p className="text-gray-300 text-sm">
-                  Join our Discord server and contact moderators.
+          <div className="card p-8 hover:transform hover:-translate-y-1 transition-all duration-300">
+            <div className="flex items-center mb-6">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-600/30 to-blue-800/30 rounded-full flex items-center justify-center mr-4">
+                <i className="fas fa-headset text-2xl text-blue-400"></i>
+              </div>
+              <h3 className="text-2xl font-bold font-orbitron text-blue-400">Contact Support</h3>
+            </div>
+
+            <div className="space-y-6">
+              <div className="p-4 bg-gray-800/50 rounded-lg">
+                <h4 className="font-bold text-lg mb-2 text-gray-300 flex items-center">
+                  <i className="fab fa-discord text-blue-400 mr-2"></i>
+                  Discord
+                </h4>
+                <p className="text-gray-400">
+                  Join our Discord server and contact moderators or guild officers. Our support team is available 24/7 for guild-related issues.
                 </p>
               </div>
-              <div>
-                <h4 className="font-semibold mb-2">In-Game</h4>
-                <p className="text-gray-300 text-sm">
-                  Message guild officers or guild master directly.
+
+              <div className="p-4 bg-gray-800/50 rounded-lg">
+                <h4 className="font-bold text-lg mb-2 text-gray-300 flex items-center">
+                  <i className="fas fa-gamepad text-purple-400 mr-2"></i>
+                  In-Game
+                </h4>
+                <p className="text-gray-400">
+                  Message guild officers or guild master directly in-game. Response time may vary depending on their availability.
+                </p>
+              </div>
+
+              <div className="p-4 bg-gray-800/50 rounded-lg">
+                <h4 className="font-bold text-lg mb-2 text-gray-300 flex items-center">
+                  <i className="fas fa-envelope text-green-400 mr-2"></i>
+                  Email
+                </h4>
+                <p className="text-gray-400">
+                  Send us an email to support@guildportal.com for non-urgent matters. We typically respond within 24 hours.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700/50 md:col-span-2">
-            <h3 className="text-xl font-bold mb-4">
-              <i className="fas fa-book text-red-500 mr-2"></i>
-              Guild Rules
-            </h3>
-            <ul className="list-disc list-inside space-y-2 text-gray-300">
-              <li>Be respectful to all guild members</li>
-              <li>Participate in guild activities regularly</li>
-              <li>Follow the KPI requirements</li>
-              <li>Report absences in advance</li>
-              <li>No toxic behavior or harassment</li>
-            </ul>
+          <div className="card p-8 hover:transform hover:-translate-y-1 transition-all duration-300 lg:col-span-2">
+            <div className="flex items-center mb-6">
+              <div className="w-12 h-12 bg-gradient-to-r from-yellow-600/30 to-yellow-800/30 rounded-full flex items-center justify-center mr-4">
+                <i className="fas fa-book text-2xl text-yellow-400"></i>
+              </div>
+              <h3 className="text-2xl font-bold font-orbitron text-yellow-400">Guild Rules</h3>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="flex items-start p-4 bg-gray-800/50 rounded-lg">
+                  <div className="flex-shrink-0 mt-1 mr-3 text-green-400">
+                    <i className="fas fa-check-circle"></i>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-300">Respect Others</h4>
+                    <p className="text-gray-400 text-sm">Be respectful to all guild members at all times</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start p-4 bg-gray-800/50 rounded-lg">
+                  <div className="flex-shrink-0 mt-1 mr-3 text-green-400">
+                    <i className="fas fa-check-circle"></i>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-300">Regular Participation</h4>
+                    <p className="text-gray-400 text-sm">Participate in guild activities regularly</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start p-4 bg-gray-800/50 rounded-lg">
+                  <div className="flex-shrink-0 mt-1 mr-3 text-green-400">
+                    <i className="fas fa-check-circle"></i>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-300">KPI Requirements</h4>
+                    <p className="text-gray-400 text-sm">Follow the KPI requirements set by guild leadership</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-start p-4 bg-gray-800/50 rounded-lg">
+                  <div className="flex-shrink-0 mt-1 mr-3 text-green-400">
+                    <i className="fas fa-check-circle"></i>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-300">Advance Notice</h4>
+                    <p className="text-gray-400 text-sm">Report absences in advance through the portal</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start p-4 bg-gray-800/50 rounded-lg">
+                  <div className="flex-shrink-0 mt-1 mr-3 text-green-400">
+                    <i className="fas fa-check-circle"></i>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-300">No Toxicity</h4>
+                    <p className="text-gray-400 text-sm">No toxic behavior or harassment is tolerated</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start p-4 bg-gray-800/50 rounded-lg">
+                  <div className="flex-shrink-0 mt-1 mr-3 text-green-400">
+                    <i className="fas fa-check-circle"></i>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-300">Teamwork</h4>
+                    <p className="text-gray-400 text-sm">Support your fellow guild members during events</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

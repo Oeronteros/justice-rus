@@ -40,11 +40,25 @@ export default function NewsSection({ user }: NewsSectionProps) {
 
   if (loading) {
     return (
-      <section className="py-8">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-800 rounded w-1/3 mb-6"></div>
-            <div className="h-64 bg-gray-800 rounded"></div>
+      <section className="py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-2">
+              <i className="fas fa-newspaper mr-3"></i>
+              News
+            </h2>
+            <p className="text-gray-400">Loading latest guild news and updates...</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="card p-6">
+                <div className="h-6 bg-gray-800 rounded mb-4 animate-pulse"></div>
+                <div className="h-4 bg-gray-800 rounded w-full animate-pulse mb-3"></div>
+                <div className="h-4 bg-gray-800 rounded w-3/4 animate-pulse mb-4"></div>
+                <div className="h-20 bg-gray-800 rounded animate-pulse"></div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -53,15 +67,19 @@ export default function NewsSection({ user }: NewsSectionProps) {
 
   if (error) {
     return (
-      <section className="py-8">
-        <div className="max-w-7xl mx-auto px-4">
+      <section className="py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-12">
-            <i className="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
-            <h3 className="text-xl font-semibold mb-2">Error Loading News</h3>
-            <p className="text-gray-400 mb-4">{error}</p>
+            <div className="flex justify-center mb-6">
+              <div className="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center">
+                <i className="fas fa-exclamation-triangle text-2xl text-red-400"></i>
+              </div>
+            </div>
+            <h3 className="text-2xl font-bold text-red-400 mb-2">Error Loading News</h3>
+            <p className="text-gray-400 mb-6 max-w-md mx-auto">{error}</p>
             <button
               onClick={loadNews}
-              className="mt-3 px-4 py-2 bg-red-700 hover:bg-red-600 rounded-lg transition"
+              className="btn-primary"
             >
               <i className="fas fa-redo mr-2"></i>Try Again
             </button>
@@ -72,49 +90,61 @@ export default function NewsSection({ user }: NewsSectionProps) {
   }
 
   return (
-    <section className="py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-6">
-          <i className="fas fa-newspaper mr-3 text-red-500"></i>
-          News
-        </h2>
+    <section className="py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
+            <i className="fas fa-newspaper mr-3"></i>
+            News
+          </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto">Stay updated with the latest guild news, announcements, and updates</p>
+        </div>
 
-        <div className="space-y-4">
+        <div className="space-y-8">
           {news.length === 0 ? (
-            <div className="text-center py-12 text-gray-400">
-              <i className="fas fa-newspaper text-4xl mb-4"></i>
-              <p>No news available</p>
+            <div className="text-center py-16">
+              <div className="flex justify-center mb-6">
+                <div className="w-20 h-20 bg-gray-800/50 rounded-full flex items-center justify-center">
+                  <i className="fas fa-newspaper text-3xl text-gray-500"></i>
+                </div>
+              </div>
+              <h3 className="text-xl font-bold text-gray-400 mb-2">No News Available</h3>
+              <p className="text-gray-500">No news or announcements have been posted yet</p>
             </div>
           ) : (
             news.map((item) => (
-              <div
-                key={item.id}
-                className={`bg-gray-800/50 rounded-lg p-6 border ${
-                  item.pinned
-                    ? 'border-yellow-500/50 bg-yellow-900/10'
-                    : 'border-gray-700/50'
-                }`}
-              >
+              <div key={item.id} className="card p-8 hover:transform hover:-translate-y-1 transition-all duration-300">
                 {item.pinned && (
-                  <div className="flex items-center mb-2 text-yellow-400">
+                  <div className="flex items-center mb-4 text-yellow-400">
                     <i className="fas fa-thumbtack mr-2"></i>
-                    <span className="text-sm font-semibold">Pinned</span>
+                    <span className="text-sm font-bold uppercase tracking-wider">Pinned</span>
                   </div>
                 )}
-                <h3 className="text-xl font-bold mb-2">{item.title}</h3>
+
+                <h3 className="text-2xl font-bold font-orbitron mb-4 text-red-400">{item.title}</h3>
+
                 <div
-                  className="text-gray-300 mb-4"
+                  className="text-gray-300 mb-6 text-lg leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: item.content }}
                 />
-                <div className="flex justify-between items-center text-sm text-gray-400">
-                  <span>
-                    <i className="fas fa-user mr-1"></i>
-                    {item.author}
-                  </span>
-                  <span>
-                    <i className="fas fa-calendar mr-1"></i>
-                    {formatDate(item.date)}
-                  </span>
+
+                <div className="flex flex-wrap justify-between items-center pt-6 border-t border-gray-700/50">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                      <i className="fas fa-user text-gray-400"></i>
+                      <span className="text-gray-400">{item.author}</span>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <i className="fas fa-calendar text-gray-400"></i>
+                      <span className="text-gray-400">{formatDate(item.date)}</span>
+                    </div>
+                  </div>
+
+                  <button className="text-sm font-medium text-red-400 hover:text-red-300 transition-colors">
+                    <i className="fas fa-comment-alt mr-2"></i>
+                    Comment
+                  </button>
                 </div>
               </div>
             ))
