@@ -4,6 +4,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
 
 const DISCORD_BOT_API_URL = process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
+const bypassHeader = (DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me'))
+  ? { 'bypass-tunnel-reminder': '1' }
+  : {};
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,6 +22,7 @@ export async function GET(request: NextRequest) {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
+        ...bypassHeader,
       },
     });
 
