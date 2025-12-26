@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import PinScreen from '@/components/PinScreen';
 import AppLayout from '@/components/AppLayout';
 import { User } from '@/types';
@@ -9,13 +8,19 @@ import { User } from '@/types';
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     checkAuth();
   }, []);
 
   const checkAuth = async () => {
+    if (typeof window === 'undefined') {
+      setLoading(false);
+      return;
+    }
+
     const token = localStorage.getItem('auth_token');
     if (!token) {
       setLoading(false);
@@ -52,7 +57,7 @@ export default function Home() {
     setUser(null);
   };
 
-  if (loading) {
+  if (!mounted || loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center z-20">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
