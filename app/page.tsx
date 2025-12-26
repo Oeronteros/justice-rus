@@ -8,10 +8,8 @@ import { User } from '@/types';
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     checkAuth();
   }, []);
 
@@ -20,7 +18,7 @@ export default function Home() {
       setLoading(false);
       return;
     }
-
+    
     const token = localStorage.getItem('auth_token');
     if (!token) {
       setLoading(false);
@@ -53,11 +51,13 @@ export default function Home() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('auth_token');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('auth_token');
+    }
     setUser(null);
   };
 
-  if (!mounted || loading) {
+  if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center z-20">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
