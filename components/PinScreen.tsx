@@ -18,7 +18,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
     setLoading(true);
 
     if (!pin) {
-      setError('Please enter PIN code');
+      setError('Please enter password');
       setLoading(false);
       return;
     }
@@ -29,11 +29,11 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ pin }),
+        body: JSON.stringify({ password: pin }),
       });
 
       if (!response.ok) {
-        throw new Error('Invalid PIN');
+        throw new Error('Invalid password');
       }
 
       const data = await response.json();
@@ -43,7 +43,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
       onAuthSuccess({ role: data.role });
 
     } catch (error) {
-      setError('Invalid PIN code');
+      setError('Invalid password');
       setPin('');
     } finally {
       setLoading(false);
@@ -71,7 +71,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <p className="text-sm text-gray-400 mb-4 font-medium">Enter PIN code to access</p>
+            <p className="text-sm text-gray-400 mb-4 font-medium">Enter password to access</p>
             <input
               type="password"
               value={pin}
