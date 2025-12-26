@@ -81,7 +81,7 @@ async function createPostgreSQLClient(config: DatabaseConfig): Promise<DatabaseC
         FROM registrations
         ORDER BY join_date DESC
       `);
-      return result.rows.map(row => ({
+      return result.rows.map((row: any) => ({
         discord: row.discord,
         nickname: row.nickname,
         rank: row.rank,
@@ -104,7 +104,7 @@ async function createPostgreSQLClient(config: DatabaseConfig): Promise<DatabaseC
         ORDER BY date DESC
         LIMIT 100
       `);
-      return result.rows.map(row => ({
+      return result.rows.map((row: any) => ({
         date: row.date,
         registration: row.registration,
         type: row.type,
@@ -124,7 +124,7 @@ async function createPostgreSQLClient(config: DatabaseConfig): Promise<DatabaseC
         FROM news
         ORDER BY pinned DESC, date DESC
       `);
-      return result.rows.map(row => ({
+      return result.rows.map((row: any) => ({
         id: row.id.toString(),
         title: row.title,
         content: row.content,
@@ -146,7 +146,7 @@ async function createPostgreSQLClient(config: DatabaseConfig): Promise<DatabaseC
         FROM guides
         ORDER BY date DESC
       `);
-      return result.rows.map(row => ({
+      return result.rows.map((row: any) => ({
         id: row.id.toString(),
         title: row.title,
         content: row.content,
@@ -168,7 +168,7 @@ async function createPostgreSQLClient(config: DatabaseConfig): Promise<DatabaseC
         FROM absences
         ORDER BY start_date DESC
       `);
-      return result.rows.map(row => ({
+      return result.rows.map((row: any) => ({
         id: row.id.toString(),
         member: row.member,
         startDate: row.startDate,
@@ -184,19 +184,20 @@ async function createPostgreSQLClient(config: DatabaseConfig): Promise<DatabaseC
 
     // Deprecated methods
     async getMembers(): Promise<Registration[]> {
-      return this.getRegistrations();
+      return await this.getRegistrations();
     },
 
     async getActivity(): Promise<Schedule[]> {
-      return this.getSchedule();
+      return await this.getSchedule();
     },
-  };
+  } as DatabaseClient;
 }
 
 // MongoDB клиент
 async function createMongoDBClient(config: DatabaseConfig): Promise<DatabaseClient> {
   let MongoClient: any;
   try {
+    // @ts-expect-error - mongodb types not available
     const mongodb = await import('mongodb');
     MongoClient = mongodb.MongoClient;
   } catch (error) {
@@ -214,7 +215,7 @@ async function createMongoDBClient(config: DatabaseConfig): Promise<DatabaseClie
     async getRegistrations(): Promise<Registration[]> {
       const collection = db.collection('registrations');
       const docs = await collection.find({}).sort({ joinDate: -1 }).toArray();
-      return docs.map(doc => ({
+      return docs.map((doc: any) => ({
         discord: doc.discordId || doc.discord || '',
         nickname: doc.nickname || '',
         rank: doc.rank || 'novice',
@@ -229,7 +230,7 @@ async function createMongoDBClient(config: DatabaseConfig): Promise<DatabaseClie
     async getSchedule(): Promise<Schedule[]> {
       const collection = db.collection('schedule');
       const docs = await collection.find({}).sort({ date: -1 }).limit(100).toArray();
-      return docs.map(doc => ({
+      return docs.map((doc: any) => ({
         date: doc.date || '',
         registration: doc.registration || '',
         type: doc.type || '',
@@ -240,7 +241,7 @@ async function createMongoDBClient(config: DatabaseConfig): Promise<DatabaseClie
     async getNews(): Promise<News[]> {
       const collection = db.collection('news');
       const docs = await collection.find({}).sort({ pinned: -1, date: -1 }).toArray();
-      return docs.map(doc => ({
+      return docs.map((doc: any) => ({
         id: doc._id.toString(),
         title: doc.title || '',
         content: doc.content || '',
@@ -253,7 +254,7 @@ async function createMongoDBClient(config: DatabaseConfig): Promise<DatabaseClie
     async getGuides(): Promise<Guide[]> {
       const collection = db.collection('guides');
       const docs = await collection.find({}).sort({ date: -1 }).toArray();
-      return docs.map(doc => ({
+      return docs.map((doc: any) => ({
         id: doc._id.toString(),
         title: doc.title || '',
         content: doc.content || '',
@@ -266,7 +267,7 @@ async function createMongoDBClient(config: DatabaseConfig): Promise<DatabaseClie
     async getAbsences(): Promise<Absence[]> {
       const collection = db.collection('absences');
       const docs = await collection.find({}).sort({ startDate: -1 }).toArray();
-      return docs.map(doc => ({
+      return docs.map((doc: any) => ({
         id: doc._id.toString(),
         member: doc.member || '',
         startDate: doc.startDate || doc.start_date || '',
@@ -282,19 +283,20 @@ async function createMongoDBClient(config: DatabaseConfig): Promise<DatabaseClie
 
     // Deprecated methods
     async getMembers(): Promise<Registration[]> {
-      return this.getRegistrations();
+      return await this.getRegistrations();
     },
 
     async getActivity(): Promise<Schedule[]> {
-      return this.getSchedule();
+      return await this.getSchedule();
     },
-  };
+  } as DatabaseClient;
 }
 
 // SQLite клиент
 async function createSQLiteClient(config: DatabaseConfig): Promise<DatabaseClient> {
   let Database: any;
   try {
+    // @ts-expect-error - better-sqlite3 types not available
     const sqlite = await import('better-sqlite3');
     Database = sqlite.default;
   } catch (error) {
@@ -425,13 +427,13 @@ async function createSQLiteClient(config: DatabaseConfig): Promise<DatabaseClien
 
     // Deprecated methods
     async getMembers(): Promise<Registration[]> {
-      return this.getRegistrations();
+      return await this.getRegistrations();
     },
 
     async getActivity(): Promise<Schedule[]> {
-      return this.getSchedule();
+      return await this.getSchedule();
     },
-  };
+  } as DatabaseClient;
 }
 
 // Singleton для переиспользования соединения

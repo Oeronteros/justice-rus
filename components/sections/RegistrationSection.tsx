@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Registration, User } from '@/types';
 import { apiService } from '@/lib/api';
 import { formatDate, getRankClass, getStatusClass, getKPIClass } from '@/lib/utils';
@@ -22,10 +22,6 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
     loadRegistrations();
   }, []);
 
-  useEffect(() => {
-    filterRegistrations();
-  }, [registrations, searchTerm, statusFilter, rankFilter]);
-
   const loadRegistrations = async () => {
     try {
       setLoading(true);
@@ -41,7 +37,7 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
     }
   };
 
-  const filterRegistrations = () => {
+  const filterRegistrations = useCallback(() => {
     let filtered = [...registrations];
 
     // Поиск
@@ -68,7 +64,12 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
     }
 
     setFilteredRegistrations(filtered);
-  };
+  }, [registrations, searchTerm, statusFilter, rankFilter]);
+
+  useEffect(() => {
+    filterRegistrations();
+  }, [filterRegistrations]);
+
 
   const stats = {
     total: registrations.length,
