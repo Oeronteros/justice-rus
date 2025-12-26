@@ -209,19 +209,19 @@ export default function CalculatorPage() {
                 <div className="flex items-center justify-between rounded-xl bg-gray-900/60 border border-gray-800 px-4 py-3">
                   <span className="text-gray-300 text-sm">??????? ???? ?? ????</span>
                   <span className="text-xl font-bold font-orbitron text-red-400">
-                    {results[index].avgHit ? results[index].avgHit.toFixed(2) : '—'}
+                    {results[index].avgHit ? results[index].avgHit.toFixed(2) : '?'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between rounded-xl bg-gray-900/60 border border-gray-800 px-4 py-3">
                   <span className="text-gray-300 text-sm">DPS</span>
                   <span className="text-xl font-bold font-orbitron text-red-400">
-                    {results[index].dps ? results[index].dps.toFixed(2) : '—'}
+                    {results[index].dps ? results[index].dps.toFixed(2) : '?'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between rounded-xl bg-gray-900/60 border border-gray-800 px-4 py-3">
                   <span className="text-gray-300 text-sm">????? ???? ?? ???</span>
                   <span className="text-xl font-bold font-orbitron text-red-400">
-                    {results[index].totalDamage ? results[index].totalDamage.toFixed(2) : '—'}
+                    {results[index].totalDamage ? results[index].totalDamage.toFixed(2) : '?'}
                   </span>
                 </div>
               </div>
@@ -230,8 +230,8 @@ export default function CalculatorPage() {
         </div>
 
         <div className="mt-10 text-center text-gray-500 text-sm">
-          ???????: ??????? ???? = (???? + ??????? ?????) × (1 + ?????% ) × (1 + ????.???? × (????.????. - 1));
-          DPS = ??????? ???? × ???????? ?????.
+          ???????: ??????? ???? = (???? + ??????? ?????) ? (1 + ?????% ) ? (1 + ????.???? ? (????.????. ? 1));
+          DPS = ??????? ???? ? ???????? ?????.
         </div>
       </div>
     </div>
