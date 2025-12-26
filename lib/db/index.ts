@@ -1,5 +1,12 @@
 // Database connection и утилиты
 // Поддерживает PostgreSQL, MongoDB, SQLite
+//
+// ВНИМАНИЕ: Этот файл предназначен ТОЛЬКО для Discord бота!
+// Next.js приложение НЕ использует этот код напрямую.
+// Веб-сайт получает данные через Discord Bot API (см. lib/api.ts).
+//
+// Для использования в Discord боте установите зависимости:
+// npm install pg mongodb better-sqlite3
 
 import { Registration, Schedule, News, Guide, Absence } from '@/types';
 

@@ -23,9 +23,9 @@ npm install
 cp .env.example .env.local
 ```
 
-4. Настройте базу данных (см. `docs/database-setup.md`)
+4. Заполните переменные окружения в `.env.local`
 
-5. Заполните переменные окружения в `.env.local`
+**Примечание:** База данных настраивается в Discord боте, а не в веб-приложении. См. `docs/discord-bot-integration.md`
 
 6. Запустите dev сервер:
 ```bash
