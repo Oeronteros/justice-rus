@@ -12,19 +12,23 @@ export interface User {
 export interface Registration {
   discord: string;
   nickname: string;
-  rank: MemberRank;
+  rank: RegistrationRank;
   class: string;
   guild: string;
   joinDate: string;
   kpi: number;
-  status: MemberStatus;
+  status: RegistrationStatus;
 }
 
 // Deprecated: используйте Registration
 export interface Member extends Registration {}
 
-export type MemberRank = 'novice' | 'member' | 'veteran' | 'elite' | 'legend' | 'gm';
-export type MemberStatus = 'active' | 'inactive' | 'pending' | 'leave';
+export type RegistrationRank = 'novice' | 'member' | 'veteran' | 'elite' | 'legend' | 'gm';
+export type RegistrationStatus = 'active' | 'inactive' | 'pending' | 'leave';
+
+// Deprecated: используйте RegistrationRank и RegistrationStatus
+export type MemberRank = RegistrationRank;
+export type MemberStatus = RegistrationStatus;
 
 export interface Schedule {
   date: string;
