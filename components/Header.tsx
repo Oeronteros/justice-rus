@@ -37,8 +37,10 @@ export default function Header({
       <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center">
         <div className="flex items-center space-x-4 mb-4 sm:mb-0">
           <div className="relative">
-            <div className="w-12 h-12 bg-gradient-to-r from-[#8b4a2f] to-[#c88b5e] rounded-full flex items-center justify-center shadow-lg shadow-[#5c2e1d]/40">
-              <i className="fas fa-skull text-white text-lg"></i>
+            <div className="sigil-ring">
+              <div className="sigil-core">
+                <i className="fas fa-skull text-white text-lg"></i>
+              </div>
             </div>
             <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-[#120d0a]"></div>
           </div>
@@ -46,7 +48,11 @@ export default function Header({
             <h1 className="text-2xl font-bold font-orbitron text-[#e8ddc8] drop-shadow">
               Cult Game Community
             </h1>
-            <p className="text-sm text-[#c9b59a] font-roboto">Justice Mobile Guild</p>
+            <p className="text-sm text-[#c9b59a] font-roboto">Guild Order • Justice Mobile</p>
+            <span className="occult-tag mt-2 block">
+              <i className="fas fa-eye"></i>
+              Клятва: Кровь • Долг • Тишина
+            </span>
           </div>
         </div>
 

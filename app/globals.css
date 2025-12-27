@@ -7,6 +7,8 @@
   --occult-copper: #c88b5e;
   --occult-bone: #e8ddc8;
   --occult-shadow: #1b1410;
+  --occult-gold: #d7b37a;
+  --occult-ash: #2a1c14;
 }
 
 @theme inline {
@@ -31,10 +33,18 @@ body {
 
 .theme-occult .occult-backdrop {
   background:
-    radial-gradient(circle at 20% 20%, rgba(155, 74, 47, 0.18), transparent 50%),
-    radial-gradient(circle at 80% 10%, rgba(200, 139, 94, 0.15), transparent 45%),
+    radial-gradient(circle at 18% 22%, rgba(155, 74, 47, 0.22), transparent 50%),
+    radial-gradient(circle at 82% 14%, rgba(200, 139, 94, 0.2), transparent 45%),
     radial-gradient(circle at 50% 80%, rgba(30, 20, 15, 0.7), transparent 55%),
     linear-gradient(180deg, #0b0a08 0%, #0f0d0a 40%, #0a0907 100%);
+}
+
+.theme-occult .occult-noise {
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 2px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.015) 1px, transparent 1px, transparent 3px);
+  mix-blend-mode: soft-light;
+  opacity: 0.6;
 }
 
 .theme-occult .occult-sigil-grid {
@@ -47,6 +57,87 @@ body {
   filter: blur(30px);
 }
 
+.theme-occult .occult-portal {
+  background: radial-gradient(circle, rgba(200, 139, 94, 0.22), rgba(20, 12, 9, 0.7) 55%, transparent 70%);
+  filter: blur(10px);
+  animation: portalPulse 10s ease-in-out infinite;
+}
+
+.theme-occult .occult-ember {
+  background: radial-gradient(circle, rgba(155, 74, 47, 0.18), transparent 70%);
+  filter: blur(18px);
+  animation: emberDrift 14s ease-in-out infinite;
+}
+
+.theme-occult .sigil-ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(200, 139, 94, 0.22), transparent 60%);
+  border: 1px solid rgba(200, 139, 94, 0.35);
+  box-shadow: inset 0 0 18px rgba(200, 139, 94, 0.15);
+}
+
+.theme-occult .sigil-ring::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+  border: 1px dashed rgba(200, 139, 94, 0.3);
+  animation: sigilRotate 22s linear infinite;
+}
+
+.theme-occult .sigil-core {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  background: linear-gradient(130deg, rgba(139, 74, 47, 0.8), rgba(200, 139, 94, 0.9));
+  box-shadow: 0 0 18px rgba(155, 74, 47, 0.35);
+  display: grid;
+  place-items: center;
+}
+
+.theme-occult .occult-manifesto {
+  margin: 24px auto 0;
+  max-width: 1100px;
+  padding: 24px 32px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(24, 16, 12, 0.9), rgba(12, 8, 6, 0.9));
+  border: 1px solid rgba(200, 139, 94, 0.25);
+  box-shadow: 0 20px 40px rgba(7, 5, 4, 0.6);
+}
+
+.theme-occult .occult-pillars {
+  margin-top: 16px;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.theme-occult .occult-pillar {
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(200, 139, 94, 0.2);
+  background: rgba(18, 12, 9, 0.8);
+}
+
+.theme-occult .occult-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(200, 139, 94, 0.35);
+  background: rgba(24, 16, 12, 0.8);
+  color: var(--occult-gold);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 .theme-occult .text-red-400 { color: var(--occult-copper) !important; }
 .theme-occult .text-red-500 { color: var(--occult-ember) !important; }
 .theme-occult .border-red-500\/50 { border-color: rgba(200, 139, 94, 0.5) !important; }
@@ -54,6 +145,35 @@ body {
 .theme-occult .bg-red-800\/70 { background-color: rgba(88, 44, 30, 0.6) !important; }
 .theme-occult .from-red-600 { --tw-gradient-from: #9b4a2f !important; }
 .theme-occult .to-purple-600 { --tw-gradient-to: #5a402f !important; }
+
+@keyframes portalPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+@keyframes emberDrift {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(14px);
+  }
+}
+
+@keyframes sigilRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
 /* Кастомные стили */
 @layer components {

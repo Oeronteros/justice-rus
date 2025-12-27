@@ -31,8 +31,11 @@ export default function RootLayout({
       <body className="theme-occult">
         <div className="fixed inset-0 z-0 overflow-hidden">
           <div className="absolute inset-0 occult-backdrop"></div>
-          <div className="absolute inset-0 occult-sigil-grid opacity-50"></div>
-          <div className="absolute -top-32 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full occult-glow"></div>
+          <div className="absolute inset-0 occult-noise"></div>
+          <div className="absolute inset-0 occult-sigil-grid opacity-40"></div>
+          <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full occult-glow"></div>
+          <div className="absolute bottom-[-120px] right-[-80px] h-[420px] w-[420px] rounded-full occult-portal"></div>
+          <div className="absolute top-[18%] left-[-120px] h-[360px] w-[360px] rounded-full occult-ember"></div>
         </div>
 
         <div className="relative z-10">

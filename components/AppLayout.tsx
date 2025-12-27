@@ -71,6 +71,41 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
         language={language}
         onLanguageChange={handleLanguageChange}
       />
+      <section className="occult-manifesto">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div>
+            <span className="occult-tag">
+              <i className="fas fa-circle-notch"></i>
+              Order Manifest
+            </span>
+            <h2 className="text-3xl font-orbitron text-[#e8ddc8] mt-4">
+              Мы — культ рейдов, дисциплины и абсолютного дамага.
+            </h2>
+            <p className="text-[#c9b59a] mt-3 max-w-2xl">
+              Свод правил прост: держим строй, чтим ритуалы и выжимаем максимум из каждого билда.
+              В этом портале — расписание, гайды, состав и доказательства нашей силы.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-4 text-sm text-[#e3d6c2]">
+            <div className="occult-pillar">
+              <div className="text-xs uppercase tracking-widest text-[#d7b37a]">Пакт I</div>
+              <div className="mt-2 font-semibold">Железная дисциплина</div>
+            </div>
+            <div className="occult-pillar">
+              <div className="text-xs uppercase tracking-widest text-[#d7b37a]">Пакт II</div>
+              <div className="mt-2 font-semibold">Знание билдов</div>
+            </div>
+            <div className="occult-pillar">
+              <div className="text-xs uppercase tracking-widest text-[#d7b37a]">Пакт III</div>
+              <div className="mt-2 font-semibold">Лояльность культу</div>
+            </div>
+            <div className="occult-pillar">
+              <div className="text-xs uppercase tracking-widest text-[#d7b37a]">Пакт IV</div>
+              <div className="mt-2 font-semibold">Удар без промаха</div>
+            </div>
+          </div>
+        </div>
+      </section>
       <main className="min-h-screen">{renderSection()}</main>
       <MobileNav
         currentSection={currentSection}
