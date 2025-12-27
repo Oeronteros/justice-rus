@@ -2,6 +2,7 @@
 
 import { Section } from '@/types';
 import { Language, sectionLabels } from '@/lib/i18n';
+import WuxiaIcon from './WuxiaIcons';
 
 interface HeaderProps {
   currentSection: Section;
@@ -11,14 +12,14 @@ interface HeaderProps {
   onLanguageChange: (language: Language) => void;
 }
 
-const sections: { id: Section; icon: string }[] = [
-  { id: 'registration', icon: 'fa-users' },
-  { id: 'schedule', icon: 'fa-calendar-alt' },
-  { id: 'help', icon: 'fa-hands-helping' },
-  { id: 'news', icon: 'fa-newspaper' },
-  { id: 'guides', icon: 'fa-graduation-cap' },
-  { id: 'absences', icon: 'fa-calendar-times' },
-  { id: 'calculator', icon: 'fa-calculator' },
+const sections: Section[] = [
+  'registration',
+  'schedule',
+  'help',
+  'news',
+  'guides',
+  'absences',
+  'calculator',
 ];
 
 export default function Header({
@@ -59,16 +60,18 @@ export default function Header({
         <nav className="flex flex-wrap items-center justify-center gap-2">
           {sections.map((section) => (
             <button
-              key={section.id}
-              onClick={() => onSectionChange(section.id)}
+              key={section}
+              onClick={() => onSectionChange(section)}
               className={`nav-btn px-5 py-3 rounded-xl transition-all duration-300 font-medium ${
-                currentSection === section.id
+                currentSection === section
                   ? 'bg-gradient-to-r from-[#2b1516]/90 to-[#4b1a1f]/80 border border-[#d6b36a]/40 shadow-lg shadow-black/40'
                   : 'bg-[#120d0c]/70 hover:bg-[#1a1211]/80 border border-[#2a1b1a]/70 hover:border-[#d6b36a]/30'
               }`}
             >
-              <i className={`fas ${section.icon} mr-2`}></i>
-              <span>{sectionLabels[language][section.id]}</span>
+              <span className="mr-2 inline-flex text-[#d6b36a]">
+                <WuxiaIcon id={section} className="w-4 h-4" />
+              </span>
+              <span>{sectionLabels[language][section]}</span>
             </button>
           ))}
 

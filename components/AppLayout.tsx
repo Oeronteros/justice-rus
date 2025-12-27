@@ -29,6 +29,42 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
     }
   }, []);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const root = document.documentElement;
+    const maxTilt = 6;
+    let frame = 0;
+
+    const handleMove = (event: MouseEvent) => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        const x = (event.clientX / window.innerWidth - 0.5) * 2;
+        const y = (event.clientY / window.innerHeight - 0.5) * -2;
+        root.style.setProperty('--tilt-x', `${(y * maxTilt).toFixed(2)}deg`);
+        root.style.setProperty('--tilt-y', `${(x * maxTilt).toFixed(2)}deg`);
+        frame = 0;
+      });
+    };
+
+    const handleLeave = () => {
+      root.style.setProperty('--tilt-x', '0deg');
+      root.style.setProperty('--tilt-y', '0deg');
+    };
+
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseleave', handleLeave);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('mouseleave', handleLeave);
+      if (frame) {
+        window.cancelAnimationFrame(frame);
+      }
+    };
+  }, []);
+
   const handleLanguageChange = (lang: Language) => {
     setLanguage(lang);
     if (typeof window !== 'undefined') {
@@ -101,7 +137,7 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
             </div>
           </div>
           <div className="wuxia-crest">
-            <div className="wuxia-crest-frame">
+            <div className="wuxia-crest-frame wuxia-parallax">
               <img
                 src="/emblem.svg"
                 alt="Demonic Cult Sigil"
