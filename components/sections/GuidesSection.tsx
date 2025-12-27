@@ -26,7 +26,7 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
       const data = await apiService.getGuides();
       setGuides(data);
     } catch (err) {
-      setError('Failed to load guides');
+      setError('Не удалось загрузить свитки');
       console.error('Failed to load guides:', err);
     } finally {
       setLoading(false);
@@ -47,9 +47,9 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-2">
               <i className="fas fa-graduation-cap mr-3"></i>
-              Guides
+              Свитки Ордена
             </h2>
-            <p className="text-gray-400">Loading helpful guides and tutorials...</p>
+            <p className="text-gray-400">Собираем священные наставления...</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -77,13 +77,13 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
                 <i className="fas fa-exclamation-triangle text-2xl text-red-400"></i>
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-red-400 mb-2">Error Loading Guides</h3>
+            <h3 className="text-2xl font-bold text-red-400 mb-2">Свитки недоступны</h3>
             <p className="text-gray-400 mb-6 max-w-md mx-auto">{error}</p>
             <button
               onClick={loadGuides}
               className="btn-primary"
             >
-              <i className="fas fa-redo mr-2"></i>Try Again
+              <i className="fas fa-redo mr-2"></i>Повторить ритуал
             </button>
           </div>
         </div>
@@ -97,9 +97,9 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
             <i className="fas fa-graduation-cap mr-3"></i>
-            Guides
+            Свитки Ордена
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">Access helpful guides and tutorials to improve your gameplay and knowledge</p>
+          <p className="text-gray-400 max-w-2xl mx-auto">Знание — оружие. Используй наставления, чтобы усилить билд и дисциплину.</p>
         </div>
 
         {categories.length > 0 && (
@@ -109,7 +109,7 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="select-field max-w-xs"
             >
-              <option value="all">All Categories</option>
+              <option value="all">Все школы</option>
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
@@ -127,14 +127,14 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
                   <i className="fas fa-graduation-cap text-3xl text-gray-500"></i>
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-gray-400 mb-2">No Guides Available</h3>
-              <p className="text-gray-500">No guides or tutorials have been created yet</p>
+              <h3 className="text-xl font-bold text-gray-400 mb-2">Свитки не найдены</h3>
+              <p className="text-gray-500">Пока нет опубликованных наставлений</p>
             </div>
           ) : (
             filteredGuides.map((guide) => (
               <div key={guide.id} className="card p-6 hover:transform hover:-translate-y-1 transition-all duration-300">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="px-3 py-1 bg-gradient-to-r from-purple-600/30 to-purple-800/30 text-purple-400 rounded-full text-sm font-medium">
+                  <span className="px-3 py-1 bg-gradient-to-r from-[#3a261a]/60 to-[#5a3a28]/60 text-[#d7b37a] rounded-full text-sm font-medium">
                     <i className="fas fa-tag mr-2"></i>
                     {guide.category}
                   </span>
@@ -156,9 +156,9 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
                     <span className="text-sm text-gray-400">{guide.author}</span>
                   </div>
 
-                  <button className="text-sm font-medium text-red-400 hover:text-red-300 transition-colors">
+                  <button className="text-sm font-medium text-[#c88b5e] hover:text-[#e0b883] transition-colors">
                     <i className="fas fa-book-open mr-2"></i>
-                    Read More
+                    Читать свиток
                   </button>
                 </div>
               </div>
@@ -169,4 +169,3 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
     </section>
   );
 }
-

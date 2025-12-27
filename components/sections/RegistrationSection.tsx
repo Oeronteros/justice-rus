@@ -30,7 +30,7 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
       setRegistrations(data);
       setFilteredRegistrations(data);
     } catch (err) {
-      setError('Failed to load registrations');
+      setError('Не удалось загрузить реестр');
       console.error('Failed to load registrations:', err);
     } finally {
       setLoading(false);
@@ -89,9 +89,9 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-2">
               <i className="fas fa-users mr-3"></i>
-              Registration List
+              Реестр Культа
             </h2>
-            <p className="text-gray-400">Loading guild members data...</p>
+            <p className="text-gray-400">Призываем записи ордена...</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -121,13 +121,13 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
                 <i className="fas fa-exclamation-triangle text-2xl text-red-400"></i>
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-red-400 mb-2">Error Loading Registrations</h3>
+            <h3 className="text-2xl font-bold text-red-400 mb-2">Реестр недоступен</h3>
             <p className="text-gray-400 mb-6 max-w-md mx-auto">{error}</p>
             <button
               onClick={loadRegistrations}
               className="btn-primary"
             >
-              <i className="fas fa-redo mr-2"></i>Try Again
+              <i className="fas fa-redo mr-2"></i>Повторить ритуал
             </button>
           </div>
         </div>
@@ -141,23 +141,23 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
             <i className="fas fa-users mr-3"></i>
-            Registration List
+            Реестр Культа
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">View and manage all guild members and their registration details</p>
+          <p className="text-gray-400 max-w-2xl mx-auto">Состав ордена, ранги и клятвы каждого, кто носит наш знак.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="card p-6 text-center">
             <div className="text-3xl font-bold font-orbitron text-red-400 mb-2">{stats.total}</div>
-            <div className="text-gray-400">Total Registrations</div>
+            <div className="text-gray-400">Всего в ордене</div>
           </div>
           <div className="card p-6 text-center">
             <div className="text-3xl font-bold font-orbitron text-green-400 mb-2">{stats.online}</div>
-            <div className="text-gray-400">Online Now</div>
+            <div className="text-gray-400">В строю</div>
           </div>
           <div className="card p-6 text-center">
             <div className="text-3xl font-bold font-orbitron text-yellow-400 mb-2">{stats.avgKPI}</div>
-            <div className="text-gray-400">Avg KPI</div>
+            <div className="text-gray-400">Средний KPI</div>
           </div>
         </div>
 
@@ -167,7 +167,7 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by name, discord or class..."
+              placeholder="Поиск по имени, Discord или классу..."
               className="input-field flex-1"
             />
 
@@ -176,11 +176,11 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
               onChange={(e) => setStatusFilter(e.target.value)}
               className="select-field"
             >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="pending">Pending</option>
-              <option value="leave">Leave</option>
+              <option value="all">Все статусы</option>
+              <option value="active">Активен</option>
+              <option value="inactive">Неактивен</option>
+              <option value="pending">Ожидает</option>
+              <option value="leave">Отгул</option>
             </select>
 
             <select
@@ -188,13 +188,13 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
               onChange={(e) => setRankFilter(e.target.value)}
               className="select-field"
             >
-              <option value="all">All Ranks</option>
-              <option value="novice">Novice</option>
-              <option value="member">Member</option>
-              <option value="veteran">Veteran</option>
-              <option value="elite">Elite</option>
-              <option value="legend">Legend</option>
-              <option value="gm">GM</option>
+              <option value="all">Все ранги</option>
+              <option value="novice">Новик</option>
+              <option value="member">Брат</option>
+              <option value="veteran">Ветеран</option>
+              <option value="elite">Элита</option>
+              <option value="legend">Легенда</option>
+              <option value="gm">ГМ</option>
             </select>
           </div>
 
@@ -202,15 +202,15 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
             <table className="table-modern">
               <thead>
                 <tr>
-                  <th className="text-left">ID</th>
+                  <th className="text-left">Знак</th>
                   <th className="text-left">Discord</th>
-                  <th className="text-left">Nickname</th>
-                  <th className="text-left">Rank</th>
-                  <th className="text-left">Class</th>
-                  <th className="text-left">Guild</th>
-                  <th className="text-left">Join Date</th>
+                  <th className="text-left">Имя</th>
+                  <th className="text-left">Ранг</th>
+                  <th className="text-left">Класс</th>
+                  <th className="text-left">Клан</th>
+                  <th className="text-left">Дата вступления</th>
                   <th className="text-left">KPI</th>
-                  <th className="text-left">Status</th>
+                  <th className="text-left">Статус</th>
                 </tr>
               </thead>
               <tbody>
@@ -219,8 +219,8 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
                     <td colSpan={9} className="py-12 text-center text-gray-500">
                       <div className="flex flex-col items-center">
                         <i className="fas fa-users-slash text-3xl mb-3"></i>
-                        <div className="text-lg">No registrations found</div>
-                        <div className="text-sm">Try adjusting your search or filters</div>
+                        <div className="text-lg">Записей не найдено</div>
+                        <div className="text-sm">Смени поиск или фильтры</div>
                       </div>
                     </td>
                   </tr>
@@ -272,4 +272,3 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
     </section>
   );
 }
-

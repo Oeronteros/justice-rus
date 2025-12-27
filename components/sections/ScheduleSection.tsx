@@ -25,7 +25,7 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
       const data = await apiService.getSchedule();
       setSchedules(data);
     } catch (err) {
-      setError('Failed to load schedule');
+      setError('Не удалось загрузить расписание');
       console.error('Failed to load schedule:', err);
     } finally {
       setLoading(false);
@@ -39,9 +39,9 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-2">
               <i className="fas fa-calendar-alt mr-3"></i>
-              Schedule
+              Расписание Ритуалов
             </h2>
-            <p className="text-gray-400">Loading upcoming events and activities...</p>
+            <p className="text-gray-400">Открываем свитки грядущих рейдов...</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -68,13 +68,13 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
                 <i className="fas fa-exclamation-triangle text-2xl text-red-400"></i>
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-red-400 mb-2">Error Loading Schedule</h3>
+            <h3 className="text-2xl font-bold text-red-400 mb-2">Расписание недоступно</h3>
             <p className="text-gray-400 mb-6 max-w-md mx-auto">{error}</p>
             <button
               onClick={loadSchedule}
               className="btn-primary"
             >
-              <i className="fas fa-redo mr-2"></i>Try Again
+              <i className="fas fa-redo mr-2"></i>Повторить ритуал
             </button>
           </div>
         </div>
@@ -88,9 +88,9 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
             <i className="fas fa-calendar-alt mr-3"></i>
-            Schedule
+            Расписание Ритуалов
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">View upcoming events, raids, and activities scheduled for the guild</p>
+          <p className="text-gray-400 max-w-2xl mx-auto">Список рейдов и действий ордена, где каждый дает клятву явки.</p>
         </div>
 
         <div className="space-y-6">
@@ -101,8 +101,8 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
                   <i className="fas fa-calendar-times text-3xl text-gray-500"></i>
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-gray-400 mb-2">No Schedule Events</h3>
-              <p className="text-gray-500">No upcoming events or activities have been scheduled yet</p>
+              <h3 className="text-xl font-bold text-gray-400 mb-2">Ритуалы не назначены</h3>
+              <p className="text-gray-500">Ждем нового приказа на сбор</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -110,7 +110,7 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
                 <div key={index} className="card p-6 hover:transform hover:-translate-y-1 transition-all duration-300">
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="text-xl font-bold font-orbitron text-red-400">{schedule.registration}</h3>
-                    <span className="text-sm font-medium bg-gray-800 px-3 py-1 rounded-full">
+                    <span className="text-sm font-medium bg-[#1a120e]/70 px-3 py-1 rounded-full">
                       {formatDate(schedule.date)}
                     </span>
                   </div>
@@ -118,14 +118,14 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
                   <p className="text-gray-300 mb-4">{schedule.description}</p>
 
                   <div className="flex justify-between items-center">
-                    <span className="px-3 py-1 bg-gradient-to-r from-blue-600/30 to-blue-800/30 text-blue-400 rounded-full text-sm font-medium">
+                    <span className="px-3 py-1 bg-gradient-to-r from-[#3a261a]/60 to-[#5a3a28]/60 text-[#d7b37a] rounded-full text-sm font-medium">
                       <i className="fas fa-tag mr-2"></i>
                       {schedule.type}
                     </span>
 
-                    <button className="text-sm font-medium text-red-400 hover:text-red-300 transition-colors">
+                    <button className="text-sm font-medium text-[#c88b5e] hover:text-[#e0b883] transition-colors">
                       <i className="fas fa-calendar-check mr-1"></i>
-                      Join Event
+                      Принять клятву
                     </button>
                   </div>
                 </div>
@@ -137,4 +137,3 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
     </section>
   );
 }
-

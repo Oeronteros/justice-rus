@@ -26,7 +26,7 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
       const data = await apiService.getAbsences();
       setAbsences(data);
     } catch (err) {
-      setError('Failed to load absences');
+      setError('Не удалось загрузить записи отсутствий');
       console.error('Failed to load absences:', err);
     } finally {
       setLoading(false);
@@ -54,9 +54,9 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-2">
               <i className="fas fa-calendar-times mr-3"></i>
-              Absences
+              Отлучения
             </h2>
-            <p className="text-gray-400">Loading member absence records...</p>
+            <p className="text-gray-400">Собираем клятвы отсутствия...</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -84,13 +84,13 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
                 <i className="fas fa-exclamation-triangle text-2xl text-red-400"></i>
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-red-400 mb-2">Error Loading Absences</h3>
+            <h3 className="text-2xl font-bold text-red-400 mb-2">Отлучения недоступны</h3>
             <p className="text-gray-400 mb-6 max-w-md mx-auto">{error}</p>
             <button
               onClick={loadAbsences}
               className="btn-primary"
             >
-              <i className="fas fa-redo mr-2"></i>Try Again
+              <i className="fas fa-redo mr-2"></i>Повторить ритуал
             </button>
           </div>
         </div>
@@ -104,9 +104,9 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
             <i className="fas fa-calendar-times mr-3"></i>
-            Absences
+            Отлучения
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">View and manage member absence records and requests</p>
+          <p className="text-gray-400 max-w-2xl mx-auto">Учет отлучений, клятв и причин отсутствия в строю.</p>
         </div>
 
         <div className="flex justify-center mb-8">
@@ -115,10 +115,10 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="select-field max-w-xs"
           >
-            <option value="all">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
+            <option value="all">Все статусы</option>
+            <option value="pending">На рассмотрении</option>
+            <option value="approved">Одобрено</option>
+            <option value="rejected">Отклонено</option>
           </select>
         </div>
 
@@ -130,8 +130,8 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
                   <i className="fas fa-calendar-times text-3xl text-gray-500"></i>
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-gray-400 mb-2">No Absences Found</h3>
-              <p className="text-gray-500">No absence records match your current filters</p>
+              <h3 className="text-xl font-bold text-gray-400 mb-2">Отлучения не найдены</h3>
+              <p className="text-gray-500">Нет записей под текущие фильтры</p>
             </div>
           ) : (
             filteredAbsences.map((absence) => (
@@ -150,18 +150,18 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                   <div className="bg-gray-800/50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-400 mb-1">Start Date</div>
+                    <div className="text-sm text-gray-400 mb-1">Начало</div>
                     <div className="font-bold text-lg">{formatDate(absence.startDate)}</div>
                   </div>
 
                   <div className="bg-gray-800/50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-400 mb-1">End Date</div>
+                    <div className="text-sm text-gray-400 mb-1">Окончание</div>
                     <div className="font-bold text-lg">{formatDate(absence.endDate)}</div>
                   </div>
                 </div>
 
                 <div className="bg-gray-800/50 p-4 rounded-lg">
-                  <div className="text-sm text-gray-400 mb-1">Reason</div>
+                  <div className="text-sm text-gray-400 mb-1">Причина</div>
                   <div className="text-gray-300">{absence.reason}</div>
                 </div>
 
@@ -170,17 +170,17 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
                     <>
                       <button className="px-4 py-2 bg-green-700 hover:bg-green-600 rounded-lg transition text-sm font-medium">
                         <i className="fas fa-check mr-2"></i>
-                        Approve
+                        Одобрить
                       </button>
                       <button className="px-4 py-2 bg-red-700 hover:bg-red-600 rounded-lg transition text-sm font-medium">
                         <i className="fas fa-times mr-2"></i>
-                        Reject
+                        Отклонить
                       </button>
                     </>
                   )}
                   <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition text-sm font-medium">
                     <i className="fas fa-edit mr-2"></i>
-                    Edit
+                    Редактировать
                   </button>
                 </div>
               </div>
@@ -191,4 +191,3 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
     </section>
   );
 }
-
