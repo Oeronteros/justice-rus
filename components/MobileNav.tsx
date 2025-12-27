@@ -28,9 +28,9 @@ export default function MobileNav({ currentSection, onSectionChange, language }:
           <button
             key={section}
             onClick={() => onSectionChange(section)}
-            className={`flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 ${
+            className={`nav-chip flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 ${
               currentSection === section
-                ? 'bg-gradient-to-b from-[#2b1516]/90 to-[#4b1a1f]/80 border border-[#d6b36a]/40 shadow-lg shadow-black/40'
+                ? 'is-active bg-gradient-to-b from-[#2b1516]/90 to-[#4b1a1f]/80 border border-[#d6b36a]/40 shadow-lg shadow-black/40'
                 : 'bg-[#120d0c]/60 hover:bg-[#1f1413]/80 border border-[#2a1b1a]/50'
             }`}
           >

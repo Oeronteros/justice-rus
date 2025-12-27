@@ -64,7 +64,7 @@ export default function Header({
               onClick={() => onSectionChange(section)}
               className={`nav-btn px-5 py-3 rounded-xl transition-all duration-300 font-medium ${
                 currentSection === section
-                  ? 'bg-gradient-to-r from-[#2b1516]/90 to-[#4b1a1f]/80 border border-[#d6b36a]/40 shadow-lg shadow-black/40'
+                  ? 'is-active bg-gradient-to-r from-[#2b1516]/90 to-[#4b1a1f]/80 border border-[#d6b36a]/40 shadow-lg shadow-black/40'
                   : 'bg-[#120d0c]/70 hover:bg-[#1a1211]/80 border border-[#2a1b1a]/70 hover:border-[#d6b36a]/30'
               }`}
             >

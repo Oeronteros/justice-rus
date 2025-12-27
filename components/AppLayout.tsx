@@ -107,8 +107,11 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
         onLanguageChange={handleLanguageChange}
       />
       <section className="wuxia-hero">
+        <div className="wuxia-ornament orb-a wuxia-parallax wuxia-parallax-deep"></div>
+        <div className="wuxia-ornament orb-b wuxia-parallax wuxia-parallax-light"></div>
+        <div className="wuxia-ornament ribbon wuxia-parallax wuxia-parallax-mid"></div>
         <div className="wuxia-hero-grid">
-          <div className="space-y-4">
+          <div className="space-y-4 wuxia-parallax wuxia-parallax-text">
             <span className="wuxia-tag">
               <i className="fas fa-circle-notch"></i>
               Клятва ордена Demonic Cult
@@ -136,8 +139,8 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
               </div>
             </div>
           </div>
-          <div className="wuxia-crest">
-            <div className="wuxia-crest-frame wuxia-parallax">
+          <div className="wuxia-crest wuxia-parallax wuxia-parallax-mid">
+            <div className="wuxia-crest-frame">
               <img
                 src="/emblem.svg"
                 alt="Demonic Cult Sigil"
@@ -147,7 +150,7 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
             <div className="wuxia-crest-caption">Demonic Cult</div>
             <div className="wuxia-crest-sub">Justice Mobile • Wuxia Order</div>
           </div>
-          <div className="wuxia-pillars">
+          <div className="wuxia-pillars wuxia-parallax wuxia-parallax-light">
             <div className="wuxia-pillar">
               <div className="text-xs uppercase tracking-widest text-[#d6b36a]">Ступень I</div>
               <div className="mt-2 font-semibold">Посвящение и дисциплина</div>
@@ -167,7 +170,11 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
           </div>
         </div>
       </section>
-      <main className="min-h-screen">{renderSection()}</main>
+      <main className="min-h-screen">
+        <div key={currentSection} className="wuxia-section">
+          {renderSection()}
+        </div>
+      </main>
       <MobileNav
         currentSection={currentSection}
         onSectionChange={setCurrentSection}
