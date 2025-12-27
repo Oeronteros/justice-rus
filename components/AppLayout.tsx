@@ -51,7 +51,6 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
       case 'absences':
         return <AbsencesSection user={user} />;
       case 'calculator':
-        // Рендерим калькулятор напрямую, так как он в app router
         if (typeof window !== 'undefined') {
           window.location.href = '/calculator';
           return null;
@@ -71,45 +70,63 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
         language={language}
         onLanguageChange={handleLanguageChange}
       />
-      <section className="occult-manifesto">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-          <div className="flex-1">
-            <span className="occult-tag">
+      <section className="wuxia-hero">
+        <div className="wuxia-hero-grid">
+          <div className="space-y-4">
+            <span className="wuxia-tag">
               <i className="fas fa-circle-notch"></i>
-              Манифест Ордена
+              Клятва ордена Demonic Cult
             </span>
-            <h2 className="text-3xl font-orbitron text-[#e8ddc8] mt-4">
-              Мы — культ рейдов, дисциплины и абсолютного дамага.
+            <h2 className="text-3xl sm:text-4xl font-orbitron text-[#f2e6d2]">
+              Тайное братство Justice Mobile: школа дуэлей, рейдов и власти над тенью.
             </h2>
-            <p className="text-[#c9b59a] mt-3 max-w-2xl">
-              Свод правил прост: держим строй, чтим ритуалы и выжимаем максимум из каждого билда.
-              В этом портале — расписание, гайды, состав и доказательства нашей силы.
+            <p className="text-[#d6c4a5] max-w-2xl">
+              Мы не просто гильдия. Мы дисциплина, ритуал и сила. Здесь рождаются командиры рейдов,
+              мастера клинка и хранители закона крови. Вступив, ты получаешь путь, знак и круг,
+              который держит слово крепче стали.
             </p>
+            <div className="wuxia-rituals">
+              <div className="wuxia-ritual">
+                <span className="wuxia-ritual-title">Обряд входа</span>
+                Проверка клинка, духа и верности.
+              </div>
+              <div className="wuxia-ritual">
+                <span className="wuxia-ritual-title">Кодекс крови</span>
+                Тишина, дисциплина, победа.
+              </div>
+              <div className="wuxia-ritual">
+                <span className="wuxia-ritual-title">Печать ордена</span>
+                Знак, что знают даже враги.
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col items-center gap-4">
-            <img
-              src="/emblem.svg"
-              alt="Guild Sigil"
-              className="w-36 h-36 opacity-90 drop-shadow-[0_18px_35px_rgba(0,0,0,0.55)]"
-            />
-            <div className="text-xs uppercase tracking-[0.4em] text-[#d7b37a]">Justice Mobile</div>
+          <div className="wuxia-crest">
+            <div className="wuxia-crest-frame">
+              <img
+                src="/emblem.svg"
+                alt="Demonic Cult Sigil"
+                className="w-36 h-36 opacity-90 wuxia-emblem drop-shadow-[0_18px_35px_rgba(0,0,0,0.55)]"
+              />
+            </div>
+            <div className="wuxia-crest-caption">Demonic Cult</div>
+            <div className="wuxia-crest-sub">Justice Mobile • Wuxia Order</div>
           </div>
-          <div className="grid grid-cols-2 gap-4 text-sm text-[#e3d6c2]">
-            <div className="occult-pillar">
-              <div className="text-xs uppercase tracking-widest text-[#d7b37a]">Пакт I</div>
-              <div className="mt-2 font-semibold">Железная дисциплина</div>
+          <div className="wuxia-pillars">
+            <div className="wuxia-pillar">
+              <div className="text-xs uppercase tracking-widest text-[#d6b36a]">Ступень I</div>
+              <div className="mt-2 font-semibold">Посвящение и дисциплина</div>
             </div>
-            <div className="occult-pillar">
-              <div className="text-xs uppercase tracking-widest text-[#d7b37a]">Пакт II</div>
-              <div className="mt-2 font-semibold">Знание билдов</div>
+            <div className="wuxia-pillar">
+              <div className="text-xs uppercase tracking-widest text-[#d6b36a]">Ступень II</div>
+              <div className="mt-2 font-semibold">Школа дуэлей и контроля</div>
             </div>
-            <div className="occult-pillar">
-              <div className="text-xs uppercase tracking-widest text-[#d7b37a]">Пакт III</div>
-              <div className="mt-2 font-semibold">Лояльность культу</div>
+            <div className="wuxia-pillar">
+              <div className="text-xs uppercase tracking-widest text-[#d6b36a]">Ступень III</div>
+              <div className="mt-2 font-semibold">Охота за легендами</div>
             </div>
-            <div className="occult-pillar">
-              <div className="text-xs uppercase tracking-widest text-[#d7b37a]">Пакт IV</div>
-              <div className="mt-2 font-semibold">Удар без промаха</div>
+            <div className="wuxia-pillar">
+              <div className="text-xs uppercase tracking-widest text-[#d6b36a]">Ступень IV</div>
+              <div className="mt-2 font-semibold">Венчание рейдов и титулов</div>
             </div>
           </div>
         </div>

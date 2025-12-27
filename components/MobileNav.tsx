@@ -29,8 +29,8 @@ export default function MobileNav({ currentSection, onSectionChange, language }:
             onClick={() => onSectionChange(section.id)}
             className={`flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 ${
               currentSection === section.id
-                ? 'bg-gradient-to-b from-[#3a261a]/90 to-[#5a3a28]/80 border border-[#c88b5e]/40 shadow-lg shadow-black/40'
-                : 'bg-[#17110d]/60 hover:bg-[#24180f]/80 border border-[#2b1e15]/50'
+                ? 'bg-gradient-to-b from-[#2b1516]/90 to-[#4b1a1f]/80 border border-[#d6b36a]/40 shadow-lg shadow-black/40'
+                : 'bg-[#120d0c]/60 hover:bg-[#1f1413]/80 border border-[#2a1b1a]/50'
             }`}
           >
             <i className={`fas ${section.icon} text-xl mb-1`}></i>

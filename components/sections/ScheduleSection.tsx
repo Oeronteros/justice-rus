@@ -118,12 +118,12 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
                   <p className="text-gray-300 mb-4">{schedule.description}</p>
 
                   <div className="flex justify-between items-center">
-                    <span className="px-3 py-1 bg-gradient-to-r from-[#3a261a]/60 to-[#5a3a28]/60 text-[#d7b37a] rounded-full text-sm font-medium">
+                    <span className="px-3 py-1 bg-gradient-to-r from-[#2b1516]/60 to-[#4b1a1f]/60 text-[#d6b36a] rounded-full text-sm font-medium">
                       <i className="fas fa-tag mr-2"></i>
                       {schedule.type}
                     </span>
 
-                    <button className="text-sm font-medium text-[#c88b5e] hover:text-[#e0b883] transition-colors">
+                    <button className="text-sm font-medium text-[#d6b36a] hover:text-[#e7c98a] transition-colors">
                       <i className="fas fa-calendar-check mr-1"></i>
                       Принять клятву
                     </button>

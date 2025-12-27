@@ -37,21 +37,21 @@ export default function Header({
       <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center">
         <div className="flex items-center space-x-4 mb-4 sm:mb-0">
           <div className="relative">
-            <div className="sigil-ring">
-              <div className="sigil-core">
+            <div className="seal-ring">
+              <div className="seal-core">
                 <i className="fas fa-skull text-white text-lg"></i>
               </div>
             </div>
             <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-[#120d0a]"></div>
           </div>
           <div className="text-left">
-            <h1 className="text-2xl font-bold font-orbitron text-[#e8ddc8] drop-shadow">
-              Cult Game Community
+            <h1 className="text-2xl font-bold font-orbitron text-[#f2e6d2] drop-shadow">
+              Demonic Cult
             </h1>
-            <p className="text-sm text-[#c9b59a] font-roboto">Guild Order • Justice Mobile</p>
-            <span className="occult-tag mt-2 block">
+            <p className="text-sm text-[#d6c4a5] font-roboto">Justice Mobile - Wuxia Order</p>
+            <span className="wuxia-tag mt-2 block">
               <i className="fas fa-eye"></i>
-              Клятва: Кровь • Долг • Тишина
+              Клятва: Кровь - Тишина - Победа
             </span>
           </div>
         </div>
@@ -63,8 +63,8 @@ export default function Header({
               onClick={() => onSectionChange(section.id)}
               className={`nav-btn px-5 py-3 rounded-xl transition-all duration-300 font-medium ${
                 currentSection === section.id
-                  ? 'bg-gradient-to-r from-[#3a261a]/90 to-[#5a3a28]/80 border border-[#c88b5e]/40 shadow-lg shadow-black/40'
-                  : 'bg-[#17110d]/70 hover:bg-[#201610]/80 border border-[#2b1e15]/70 hover:border-[#c88b5e]/30'
+                  ? 'bg-gradient-to-r from-[#2b1516]/90 to-[#4b1a1f]/80 border border-[#d6b36a]/40 shadow-lg shadow-black/40'
+                  : 'bg-[#120d0c]/70 hover:bg-[#1a1211]/80 border border-[#2a1b1a]/70 hover:border-[#d6b36a]/30'
               }`}
             >
               <i className={`fas ${section.icon} mr-2`}></i>
@@ -76,7 +76,7 @@ export default function Header({
             id="langSwitch"
             value={language}
             onChange={(e) => onLanguageChange(e.target.value as Language)}
-            className="ml-3 bg-[#17110d]/80 border border-[#2b1e15]/70 text-[#f2eadb] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#8b4a2f]/40 transition-all font-medium"
+            className="ml-3 bg-[#120d0c]/80 border border-[#2a1b1a]/70 text-[#f2e6d2] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#9f1320]/40 transition-all font-medium"
           >
             <option value="ru">RU</option>
             <option value="en">EN</option>
@@ -84,7 +84,7 @@ export default function Header({
 
           <button
             onClick={handleRefresh}
-            className="ml-3 bg-[#17110d]/80 hover:bg-[#24180f]/90 border border-[#2b1e15]/70 hover:border-[#c88b5e]/40 p-3 rounded-xl transition-all"
+            className="ml-3 bg-[#120d0c]/80 hover:bg-[#1f1413]/90 border border-[#2a1b1a]/70 hover:border-[#d6b36a]/40 p-3 rounded-xl transition-all"
             title="Refresh data"
           >
             <i className="fas fa-sync-alt text-lg"></i>
@@ -92,7 +92,7 @@ export default function Header({
 
           <button
             onClick={onLogout}
-            className="ml-3 bg-gradient-to-r from-[#6b2f20]/80 to-[#8b4a2f]/80 hover:from-[#7a3926]/90 hover:to-[#9b5536]/90 border border-[#c88b5e]/40 p-3 rounded-xl transition-all shadow-lg shadow-black/30"
+            className="ml-3 bg-gradient-to-r from-[#6e0f16]/80 to-[#9f1320]/80 hover:from-[#7c1220]/90 hover:to-[#b01b2a]/90 border border-[#d6b36a]/40 p-3 rounded-xl transition-all shadow-lg shadow-black/30"
             title="Logout"
           >
             <i className="fas fa-sign-out-alt text-lg"></i>

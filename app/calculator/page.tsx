@@ -79,25 +79,25 @@ export default function CalculatorPage() {
   }, [builds]);
 
   return (
-    <div className="min-h-screen bg-[#0b0a08] pt-20 pb-10">
+    <div className="min-h-screen bg-[#0b0a0a] pt-20 pb-10">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold font-orbitron text-[#e8ddc8] mb-4">
-            ??????????? ?????? (DPS ? ????)
+          <h1 className="text-5xl font-bold font-orbitron text-[#f2e6d2] mb-4">
+            Build Calculator (DPS & Damage)
           </h1>
-          <p className="text-[#c9b59a] text-lg max-w-2xl mx-auto">
-            ??????????? ?????? ?? ???????? ????? ?? ????, DPS ? ?????? ????? ?? ????? ???.
+          <p className="text-[#d6c4a5] text-lg max-w-2xl mx-auto">
+            Compare builds by average hit, DPS, and total damage over a fight duration.
           </p>
         </div>
 
         <div className="flex items-center justify-between mb-6">
-          <div className="text-gray-400 text-sm">?? 4 ?????? ??? ?????????.</div>
+          <div className="text-gray-400 text-sm">Up to 4 builds for comparison.</div>
           <button
             onClick={addBuild}
             className="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm font-semibold transition"
           >
             <i className="fas fa-plus mr-2"></i>
-            ???????? ????
+            Add build
           </button>
         </div>
 
@@ -106,20 +106,20 @@ export default function CalculatorPage() {
             <div key={`${build.name}-${index}`} className="card p-8">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-r from-[#8b4a2f] to-[#c88b5e] rounded-full flex items-center justify-center shadow-lg shadow-[#3b1f14]/40">
+                  <div className="w-12 h-12 bg-gradient-to-r from-[#9f1320] to-[#d6b36a] rounded-full flex items-center justify-center shadow-lg shadow-[#2d0f14]/40">
                     <i className="fas fa-sword text-white"></i>
                   </div>
                   <input
                     value={build.name}
                     onChange={(e) => updateBuild(index, 'name', e.target.value)}
-                    className="bg-transparent text-2xl font-bold font-orbitron text-[#c88b5e] focus:outline-none"
+                    className="bg-transparent text-2xl font-bold font-orbitron text-[#d6b36a] focus:outline-none"
                   />
                 </div>
                 {builds.length > 1 && (
                   <button
                     onClick={() => removeBuild(index)}
-                    className="text-gray-400 hover:text-[#c88b5e] transition"
-                    title="??????? ????"
+                    className="text-gray-400 hover:text-[#d6b36a] transition"
+                    title="Remove build"
                   >
                     <i className="fas fa-trash"></i>
                   </button>
@@ -128,99 +128,99 @@ export default function CalculatorPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-[#e3d6c2] mb-2 text-sm">??????? ????</label>
+                  <label className="block text-[#f2e6d2] mb-2 text-sm">Base damage</label>
                   <input
                     type="number"
                     value={build.baseDamage}
                     onChange={(e) => updateBuild(index, 'baseDamage', e.target.value)}
                     className="input-field"
-                    placeholder="????. 1200"
+                    placeholder="e.g. 1200"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#e3d6c2] mb-2 text-sm">??????? ????? ?????</label>
+                  <label className="block text-[#f2e6d2] mb-2 text-sm">Flat bonus damage</label>
                   <input
                     type="number"
                     value={build.flatDamage}
                     onChange={(e) => updateBuild(index, 'flatDamage', e.target.value)}
                     className="input-field"
-                    placeholder="????. 250"
+                    placeholder="e.g. 250"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#e3d6c2] mb-2 text-sm">???????? ????? (??/?)</label>
+                  <label className="block text-[#f2e6d2] mb-2 text-sm">Attack speed (hits/s)</label>
                   <input
                     type="number"
                     value={build.attacksPerSecond}
                     onChange={(e) => updateBuild(index, 'attacksPerSecond', e.target.value)}
                     className="input-field"
-                    placeholder="????. 1.6"
+                    placeholder="e.g. 1.6"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#e3d6c2] mb-2 text-sm">????. ???? (%)</label>
+                  <label className="block text-[#f2e6d2] mb-2 text-sm">Crit chance (%)</label>
                   <input
                     type="number"
                     value={build.critChance}
                     onChange={(e) => updateBuild(index, 'critChance', e.target.value)}
                     className="input-field"
-                    placeholder="????. 35"
+                    placeholder="e.g. 35"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#e3d6c2] mb-2 text-sm">????. ?????????</label>
+                  <label className="block text-[#f2e6d2] mb-2 text-sm">Crit multiplier</label>
                   <input
                     type="number"
                     value={build.critMultiplier}
                     onChange={(e) => updateBuild(index, 'critMultiplier', e.target.value)}
                     className="input-field"
-                    placeholder="????. 2.0"
+                    placeholder="e.g. 2.0"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#e3d6c2] mb-2 text-sm">???????? ???? (%)</label>
+                  <label className="block text-[#f2e6d2] mb-2 text-sm">Bonus damage (%)</label>
                   <input
                     type="number"
                     value={build.bonusDamage}
                     onChange={(e) => updateBuild(index, 'bonusDamage', e.target.value)}
                     className="input-field"
-                    placeholder="????. 15"
+                    placeholder="e.g. 15"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-[#e3d6c2] mb-2 text-sm">???????????? ??? (???)</label>
+                  <label className="block text-[#f2e6d2] mb-2 text-sm">Fight duration (sec)</label>
                   <input
                     type="number"
                     value={build.duration}
                     onChange={(e) => updateBuild(index, 'duration', e.target.value)}
                     className="input-field"
-                    placeholder="????. 90"
+                    placeholder="e.g. 90"
                   />
                 </div>
               </div>
 
               <div className="mt-6 space-y-3">
-                <div className="flex items-center justify-between rounded-xl bg-[#130d0a]/70 border border-[#2b1e15] px-4 py-3">
-                  <span className="text-[#e3d6c2] text-sm">??????? ???? ?? ????</span>
-                  <span className="text-xl font-bold font-orbitron text-[#c88b5e]">
+                <div className="flex items-center justify-between rounded-xl bg-[#120d0c]/75 border border-[#2b1b1a] px-4 py-3">
+                  <span className="text-[#f2e6d2] text-sm">Average hit</span>
+                  <span className="text-xl font-bold font-orbitron text-[#d6b36a]">
                     {results[index].avgHit ? results[index].avgHit.toFixed(2) : '?'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between rounded-xl bg-[#130d0a]/70 border border-[#2b1e15] px-4 py-3">
-                  <span className="text-[#e3d6c2] text-sm">DPS</span>
-                  <span className="text-xl font-bold font-orbitron text-[#c88b5e]">
+                <div className="flex items-center justify-between rounded-xl bg-[#120d0c]/75 border border-[#2b1b1a] px-4 py-3">
+                  <span className="text-[#f2e6d2] text-sm">DPS</span>
+                  <span className="text-xl font-bold font-orbitron text-[#d6b36a]">
                     {results[index].dps ? results[index].dps.toFixed(2) : '?'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between rounded-xl bg-[#130d0a]/70 border border-[#2b1e15] px-4 py-3">
-                  <span className="text-[#e3d6c2] text-sm">????? ???? ?? ???</span>
-                  <span className="text-xl font-bold font-orbitron text-[#c88b5e]">
+                <div className="flex items-center justify-between rounded-xl bg-[#120d0c]/75 border border-[#2b1b1a] px-4 py-3">
+                  <span className="text-[#f2e6d2] text-sm">Total damage</span>
+                  <span className="text-xl font-bold font-orbitron text-[#d6b36a]">
                     {results[index].totalDamage ? results[index].totalDamage.toFixed(2) : '?'}
                   </span>
                 </div>
@@ -229,9 +229,9 @@ export default function CalculatorPage() {
           ))}
         </div>
 
-        <div className="mt-10 text-center text-[#b7a68e] text-sm">
-          ???????: ??????? ???? = (???? + ??????? ?????) ? (1 + ?????% ) ? (1 + ????.???? ? (????.????. ? 1));
-          DPS = ??????? ???? ? ???????? ?????.
+        <div className="mt-10 text-center text-gray-500 text-sm">
+          Formula: avg hit = (base + flat bonus) ? (1 + bonus% ) ? (1 + crit chance ? (crit mult ? 1));
+          DPS = avg hit ? attack speed.
         </div>
       </div>
     </div>

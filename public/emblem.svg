@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(110 110) rotate(90) scale(110)">
-      <stop offset="0" stop-color="#d7b37a" stop-opacity="0.6"/>
-      <stop offset="0.6" stop-color="#8b4a2f" stop-opacity="0.2"/>
-      <stop offset="1" stop-color="#0b0a08" stop-opacity="0"/>
+    <linearGradient id="seal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9f1320"/>
+      <stop offset="1" stop-color="#6e0f16"/>
+    </linearGradient>
+    <radialGradient id="gold" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(120 120) rotate(90) scale(120)">
+      <stop offset="0" stop-color="#f2e6d2" stop-opacity="0.3"/>
+      <stop offset="0.6" stop-color="#d6b36a" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#0b0a0a" stop-opacity="0"/>
     </radialGradient>
   </defs>
-  <circle cx="110" cy="110" r="104" stroke="#c88b5e" stroke-opacity="0.7" stroke-width="2"/>
-  <circle cx="110" cy="110" r="86" stroke="#8b4a2f" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="6 6"/>
-  <circle cx="110" cy="110" r="68" stroke="#d7b37a" stroke-opacity="0.3" stroke-width="1"/>
-  <circle cx="110" cy="110" r="110" fill="url(#glow)"/>
-  <path d="M110 38L164 154H56L110 38Z" stroke="#c88b5e" stroke-opacity="0.8" stroke-width="2"/>
-  <path d="M110 70L141 134H79L110 70Z" stroke="#d7b37a" stroke-opacity="0.7" stroke-width="1.5"/>
-  <circle cx="110" cy="112" r="18" stroke="#c88b5e" stroke-width="2"/>
-  <circle cx="110" cy="112" r="8" fill="#c88b5e"/>
-  <path d="M40 110H180" stroke="#8b4a2f" stroke-opacity="0.5" stroke-width="1"/>
-  <path d="M110 40V180" stroke="#8b4a2f" stroke-opacity="0.5" stroke-width="1"/>
+  <rect x="18" y="18" width="204" height="204" rx="18" fill="url(#seal)" stroke="#d6b36a" stroke-opacity="0.6" stroke-width="2"/>
+  <rect x="32" y="32" width="176" height="176" rx="14" stroke="#d6b36a" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="6 6"/>
+  <circle cx="120" cy="120" r="88" fill="url(#gold)"/>
+  <path d="M120 46L178 120L120 194L62 120L120 46Z" stroke="#f2e6d2" stroke-opacity="0.55" stroke-width="2"/>
+  <path d="M120 72L156 120L120 168L84 120L120 72Z" stroke="#f2e6d2" stroke-opacity="0.5" stroke-width="1.5"/>
+  <circle cx="120" cy="120" r="22" stroke="#f2e6d2" stroke-opacity="0.65" stroke-width="2"/>
+  <circle cx="120" cy="120" r="10" fill="#f2e6d2"/>
+  <path d="M60 120H180" stroke="#d6b36a" stroke-opacity="0.45" stroke-width="1"/>
+  <path d="M120 60V180" stroke="#d6b36a" stroke-opacity="0.45" stroke-width="1"/>
 </svg>
