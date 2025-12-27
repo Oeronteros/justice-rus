@@ -34,7 +34,7 @@ export default function Header({
   };
 
   return (
-    <header className="bg-gradient-to-r from-[#0f151c]/95 via-[#0c1218]/95 to-[#0a1016]/95 backdrop-blur-xl border-b border-[#2a3a47]/60 shadow-2xl shadow-black/40 sticky top-0 z-40">
+    <header className="bg-gradient-to-r from-[#0b121a]/95 via-[#0a1118]/95 to-[#0a1016]/95 backdrop-blur-xl border-b border-[#223544]/60 shadow-2xl shadow-black/40 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center">
         <div className="flex items-center space-x-4 mb-4 sm:mb-0">
           <div className="relative">
@@ -43,7 +43,7 @@ export default function Header({
                 <i className="fas fa-skull text-white text-lg"></i>
               </div>
             </div>
-            <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-[#120d0a]"></div>
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#5fd1d4] rounded-full border-2 border-[#0a1118]"></div>
           </div>
           <div className="text-left">
             <h1 className="text-2xl font-bold font-orbitron text-[#e6eff5] drop-shadow">
@@ -57,15 +57,15 @@ export default function Header({
           </div>
         </div>
 
-        <nav className="flex flex-wrap items-center justify-center gap-2">
+        <nav className="wuxia-nav flex flex-wrap items-center justify-center gap-2">
           {sections.map((section) => (
             <button
               key={section}
               onClick={() => onSectionChange(section)}
               className={`nav-btn px-5 py-3 rounded-xl transition-all duration-300 font-medium ${
                 currentSection === section
-                  ? 'is-active bg-gradient-to-r from-[#182734]/90 to-[#244057]/80 border border-[#8fb9cc]/40 shadow-lg shadow-black/40'
-                  : 'bg-[#0f1419]/70 hover:bg-[#141c24]/80 border border-[#23303b]/70 hover:border-[#8fb9cc]/30'
+                  ? 'is-active bg-gradient-to-r from-[#142636]/90 to-[#1d3b52]/80 border border-[#8fb9cc]/45 shadow-lg shadow-black/40'
+                  : 'bg-[#0b141d]/70 hover:bg-[#14202a]/80 border border-[#223140]/70 hover:border-[#8fb9cc]/30'
               }`}
             >
               <span className="mr-2 inline-flex text-[#8fb9cc]">
@@ -79,7 +79,7 @@ export default function Header({
             id="langSwitch"
             value={language}
             onChange={(e) => onLanguageChange(e.target.value as Language)}
-            className="ml-3 bg-[#0f1419]/80 border border-[#23303b]/70 text-[#e6eff5] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a90b0]/40 transition-all font-medium"
+            className="ml-3 bg-[#0b141d]/80 border border-[#223140]/70 text-[#e6eff5] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a90b0]/40 transition-all font-medium"
           >
             <option value="ru">RU</option>
             <option value="en">EN</option>
@@ -87,7 +87,7 @@ export default function Header({
 
           <button
             onClick={handleRefresh}
-            className="ml-3 bg-[#0f1419]/80 hover:bg-[#18222c]/90 border border-[#23303b]/70 hover:border-[#8fb9cc]/40 p-3 rounded-xl transition-all"
+            className="ml-3 bg-[#0b141d]/80 hover:bg-[#172230]/90 border border-[#223140]/70 hover:border-[#8fb9cc]/40 p-3 rounded-xl transition-all"
             title="Refresh data"
           >
             <i className="fas fa-sync-alt text-lg"></i>

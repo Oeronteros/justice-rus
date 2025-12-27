@@ -134,7 +134,7 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
             filteredGuides.map((guide) => (
               <div key={guide.id} className="card p-6 hover:transform hover:-translate-y-1 transition-all duration-300">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="px-3 py-1 bg-gradient-to-r from-[#182734]/60 to-[#244057]/60 text-[#8fb9cc] rounded-full text-sm font-medium">
+                  <span className="px-3 py-1 bg-gradient-to-r from-[#142636]/60 to-[#1d3b52]/60 text-[#8fb9cc] rounded-full text-sm font-medium">
                     <i className="fas fa-tag mr-2"></i>
                     {guide.category}
                   </span>

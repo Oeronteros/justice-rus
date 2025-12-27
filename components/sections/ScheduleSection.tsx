@@ -118,7 +118,7 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
                   <p className="text-gray-300 mb-4">{schedule.description}</p>
 
                   <div className="flex justify-between items-center">
-                    <span className="px-3 py-1 bg-gradient-to-r from-[#182734]/60 to-[#244057]/60 text-[#8fb9cc] rounded-full text-sm font-medium">
+                    <span className="px-3 py-1 bg-gradient-to-r from-[#142636]/60 to-[#1d3b52]/60 text-[#8fb9cc] rounded-full text-sm font-medium">
                       <i className="fas fa-tag mr-2"></i>
                       {schedule.type}
                     </span>

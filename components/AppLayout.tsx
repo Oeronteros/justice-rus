@@ -107,10 +107,11 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
         onLanguageChange={handleLanguageChange}
       />
       <section className="wuxia-hero">
-        <div className="wuxia-ornament orb-a wuxia-parallax wuxia-parallax-deep"></div>
-        <div className="wuxia-ornament orb-b wuxia-parallax wuxia-parallax-light"></div>
-        <div className="wuxia-ornament ribbon wuxia-parallax wuxia-parallax-mid"></div>
-        <div className="wuxia-hero-grid">
+        <div className="wuxia-hero-surface">
+          <div className="wuxia-ornament orb-a wuxia-parallax wuxia-parallax-deep"></div>
+          <div className="wuxia-ornament orb-b wuxia-parallax wuxia-parallax-light"></div>
+          <div className="wuxia-ornament ribbon wuxia-parallax wuxia-parallax-mid"></div>
+          <div className="wuxia-hero-grid">
           <div className="space-y-4 wuxia-parallax wuxia-parallax-text">
             <span className="wuxia-tag">
               <i className="fas fa-circle-notch"></i>
@@ -168,6 +169,7 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
               <div className="mt-2 font-semibold">Венчание рейдов и титулов</div>
             </div>
           </div>
+        </div>
         </div>
       </section>
       <main className="min-h-screen">
