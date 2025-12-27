@@ -21,7 +21,7 @@ const sections: { id: Section; icon: string }[] = [
 
 export default function MobileNav({ currentSection, onSectionChange, language }: MobileNavProps) {
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900/90 to-black/70 backdrop-blur-xl border-t border-red-900/30 z-40 shadow-2xl shadow-red-900/20">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-t from-[#0f0b09]/95 to-[#1a120e]/85 backdrop-blur-xl border-t border-[#3b2a1f]/60 z-40 shadow-2xl shadow-black/40">
       <div className="flex justify-around py-3 px-2">
         {sections.map((section) => (
           <button
@@ -29,8 +29,8 @@ export default function MobileNav({ currentSection, onSectionChange, language }:
             onClick={() => onSectionChange(section.id)}
             className={`flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 ${
               currentSection === section.id
-                ? 'bg-gradient-to-b from-red-700/50 to-purple-700/50 border border-red-500/50 shadow-lg shadow-red-900/30'
-                : 'bg-gray-800/30 hover:bg-gray-700/50 border border-gray-700/30'
+                ? 'bg-gradient-to-b from-[#3a261a]/90 to-[#5a3a28]/80 border border-[#c88b5e]/40 shadow-lg shadow-black/40'
+                : 'bg-[#17110d]/60 hover:bg-[#24180f]/80 border border-[#2b1e15]/50'
             }`}
           >
             <i className={`fas ${section.icon} text-xl mb-1`}></i>

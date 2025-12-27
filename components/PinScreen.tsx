@@ -50,27 +50,27 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-20 bg-gradient-to-br from-gray-900 via-black to-gray-900">
+    <div className="fixed inset-0 flex items-center justify-center z-20 bg-[#0b0a08]/95">
       <div className="card p-10 text-center w-full max-w-md relative overflow-hidden">
         {/* Анимированный фон для карточки */}
-        <div className="absolute inset-0 bg-gradient-to-br from-red-900/10 to-purple-900/10 rounded-2xl -z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-[#3a261a]/40 to-[#120d0a]/80 rounded-2xl -z-10"></div>
 
         <div className="mb-8">
           <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 bg-gradient-to-r from-red-600 to-purple-600 rounded-full flex items-center justify-center shadow-lg shadow-red-600/30">
+            <div className="w-20 h-20 bg-gradient-to-r from-[#8b4a2f] to-[#c88b5e] rounded-full flex items-center justify-center shadow-lg shadow-[#5c2e1d]/40">
               <i className="fas fa-skull-crossbones text-3xl text-white"></i>
             </div>
           </div>
 
-          <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 via-purple-400 to-red-400 mb-3">
+          <h2 className="text-4xl font-bold font-orbitron text-[#e8ddc8] mb-3">
             Cult Game Community
           </h2>
-          <p className="text-gray-400 text-lg">Guild Portal - Justice Mobile</p>
+          <p className="text-[#c9b59a] text-lg">Guild Portal - Justice Mobile</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <p className="text-sm text-gray-400 mb-4 font-medium">Enter password to access</p>
+            <p className="text-sm text-[#c9b59a] mb-4 font-medium">Enter password to access</p>
             <input
               type="password"
               value={pin}
@@ -94,7 +94,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
           </button>
 
           {error && (
-            <div className="text-red-400 text-sm mt-2 p-4 bg-red-900/30 rounded-xl border border-red-800/50">
+            <div className="text-[#e8b08d] text-sm mt-2 p-4 bg-[#2a1b14]/60 rounded-xl border border-[#8b4a2f]/40">
               <i className="fas fa-exclamation-triangle mr-2"></i>
               {error}
             </div>

@@ -79,13 +79,13 @@ export default function CalculatorPage() {
   }, [builds]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 pt-20 pb-10">
+    <div className="min-h-screen bg-[#0b0a08] pt-20 pb-10">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 via-purple-400 to-red-400 mb-4">
+          <h1 className="text-5xl font-bold font-orbitron text-[#e8ddc8] mb-4">
             ??????????? ?????? (DPS ? ????)
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className="text-[#c9b59a] text-lg max-w-2xl mx-auto">
             ??????????? ?????? ?? ???????? ????? ?? ????, DPS ? ?????? ????? ?? ????? ???.
           </p>
         </div>
@@ -106,19 +106,19 @@ export default function CalculatorPage() {
             <div key={`${build.name}-${index}`} className="card p-8">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-r from-red-600 to-red-800 rounded-full flex items-center justify-center shadow-lg shadow-red-900/30">
+                  <div className="w-12 h-12 bg-gradient-to-r from-[#8b4a2f] to-[#c88b5e] rounded-full flex items-center justify-center shadow-lg shadow-[#3b1f14]/40">
                     <i className="fas fa-sword text-white"></i>
                   </div>
                   <input
                     value={build.name}
                     onChange={(e) => updateBuild(index, 'name', e.target.value)}
-                    className="bg-transparent text-2xl font-bold font-orbitron text-red-400 focus:outline-none"
+                    className="bg-transparent text-2xl font-bold font-orbitron text-[#c88b5e] focus:outline-none"
                   />
                 </div>
                 {builds.length > 1 && (
                   <button
                     onClick={() => removeBuild(index)}
-                    className="text-gray-400 hover:text-red-400 transition"
+                    className="text-gray-400 hover:text-[#c88b5e] transition"
                     title="??????? ????"
                   >
                     <i className="fas fa-trash"></i>
@@ -128,7 +128,7 @@ export default function CalculatorPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-gray-300 mb-2 text-sm">??????? ????</label>
+                  <label className="block text-[#e3d6c2] mb-2 text-sm">??????? ????</label>
                   <input
                     type="number"
                     value={build.baseDamage}
@@ -139,7 +139,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 mb-2 text-sm">??????? ????? ?????</label>
+                  <label className="block text-[#e3d6c2] mb-2 text-sm">??????? ????? ?????</label>
                   <input
                     type="number"
                     value={build.flatDamage}
@@ -150,7 +150,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 mb-2 text-sm">???????? ????? (??/?)</label>
+                  <label className="block text-[#e3d6c2] mb-2 text-sm">???????? ????? (??/?)</label>
                   <input
                     type="number"
                     value={build.attacksPerSecond}
@@ -161,7 +161,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 mb-2 text-sm">????. ???? (%)</label>
+                  <label className="block text-[#e3d6c2] mb-2 text-sm">????. ???? (%)</label>
                   <input
                     type="number"
                     value={build.critChance}
@@ -172,7 +172,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 mb-2 text-sm">????. ?????????</label>
+                  <label className="block text-[#e3d6c2] mb-2 text-sm">????. ?????????</label>
                   <input
                     type="number"
                     value={build.critMultiplier}
@@ -183,7 +183,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 mb-2 text-sm">???????? ???? (%)</label>
+                  <label className="block text-[#e3d6c2] mb-2 text-sm">???????? ???? (%)</label>
                   <input
                     type="number"
                     value={build.bonusDamage}
@@ -194,7 +194,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-gray-300 mb-2 text-sm">???????????? ??? (???)</label>
+                  <label className="block text-[#e3d6c2] mb-2 text-sm">???????????? ??? (???)</label>
                   <input
                     type="number"
                     value={build.duration}
@@ -206,21 +206,21 @@ export default function CalculatorPage() {
               </div>
 
               <div className="mt-6 space-y-3">
-                <div className="flex items-center justify-between rounded-xl bg-gray-900/60 border border-gray-800 px-4 py-3">
-                  <span className="text-gray-300 text-sm">??????? ???? ?? ????</span>
-                  <span className="text-xl font-bold font-orbitron text-red-400">
+                <div className="flex items-center justify-between rounded-xl bg-[#130d0a]/70 border border-[#2b1e15] px-4 py-3">
+                  <span className="text-[#e3d6c2] text-sm">??????? ???? ?? ????</span>
+                  <span className="text-xl font-bold font-orbitron text-[#c88b5e]">
                     {results[index].avgHit ? results[index].avgHit.toFixed(2) : '?'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between rounded-xl bg-gray-900/60 border border-gray-800 px-4 py-3">
-                  <span className="text-gray-300 text-sm">DPS</span>
-                  <span className="text-xl font-bold font-orbitron text-red-400">
+                <div className="flex items-center justify-between rounded-xl bg-[#130d0a]/70 border border-[#2b1e15] px-4 py-3">
+                  <span className="text-[#e3d6c2] text-sm">DPS</span>
+                  <span className="text-xl font-bold font-orbitron text-[#c88b5e]">
                     {results[index].dps ? results[index].dps.toFixed(2) : '?'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between rounded-xl bg-gray-900/60 border border-gray-800 px-4 py-3">
-                  <span className="text-gray-300 text-sm">????? ???? ?? ???</span>
-                  <span className="text-xl font-bold font-orbitron text-red-400">
+                <div className="flex items-center justify-between rounded-xl bg-[#130d0a]/70 border border-[#2b1e15] px-4 py-3">
+                  <span className="text-[#e3d6c2] text-sm">????? ???? ?? ???</span>
+                  <span className="text-xl font-bold font-orbitron text-[#c88b5e]">
                     {results[index].totalDamage ? results[index].totalDamage.toFixed(2) : '?'}
                   </span>
                 </div>
@@ -229,7 +229,7 @@ export default function CalculatorPage() {
           ))}
         </div>
 
-        <div className="mt-10 text-center text-gray-500 text-sm">
+        <div className="mt-10 text-center text-[#b7a68e] text-sm">
           ???????: ??????? ???? = (???? + ??????? ?????) ? (1 + ?????% ) ? (1 + ????.???? ? (????.????. ? 1));
           DPS = ??????? ???? ? ???????? ?????.
         </div>

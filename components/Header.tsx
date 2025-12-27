@@ -33,20 +33,20 @@ export default function Header({
   };
 
   return (
-    <header className="bg-gradient-to-r from-gray-900/90 to-black/90 backdrop-blur-xl border-b border-red-900/30 shadow-2xl shadow-red-900/20 sticky top-0 z-40">
+    <header className="bg-gradient-to-r from-[#1a120e]/95 via-[#0f0b09]/95 to-[#0b0a08]/95 backdrop-blur-xl border-b border-[#3b2a1f]/60 shadow-2xl shadow-black/40 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center">
         <div className="flex items-center space-x-4 mb-4 sm:mb-0">
           <div className="relative">
-            <div className="w-12 h-12 bg-gradient-to-r from-red-600 to-purple-600 rounded-full flex items-center justify-center shadow-lg shadow-red-600/30">
+            <div className="w-12 h-12 bg-gradient-to-r from-[#8b4a2f] to-[#c88b5e] rounded-full flex items-center justify-center shadow-lg shadow-[#5c2e1d]/40">
               <i className="fas fa-skull text-white text-lg"></i>
             </div>
-            <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-900"></div>
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-[#120d0a]"></div>
           </div>
           <div className="text-left">
-            <h1 className="text-2xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400">
+            <h1 className="text-2xl font-bold font-orbitron text-[#e8ddc8] drop-shadow">
               Cult Game Community
             </h1>
-            <p className="text-sm text-gray-400 font-roboto">Justice Mobile Guild</p>
+            <p className="text-sm text-[#c9b59a] font-roboto">Justice Mobile Guild</p>
           </div>
         </div>
 
@@ -57,8 +57,8 @@ export default function Header({
               onClick={() => onSectionChange(section.id)}
               className={`nav-btn px-5 py-3 rounded-xl transition-all duration-300 font-medium ${
                 currentSection === section.id
-                  ? 'bg-gradient-to-r from-red-700/50 to-purple-700/50 border border-red-500/50 shadow-lg shadow-red-900/30'
-                  : 'bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 hover:border-red-500/30'
+                  ? 'bg-gradient-to-r from-[#3a261a]/90 to-[#5a3a28]/80 border border-[#c88b5e]/40 shadow-lg shadow-black/40'
+                  : 'bg-[#17110d]/70 hover:bg-[#201610]/80 border border-[#2b1e15]/70 hover:border-[#c88b5e]/30'
               }`}
             >
               <i className={`fas ${section.icon} mr-2`}></i>
@@ -70,7 +70,7 @@ export default function Header({
             id="langSwitch"
             value={language}
             onChange={(e) => onLanguageChange(e.target.value as Language)}
-            className="ml-3 bg-gray-800/50 border border-gray-700/50 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-600/50 transition-all font-medium"
+            className="ml-3 bg-[#17110d]/80 border border-[#2b1e15]/70 text-[#f2eadb] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#8b4a2f]/40 transition-all font-medium"
           >
             <option value="ru">RU</option>
             <option value="en">EN</option>
@@ -78,7 +78,7 @@ export default function Header({
 
           <button
             onClick={handleRefresh}
-            className="ml-3 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 hover:border-red-500/30 p-3 rounded-xl transition-all"
+            className="ml-3 bg-[#17110d]/80 hover:bg-[#24180f]/90 border border-[#2b1e15]/70 hover:border-[#c88b5e]/40 p-3 rounded-xl transition-all"
             title="Refresh data"
           >
             <i className="fas fa-sync-alt text-lg"></i>
@@ -86,7 +86,7 @@ export default function Header({
 
           <button
             onClick={onLogout}
-            className="ml-3 bg-gradient-to-r from-red-800/70 to-red-900/70 hover:from-red-700/70 hover:to-red-800/70 border border-red-700/50 p-3 rounded-xl transition-all shadow-lg shadow-red-900/20"
+            className="ml-3 bg-gradient-to-r from-[#6b2f20]/80 to-[#8b4a2f]/80 hover:from-[#7a3926]/90 hover:to-[#9b5536]/90 border border-[#c88b5e]/40 p-3 rounded-xl transition-all shadow-lg shadow-black/30"
             title="Logout"
           >
             <i className="fas fa-sign-out-alt text-lg"></i>
