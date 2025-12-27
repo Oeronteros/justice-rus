@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(110 110) rotate(90) scale(110)">
+      <stop offset="0" stop-color="#d7b37a" stop-opacity="0.6"/>
+      <stop offset="0.6" stop-color="#8b4a2f" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#0b0a08" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="110" cy="110" r="104" stroke="#c88b5e" stroke-opacity="0.7" stroke-width="2"/>
+  <circle cx="110" cy="110" r="86" stroke="#8b4a2f" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="6 6"/>
+  <circle cx="110" cy="110" r="68" stroke="#d7b37a" stroke-opacity="0.3" stroke-width="1"/>
+  <circle cx="110" cy="110" r="110" fill="url(#glow)"/>
+  <path d="M110 38L164 154H56L110 38Z" stroke="#c88b5e" stroke-opacity="0.8" stroke-width="2"/>
+  <path d="M110 70L141 134H79L110 70Z" stroke="#d7b37a" stroke-opacity="0.7" stroke-width="1.5"/>
+  <circle cx="110" cy="112" r="18" stroke="#c88b5e" stroke-width="2"/>
+  <circle cx="110" cy="112" r="8" fill="#c88b5e"/>
+  <path d="M40 110H180" stroke="#8b4a2f" stroke-opacity="0.5" stroke-width="1"/>
+  <path d="M110 40V180" stroke="#8b4a2f" stroke-opacity="0.5" stroke-width="1"/>
+</svg>

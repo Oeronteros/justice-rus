@@ -17,6 +17,20 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [rankFilter, setRankFilter] = useState<string>('all');
+  const rankLabels: Record<string, string> = {
+    novice: 'Новик',
+    member: 'Брат',
+    veteran: 'Ветеран',
+    elite: 'Элита',
+    legend: 'Легенда',
+    gm: 'ГМ',
+  };
+  const statusLabels: Record<string, string> = {
+    active: 'Активен',
+    inactive: 'Неактивен',
+    pending: 'Ожидает',
+    leave: 'Отгул',
+  };
 
   useEffect(() => {
     loadRegistrations();
@@ -241,7 +255,7 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
                             registration.rank
                           )}`}
                         >
-                          {registration.rank}
+                          {rankLabels[registration.rank] || registration.rank}
                         </span>
                       </td>
                       <td>{registration.class}</td>
@@ -258,7 +272,7 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
                             registration.status
                           )}`}
                         >
-                          {registration.status}
+                          {statusLabels[registration.status] || registration.status}
                         </span>
                       </td>
                     </tr>

@@ -320,6 +320,11 @@ body {
     opacity: 0.8;
   }
 
+  .card > * {
+    position: relative;
+    z-index: 1;
+  }
+
   /* Ахуенные кнопки */
   .btn-primary {
     @apply text-white font-medium py-3 px-6 rounded-xl transition-all duration-300;

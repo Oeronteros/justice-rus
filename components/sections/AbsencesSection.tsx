@@ -14,6 +14,11 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const statusLabels: Record<string, string> = {
+    pending: 'На рассмотрении',
+    approved: 'Одобрено',
+    rejected: 'Отклонено',
+  };
 
   useEffect(() => {
     loadAbsences();
@@ -144,7 +149,7 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
                     )}`}
                   >
                     <i className="fas fa-circle mr-2"></i>
-                    {absence.status}
+                    {statusLabels[absence.status] || absence.status}
                   </span>
                 </div>
 

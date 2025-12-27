@@ -73,10 +73,10 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
       />
       <section className="occult-manifesto">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-          <div>
+          <div className="flex-1">
             <span className="occult-tag">
               <i className="fas fa-circle-notch"></i>
-              Order Manifest
+              Манифест Ордена
             </span>
             <h2 className="text-3xl font-orbitron text-[#e8ddc8] mt-4">
               Мы — культ рейдов, дисциплины и абсолютного дамага.
@@ -85,6 +85,14 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
               Свод правил прост: держим строй, чтим ритуалы и выжимаем максимум из каждого билда.
               В этом портале — расписание, гайды, состав и доказательства нашей силы.
             </p>
+          </div>
+          <div className="flex flex-col items-center gap-4">
+            <img
+              src="/emblem.svg"
+              alt="Guild Sigil"
+              className="w-36 h-36 opacity-90 drop-shadow-[0_18px_35px_rgba(0,0,0,0.55)]"
+            />
+            <div className="text-xs uppercase tracking-[0.4em] text-[#d7b37a]">Justice Mobile</div>
           </div>
           <div className="grid grid-cols-2 gap-4 text-sm text-[#e3d6c2]">
             <div className="occult-pillar">
