@@ -18,27 +18,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const response = await fetch(`${DISCORD_BOT_API_URL}/api/news`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-        ...bypassHeader,
-      },
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      return NextResponse.json(
-        {
-          error: 'Failed to fetch news from Discord bot',
-          message: errorData.error || errorData.message || `HTTP ${response.status}`,
-        },
-        { status: response.status }
-      );
-    }
-
-    const data = await response.json();
-    return NextResponse.json(data);
+    // Discord bot does not expose a news endpoint; return empty list to keep UI stable.
+    return NextResponse.json([]);
   } catch (error) {
     console.error('Error proxying news request to Discord bot:', error);
     return NextResponse.json(

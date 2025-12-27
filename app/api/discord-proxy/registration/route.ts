@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const response = await fetch(`${DISCORD_BOT_API_URL}/api/registrations`, {
+    const response = await fetch(`${DISCORD_BOT_API_URL}/api/users`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
       const errorData = await response.json().catch(() => ({}));
       return NextResponse.json(
         {
-          error: 'Failed to fetch registrations from Discord bot',
+          error: 'Failed to fetch users from Discord bot',
           message: errorData.error || errorData.message || `HTTP ${response.status}`,
         },
         { status: response.status }
