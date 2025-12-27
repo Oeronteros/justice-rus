@@ -116,10 +116,10 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
               <i className="fas fa-circle-notch"></i>
               Клятва ордена Demonic Cult
             </span>
-            <h2 className="text-3xl sm:text-4xl font-orbitron text-[#f2e6d2]">
+            <h2 className="text-3xl sm:text-4xl font-orbitron text-[#e6eff5]">
               Тайное братство Justice Mobile: школа дуэлей, рейдов и власти над тенью.
             </h2>
-            <p className="text-[#d6c4a5] max-w-2xl">
+            <p className="text-[#b7c9d6] max-w-2xl">
               Мы не просто гильдия. Мы дисциплина, ритуал и сила. Здесь рождаются командиры рейдов,
               мастера клинка и хранители закона крови. Вступив, ты получаешь путь, знак и круг,
               который держит слово крепче стали.
@@ -152,19 +152,19 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
           </div>
           <div className="wuxia-pillars wuxia-parallax wuxia-parallax-light">
             <div className="wuxia-pillar">
-              <div className="text-xs uppercase tracking-widest text-[#d6b36a]">Ступень I</div>
+              <div className="text-xs uppercase tracking-widest text-[#8fb9cc]">Ступень I</div>
               <div className="mt-2 font-semibold">Посвящение и дисциплина</div>
             </div>
             <div className="wuxia-pillar">
-              <div className="text-xs uppercase tracking-widest text-[#d6b36a]">Ступень II</div>
+              <div className="text-xs uppercase tracking-widest text-[#8fb9cc]">Ступень II</div>
               <div className="mt-2 font-semibold">Школа дуэлей и контроля</div>
             </div>
             <div className="wuxia-pillar">
-              <div className="text-xs uppercase tracking-widest text-[#d6b36a]">Ступень III</div>
+              <div className="text-xs uppercase tracking-widest text-[#8fb9cc]">Ступень III</div>
               <div className="mt-2 font-semibold">Охота за легендами</div>
             </div>
             <div className="wuxia-pillar">
-              <div className="text-xs uppercase tracking-widest text-[#d6b36a]">Ступень IV</div>
+              <div className="text-xs uppercase tracking-widest text-[#8fb9cc]">Ступень IV</div>
               <div className="mt-2 font-semibold">Венчание рейдов и титулов</div>
             </div>
           </div>

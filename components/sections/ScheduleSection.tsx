@@ -110,7 +110,7 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
                 <div key={index} className="card p-6 hover:transform hover:-translate-y-1 transition-all duration-300">
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="text-xl font-bold font-orbitron text-red-400">{schedule.registration}</h3>
-                    <span className="text-sm font-medium bg-[#1a120e]/70 px-3 py-1 rounded-full">
+                    <span className="text-sm font-medium bg-[#121a22]/70 px-3 py-1 rounded-full">
                       {formatDate(schedule.date)}
                     </span>
                   </div>
@@ -118,12 +118,12 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
                   <p className="text-gray-300 mb-4">{schedule.description}</p>
 
                   <div className="flex justify-between items-center">
-                    <span className="px-3 py-1 bg-gradient-to-r from-[#2b1516]/60 to-[#4b1a1f]/60 text-[#d6b36a] rounded-full text-sm font-medium">
+                    <span className="px-3 py-1 bg-gradient-to-r from-[#182734]/60 to-[#244057]/60 text-[#8fb9cc] rounded-full text-sm font-medium">
                       <i className="fas fa-tag mr-2"></i>
                       {schedule.type}
                     </span>
 
-                    <button className="text-sm font-medium text-[#d6b36a] hover:text-[#e7c98a] transition-colors">
+                    <button className="text-sm font-medium text-[#8fb9cc] hover:text-[#bcd6e5] transition-colors">
                       <i className="fas fa-calendar-check mr-1"></i>
                       Принять клятву
                     </button>

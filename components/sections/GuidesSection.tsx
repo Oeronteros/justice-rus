@@ -134,7 +134,7 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
             filteredGuides.map((guide) => (
               <div key={guide.id} className="card p-6 hover:transform hover:-translate-y-1 transition-all duration-300">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="px-3 py-1 bg-gradient-to-r from-[#2b1516]/60 to-[#4b1a1f]/60 text-[#d6b36a] rounded-full text-sm font-medium">
+                  <span className="px-3 py-1 bg-gradient-to-r from-[#182734]/60 to-[#244057]/60 text-[#8fb9cc] rounded-full text-sm font-medium">
                     <i className="fas fa-tag mr-2"></i>
                     {guide.category}
                   </span>
@@ -156,7 +156,7 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
                     <span className="text-sm text-gray-400">{guide.author}</span>
                   </div>
 
-                  <button className="text-sm font-medium text-[#d6b36a] hover:text-[#e7c98a] transition-colors">
+                  <button className="text-sm font-medium text-[#8fb9cc] hover:text-[#bcd6e5] transition-colors">
                     <i className="fas fa-book-open mr-2"></i>
                     Читать свиток
                   </button>

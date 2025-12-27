@@ -50,27 +50,27 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-20 bg-[#0b0a0a]/95">
+    <div className="fixed inset-0 flex items-center justify-center z-20 bg-[#0a0f14]/95">
       <div className="card p-10 text-center w-full max-w-md relative overflow-hidden">
         {/* Анимированный фон для карточки */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#2a1215]/50 to-[#0f0b0a]/85 rounded-2xl -z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-[#182634]/50 to-[#0c1218]/85 rounded-2xl -z-10"></div>
 
         <div className="mb-8">
           <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 bg-gradient-to-r from-[#9f1320] to-[#d6b36a] rounded-full flex items-center justify-center shadow-lg shadow-[#2d0f14]/40">
+            <div className="w-20 h-20 bg-gradient-to-r from-[#2f6e8d] to-[#8fb9cc] rounded-full flex items-center justify-center shadow-lg shadow-[#0c1a24]/40">
               <i className="fas fa-skull-crossbones text-3xl text-white"></i>
             </div>
           </div>
 
-          <h2 className="text-4xl font-bold font-orbitron text-[#f2e6d2] mb-3">
+          <h2 className="text-4xl font-bold font-orbitron text-[#e6eff5] mb-3">
             Cult Game Community
           </h2>
-          <p className="text-[#d6c4a5] text-lg">Guild Portal - Justice Mobile</p>
+          <p className="text-[#b7c9d6] text-lg">Guild Portal - Justice Mobile</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <p className="text-sm text-[#d6c4a5] mb-4 font-medium">Enter password to access</p>
+            <p className="text-sm text-[#b7c9d6] mb-4 font-medium">Enter password to access</p>
             <input
               type="password"
               value={pin}
@@ -94,7 +94,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
           </button>
 
           {error && (
-            <div className="text-[#f2c79a] text-sm mt-2 p-4 bg-[#2a1418]/65 rounded-xl border border-[#9f1320]/40">
+            <div className="text-[#bcd6e5] text-sm mt-2 p-4 bg-[#16202b]/65 rounded-xl border border-[#2f6e8d]/40">
               <i className="fas fa-exclamation-triangle mr-2"></i>
               {error}
             </div>

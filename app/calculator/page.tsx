@@ -79,13 +79,13 @@ export default function CalculatorPage() {
   }, [builds]);
 
   return (
-    <div className="min-h-screen bg-[#0b0a0a] pt-20 pb-10">
+    <div className="min-h-screen bg-[#0a0f14] pt-20 pb-10">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold font-orbitron text-[#f2e6d2] mb-4">
+          <h1 className="text-5xl font-bold font-orbitron text-[#e6eff5] mb-4">
             Build Calculator (DPS & Damage)
           </h1>
-          <p className="text-[#d6c4a5] text-lg max-w-2xl mx-auto">
+          <p className="text-[#b7c9d6] text-lg max-w-2xl mx-auto">
             Compare builds by average hit, DPS, and total damage over a fight duration.
           </p>
         </div>
@@ -106,19 +106,19 @@ export default function CalculatorPage() {
             <div key={`${build.name}-${index}`} className="card p-8">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-r from-[#9f1320] to-[#d6b36a] rounded-full flex items-center justify-center shadow-lg shadow-[#2d0f14]/40">
+                  <div className="w-12 h-12 bg-gradient-to-r from-[#2f6e8d] to-[#8fb9cc] rounded-full flex items-center justify-center shadow-lg shadow-[#0c1a24]/40">
                     <i className="fas fa-sword text-white"></i>
                   </div>
                   <input
                     value={build.name}
                     onChange={(e) => updateBuild(index, 'name', e.target.value)}
-                    className="bg-transparent text-2xl font-bold font-orbitron text-[#d6b36a] focus:outline-none"
+                    className="bg-transparent text-2xl font-bold font-orbitron text-[#8fb9cc] focus:outline-none"
                   />
                 </div>
                 {builds.length > 1 && (
                   <button
                     onClick={() => removeBuild(index)}
-                    className="text-gray-400 hover:text-[#d6b36a] transition"
+                    className="text-gray-400 hover:text-[#8fb9cc] transition"
                     title="Remove build"
                   >
                     <i className="fas fa-trash"></i>
@@ -128,7 +128,7 @@ export default function CalculatorPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-[#f2e6d2] mb-2 text-sm">Base damage</label>
+                  <label className="block text-[#e6eff5] mb-2 text-sm">Base damage</label>
                   <input
                     type="number"
                     value={build.baseDamage}
@@ -139,7 +139,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[#f2e6d2] mb-2 text-sm">Flat bonus damage</label>
+                  <label className="block text-[#e6eff5] mb-2 text-sm">Flat bonus damage</label>
                   <input
                     type="number"
                     value={build.flatDamage}
@@ -150,7 +150,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[#f2e6d2] mb-2 text-sm">Attack speed (hits/s)</label>
+                  <label className="block text-[#e6eff5] mb-2 text-sm">Attack speed (hits/s)</label>
                   <input
                     type="number"
                     value={build.attacksPerSecond}
@@ -161,7 +161,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[#f2e6d2] mb-2 text-sm">Crit chance (%)</label>
+                  <label className="block text-[#e6eff5] mb-2 text-sm">Crit chance (%)</label>
                   <input
                     type="number"
                     value={build.critChance}
@@ -172,7 +172,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[#f2e6d2] mb-2 text-sm">Crit multiplier</label>
+                  <label className="block text-[#e6eff5] mb-2 text-sm">Crit multiplier</label>
                   <input
                     type="number"
                     value={build.critMultiplier}
@@ -183,7 +183,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[#f2e6d2] mb-2 text-sm">Bonus damage (%)</label>
+                  <label className="block text-[#e6eff5] mb-2 text-sm">Bonus damage (%)</label>
                   <input
                     type="number"
                     value={build.bonusDamage}
@@ -194,7 +194,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-[#f2e6d2] mb-2 text-sm">Fight duration (sec)</label>
+                  <label className="block text-[#e6eff5] mb-2 text-sm">Fight duration (sec)</label>
                   <input
                     type="number"
                     value={build.duration}
@@ -206,21 +206,21 @@ export default function CalculatorPage() {
               </div>
 
               <div className="mt-6 space-y-3">
-                <div className="flex items-center justify-between rounded-xl bg-[#120d0c]/75 border border-[#2b1b1a] px-4 py-3">
-                  <span className="text-[#f2e6d2] text-sm">Average hit</span>
-                  <span className="text-xl font-bold font-orbitron text-[#d6b36a]">
+                <div className="flex items-center justify-between rounded-xl bg-[#0f161d]/75 border border-[#243240] px-4 py-3">
+                  <span className="text-[#e6eff5] text-sm">Average hit</span>
+                  <span className="text-xl font-bold font-orbitron text-[#8fb9cc]">
                     {results[index].avgHit ? results[index].avgHit.toFixed(2) : '?'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between rounded-xl bg-[#120d0c]/75 border border-[#2b1b1a] px-4 py-3">
-                  <span className="text-[#f2e6d2] text-sm">DPS</span>
-                  <span className="text-xl font-bold font-orbitron text-[#d6b36a]">
+                <div className="flex items-center justify-between rounded-xl bg-[#0f161d]/75 border border-[#243240] px-4 py-3">
+                  <span className="text-[#e6eff5] text-sm">DPS</span>
+                  <span className="text-xl font-bold font-orbitron text-[#8fb9cc]">
                     {results[index].dps ? results[index].dps.toFixed(2) : '?'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between rounded-xl bg-[#120d0c]/75 border border-[#2b1b1a] px-4 py-3">
-                  <span className="text-[#f2e6d2] text-sm">Total damage</span>
-                  <span className="text-xl font-bold font-orbitron text-[#d6b36a]">
+                <div className="flex items-center justify-between rounded-xl bg-[#0f161d]/75 border border-[#243240] px-4 py-3">
+                  <span className="text-[#e6eff5] text-sm">Total damage</span>
+                  <span className="text-xl font-bold font-orbitron text-[#8fb9cc]">
                     {results[index].totalDamage ? results[index].totalDamage.toFixed(2) : '?'}
                   </span>
                 </div>

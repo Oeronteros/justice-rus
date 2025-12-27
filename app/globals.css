@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --wuxia-ink: #0b0a0a;
-  --wuxia-ink-soft: #15110f;
-  --wuxia-paper: #f2e6d2;
-  --wuxia-vermillion: #9f1320;
-  --wuxia-crimson: #6e0f16;
-  --wuxia-gold: #d6b36a;
-  --wuxia-jade: #7fa38a;
-  --wuxia-shadow: #1a120f;
+  --wuxia-ink: #0a0f14;
+  --wuxia-ink-soft: #111821;
+  --wuxia-paper: #dfe8f2;
+  --wuxia-vermillion: #4a90b0;
+  --wuxia-crimson: #23506b;
+  --wuxia-gold: #8fb9cc;
+  --wuxia-jade: #78b8b0;
+  --wuxia-shadow: #101821;
   --tilt-x: 0deg;
   --tilt-y: 0deg;
 }
@@ -35,10 +35,10 @@ body {
 
 .theme-wuxia .wuxia-backdrop {
   background:
-    radial-gradient(circle at 15% 20%, rgba(159, 19, 32, 0.2), transparent 55%),
-    radial-gradient(circle at 82% 12%, rgba(214, 179, 106, 0.18), transparent 45%),
-    radial-gradient(circle at 50% 75%, rgba(20, 14, 12, 0.8), transparent 60%),
-    linear-gradient(180deg, #0b0a0a 0%, #0f0d0c 45%, #0a0908 100%);
+    radial-gradient(circle at 15% 20%, rgba(74, 144, 176, 0.2), transparent 55%),
+    radial-gradient(circle at 82% 12%, rgba(143, 185, 204, 0.2), transparent 45%),
+    radial-gradient(circle at 50% 75%, rgba(16, 24, 33, 0.85), transparent 60%),
+    linear-gradient(180deg, #0a0f14 0%, #0d1218 45%, #091017 100%);
 }
 
 .theme-wuxia .wuxia-noise {
@@ -55,12 +55,12 @@ body {
 }
 
 .theme-wuxia .wuxia-glow {
-  background: radial-gradient(circle, rgba(214, 179, 106, 0.2), transparent 70%);
+  background: radial-gradient(circle, rgba(143, 185, 204, 0.25), transparent 70%);
   filter: blur(32px);
 }
 
 .theme-wuxia .wuxia-moon {
-  background: radial-gradient(circle, rgba(214, 179, 106, 0.24), rgba(20, 12, 9, 0.7) 55%, transparent 72%);
+  background: radial-gradient(circle, rgba(143, 185, 204, 0.26), rgba(10, 16, 24, 0.75) 55%, transparent 72%);
   filter: blur(10px);
   animation: portalPulse 12s ease-in-out infinite;
 }
@@ -75,7 +75,7 @@ body {
 }
 
 .theme-wuxia .wuxia-ink {
-  background: radial-gradient(circle, rgba(159, 19, 32, 0.18), transparent 70%);
+  background: radial-gradient(circle, rgba(74, 144, 176, 0.18), transparent 70%);
   filter: blur(18px);
   animation: emberDrift 14s ease-in-out infinite;
 }
@@ -87,9 +87,9 @@ body {
   width: 52px;
   height: 52px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(214, 179, 106, 0.22), transparent 60%);
-  border: 1px solid rgba(214, 179, 106, 0.35);
-  box-shadow: inset 0 0 18px rgba(214, 179, 106, 0.15);
+  background: radial-gradient(circle, rgba(143, 185, 204, 0.25), transparent 60%);
+  border: 1px solid rgba(143, 185, 204, 0.4);
+  box-shadow: inset 0 0 18px rgba(143, 185, 204, 0.18);
 }
 
 .theme-wuxia .seal-ring::after {
@@ -97,7 +97,7 @@ body {
   position: absolute;
   inset: -6px;
   border-radius: 999px;
-  border: 1px dashed rgba(214, 179, 106, 0.3);
+  border: 1px dashed rgba(143, 185, 204, 0.35);
   animation: sigilRotate 22s linear infinite;
 }
 
@@ -105,8 +105,8 @@ body {
   width: 38px;
   height: 38px;
   border-radius: 999px;
-  background: linear-gradient(130deg, rgba(159, 19, 32, 0.8), rgba(214, 179, 106, 0.9));
-  box-shadow: 0 0 18px rgba(159, 19, 32, 0.35);
+  background: linear-gradient(130deg, rgba(74, 144, 176, 0.8), rgba(143, 185, 204, 0.9));
+  box-shadow: 0 0 18px rgba(74, 144, 176, 0.35);
   display: grid;
   place-items: center;
 }
@@ -117,8 +117,8 @@ body {
   max-width: 1140px;
   padding: 28px 34px;
   border-radius: 28px;
-  background: linear-gradient(140deg, rgba(20, 14, 12, 0.94), rgba(10, 8, 7, 0.97));
-  border: 1px solid rgba(214, 179, 106, 0.28);
+  background: linear-gradient(140deg, rgba(12, 18, 26, 0.94), rgba(8, 12, 18, 0.97));
+  border: 1px solid rgba(143, 185, 204, 0.3);
   box-shadow: 0 26px 50px rgba(5, 4, 4, 0.7);
   overflow: hidden;
 }
@@ -127,7 +127,7 @@ body {
   content: '';
   position: absolute;
   inset: -40% 0 0 0;
-  background: radial-gradient(circle, rgba(214, 179, 106, 0.18), transparent 70%);
+  background: radial-gradient(circle, rgba(143, 185, 204, 0.2), transparent 70%);
   opacity: 0.45;
   pointer-events: none;
 }
@@ -136,7 +136,7 @@ body {
   content: '';
   position: absolute;
   inset: -120% 0 0 0;
-  background: linear-gradient(120deg, transparent, rgba(214, 179, 106, 0.18), transparent);
+  background: linear-gradient(120deg, transparent, rgba(143, 185, 204, 0.22), transparent);
   opacity: 0.35;
   animation: bannerSheen 18s linear infinite;
   pointer-events: none;
@@ -155,7 +155,7 @@ body {
   height: 180px;
   top: -40px;
   right: 18%;
-  background: radial-gradient(circle, rgba(214, 179, 106, 0.35), transparent 70%);
+  background: radial-gradient(circle, rgba(143, 185, 204, 0.35), transparent 70%);
   filter: blur(6px);
 }
 
@@ -164,7 +164,7 @@ body {
   height: 240px;
   bottom: -80px;
   left: 10%;
-  background: radial-gradient(circle, rgba(159, 19, 32, 0.35), transparent 70%);
+  background: radial-gradient(circle, rgba(74, 144, 176, 0.35), transparent 70%);
   filter: blur(8px);
 }
 
@@ -174,7 +174,7 @@ body {
   top: 28%;
   left: -60px;
   border-radius: 40% 60% 60% 40%;
-  background: linear-gradient(120deg, rgba(214, 179, 106, 0.08), rgba(159, 19, 32, 0.2), transparent);
+  background: linear-gradient(120deg, rgba(143, 185, 204, 0.1), rgba(74, 144, 176, 0.2), transparent);
   filter: blur(10px);
   opacity: 0.4;
 }
@@ -209,8 +209,8 @@ body {
 .theme-wuxia .wuxia-pillar {
   padding: 14px 16px;
   border-radius: 16px;
-  border: 1px solid rgba(214, 179, 106, 0.2);
-  background: rgba(17, 13, 11, 0.85);
+  border: 1px solid rgba(143, 185, 204, 0.22);
+  background: rgba(12, 16, 22, 0.85);
 }
 
 .theme-wuxia .wuxia-tag {
@@ -219,8 +219,8 @@ body {
   gap: 8px;
   padding: 6px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(214, 179, 106, 0.4);
-  background: rgba(20, 14, 12, 0.85);
+  border: 1px solid rgba(143, 185, 204, 0.45);
+  background: rgba(12, 16, 22, 0.85);
   color: var(--wuxia-gold);
   font-size: 0.75rem;
   letter-spacing: 0.12em;
@@ -236,9 +236,9 @@ body {
 .theme-wuxia .wuxia-ritual {
   padding: 12px 14px;
   border-radius: 16px;
-  border: 1px solid rgba(214, 179, 106, 0.2);
-  background: rgba(16, 12, 11, 0.8);
-  color: #e6d6bf;
+  border: 1px solid rgba(143, 185, 204, 0.2);
+  background: rgba(10, 14, 20, 0.8);
+  color: #cdd9e5;
   font-size: 0.95rem;
 }
 
@@ -262,9 +262,9 @@ body {
 .theme-wuxia .wuxia-crest-frame {
   padding: 18px;
   border-radius: 28px;
-  background: radial-gradient(circle, rgba(214, 179, 106, 0.12), rgba(20, 14, 12, 0.95));
-  border: 1px solid rgba(214, 179, 106, 0.35);
-  box-shadow: inset 0 0 24px rgba(214, 179, 106, 0.2), 0 18px 36px rgba(0, 0, 0, 0.6);
+  background: radial-gradient(circle, rgba(143, 185, 204, 0.12), rgba(10, 14, 20, 0.95));
+  border: 1px solid rgba(143, 185, 204, 0.35);
+  box-shadow: inset 0 0 24px rgba(143, 185, 204, 0.2), 0 18px 36px rgba(0, 0, 0, 0.6);
 }
 
 .theme-wuxia .wuxia-crest-caption {
@@ -272,14 +272,14 @@ body {
   font-size: 1.2rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #f2e6d2;
+  color: #e6eff5;
 }
 
 .theme-wuxia .wuxia-crest-sub {
   font-size: 0.8rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(214, 179, 106, 0.75);
+  color: rgba(143, 185, 204, 0.75);
 }
 
 .theme-wuxia .wuxia-emblem {
@@ -309,11 +309,11 @@ body {
 
 .theme-wuxia .text-red-400 { color: var(--wuxia-gold) !important; }
 .theme-wuxia .text-red-500 { color: var(--wuxia-vermillion) !important; }
-.theme-wuxia .border-red-500\/50 { border-color: rgba(214, 179, 106, 0.5) !important; }
-.theme-wuxia .bg-red-900\/30 { background-color: rgba(60, 16, 22, 0.4) !important; }
-.theme-wuxia .bg-red-800\/70 { background-color: rgba(89, 19, 26, 0.6) !important; }
-.theme-wuxia .from-red-600 { --tw-gradient-from: #9f1320 !important; }
-.theme-wuxia .to-purple-600 { --tw-gradient-to: #d6b36a !important; }
+.theme-wuxia .border-red-500\/50 { border-color: rgba(143, 185, 204, 0.5) !important; }
+.theme-wuxia .bg-red-900\/30 { background-color: rgba(20, 32, 45, 0.5) !important; }
+.theme-wuxia .bg-red-800\/70 { background-color: rgba(28, 48, 64, 0.65) !important; }
+.theme-wuxia .from-red-600 { --tw-gradient-from: #3a6f8f !important; }
+.theme-wuxia .to-purple-600 { --tw-gradient-to: #8fb9cc !important; }
 
 @keyframes portalPulse {
   0%, 100% {
@@ -484,7 +484,7 @@ body {
 .theme-wuxia .wuxia-section::before {
   inset: 12px 6%;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(214, 179, 106, 0.2), transparent 70%);
+  background: radial-gradient(circle, rgba(143, 185, 204, 0.2), transparent 70%);
   filter: blur(18px);
   opacity: 0;
   animation: sectionMist var(--mist-duration) ease forwards;
@@ -496,19 +496,19 @@ body {
   width: 120px;
   height: 120px;
   border-radius: 999px;
-  border: 1px solid rgba(214, 179, 106, 0.35);
-  background: radial-gradient(circle, rgba(214, 179, 106, 0.2), transparent 70%);
-  box-shadow: inset 0 0 20px rgba(214, 179, 106, 0.2);
+  border: 1px solid rgba(143, 185, 204, 0.35);
+  background: radial-gradient(circle, rgba(143, 185, 204, 0.2), transparent 70%);
+  box-shadow: inset 0 0 20px rgba(143, 185, 204, 0.2);
   opacity: 0;
   animation: sealBloom var(--seal-duration) ease forwards;
 }
 
 .theme-wuxia .wuxia-section-registration::before {
-  background: radial-gradient(circle, rgba(214, 179, 106, 0.25), transparent 68%);
+  background: radial-gradient(circle, rgba(143, 185, 204, 0.25), transparent 68%);
 }
 
 .theme-wuxia .wuxia-section-registration::after {
-  border-color: rgba(214, 179, 106, 0.45);
+  border-color: rgba(143, 185, 204, 0.45);
 }
 
 .theme-wuxia .wuxia-section-schedule::before {
@@ -527,11 +527,11 @@ body {
 }
 
 .theme-wuxia .wuxia-section-help::before {
-  background: radial-gradient(circle, rgba(110, 15, 22, 0.35), transparent 72%);
+  background: radial-gradient(circle, rgba(35, 80, 107, 0.35), transparent 72%);
 }
 
 .theme-wuxia .wuxia-section-help::after {
-  border-color: rgba(110, 15, 22, 0.5);
+  border-color: rgba(35, 80, 107, 0.5);
 }
 
 .theme-wuxia .wuxia-section-help {
@@ -542,7 +542,7 @@ body {
 }
 
 .theme-wuxia .wuxia-section-news::before {
-  background: radial-gradient(circle, rgba(214, 179, 106, 0.2), transparent 70%);
+  background: radial-gradient(circle, rgba(143, 185, 204, 0.2), transparent 70%);
 }
 
 .theme-wuxia .wuxia-section-news::after {
@@ -557,11 +557,11 @@ body {
 }
 
 .theme-wuxia .wuxia-section-guides::before {
-  background: radial-gradient(circle, rgba(159, 19, 32, 0.3), transparent 70%);
+  background: radial-gradient(circle, rgba(74, 144, 176, 0.3), transparent 70%);
 }
 
 .theme-wuxia .wuxia-section-guides::after {
-  border-color: rgba(159, 19, 32, 0.55);
+  border-color: rgba(74, 144, 176, 0.55);
 }
 
 .theme-wuxia .wuxia-section-guides {
@@ -573,12 +573,12 @@ body {
 }
 
 .theme-wuxia .wuxia-section-absences::before {
-  background: radial-gradient(circle, rgba(214, 179, 106, 0.18), transparent 70%);
+  background: radial-gradient(circle, rgba(143, 185, 204, 0.18), transparent 70%);
 }
 
 .theme-wuxia .wuxia-section-absences::after {
-  border-color: rgba(214, 179, 106, 0.35);
-  box-shadow: inset 0 0 20px rgba(214, 179, 106, 0.15);
+  border-color: rgba(143, 185, 204, 0.35);
+  box-shadow: inset 0 0 20px rgba(143, 185, 204, 0.15);
 }
 
 .theme-wuxia .wuxia-section-absences {
@@ -614,12 +614,12 @@ body {
 
   .nav-btn:hover {
     @apply transform -translate-y-0.5;
-    border-color: rgba(214, 179, 106, 0.35);
+    border-color: rgba(143, 185, 204, 0.45);
   }
   
   .nav-btn.is-active {
-    background: linear-gradient(120deg, rgba(55, 20, 24, 0.85), rgba(90, 30, 34, 0.75));
-    border-color: rgba(214, 179, 106, 0.5);
+    background: linear-gradient(120deg, rgba(20, 34, 46, 0.88), rgba(32, 52, 68, 0.78));
+    border-color: rgba(143, 185, 204, 0.5);
   }
 
   .nav-btn.is-active::after {
@@ -627,7 +627,7 @@ body {
     position: absolute;
     inset: auto 12px 6px 12px;
     height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(214, 179, 106, 0.9), transparent);
+    background: linear-gradient(90deg, transparent, rgba(143, 185, 204, 0.9), transparent);
     animation: navGlow 2.4s ease-in-out infinite;
   }
 
@@ -640,7 +640,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    border: 1px solid rgba(214, 179, 106, 0.35);
+    border: 1px solid rgba(143, 185, 204, 0.35);
     border-radius: 20px;
     animation: navPulse 2.2s ease-in-out infinite;
     pointer-events: none;
@@ -655,7 +655,7 @@ body {
   }
 
   .mobile-nav-btn.active {
-    background: rgba(55, 20, 24, 0.6);
+    background: rgba(20, 34, 46, 0.6);
     color: var(--wuxia-gold);
   }
 
@@ -688,29 +688,13 @@ body {
     width: 36px;
     height: 36px;
     border-radius: 999px;
-    border: 1px solid rgba(214, 179, 106, 0.35);
-    background: radial-gradient(circle, rgba(214, 179, 106, 0.2), transparent 70%);
-    box-shadow: inset 0 0 12px rgba(214, 179, 106, 0.2);
+    border: 1px solid rgba(143, 185, 204, 0.35);
+    background: radial-gradient(circle, rgba(143, 185, 204, 0.2), transparent 70%);
+    box-shadow: inset 0 0 12px rgba(143, 185, 204, 0.2);
     opacity: 0;
     animation: stampPop 0.7s ease 0.05s forwards;
     pointer-events: none;
   }
-
-.table-responsive::after {
-  content: '';
-  position: absolute;
-  top: 10px;
-  right: 16px;
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
-  border: 1px solid rgba(214, 179, 106, 0.35);
-  background: radial-gradient(circle, rgba(214, 179, 106, 0.2), transparent 70%);
-  box-shadow: inset 0 0 12px rgba(214, 179, 106, 0.2);
-  opacity: 0;
-  animation: stampPop 0.7s ease 0.05s forwards;
-  pointer-events: none;
-}
 
   @media (min-width: 640px) {
     .table-responsive {
@@ -753,8 +737,8 @@ body {
   /* Ахуенные карточки */
 .card {
   @apply rounded-2xl border transition-all duration-300;
-  background: linear-gradient(145deg, rgba(20, 15, 13, 0.9), rgba(12, 10, 9, 0.95));
-  border-color: rgba(214, 179, 106, 0.18);
+  background: linear-gradient(145deg, rgba(14, 22, 30, 0.92), rgba(9, 14, 20, 0.96));
+  border-color: rgba(143, 185, 204, 0.2);
   box-shadow: 0 20px 40px rgba(6, 5, 4, 0.6);
   position: relative;
   overflow: hidden;
@@ -768,14 +752,14 @@ body {
     rotateX(calc(var(--tilt-x) * 0.35 + 2deg))
     rotateY(calc(var(--tilt-y) * 0.35 - 2deg));
   box-shadow: 0 28px 50px rgba(6, 5, 4, 0.75);
-  border-color: rgba(214, 179, 106, 0.4);
+  border-color: rgba(143, 185, 204, 0.45);
 }
 
   .card::before {
     content: '';
     position: absolute;
     inset: -40% 0 0 0;
-    background: radial-gradient(circle, rgba(214, 179, 106, 0.2), transparent 70%);
+    background: radial-gradient(circle, rgba(143, 185, 204, 0.2), transparent 70%);
     opacity: 0;
     transition: opacity 0.4s ease;
     animation: cardSheen 12s ease-in-out infinite;
@@ -790,9 +774,9 @@ body {
     width: 32px;
     height: 32px;
     border-radius: 999px;
-    border: 1px solid rgba(214, 179, 106, 0.4);
-    background: radial-gradient(circle, rgba(214, 179, 106, 0.25), transparent 70%);
-    box-shadow: inset 0 0 10px rgba(214, 179, 106, 0.2);
+    border: 1px solid rgba(143, 185, 204, 0.4);
+    background: radial-gradient(circle, rgba(143, 185, 204, 0.25), transparent 70%);
+    box-shadow: inset 0 0 10px rgba(143, 185, 204, 0.2);
     opacity: 0;
     animation: stampPop 0.7s ease forwards;
     pointer-events: none;
@@ -811,14 +795,14 @@ body {
   /* Ахуенные кнопки */
   .btn-primary {
     @apply text-white font-medium py-3 px-6 rounded-xl transition-all duration-300;
-    background: linear-gradient(120deg, #9f1320, #d6b36a);
-    border: 1px solid rgba(214, 179, 106, 0.4);
-    box-shadow: 0 12px 24px rgba(159, 19, 32, 0.3);
+    background: linear-gradient(120deg, #2f6e8d, #8fb9cc);
+    border: 1px solid rgba(143, 185, 204, 0.4);
+    box-shadow: 0 12px 24px rgba(47, 110, 141, 0.35);
   }
 
   .btn-primary:hover {
-    background: linear-gradient(120deg, #b21a28, #e1c07b);
-    box-shadow: 0 18px 30px rgba(159, 19, 32, 0.4);
+    background: linear-gradient(120deg, #3a7fa3, #a2c8d8);
+    box-shadow: 0 18px 30px rgba(47, 110, 141, 0.45);
   }
 
   .btn-secondary {
@@ -828,15 +812,15 @@ body {
   /* Ахуенные инпуты */
   .input-field {
     @apply w-full rounded-xl px-4 py-3 transition-all duration-300;
-    background: rgba(14, 11, 10, 0.9);
-    border: 1px solid rgba(214, 179, 106, 0.25);
+    background: rgba(10, 14, 20, 0.9);
+    border: 1px solid rgba(143, 185, 204, 0.25);
     color: var(--wuxia-paper);
   }
 
   .input-field:focus {
     outline: none;
-    border-color: rgba(214, 179, 106, 0.6);
-    box-shadow: 0 0 0 2px rgba(159, 19, 32, 0.25);
+    border-color: rgba(143, 185, 204, 0.6);
+    box-shadow: 0 0 0 2px rgba(74, 144, 176, 0.25);
   }
 
   /* Ахуенные таблички */
@@ -863,14 +847,14 @@ body {
   /* Ахуенные селекты */
   .select-field {
     @apply text-white rounded-xl px-4 py-3 focus:outline-none transition-all duration-300;
-    background: rgba(14, 11, 10, 0.9);
-    border: 1px solid rgba(214, 179, 106, 0.25);
+    background: rgba(10, 14, 20, 0.9);
+    border: 1px solid rgba(143, 185, 204, 0.25);
     box-shadow: none;
   }
 
   /* Ахуенные текстовые области */
   .textarea-field {
-    @apply w-full bg-gray-800/50 border border-gray-700/50 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-600/50 focus:border-transparent transition-all duration-300 placeholder-gray-500 min-h-[120px];
+    @apply w-full bg-gray-800/50 border border-gray-700/50 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4a90b0]/40 focus:border-transparent transition-all duration-300 placeholder-gray-500 min-h-[120px];
   }
 
   /* Ахуенные прогресс-бары */
