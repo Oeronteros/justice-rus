@@ -171,7 +171,10 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
         </div>
       </section>
       <main className="min-h-screen">
-        <div key={currentSection} className="wuxia-section">
+        <div
+          key={currentSection}
+          className={`wuxia-section wuxia-section-${currentSection}`}
+        >
           {renderSection()}
         </div>
       </main>
