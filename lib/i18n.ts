@@ -4,21 +4,23 @@ export type Language = 'ru' | 'en';
 
 export const sectionLabels: Record<Language, Record<Section, string>> = {
   ru: {
-    registration: 'Регистрация',
+    registration: 'Участники',
     schedule: 'Расписание',
-    help: 'Помощь',
     news: 'Новости',
     guides: 'Гайды',
     absences: 'Отсутствия',
+    help: 'Помощь',
+    about: 'О нас',
     calculator: 'Калькулятор',
   },
   en: {
-    registration: 'Registration',
+    registration: 'Members',
     schedule: 'Schedule',
-    help: 'Help',
     news: 'News',
     guides: 'Guides',
     absences: 'Absences',
+    help: 'Help',
+    about: 'About',
     calculator: 'Calculator',
   },
 };

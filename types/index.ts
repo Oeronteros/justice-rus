@@ -1,7 +1,15 @@
 // Типы данных для приложения
 
 export type UserRole = 'member' | 'officer' | 'gm';
-export type Section = 'registration' | 'schedule' | 'help' | 'news' | 'guides' | 'absences' | 'calculator';
+export type Section =
+  | 'registration'
+  | 'schedule'
+  | 'guides'
+  | 'help'
+  | 'absences'
+  | 'news'
+  | 'about'
+  | 'calculator';
 
 export interface User {
   role: UserRole;
@@ -65,6 +73,16 @@ export interface Absence {
   endDate: string;
   reason: string;
   status: 'pending' | 'approved' | 'rejected';
+}
+
+export interface HelpRequest {
+  id: string;
+  title: string;
+  details: string;
+  category: string;
+  author: string;
+  status: 'open' | 'closed';
+  createdAt: string;
 }
 
 export interface ApiResponse<T> {
