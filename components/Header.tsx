@@ -88,7 +88,7 @@ export default function Header({
   return (
     <header className="dc-header sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-6 py-4">
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="flex items-center gap-4">
           <div className="relative">
             <div className="seal-ring">
@@ -102,17 +102,17 @@ export default function Header({
             <h1 className="text-2xl font-bold font-orbitron dc-text drop-shadow">
               Demonic Cult
             </h1>
-            <p className="text-sm dc-muted font-roboto">Justice Mobile - Wuxia Order</p>
-            <span className="wuxia-tag mt-2 block">
+            <p className="text-sm dc-muted font-roboto whitespace-nowrap">Justice Mobile · Wuxia Order</p>
+            <span className="wuxia-tag wuxia-tag-compact mt-2 block">
               <WuxiaIcon name="eye" className="w-4 h-4" />
-              {portalCopy[language].oath}
+              <span className="wuxia-tag-text">{portalCopy[language].oath}</span>
             </span>
           </div>
           </div>
 
           <div className="flex flex-wrap items-center justify-center lg:justify-end gap-2">
             {seasonalBadge && (
-              <div className="dc-season-badge hidden lg:flex items-center gap-2 px-4 py-3 rounded-xl">
+              <div className="dc-season-badge hidden lg:flex items-center gap-2 px-3 py-2 rounded-xl">
                 <span className="dc-accent inline-flex">
                   <WuxiaIcon name="sparkle" className="w-4 h-4" />
                 </span>
@@ -124,7 +124,7 @@ export default function Header({
               id="langSwitch"
               value={language}
               onChange={(e) => onLanguageChange(e.target.value as Language)}
-              className="dc-select rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a90b0]/40 transition-all font-medium"
+              className="dc-select rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a90b0]/40 transition-all font-medium"
             >
               <option value="ru">RU</option>
               <option value="en">EN</option>
@@ -132,7 +132,7 @@ export default function Header({
 
             <button
               onClick={toggleNewYearMode}
-              className={`dc-icon-btn p-3 rounded-xl ${newYearMode ? 'dc-icon-btn-active' : ''}`}
+              className={`dc-icon-btn p-2.5 rounded-xl ${newYearMode ? 'dc-icon-btn-active' : ''}`}
               title={language === 'ru' ? 'Новогодний режим' : 'New Year mode'}
             >
               <WuxiaIcon name="snowflake" className="w-5 h-5" />
@@ -140,7 +140,7 @@ export default function Header({
 
             <button
               onClick={handleRefresh}
-              className="dc-icon-btn p-3 rounded-xl"
+              className="dc-icon-btn p-2.5 rounded-xl"
               title="Refresh data"
             >
               <WuxiaIcon name="refresh" className="w-5 h-5" />
@@ -148,7 +148,7 @@ export default function Header({
 
             <button
               onClick={onLogout}
-              className="dc-icon-btn dc-icon-btn-accent p-3 rounded-xl"
+              className="dc-icon-btn dc-icon-btn-accent p-2.5 rounded-xl"
               title="Logout"
             >
               <WuxiaIcon name="logout" className="w-5 h-5" />
@@ -156,7 +156,7 @@ export default function Header({
           </div>
         </div>
 
-        <nav className="wuxia-nav hidden md:block mt-4">
+        <nav className="wuxia-nav hidden md:block mt-3">
           <div className="wuxia-nav-scroll">
             {sections.map((section) => (
               <button

@@ -481,6 +481,20 @@ body {
   box-shadow: inset 0 0 12px rgba(143, 185, 204, 0.15);
 }
 
+.theme-wuxia .wuxia-tag-compact {
+  letter-spacing: 0.08em;
+  text-transform: none;
+  padding: 6px 10px;
+  max-width: min(520px, 100%);
+}
+
+.theme-wuxia .wuxia-tag-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .theme-wuxia .wuxia-rituals {
   display: grid;
   gap: 12px;
