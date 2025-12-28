@@ -2,6 +2,9 @@
 // Прокси для получения данных регистраций через Discord бота
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
+import { getPool, hasDatabaseUrl } from '@/lib/neon';
+
+export const runtime = 'nodejs';
 
 const DISCORD_BOT_API_URL = process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const bypassHeader: Record<string, string> = (DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me'))
@@ -16,6 +19,30 @@ export async function GET(request: NextRequest) {
 
     if (!token || !verifyToken(token)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (hasDatabaseUrl()) {
+      const pool = getPool();
+      const result = await pool.query(
+        `
+        SELECT discord_login, nick, class_name, guild_name, created_at
+        FROM registrations
+        ORDER BY created_at DESC
+        `
+      );
+
+      const data = result.rows.map((row) => ({
+        discord: row.discord_login || '',
+        nickname: row.nick || '',
+        rank: 'member',
+        class: row.class_name || '',
+        guild: row.guild_name || '',
+        joinDate: row.created_at?.toISOString?.() || row.created_at || '',
+        kpi: 0,
+        status: 'active',
+      }));
+
+      return NextResponse.json(data);
     }
 
     const response = await fetch(`${DISCORD_BOT_API_URL}/api/users`, {

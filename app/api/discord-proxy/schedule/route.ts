@@ -2,6 +2,9 @@
 // Прокси для получения расписания через Discord бота
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
+import { getPool, hasDatabaseUrl } from '@/lib/neon';
+
+export const runtime = 'nodejs';
 
 const DISCORD_BOT_API_URL = process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const bypassHeader: Record<string, string> = (DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me'))
@@ -16,6 +19,28 @@ export async function GET(request: NextRequest) {
 
     if (!token || !verifyToken(token)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (hasDatabaseUrl()) {
+      const pool = getPool();
+      const result = await pool.query(
+        `
+        SELECT day_type, time, title_ru, title_en
+        FROM schedule
+        WHERE active = 1
+        ORDER BY order_index ASC, time ASC
+        `
+      );
+
+      const today = new Date().toISOString();
+      const data = result.rows.map((row) => ({
+        date: today,
+        registration: row.title_ru || row.title_en || '',
+        type: row.day_type || '',
+        description: row.time ? String(row.time) : '',
+      }));
+
+      return NextResponse.json(data);
     }
 
     const response = await fetch(`${DISCORD_BOT_API_URL}/api/schedule`, {

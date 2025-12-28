@@ -2,6 +2,9 @@
 // Прокси для получения гайдов через Discord бота
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
+import { getPool, hasDatabaseUrl } from '@/lib/neon';
+
+export const runtime = 'nodejs';
 
 const DISCORD_BOT_API_URL = process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const bypassHeader: Record<string, string> = (DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me'))
@@ -16,6 +19,29 @@ export async function GET(request: NextRequest) {
 
     if (!token || !verifyToken(token)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (hasDatabaseUrl()) {
+      const pool = getPool();
+      const result = await pool.query(
+        `
+        SELECT id, title_ru, title_en, content_ru, content_en, category, created_at, updated_at
+        FROM guides
+        WHERE active = 1
+        ORDER BY order_index ASC, updated_at DESC
+        `
+      );
+
+      const data = result.rows.map((row) => ({
+        id: String(row.id),
+        title: row.title_ru || row.title_en || '',
+        content: row.content_ru || row.content_en || '',
+        category: row.category || 'general',
+        author: 'bot',
+        date: (row.updated_at || row.created_at || new Date()).toISOString(),
+      }));
+
+      return NextResponse.json(data);
     }
 
     const response = await fetch(`${DISCORD_BOT_API_URL}/api/guides`, {

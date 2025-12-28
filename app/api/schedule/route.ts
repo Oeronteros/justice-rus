@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getPool, hasDatabaseUrl } from '@/lib/neon';
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 const BOT_API_URL =
   process.env.BOT_API_URL || process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
@@ -13,12 +15,35 @@ const bypassHeader: Record<string, string> =
 
 export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const language = searchParams.get('language') || 'ru';
+
+    if (hasDatabaseUrl()) {
+      const pool = getPool();
+      const titleField = language === 'en' ? 'title_en' : 'title_ru';
+      const result = await pool.query(
+        `
+        SELECT day_type, time, ${titleField} AS title
+        FROM schedule
+        WHERE active = 1
+        ORDER BY order_index ASC, time ASC
+        `
+      );
+
+      const today = new Date().toISOString();
+      const data = result.rows.map((row) => ({
+        date: today,
+        registration: row.title || '',
+        type: row.day_type || '',
+        description: row.time ? String(row.time) : '',
+      }));
+
+      return NextResponse.json(data);
+    }
+
     if (!BOT_API_KEY) {
       return NextResponse.json({ error: 'Missing BOT_API_KEY' }, { status: 500 });
     }
-
-    const { searchParams } = new URL(request.url);
-    const language = searchParams.get('language') || 'ru';
 
     const url = new URL('/api/schedule/today', BOT_API_URL);
     url.searchParams.set('language', language);
@@ -66,4 +91,3 @@ export async function OPTIONS() {
     },
   });
 }
-

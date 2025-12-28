@@ -758,6 +758,15 @@ body {
   }
 }
 
+@keyframes garlandDrift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 320px 0;
+  }
+}
+
 @keyframes navGlow {
   0%, 100% {
     opacity: 0.4;
@@ -1056,18 +1065,19 @@ body {
     left: 0;
     right: 0;
     top: 0;
-    height: 26px;
+    height: 18px;
     background-image:
-      radial-gradient(circle at 18px 16px, rgba(223, 232, 242, 0.9) 0 2px, transparent 6px),
-      radial-gradient(circle at 76px 12px, rgba(143, 185, 204, 0.85) 0 2px, transparent 6px),
-      radial-gradient(circle at 132px 18px, rgba(207, 230, 245, 0.9) 0 2px, transparent 6px),
-      linear-gradient(90deg, rgba(143, 185, 204, 0.22), rgba(207, 230, 245, 0.1), rgba(143, 185, 204, 0.22));
-    background-size: 160px 26px;
+      radial-gradient(circle at 22px 11px, rgba(223, 232, 242, 0.35) 0 1px, transparent 7px),
+      radial-gradient(circle at 148px 14px, rgba(143, 185, 204, 0.28) 0 1px, transparent 8px),
+      radial-gradient(circle at 268px 9px, rgba(207, 230, 245, 0.3) 0 1px, transparent 9px),
+      linear-gradient(90deg, rgba(143, 185, 204, 0.18), rgba(207, 230, 245, 0.08), rgba(143, 185, 204, 0.18));
+    background-size: 320px 18px;
     background-repeat: repeat;
-    mix-blend-mode: screen;
-    filter: drop-shadow(0 0 12px rgba(143, 185, 204, 0.35));
-    opacity: 0.55;
-    animation: garlandFlicker 6.2s ease-in-out infinite;
+    background-position: 0 0;
+    mix-blend-mode: normal;
+    filter: drop-shadow(0 0 10px rgba(143, 185, 204, 0.18));
+    opacity: 0.28;
+    animation: garlandFlicker 8.5s ease-in-out infinite, garlandDrift 22s linear infinite;
     pointer-events: none;
     mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
   }
@@ -1150,12 +1160,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border-radius: 20px;
-    background: rgba(10, 16, 24, 0.72);
-    border: 1px solid rgba(143, 185, 204, 0.2);
-    box-shadow: 0 18px 36px rgba(5, 10, 16, 0.55);
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: rgba(10, 16, 24, 0.55);
+    border: 1px solid rgba(143, 185, 204, 0.16);
+    box-shadow: 0 16px 32px rgba(5, 10, 16, 0.5);
     backdrop-filter: blur(12px);
   }
 
@@ -1164,23 +1174,35 @@ body {
     padding: 8px 10px;
   }
 
+  .dc-order--full::before {
+    content: '';
+    position: absolute;
+    left: 22px;
+    right: 22px;
+    top: 50%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(143, 185, 204, 0.34), transparent);
+    opacity: 0.85;
+    pointer-events: none;
+  }
+
   .dc-order-step {
     @apply border border-transparent transition-all duration-300;
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
+    gap: 8px;
+    padding: 7px 10px;
     border-radius: 999px;
-    background: rgba(11, 20, 29, 0.62);
-    border: 1px solid rgba(34, 49, 64, 0.7);
-    color: var(--wuxia-paper);
+    background: transparent;
+    border: 1px solid transparent;
+    color: rgba(223, 232, 242, 0.92);
     font-weight: 600;
     letter-spacing: 0.04em;
   }
 
   .dc-order--compact .dc-order-step {
-    padding: 8px 10px;
+    padding: 7px 9px;
   }
 
   .dc-order--compact .dc-order-label {
@@ -1191,7 +1213,7 @@ body {
     @apply transform -translate-y-0.5;
     border-color: rgba(143, 185, 204, 0.45);
     box-shadow: 0 12px 24px rgba(5, 10, 16, 0.4);
-    background: rgba(18, 34, 48, 0.78);
+    background: rgba(18, 34, 48, 0.55);
   }
 
   .dc-order-step.is-active {
@@ -1208,24 +1230,17 @@ body {
   }
 
   .dc-order--full .dc-order-step:not(.dc-more-trigger)::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: -12px;
-    width: 14px;
-    height: 1px;
-    background: linear-gradient(90deg, rgba(143, 185, 204, 0.45), transparent);
-    opacity: 0.9;
+    display: none;
   }
 
   .dc-order-dot {
-    width: 30px;
-    height: 30px;
+    width: 26px;
+    height: 26px;
     border-radius: 999px;
     display: grid;
     place-items: center;
-    background: rgba(8, 12, 18, 0.55);
-    border: 1px solid rgba(143, 185, 204, 0.25);
+    background: rgba(8, 12, 18, 0.66);
+    border: 1px solid rgba(143, 185, 204, 0.22);
     box-shadow: inset 0 0 12px rgba(143, 185, 204, 0.18);
     flex: 0 0 auto;
   }

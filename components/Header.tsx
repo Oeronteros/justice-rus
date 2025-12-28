@@ -224,8 +224,8 @@ export default function Header({
 
   return (
     <header className={`dc-header sticky top-0 z-40 ${headerCompact ? 'dc-header--compact' : ''}`}>
-      <div className={`max-w-7xl mx-auto px-6 ${headerCompact ? 'py-3' : 'py-4'}`}>
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div className={`max-w-7xl mx-auto px-6 ${headerCompact ? 'py-2.5' : 'py-3.5'}`}>
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
           <div className="flex items-center gap-4">
           <div className="relative">
             <div className="seal-ring">
@@ -240,7 +240,7 @@ export default function Header({
               Demonic Cult
             </h1>
             <p className="text-sm dc-muted font-roboto whitespace-nowrap">Justice Mobile · Wuxia Order</p>
-            <span className="dc-header-oath wuxia-tag wuxia-tag-compact mt-2 block">
+            <span className="dc-header-oath wuxia-tag wuxia-tag-compact mt-1.5 block">
               <WuxiaIcon name="eye" className="w-4 h-4" />
               <span className="wuxia-tag-text">{portalCopy[language].oath}</span>
             </span>
@@ -293,7 +293,7 @@ export default function Header({
           </div>
         </div>
 
-        <nav className="hidden md:block mt-3">
+        <nav className="hidden md:block mt-2">
           <div className={`dc-order ${headerCompact ? 'dc-order--compact' : 'dc-order--full'}`}>
             {!headerCompact && (
               <button
