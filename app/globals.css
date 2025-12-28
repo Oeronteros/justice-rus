@@ -16,6 +16,8 @@
   --wuxia-glow: rgba(110, 190, 230, 0.25);
   --tilt-x: 0deg;
   --tilt-y: 0deg;
+  --cursor-x: 50%;
+  --cursor-y: 35%;
 }
 
 @theme inline {
@@ -114,6 +116,26 @@ body {
   animation: auroraSweep 20s ease-in-out infinite;
 }
 
+.theme-wuxia .wuxia-cursor-glow {
+  background: radial-gradient(
+    circle at var(--cursor-x) var(--cursor-y),
+    rgba(143, 185, 204, 0.24),
+    transparent 58%
+  );
+  filter: blur(70px);
+  opacity: 0.65;
+  mix-blend-mode: screen;
+}
+
+.theme-wuxia.dc-season-newyear .wuxia-cursor-glow {
+  background: radial-gradient(
+    circle at var(--cursor-x) var(--cursor-y),
+    rgba(207, 230, 245, 0.22),
+    transparent 60%
+  );
+  opacity: 0.75;
+}
+
 .theme-wuxia .wuxia-constellation {
   background-image:
     radial-gradient(circle at 12% 18%, rgba(223, 232, 242, 0.4) 0 1px, transparent 2px),
@@ -138,6 +160,120 @@ body {
 .theme-wuxia .wuxia-scroll-grid {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='70' height='70'><path d='M35 0V70M0 35H70M7 7L63 63M7 63L63 7' stroke='%238fb9cc' stroke-opacity='0.18' stroke-width='1'/></svg>");
   mix-blend-mode: screen;
+}
+
+.theme-wuxia .wuxia-snow,
+.theme-wuxia .wuxia-sparkles,
+.theme-wuxia .wuxia-frost {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.55s ease;
+}
+
+.theme-wuxia .wuxia-snow::before,
+.theme-wuxia .wuxia-snow::after,
+.theme-wuxia .wuxia-sparkles::before,
+.theme-wuxia .wuxia-sparkles::after {
+  content: '';
+  position: absolute;
+  inset: -30%;
+  background-repeat: repeat;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.theme-wuxia.dc-season-newyear .wuxia-snow {
+  opacity: 1;
+  mix-blend-mode: screen;
+}
+
+.theme-wuxia.dc-season-newyear .wuxia-snow::before {
+  opacity: 0.55;
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(223, 232, 242, 0.9) 0 1px, transparent 2px),
+    radial-gradient(circle at 28% 42%, rgba(223, 232, 242, 0.8) 0 1px, transparent 2px),
+    radial-gradient(circle at 55% 22%, rgba(223, 232, 242, 0.85) 0 1px, transparent 2px),
+    radial-gradient(circle at 72% 36%, rgba(223, 232, 242, 0.8) 0 1px, transparent 2px),
+    radial-gradient(circle at 86% 60%, rgba(223, 232, 242, 0.75) 0 1px, transparent 2px),
+    radial-gradient(circle at 40% 74%, rgba(223, 232, 242, 0.85) 0 1px, transparent 2px);
+  background-size: 260px 260px;
+  filter: blur(0.15px);
+  animation: snowFallFront 18s linear infinite;
+}
+
+.theme-wuxia.dc-season-newyear .wuxia-snow::after {
+  opacity: 0.35;
+  background-image:
+    radial-gradient(circle at 18% 32%, rgba(143, 185, 204, 0.55) 0 1px, transparent 2px),
+    radial-gradient(circle at 44% 16%, rgba(223, 232, 242, 0.45) 0 1px, transparent 2px),
+    radial-gradient(circle at 68% 58%, rgba(143, 185, 204, 0.5) 0 1px, transparent 2px),
+    radial-gradient(circle at 82% 26%, rgba(223, 232, 242, 0.4) 0 1px, transparent 2px);
+  background-size: 360px 360px;
+  filter: blur(0.6px);
+  animation: snowFallBack 26s linear infinite;
+}
+
+.theme-wuxia.dc-season-newyear .wuxia-sparkles {
+  opacity: 1;
+  mix-blend-mode: screen;
+}
+
+.theme-wuxia.dc-season-newyear .wuxia-sparkles::before {
+  inset: -10%;
+  opacity: 0.38;
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(207, 230, 245, 0.9) 0 1px, transparent 3px),
+    radial-gradient(circle at 28% 42%, rgba(143, 185, 204, 0.75) 0 1px, transparent 3px),
+    radial-gradient(circle at 55% 22%, rgba(223, 232, 242, 0.7) 0 1px, transparent 3px),
+    radial-gradient(circle at 72% 36%, rgba(207, 230, 245, 0.8) 0 1px, transparent 3px),
+    radial-gradient(circle at 86% 60%, rgba(143, 185, 204, 0.7) 0 1px, transparent 3px),
+    radial-gradient(circle at 40% 74%, rgba(223, 232, 242, 0.75) 0 1px, transparent 3px);
+  background-size: 520px 520px;
+  animation: sparkleTwinkle 6.5s ease-in-out infinite;
+}
+
+.theme-wuxia.dc-season-newyear .wuxia-sparkles::after {
+  inset: -20%;
+  opacity: 0.18;
+  background-image:
+    radial-gradient(circle at 16% 62%, rgba(207, 230, 245, 0.85) 0 1px, transparent 4px),
+    radial-gradient(circle at 62% 16%, rgba(223, 232, 242, 0.75) 0 1px, transparent 4px),
+    radial-gradient(circle at 78% 76%, rgba(143, 185, 204, 0.7) 0 1px, transparent 4px);
+  background-size: 720px 720px;
+  animation: sparkleTwinkle 9.8s ease-in-out infinite reverse;
+}
+
+.theme-wuxia.dc-season-newyear .wuxia-frost {
+  opacity: 0.75;
+  background:
+    radial-gradient(circle at 12% 10%, rgba(207, 230, 245, 0.22), transparent 55%),
+    radial-gradient(circle at 90% 14%, rgba(207, 230, 245, 0.18), transparent 55%),
+    radial-gradient(circle at 70% 92%, rgba(143, 185, 204, 0.16), transparent 60%),
+    radial-gradient(circle at 18% 88%, rgba(143, 185, 204, 0.12), transparent 60%);
+  filter: blur(18px);
+  mix-blend-mode: screen;
+  animation: frostBreath 7.5s ease-in-out infinite;
+}
+
+@media (max-width: 640px) {
+  .theme-wuxia.dc-season-newyear .wuxia-snow::after {
+    opacity: 0.18;
+  }
+
+  .theme-wuxia.dc-season-newyear .wuxia-sparkles::after {
+    opacity: 0.1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-wuxia .wuxia-snow::before,
+  .theme-wuxia .wuxia-snow::after,
+  .theme-wuxia .wuxia-sparkles::before,
+  .theme-wuxia .wuxia-sparkles::after,
+  .theme-wuxia .wuxia-frost,
+  .theme-wuxia .wuxia-cursor-glow {
+    animation: none !important;
+  }
 }
 
 .theme-wuxia .wuxia-glow {
@@ -553,6 +689,59 @@ body {
   }
 }
 
+@keyframes snowFallFront {
+  0% {
+    transform: translate3d(2%, -18%, 0);
+  }
+  100% {
+    transform: translate3d(-2%, 18%, 0);
+  }
+}
+
+@keyframes snowFallBack {
+  0% {
+    transform: translate3d(-3%, -22%, 0);
+  }
+  100% {
+    transform: translate3d(3%, 22%, 0);
+  }
+}
+
+@keyframes sparkleTwinkle {
+  0%, 100% {
+    opacity: 0.35;
+    filter: blur(0px);
+  }
+  50% {
+    opacity: 0.75;
+    filter: blur(0.4px);
+  }
+}
+
+@keyframes frostBreath {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes garlandFlicker {
+  0%, 100% {
+    opacity: 0.65;
+    filter: brightness(0.95);
+  }
+  40% {
+    opacity: 1;
+    filter: brightness(1.15);
+  }
+  70% {
+    opacity: 0.8;
+    filter: brightness(1.05);
+  }
+}
+
 @keyframes navGlow {
   0%, 100% {
     opacity: 0.4;
@@ -673,6 +862,25 @@ body {
   animation: sealBloom var(--seal-duration) ease forwards;
 }
 
+.theme-wuxia.dc-season-newyear .wuxia-section::after {
+  border-color: rgba(207, 230, 245, 0.45);
+  background:
+    radial-gradient(circle, rgba(207, 230, 245, 0.2), transparent 70%),
+    conic-gradient(
+      from 0deg,
+      rgba(207, 230, 245, 0.0) 0 8%,
+      rgba(207, 230, 245, 0.18) 8% 10%,
+      rgba(207, 230, 245, 0.0) 10% 33%,
+      rgba(207, 230, 245, 0.16) 33% 35%,
+      rgba(207, 230, 245, 0.0) 35% 58%,
+      rgba(207, 230, 245, 0.16) 58% 60%,
+      rgba(207, 230, 245, 0.0) 60% 83%,
+      rgba(207, 230, 245, 0.18) 83% 85%,
+      rgba(207, 230, 245, 0.0) 85% 100%
+    );
+  box-shadow: inset 0 0 24px rgba(207, 230, 245, 0.18);
+}
+
 .theme-wuxia .wuxia-section-registration::before {
   background: radial-gradient(circle, rgba(143, 185, 204, 0.25), transparent 68%);
 }
@@ -777,10 +985,44 @@ body {
 /* Кастомные стили */
 @layer components {
   .dc-header {
+    position: relative;
+    overflow: hidden;
     background: linear-gradient(90deg, rgba(10, 18, 26, 0.92), rgba(8, 16, 24, 0.94), rgba(10, 16, 22, 0.92));
     border-bottom: 1px solid rgba(34, 53, 68, 0.6);
     box-shadow: 0 18px 44px rgba(4, 8, 12, 0.65);
     backdrop-filter: blur(16px);
+  }
+
+  .theme-wuxia.dc-season-newyear .dc-header::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(207, 230, 245, 0.85), transparent);
+    opacity: 0.9;
+    pointer-events: none;
+  }
+
+  .theme-wuxia.dc-season-newyear .dc-header::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 34px;
+    background-image:
+      radial-gradient(circle at 14px 18px, rgba(223, 232, 242, 0.95) 0 2px, transparent 5px),
+      radial-gradient(circle at 40px 22px, rgba(143, 185, 204, 0.9) 0 2px, transparent 5px),
+      radial-gradient(circle at 66px 16px, rgba(207, 230, 245, 0.95) 0 2px, transparent 5px),
+      radial-gradient(circle at 92px 22px, rgba(127, 163, 138, 0.85) 0 2px, transparent 5px),
+      linear-gradient(90deg, rgba(143, 185, 204, 0.28), rgba(207, 230, 245, 0.12), rgba(143, 185, 204, 0.28));
+    background-size: 110px 34px;
+    background-repeat: repeat;
+    mix-blend-mode: screen;
+    filter: drop-shadow(0 0 12px rgba(143, 185, 204, 0.35));
+    opacity: 0.9;
+    animation: garlandFlicker 6.2s ease-in-out infinite;
+    pointer-events: none;
   }
 
   .dc-select {
@@ -801,6 +1043,39 @@ body {
     background: rgba(18, 34, 48, 0.9);
     border-color: rgba(143, 185, 204, 0.45);
     transform: translateY(-1px);
+  }
+
+  .dc-icon-btn-active {
+    border-color: rgba(207, 230, 245, 0.75);
+    box-shadow: 0 18px 34px rgba(4, 8, 12, 0.62), 0 0 18px rgba(143, 185, 204, 0.25);
+  }
+
+  .dc-season-badge {
+    position: relative;
+    overflow: hidden;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    color: rgba(223, 232, 242, 0.9);
+    background: rgba(8, 12, 18, 0.62);
+    border: 1px solid rgba(143, 185, 204, 0.25);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 18px 36px rgba(4, 8, 12, 0.6);
+  }
+
+  .dc-season-badge::before {
+    content: '';
+    position: absolute;
+    inset: -40% -30%;
+    background: linear-gradient(90deg, transparent 0%, rgba(207, 230, 245, 0.2) 50%, transparent 100%);
+    transform: rotate(12deg);
+    opacity: 0.65;
+    animation: bannerSheen 4.8s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .dc-season-badge > * {
+    position: relative;
+    z-index: 1;
   }
 
   .dc-icon-btn-accent {
@@ -828,6 +1103,42 @@ body {
     border-top-left-radius: 22px;
     border-top-right-radius: 22px;
     box-shadow: 0 -18px 36px rgba(4, 8, 12, 0.6);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .theme-wuxia.dc-season-newyear .wuxia-dock::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    top: 10px;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(207, 230, 245, 0.7), transparent);
+    opacity: 0.85;
+    pointer-events: none;
+  }
+
+  .theme-wuxia.dc-season-newyear .wuxia-dock::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 28px;
+    background-image:
+      radial-gradient(circle at 20px 18px, rgba(223, 232, 242, 0.85) 0 2px, transparent 5px),
+      radial-gradient(circle at 54px 16px, rgba(143, 185, 204, 0.75) 0 2px, transparent 5px),
+      radial-gradient(circle at 88px 18px, rgba(207, 230, 245, 0.85) 0 2px, transparent 5px),
+      linear-gradient(90deg, rgba(143, 185, 204, 0.18), rgba(207, 230, 245, 0.08), rgba(143, 185, 204, 0.18));
+    background-size: 110px 28px;
+    background-repeat: repeat;
+    mix-blend-mode: screen;
+    filter: drop-shadow(0 0 10px rgba(143, 185, 204, 0.25));
+    opacity: 0.75;
+    animation: garlandFlicker 7.6s ease-in-out infinite reverse;
+    pointer-events: none;
   }
 
   .nav-btn {
@@ -883,6 +1194,11 @@ body {
     animation: navGlow 2.4s ease-in-out infinite;
   }
 
+  .theme-wuxia.dc-season-newyear .nav-btn.is-active::after {
+    background: linear-gradient(90deg, transparent, rgba(207, 230, 245, 0.95), transparent);
+    animation: navGlow 1.9s ease-in-out infinite;
+  }
+
   .nav-chip {
     position: relative;
     overflow: hidden;
@@ -912,6 +1228,11 @@ body {
     border-radius: 20px;
     animation: navPulse 2.2s ease-in-out infinite;
     pointer-events: none;
+  }
+
+  .theme-wuxia.dc-season-newyear .nav-chip.is-active::after {
+    border-color: rgba(207, 230, 245, 0.42);
+    animation: navPulse 1.8s ease-in-out infinite;
   }
 
   .table-responsive {
@@ -1051,6 +1372,25 @@ body {
     animation: stampPop 0.7s ease forwards;
     pointer-events: none;
     z-index: 2;
+  }
+
+  .theme-wuxia.dc-season-newyear .card::after {
+    border-radius: 16px;
+    border-color: rgba(207, 230, 245, 0.55);
+    background:
+      radial-gradient(circle, rgba(207, 230, 245, 0.22), transparent 70%),
+      conic-gradient(
+        from 0deg,
+        rgba(207, 230, 245, 0.0) 0 10%,
+        rgba(207, 230, 245, 0.26) 10% 12%,
+        rgba(207, 230, 245, 0.0) 12% 35%,
+        rgba(207, 230, 245, 0.22) 35% 37%,
+        rgba(207, 230, 245, 0.0) 37% 60%,
+        rgba(207, 230, 245, 0.24) 60% 62%,
+        rgba(207, 230, 245, 0.0) 62% 85%,
+        rgba(207, 230, 245, 0.22) 85% 87%,
+        rgba(207, 230, 245, 0.0) 87% 100%
+      );
   }
 
   .card:hover::before {

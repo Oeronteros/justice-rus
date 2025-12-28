@@ -1,7 +1,9 @@
 'use client';
 
+import { useEffect, useMemo, useState } from 'react';
 import { Section } from '@/types';
 import { Language, portalCopy, sectionLabels } from '@/lib/i18n';
+import { formatCountdownParts, NEWYEAR_STORAGE_KEY, resolveNewYearEnabled } from '@/lib/seasonal';
 import WuxiaIcon from './WuxiaIcons';
 
 interface HeaderProps {
@@ -29,8 +31,58 @@ export default function Header({
   language,
   onLanguageChange,
 }: HeaderProps) {
+  const [newYearMode, setNewYearMode] = useState(false);
+  const [ticker, setTicker] = useState(0);
+
   const handleRefresh = () => {
     window.location.reload();
+  };
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const stored = localStorage.getItem(NEWYEAR_STORAGE_KEY);
+    const enabled = resolveNewYearEnabled(new Date(), stored);
+    setNewYearMode(enabled);
+    document.body.classList.toggle('dc-season-newyear', enabled);
+  }, []);
+
+  useEffect(() => {
+    if (!newYearMode) return;
+    const interval = window.setInterval(() => setTicker((t) => (t + 1) % 10_000), 1000);
+    return () => window.clearInterval(interval);
+  }, [newYearMode]);
+
+  const seasonalBadge = useMemo(() => {
+    if (!newYearMode) return null;
+
+    const now = new Date();
+    if (now.getMonth() === 11) {
+      const target = new Date(now.getFullYear() + 1, 0, 1, 0, 0, 0, 0);
+      const diff = target.getTime() - now.getTime();
+      const { days, hours, minutes } = formatCountdownParts(diff);
+
+      if (language === 'ru') return `До Нового года: ${days}д ${hours}ч ${minutes}м`;
+      return `New Year in: ${days}d ${hours}h ${minutes}m`;
+    }
+
+    if (now.getMonth() === 0 && now.getDate() <= 7) {
+      if (language === 'ru') return 'С Новым годом!';
+      return 'Happy New Year!';
+    }
+
+    if (language === 'ru') return 'Зимний ритуал';
+    return 'Winter rite';
+  }, [language, newYearMode, ticker]);
+
+  const toggleNewYearMode = () => {
+    const next = !newYearMode;
+    setNewYearMode(next);
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(NEWYEAR_STORAGE_KEY, next ? 'on' : 'off');
+    }
+
+    document.body.classList.toggle('dc-season-newyear', next);
   };
 
   return (
@@ -73,6 +125,15 @@ export default function Header({
             </button>
           ))}
 
+          {seasonalBadge && (
+            <div className="dc-season-badge ml-3 hidden lg:flex items-center gap-2 px-4 py-3 rounded-xl">
+              <span className="dc-accent inline-flex">
+                <WuxiaIcon name="sparkle" className="w-4 h-4" />
+              </span>
+              <span>{seasonalBadge}</span>
+            </div>
+          )}
+
           <select
             id="langSwitch"
             value={language}
@@ -82,6 +143,14 @@ export default function Header({
             <option value="ru">RU</option>
             <option value="en">EN</option>
           </select>
+
+          <button
+            onClick={toggleNewYearMode}
+            className={`dc-icon-btn ml-3 p-3 rounded-xl ${newYearMode ? 'dc-icon-btn-active' : ''}`}
+            title={language === 'ru' ? 'Новогодний режим' : 'New Year mode'}
+          >
+            <WuxiaIcon name="snowflake" className="w-5 h-5" />
+          </button>
 
           <button
             onClick={handleRefresh}
