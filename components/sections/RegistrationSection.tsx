@@ -164,7 +164,7 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
           <p className="text-gray-400 max-w-2xl mx-auto">Состав ордена, ранги и клятвы каждого, кто носит наш знак.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div id="registration-kpi" className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="card p-6 text-center">
             <div className="text-3xl font-bold font-orbitron text-red-400 mb-2">{stats.total}</div>
             <div className="text-gray-400">Всего в ордене</div>

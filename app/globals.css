@@ -183,12 +183,13 @@ body {
 }
 
 .theme-wuxia.dc-season-newyear .wuxia-snow {
-  opacity: 1;
+  opacity: 0.55;
   mix-blend-mode: screen;
+  mask-image: linear-gradient(to bottom, #000, transparent 55%);
 }
 
 .theme-wuxia.dc-season-newyear .wuxia-snow::before {
-  opacity: 0.55;
+  opacity: 0.18;
   background-image:
     radial-gradient(circle at 12% 18%, rgba(223, 232, 242, 0.9) 0 1px, transparent 2px),
     radial-gradient(circle at 28% 42%, rgba(223, 232, 242, 0.8) 0 1px, transparent 2px),
@@ -202,7 +203,7 @@ body {
 }
 
 .theme-wuxia.dc-season-newyear .wuxia-snow::after {
-  opacity: 0.35;
+  opacity: 0.08;
   background-image:
     radial-gradient(circle at 18% 32%, rgba(143, 185, 204, 0.55) 0 1px, transparent 2px),
     radial-gradient(circle at 44% 16%, rgba(223, 232, 242, 0.45) 0 1px, transparent 2px),
@@ -216,11 +217,12 @@ body {
 .theme-wuxia.dc-season-newyear .wuxia-sparkles {
   opacity: 1;
   mix-blend-mode: screen;
+  mask-image: radial-gradient(circle at 50% 45%, transparent 0 62%, #000 100%);
 }
 
 .theme-wuxia.dc-season-newyear .wuxia-sparkles::before {
   inset: -10%;
-  opacity: 0.38;
+  opacity: 0.16;
   background-image:
     radial-gradient(circle at 12% 18%, rgba(207, 230, 245, 0.9) 0 1px, transparent 3px),
     radial-gradient(circle at 28% 42%, rgba(143, 185, 204, 0.75) 0 1px, transparent 3px),
@@ -234,7 +236,7 @@ body {
 
 .theme-wuxia.dc-season-newyear .wuxia-sparkles::after {
   inset: -20%;
-  opacity: 0.18;
+  opacity: 0.08;
   background-image:
     radial-gradient(circle at 16% 62%, rgba(207, 230, 245, 0.85) 0 1px, transparent 4px),
     radial-gradient(circle at 62% 16%, rgba(223, 232, 242, 0.75) 0 1px, transparent 4px),
@@ -244,7 +246,7 @@ body {
 }
 
 .theme-wuxia.dc-season-newyear .wuxia-frost {
-  opacity: 0.75;
+  opacity: 0.62;
   background:
     radial-gradient(circle at 12% 10%, rgba(207, 230, 245, 0.22), transparent 55%),
     radial-gradient(circle at 90% 14%, rgba(207, 230, 245, 0.18), transparent 55%),
@@ -257,11 +259,11 @@ body {
 
 @media (max-width: 640px) {
   .theme-wuxia.dc-season-newyear .wuxia-snow::after {
-    opacity: 0.18;
+    opacity: 0.04;
   }
 
   .theme-wuxia.dc-season-newyear .wuxia-sparkles::after {
-    opacity: 0.1;
+    opacity: 0.04;
   }
 }
 
@@ -794,16 +796,18 @@ body {
 @keyframes sectionReveal {
   0% {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translate3d(var(--reveal-x, 0px), var(--reveal-y, 12px), 0);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 .theme-wuxia .wuxia-section {
-  animation: sectionReveal 0.45s ease;
+  --reveal-x: 0px;
+  --reveal-y: 12px;
+  animation: sectionReveal 0.52s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @keyframes sectionMist {
@@ -842,11 +846,14 @@ body {
 
 .theme-wuxia .wuxia-section {
   position: relative;
+  --mist-color: rgba(143, 185, 204, 0.2);
   --mist-duration: 0.7s;
   --seal-duration: 0.8s;
   --seal-rotate: 0deg;
   --seal-shift-x: 0px;
   --seal-shift-y: 0px;
+  --scene-symbol: none;
+  --scene-symbol-size: 480px;
 }
 
 .theme-wuxia .wuxia-section > * {
@@ -857,8 +864,13 @@ body {
 .theme-wuxia .wuxia-section::before {
   inset: 12px 6%;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(143, 185, 204, 0.2), transparent 70%);
-  filter: blur(18px);
+  background:
+    var(--scene-symbol),
+    radial-gradient(circle, var(--mist-color), transparent 70%);
+  background-repeat: no-repeat, no-repeat;
+  background-position: 88% 24%, center;
+  background-size: var(--scene-symbol-size) var(--scene-symbol-size), auto;
+  filter: blur(16px);
   opacity: 0;
   animation: sectionMist var(--mist-duration) ease forwards;
 }
@@ -895,68 +907,68 @@ body {
   box-shadow: inset 0 0 24px rgba(207, 230, 245, 0.18);
 }
 
-.theme-wuxia .wuxia-section-registration::before {
-  background: radial-gradient(circle, rgba(143, 185, 204, 0.25), transparent 68%);
+.theme-wuxia .wuxia-section-registration {
+  --mist-color: rgba(143, 185, 204, 0.25);
+  --scene-symbol: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><circle cx='100' cy='100' r='70' fill='none' stroke='%238fb9cc' stroke-opacity='0.22' stroke-width='5'/><circle cx='100' cy='100' r='34' fill='none' stroke='%238fb9cc' stroke-opacity='0.15' stroke-width='4'/><path d='M100 28v24M100 148v24M28 100h24M148 100h24' stroke='%238fb9cc' stroke-opacity='0.18' stroke-width='5' stroke-linecap='round'/></svg>");
+  --scene-symbol-size: 460px;
+  --reveal-x: 0px;
+  --reveal-y: 12px;
 }
 
 .theme-wuxia .wuxia-section-registration::after {
   border-color: rgba(143, 185, 204, 0.45);
 }
 
-.theme-wuxia .wuxia-section-schedule::before {
-  background: radial-gradient(circle, rgba(127, 163, 138, 0.35), transparent 70%);
-}
-
-.theme-wuxia .wuxia-section-schedule::after {
-  border-color: rgba(127, 163, 138, 0.5);
-}
-
 .theme-wuxia .wuxia-section-schedule {
+  --mist-color: rgba(127, 163, 138, 0.35);
+  --scene-symbol: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><rect x='40' y='48' width='120' height='112' rx='18' fill='none' stroke='%238fb9cc' stroke-opacity='0.2' stroke-width='5'/><path d='M60 40v24M140 40v24M40 82h120' stroke='%238fb9cc' stroke-opacity='0.18' stroke-width='5' stroke-linecap='round'/><path d='M72 110h56M72 134h46' stroke='%238fb9cc' stroke-opacity='0.14' stroke-width='5' stroke-linecap='round'/></svg>");
+  --scene-symbol-size: 470px;
+  --reveal-x: -10px;
+  --reveal-y: 16px;
   --mist-duration: 0.9s;
   --seal-duration: 1s;
   --seal-rotate: -6deg;
   --seal-shift-x: -16px;
 }
 
-.theme-wuxia .wuxia-section-help::before {
-  background: radial-gradient(circle, rgba(35, 80, 107, 0.35), transparent 72%);
-}
-
-.theme-wuxia .wuxia-section-help::after {
-  border-color: rgba(35, 80, 107, 0.5);
+.theme-wuxia .wuxia-section-schedule::after {
+  border-color: rgba(127, 163, 138, 0.5);
 }
 
 .theme-wuxia .wuxia-section-help {
+  --mist-color: rgba(35, 80, 107, 0.35);
+  --reveal-x: 10px;
+  --reveal-y: 14px;
   --mist-duration: 0.75s;
   --seal-duration: 0.95s;
   --seal-rotate: 8deg;
   --seal-shift-x: 18px;
 }
 
-.theme-wuxia .wuxia-section-news::before {
-  background: radial-gradient(circle, rgba(143, 185, 204, 0.2), transparent 70%);
-}
-
-.theme-wuxia .wuxia-section-news::after {
-  border-style: dashed;
+.theme-wuxia .wuxia-section-help::after {
+  border-color: rgba(35, 80, 107, 0.5);
 }
 
 .theme-wuxia .wuxia-section-news {
+  --mist-color: rgba(143, 185, 204, 0.2);
+  --reveal-x: 0px;
+  --reveal-y: 10px;
   --mist-duration: 0.65s;
   --seal-duration: 0.8s;
   --seal-rotate: -12deg;
   --seal-shift-y: -10px;
 }
 
-.theme-wuxia .wuxia-section-guides::before {
-  background: radial-gradient(circle, rgba(74, 144, 176, 0.3), transparent 70%);
-}
-
-.theme-wuxia .wuxia-section-guides::after {
-  border-color: rgba(74, 144, 176, 0.55);
+.theme-wuxia .wuxia-section-news::after {
+  border-style: dashed;
 }
 
 .theme-wuxia .wuxia-section-guides {
+  --mist-color: rgba(74, 144, 176, 0.3);
+  --scene-symbol: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><path d='M100 68c-22-14-44-20-74-20v112c30 0 52 6 74 20' fill='none' stroke='%238fb9cc' stroke-opacity='0.2' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/><path d='M100 68c22-14 44-20 74-20v112c-30 0-52 6-74 20' fill='none' stroke='%238fb9cc' stroke-opacity='0.2' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/><path d='M100 68v112' fill='none' stroke='%238fb9cc' stroke-opacity='0.14' stroke-width='5' stroke-linecap='round'/></svg>");
+  --scene-symbol-size: 520px;
+  --reveal-x: 12px;
+  --reveal-y: 16px;
   --mist-duration: 0.8s;
   --seal-duration: 1.05s;
   --seal-rotate: 10deg;
@@ -964,16 +976,16 @@ body {
   --seal-shift-y: 6px;
 }
 
-.theme-wuxia .wuxia-section-absences::before {
-  background: radial-gradient(circle, rgba(143, 185, 204, 0.18), transparent 70%);
-}
-
-.theme-wuxia .wuxia-section-absences::after {
-  border-color: rgba(143, 185, 204, 0.35);
-  box-shadow: inset 0 0 20px rgba(143, 185, 204, 0.15);
+.theme-wuxia .wuxia-section-guides::after {
+  border-color: rgba(74, 144, 176, 0.55);
 }
 
 .theme-wuxia .wuxia-section-absences {
+  --mist-color: rgba(143, 185, 204, 0.18);
+  --scene-symbol: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><rect x='40' y='48' width='120' height='112' rx='18' fill='none' stroke='%238fb9cc' stroke-opacity='0.18' stroke-width='5'/><path d='M60 40v24M140 40v24M40 82h120' stroke='%238fb9cc' stroke-opacity='0.16' stroke-width='5' stroke-linecap='round'/><path d='M78 118l44 44M122 118l-44 44' stroke='%238fb9cc' stroke-opacity='0.16' stroke-width='5' stroke-linecap='round'/></svg>");
+  --scene-symbol-size: 500px;
+  --reveal-x: -8px;
+  --reveal-y: 18px;
   --mist-duration: 1s;
   --seal-duration: 1.2s;
   --seal-rotate: -4deg;
@@ -981,20 +993,25 @@ body {
   --seal-shift-y: 10px;
 }
 
-.theme-wuxia .wuxia-section-calculator::before {
-  background: radial-gradient(circle, rgba(127, 163, 138, 0.25), transparent 70%);
+.theme-wuxia .wuxia-section-absences::after {
+  border-color: rgba(143, 185, 204, 0.35);
+  box-shadow: inset 0 0 20px rgba(143, 185, 204, 0.15);
+}
+
+.theme-wuxia .wuxia-section-calculator {
+  --mist-color: rgba(127, 163, 138, 0.25);
+  --reveal-x: 0px;
+  --reveal-y: 14px;
+  --mist-duration: 0.7s;
+  --seal-duration: 0.9s;
+  --seal-rotate: 6deg;
+  --seal-shift-x: -14px;
 }
 
 .theme-wuxia .wuxia-section-calculator::after {
   border-color: rgba(127, 163, 138, 0.45);
 }
 
-.theme-wuxia .wuxia-section-calculator {
-  --mist-duration: 0.7s;
-  --seal-duration: 0.9s;
-  --seal-rotate: 6deg;
-  --seal-shift-x: -14px;
-}
 
 /* Кастомные стили */
 @layer components {
@@ -1005,6 +1022,22 @@ body {
     border-bottom: 1px solid rgba(34, 53, 68, 0.6);
     box-shadow: 0 18px 44px rgba(4, 8, 12, 0.65);
     backdrop-filter: blur(16px);
+  }
+
+  .dc-header--compact {
+    box-shadow: 0 14px 34px rgba(4, 8, 12, 0.6);
+  }
+
+  .dc-header--compact .dc-header-oath {
+    display: none;
+  }
+
+  .dc-header--compact .dc-season-badge {
+    display: none;
+  }
+
+  .dc-header--compact .seal-ring {
+    transform: scale(0.92);
   }
 
   .theme-wuxia.dc-season-newyear .dc-header::before {
@@ -1112,6 +1145,136 @@ body {
     backdrop-filter: blur(12px);
   }
 
+  .dc-order {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 20px;
+    background: rgba(10, 16, 24, 0.72);
+    border: 1px solid rgba(143, 185, 204, 0.2);
+    box-shadow: 0 18px 36px rgba(5, 10, 16, 0.55);
+    backdrop-filter: blur(12px);
+  }
+
+  .dc-order--compact {
+    justify-content: flex-end;
+    padding: 8px 10px;
+  }
+
+  .dc-order-step {
+    @apply border border-transparent transition-all duration-300;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(11, 20, 29, 0.62);
+    border: 1px solid rgba(34, 49, 64, 0.7);
+    color: var(--wuxia-paper);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .dc-order--compact .dc-order-step {
+    padding: 8px 10px;
+  }
+
+  .dc-order--compact .dc-order-label {
+    display: none;
+  }
+
+  .dc-order-step:hover {
+    @apply transform -translate-y-0.5;
+    border-color: rgba(143, 185, 204, 0.45);
+    box-shadow: 0 12px 24px rgba(5, 10, 16, 0.4);
+    background: rgba(18, 34, 48, 0.78);
+  }
+
+  .dc-order-step.is-active {
+    background: linear-gradient(120deg, rgba(20, 34, 46, 0.88), rgba(32, 52, 68, 0.78));
+    border-color: rgba(143, 185, 204, 0.55);
+    box-shadow: 0 16px 30px rgba(5, 10, 16, 0.6), 0 0 18px rgba(143, 185, 204, 0.25);
+    text-shadow: 0 0 12px rgba(143, 185, 204, 0.35);
+  }
+
+  .dc-order-step.is-active .dc-order-dot {
+    background: linear-gradient(130deg, rgba(36, 100, 138, 0.9), rgba(143, 185, 204, 0.75));
+    border-color: rgba(207, 230, 245, 0.6);
+    box-shadow: 0 0 18px rgba(143, 185, 204, 0.25);
+  }
+
+  .dc-order--full .dc-order-step:not(.dc-more-trigger)::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -12px;
+    width: 14px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(143, 185, 204, 0.45), transparent);
+    opacity: 0.9;
+  }
+
+  .dc-order-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: rgba(8, 12, 18, 0.55);
+    border: 1px solid rgba(143, 185, 204, 0.25);
+    box-shadow: inset 0 0 12px rgba(143, 185, 204, 0.18);
+    flex: 0 0 auto;
+  }
+
+  .dc-order-label {
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .dc-more {
+    position: relative;
+    flex: 0 0 auto;
+  }
+
+  .dc-more-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    min-width: 220px;
+    padding: 10px;
+    border-radius: 18px;
+    background: rgba(8, 12, 18, 0.86);
+    border: 1px solid rgba(143, 185, 204, 0.24);
+    box-shadow: 0 22px 50px rgba(4, 8, 12, 0.75);
+    backdrop-filter: blur(14px);
+    z-index: 50;
+  }
+
+  .dc-more-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    color: rgba(223, 232, 242, 0.9);
+    background: transparent;
+    border: 1px solid transparent;
+    text-align: left;
+    font-weight: 600;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .dc-more-item:hover {
+    background: rgba(18, 34, 48, 0.78);
+    border-color: rgba(143, 185, 204, 0.35);
+    transform: translateY(-1px);
+  }
+
   .wuxia-nav-scroll {
     display: flex;
     flex-wrap: nowrap;
@@ -1141,41 +1304,6 @@ body {
     box-shadow: 0 -18px 36px rgba(4, 8, 12, 0.6);
     position: relative;
     overflow: hidden;
-  }
-
-  .theme-wuxia.dc-season-newyear .wuxia-dock::before {
-    content: '';
-    position: absolute;
-    left: 16px;
-    right: 16px;
-    top: 10px;
-    height: 2px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, transparent, rgba(207, 230, 245, 0.7), transparent);
-    opacity: 0.85;
-    pointer-events: none;
-  }
-
-  .theme-wuxia.dc-season-newyear .wuxia-dock::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 22px;
-    background-image:
-      radial-gradient(circle at 18px 14px, rgba(223, 232, 242, 0.8) 0 2px, transparent 6px),
-      radial-gradient(circle at 74px 10px, rgba(143, 185, 204, 0.7) 0 2px, transparent 6px),
-      radial-gradient(circle at 128px 16px, rgba(207, 230, 245, 0.82) 0 2px, transparent 6px),
-      linear-gradient(90deg, rgba(143, 185, 204, 0.14), rgba(207, 230, 245, 0.06), rgba(143, 185, 204, 0.14));
-    background-size: 160px 22px;
-    background-repeat: repeat;
-    mix-blend-mode: screen;
-    filter: drop-shadow(0 0 10px rgba(143, 185, 204, 0.25));
-    opacity: 0.5;
-    animation: garlandFlicker 7.6s ease-in-out infinite reverse;
-    pointer-events: none;
-    mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
   }
 
   .nav-btn {
@@ -1363,16 +1491,47 @@ body {
   /* Ахуенные карточки */
 .card {
   @apply rounded-2xl border transition-all duration-300;
+  --card-rim: conic-gradient(
+    from 180deg at 50% 50%,
+    rgba(143, 185, 204, 0.06) 0 8%,
+    rgba(143, 185, 204, 0.34) 8% 10%,
+    rgba(12, 20, 30, 0.18) 10% 28%,
+    rgba(143, 185, 204, 0.2) 28% 30%,
+    rgba(12, 20, 30, 0.18) 30% 56%,
+    rgba(143, 185, 204, 0.24) 56% 58%,
+    rgba(12, 20, 30, 0.18) 58% 78%,
+    rgba(143, 185, 204, 0.2) 78% 80%,
+    rgba(12, 20, 30, 0.18) 80% 90%,
+    rgba(143, 185, 204, 0.32) 90% 92%,
+    rgba(143, 185, 204, 0.06) 92% 100%
+  );
   border: 1px solid transparent;
   background:
     linear-gradient(145deg, rgba(10, 16, 24, 0.92), rgba(6, 10, 16, 0.98)) padding-box,
-    linear-gradient(130deg, rgba(143, 185, 204, 0.35), rgba(12, 20, 30, 0.2)) border-box;
+    var(--card-rim) border-box;
   box-shadow: 0 24px 50px rgba(4, 8, 12, 0.6);
   backdrop-filter: blur(14px);
   position: relative;
   overflow: hidden;
   transform-style: preserve-3d;
   transform: perspective(1000px) rotateX(calc(var(--tilt-x) * 0.35)) rotateY(calc(var(--tilt-y) * 0.35));
+}
+
+.theme-wuxia.dc-season-newyear .card {
+  --card-rim: conic-gradient(
+    from 180deg at 50% 50%,
+    rgba(207, 230, 245, 0.08) 0 8%,
+    rgba(207, 230, 245, 0.38) 8% 10%,
+    rgba(12, 20, 30, 0.16) 10% 28%,
+    rgba(207, 230, 245, 0.22) 28% 30%,
+    rgba(12, 20, 30, 0.16) 30% 56%,
+    rgba(207, 230, 245, 0.26) 56% 58%,
+    rgba(12, 20, 30, 0.16) 58% 78%,
+    rgba(207, 230, 245, 0.22) 78% 80%,
+    rgba(12, 20, 30, 0.16) 80% 90%,
+    rgba(207, 230, 245, 0.36) 90% 92%,
+    rgba(207, 230, 245, 0.08) 92% 100%
+  );
 }
 
 .card:hover {
@@ -1386,12 +1545,29 @@ body {
   .card::before {
     content: '';
     position: absolute;
-    inset: -40% 0 0 0;
-    background: radial-gradient(circle, rgba(143, 185, 204, 0.25), transparent 70%);
+    inset: 0;
+    border-radius: inherit;
+    background:
+      radial-gradient(
+        circle at var(--cursor-x) var(--cursor-y),
+        rgba(143, 185, 204, 0.22),
+        transparent 60%
+      ),
+      radial-gradient(circle at 18% 12%, rgba(143, 185, 204, 0.12), transparent 65%);
     opacity: 0;
-    transition: opacity 0.4s ease;
-    animation: cardSheen 10s ease-in-out infinite;
+    transition: opacity 0.25s ease;
+    mix-blend-mode: screen;
     pointer-events: none;
+  }
+
+  .theme-wuxia.dc-season-newyear .card::before {
+    background:
+      radial-gradient(
+        circle at var(--cursor-x) var(--cursor-y),
+        rgba(207, 230, 245, 0.18),
+        transparent 60%
+      ),
+      radial-gradient(circle at 18% 12%, rgba(143, 185, 204, 0.1), transparent 65%);
   }
 
   .card::after {
@@ -1431,7 +1607,7 @@ body {
   }
 
   .card:hover::before {
-    opacity: 0.8;
+    opacity: 0.9;
   }
 
   .card > * {

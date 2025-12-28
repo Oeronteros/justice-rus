@@ -7,6 +7,7 @@ export type IconName =
   | 'seal'
   | 'snowflake'
   | 'sparkle'
+  | 'dots'
   | 'refresh'
   | 'logout'
   | 'spinner'
@@ -132,6 +133,14 @@ export default function WuxiaIcon({ name, className = '' }: IconProps) {
         <svg viewBox="0 0 24 24" className={className} {...baseProps}>
           <path d="M12 3.4l1.5 5.2 5.1 1.5-5.1 1.5-1.5 5.2-1.5-5.2-5.1-1.5 5.1-1.5L12 3.4z" />
           <path d="M19.3 14.2l.7 2.4 2.4.7-2.4.7-.7 2.4-.7-2.4-2.4-.7 2.4-.7.7-2.4z" />
+        </svg>
+      );
+    case 'dots':
+      return (
+        <svg viewBox="0 0 24 24" className={className} {...baseProps}>
+          <circle cx="6.3" cy="12" r="1.1" fill="currentColor" stroke="none" />
+          <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
+          <circle cx="17.7" cy="12" r="1.1" fill="currentColor" stroke="none" />
         </svg>
       );
     case 'skull':

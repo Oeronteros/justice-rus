@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Section } from '@/types';
 import { Language, portalCopy, sectionLabels } from '@/lib/i18n';
 import { formatCountdownParts, NEWYEAR_STORAGE_KEY, resolveNewYearEnabled } from '@/lib/seasonal';
@@ -14,15 +14,9 @@ interface HeaderProps {
   onLanguageChange: (language: Language) => void;
 }
 
-const sections: Section[] = [
-  'registration',
-  'schedule',
-  'help',
-  'news',
-  'guides',
-  'absences',
-  'calculator',
-];
+type OrderStep = 'portal' | 'schedule' | 'guides' | 'kpi' | 'absences';
+
+const moreSections: Section[] = ['news', 'help', 'calculator'];
 
 export default function Header({
   currentSection,
@@ -33,6 +27,10 @@ export default function Header({
 }: HeaderProps) {
   const [newYearMode, setNewYearMode] = useState(false);
   const [ticker, setTicker] = useState(0);
+  const [headerCompact, setHeaderCompact] = useState(false);
+  const [activeOrderStep, setActiveOrderStep] = useState<OrderStep>('portal');
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement | null>(null);
 
   const handleRefresh = () => {
     window.location.reload();
@@ -74,6 +72,76 @@ export default function Header({
     return 'Winter rite';
   }, [language, newYearMode, ticker]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const threshold = 72;
+    let frame = 0;
+
+    const update = () => {
+      setHeaderCompact(window.scrollY > threshold);
+      frame = 0;
+    };
+
+    const handleScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (frame) {
+        window.cancelAnimationFrame(frame);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (currentSection === 'schedule') {
+      setActiveOrderStep('schedule');
+      return;
+    }
+    if (currentSection === 'guides') {
+      setActiveOrderStep('guides');
+      return;
+    }
+    if (currentSection === 'absences') {
+      setActiveOrderStep('absences');
+      return;
+    }
+    if (currentSection === 'registration' && activeOrderStep !== 'kpi') {
+      setActiveOrderStep('portal');
+    }
+  }, [activeOrderStep, currentSection]);
+
+  useEffect(() => {
+    if (!moreOpen) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+      if (!target) return;
+      if (!moreRef.current) return;
+      if (!moreRef.current.contains(target)) {
+        setMoreOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMoreOpen(false);
+      }
+    };
+
+    window.addEventListener('pointerdown', handlePointerDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [moreOpen]);
+
   const toggleNewYearMode = () => {
     const next = !newYearMode;
     setNewYearMode(next);
@@ -85,9 +153,78 @@ export default function Header({
     document.body.classList.toggle('dc-season-newyear', next);
   };
 
+  const scrollToMain = () => {
+    if (typeof window === 'undefined') return;
+    window.requestAnimationFrame(() => {
+      document.getElementById('portal-main')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+
+  const goToSection = (section: Section) => {
+    setMoreOpen(false);
+    onSectionChange(section);
+    scrollToMain();
+  };
+
+  const goToPortal = () => {
+    setActiveOrderStep('portal');
+    goToSection('registration');
+  };
+
+  const goToSchedule = () => {
+    setActiveOrderStep('schedule');
+    goToSection('schedule');
+  };
+
+  const goToGuides = () => {
+    setActiveOrderStep('guides');
+    goToSection('guides');
+  };
+
+  const goToAbsences = () => {
+    setActiveOrderStep('absences');
+    goToSection('absences');
+  };
+
+  const focusKpi = () => {
+    setMoreOpen(false);
+    setActiveOrderStep('kpi');
+    onSectionChange('registration');
+
+    if (typeof window === 'undefined') return;
+    window.requestAnimationFrame(() => {
+      document.getElementById('portal-main')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.requestAnimationFrame(() => {
+        document.getElementById('registration-kpi')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    });
+  };
+
+  const orderLabels = useMemo(() => {
+    if (language === 'ru') {
+      return {
+        portal: 'Портал',
+        schedule: 'Расписание',
+        guides: 'Гайды',
+        kpi: 'KPI',
+        absences: 'Отсутствия',
+        more: 'Ещё',
+      };
+    }
+
+    return {
+      portal: 'Portal',
+      schedule: 'Schedule',
+      guides: 'Guides',
+      kpi: 'KPI',
+      absences: 'Absences',
+      more: 'More',
+    };
+  }, [language]);
+
   return (
-    <header className="dc-header sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-6 py-4">
+    <header className={`dc-header sticky top-0 z-40 ${headerCompact ? 'dc-header--compact' : ''}`}>
+      <div className={`max-w-7xl mx-auto px-6 ${headerCompact ? 'py-3' : 'py-4'}`}>
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="flex items-center gap-4">
           <div className="relative">
@@ -103,7 +240,7 @@ export default function Header({
               Demonic Cult
             </h1>
             <p className="text-sm dc-muted font-roboto whitespace-nowrap">Justice Mobile · Wuxia Order</p>
-            <span className="wuxia-tag wuxia-tag-compact mt-2 block">
+            <span className="dc-header-oath wuxia-tag wuxia-tag-compact mt-2 block">
               <WuxiaIcon name="eye" className="w-4 h-4" />
               <span className="wuxia-tag-text">{portalCopy[language].oath}</span>
             </span>
@@ -156,22 +293,116 @@ export default function Header({
           </div>
         </div>
 
-        <nav className="wuxia-nav hidden md:block mt-3">
-          <div className="wuxia-nav-scroll">
-            {sections.map((section) => (
+        <nav className="hidden md:block mt-3">
+          <div className={`dc-order ${headerCompact ? 'dc-order--compact' : 'dc-order--full'}`}>
+            {!headerCompact && (
               <button
-                key={section}
-                onClick={() => onSectionChange(section)}
-                className={`nav-btn px-4 py-2.5 rounded-xl transition-all duration-300 text-sm font-medium ${
-                  currentSection === section ? 'is-active' : ''
-                }`}
+                type="button"
+                onClick={goToPortal}
+                className={`dc-order-step ${activeOrderStep === 'portal' ? 'is-active' : ''}`}
               >
-                <span className="mr-2 inline-flex dc-accent">
-                  <WuxiaIcon name={section} className="w-4 h-4" />
+                <span className="dc-order-dot dc-accent">
+                  <WuxiaIcon name="registration" className="w-4 h-4" />
                 </span>
-                <span>{sectionLabels[language][section]}</span>
+                <span className="dc-order-label">{orderLabels.portal}</span>
               </button>
-            ))}
+            )}
+
+            <button
+              type="button"
+              onClick={goToSchedule}
+              className={`dc-order-step ${activeOrderStep === 'schedule' ? 'is-active' : ''}`}
+            >
+              <span className="dc-order-dot dc-accent">
+                <WuxiaIcon name="schedule" className="w-4 h-4" />
+              </span>
+              <span className="dc-order-label">{orderLabels.schedule}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={goToGuides}
+              className={`dc-order-step ${activeOrderStep === 'guides' ? 'is-active' : ''}`}
+            >
+              <span className="dc-order-dot dc-accent">
+                <WuxiaIcon name="guides" className="w-4 h-4" />
+              </span>
+              <span className="dc-order-label">{orderLabels.guides}</span>
+            </button>
+
+            {!headerCompact && (
+              <button
+                type="button"
+                onClick={focusKpi}
+                className={`dc-order-step ${activeOrderStep === 'kpi' ? 'is-active' : ''}`}
+              >
+                <span className="dc-order-dot dc-accent">
+                  <WuxiaIcon name="sparkle" className="w-4 h-4" />
+                </span>
+                <span className="dc-order-label">{orderLabels.kpi}</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={goToAbsences}
+              className={`dc-order-step ${activeOrderStep === 'absences' ? 'is-active' : ''}`}
+            >
+              <span className="dc-order-dot dc-accent">
+                <WuxiaIcon name="absences" className="w-4 h-4" />
+              </span>
+              <span className="dc-order-label">{orderLabels.absences}</span>
+            </button>
+
+            <div ref={moreRef} className="dc-more">
+              <button
+                type="button"
+                className={`dc-order-step dc-more-trigger ${moreOpen ? 'is-open' : ''}`}
+                onClick={() => setMoreOpen((v) => !v)}
+              >
+                <span className="dc-order-dot dc-accent">
+                  <WuxiaIcon name="dots" className="w-4 h-4" />
+                </span>
+                <span className="dc-order-label">{orderLabels.more}</span>
+              </button>
+
+              {moreOpen && (
+                <div className="dc-more-menu" role="menu">
+                  {headerCompact && (
+                    <button type="button" className="dc-more-item" role="menuitem" onClick={goToPortal}>
+                      <span className="dc-accent inline-flex">
+                        <WuxiaIcon name="registration" className="w-4 h-4" />
+                      </span>
+                      <span>{sectionLabels[language].registration}</span>
+                    </button>
+                  )}
+
+                  {headerCompact && (
+                    <button type="button" className="dc-more-item" role="menuitem" onClick={focusKpi}>
+                      <span className="dc-accent inline-flex">
+                        <WuxiaIcon name="sparkle" className="w-4 h-4" />
+                      </span>
+                      <span>{orderLabels.kpi}</span>
+                    </button>
+                  )}
+
+                  {moreSections.map((section) => (
+                    <button
+                      key={section}
+                      type="button"
+                      className="dc-more-item"
+                      role="menuitem"
+                      onClick={() => goToSection(section)}
+                    >
+                      <span className="dc-accent inline-flex">
+                        <WuxiaIcon name={section} className="w-4 h-4" />
+                      </span>
+                      <span>{sectionLabels[language][section]}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </nav>
       </div>
