@@ -1,6 +1,7 @@
 'use client';
 
 import { User } from '@/types';
+import WuxiaIcon from '../WuxiaIcons';
 
 interface HelpSectionProps {
   user: User;
@@ -12,7 +13,7 @@ export default function HelpSection({ user }: HelpSectionProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
-            <i className="fas fa-hands-helping mr-3"></i>
+            <WuxiaIcon name="help" className="inline-block w-7 h-7 mr-3 text-red-400 align-text-bottom" />
             Help & Support
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">Find answers to common questions and get support from the guild community</p>
@@ -22,7 +23,7 @@ export default function HelpSection({ user }: HelpSectionProps) {
           <div className="card p-8 hover:transform hover:-translate-y-1 transition-all duration-300">
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-gradient-to-r from-red-600/30 to-red-800/30 rounded-full flex items-center justify-center mr-4">
-                <i className="fas fa-question-circle text-2xl text-red-400"></i>
+                <WuxiaIcon name="seal" className="w-7 h-7 text-red-400" />
               </div>
               <h3 className="text-2xl font-bold font-orbitron text-red-400">Frequently Asked Questions</h3>
             </div>
@@ -54,7 +55,7 @@ export default function HelpSection({ user }: HelpSectionProps) {
           <div className="card p-8 hover:transform hover:-translate-y-1 transition-all duration-300">
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-gradient-to-r from-blue-600/30 to-blue-800/30 rounded-full flex items-center justify-center mr-4">
-                <i className="fas fa-headset text-2xl text-blue-400"></i>
+                <WuxiaIcon name="shield" className="w-7 h-7 text-blue-400" />
               </div>
               <h3 className="text-2xl font-bold font-orbitron text-blue-400">Contact Support</h3>
             </div>
@@ -62,7 +63,7 @@ export default function HelpSection({ user }: HelpSectionProps) {
             <div className="space-y-6">
               <div className="p-4 bg-gray-800/50 rounded-lg">
                 <h4 className="font-bold text-lg mb-2 text-gray-300 flex items-center">
-                  <i className="fab fa-discord text-blue-400 mr-2"></i>
+                  <WuxiaIcon name="comment" className="inline-block w-4 h-4 mr-2 text-blue-400 align-text-bottom" />
                   Discord
                 </h4>
                 <p className="text-gray-400">
@@ -72,7 +73,7 @@ export default function HelpSection({ user }: HelpSectionProps) {
 
               <div className="p-4 bg-gray-800/50 rounded-lg">
                 <h4 className="font-bold text-lg mb-2 text-gray-300 flex items-center">
-                  <i className="fas fa-gamepad text-purple-400 mr-2"></i>
+                  <WuxiaIcon name="sword" className="inline-block w-4 h-4 mr-2 text-purple-400 align-text-bottom" />
                   In-Game
                 </h4>
                 <p className="text-gray-400">
@@ -82,7 +83,7 @@ export default function HelpSection({ user }: HelpSectionProps) {
 
               <div className="p-4 bg-gray-800/50 rounded-lg">
                 <h4 className="font-bold text-lg mb-2 text-gray-300 flex items-center">
-                  <i className="fas fa-envelope text-green-400 mr-2"></i>
+                  <WuxiaIcon name="seal" className="inline-block w-4 h-4 mr-2 text-green-400 align-text-bottom" />
                   Email
                 </h4>
                 <p className="text-gray-400">
@@ -95,7 +96,7 @@ export default function HelpSection({ user }: HelpSectionProps) {
           <div className="card p-8 hover:transform hover:-translate-y-1 transition-all duration-300 lg:col-span-2">
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-gradient-to-r from-yellow-600/30 to-yellow-800/30 rounded-full flex items-center justify-center mr-4">
-                <i className="fas fa-book text-2xl text-yellow-400"></i>
+                <WuxiaIcon name="book" className="w-7 h-7 text-yellow-400" />
               </div>
               <h3 className="text-2xl font-bold font-orbitron text-yellow-400">Guild Rules</h3>
             </div>
@@ -104,7 +105,7 @@ export default function HelpSection({ user }: HelpSectionProps) {
               <div className="space-y-4">
                 <div className="flex items-start p-4 bg-gray-800/50 rounded-lg">
                   <div className="flex-shrink-0 mt-1 mr-3 text-green-400">
-                    <i className="fas fa-check-circle"></i>
+                    <WuxiaIcon name="checkCircle" className="w-5 h-5" />
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-300">Respect Others</h4>
@@ -114,7 +115,7 @@ export default function HelpSection({ user }: HelpSectionProps) {
 
                 <div className="flex items-start p-4 bg-gray-800/50 rounded-lg">
                   <div className="flex-shrink-0 mt-1 mr-3 text-green-400">
-                    <i className="fas fa-check-circle"></i>
+                    <WuxiaIcon name="checkCircle" className="w-5 h-5" />
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-300">Regular Participation</h4>
@@ -124,7 +125,7 @@ export default function HelpSection({ user }: HelpSectionProps) {
 
                 <div className="flex items-start p-4 bg-gray-800/50 rounded-lg">
                   <div className="flex-shrink-0 mt-1 mr-3 text-green-400">
-                    <i className="fas fa-check-circle"></i>
+                    <WuxiaIcon name="checkCircle" className="w-5 h-5" />
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-300">KPI Requirements</h4>
@@ -136,7 +137,7 @@ export default function HelpSection({ user }: HelpSectionProps) {
               <div className="space-y-4">
                 <div className="flex items-start p-4 bg-gray-800/50 rounded-lg">
                   <div className="flex-shrink-0 mt-1 mr-3 text-green-400">
-                    <i className="fas fa-check-circle"></i>
+                    <WuxiaIcon name="checkCircle" className="w-5 h-5" />
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-300">Advance Notice</h4>
@@ -146,7 +147,7 @@ export default function HelpSection({ user }: HelpSectionProps) {
 
                 <div className="flex items-start p-4 bg-gray-800/50 rounded-lg">
                   <div className="flex-shrink-0 mt-1 mr-3 text-green-400">
-                    <i className="fas fa-check-circle"></i>
+                    <WuxiaIcon name="checkCircle" className="w-5 h-5" />
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-300">No Toxicity</h4>
@@ -156,7 +157,7 @@ export default function HelpSection({ user }: HelpSectionProps) {
 
                 <div className="flex items-start p-4 bg-gray-800/50 rounded-lg">
                   <div className="flex-shrink-0 mt-1 mr-3 text-green-400">
-                    <i className="fas fa-check-circle"></i>
+                    <WuxiaIcon name="checkCircle" className="w-5 h-5" />
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-300">Teamwork</h4>
@@ -171,4 +172,3 @@ export default function HelpSection({ user }: HelpSectionProps) {
     </section>
   );
 }
-

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Registration, User } from '@/types';
 import { apiService } from '@/lib/api';
 import { formatDate, getRankClass, getStatusClass, getKPIClass } from '@/lib/utils';
+import WuxiaIcon from '../WuxiaIcons';
 
 interface RegistrationSectionProps {
   user: User;
@@ -102,7 +103,7 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-2">
-              <i className="fas fa-users mr-3"></i>
+              <WuxiaIcon name="registration" className="inline-block w-6 h-6 mr-3 text-red-400 align-text-bottom" />
               Реестр Культа
             </h2>
             <p className="text-gray-400">Призываем записи ордена...</p>
@@ -131,18 +132,21 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-12">
             <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center">
-                <i className="fas fa-exclamation-triangle text-2xl text-red-400"></i>
-              </div>
+                <div className="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center">
+                <WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />
+                </div>
             </div>
             <h3 className="text-2xl font-bold text-red-400 mb-2">Реестр недоступен</h3>
             <p className="text-gray-400 mb-6 max-w-md mx-auto">{error}</p>
-            <button
-              onClick={loadRegistrations}
-              className="btn-primary"
-            >
-              <i className="fas fa-redo mr-2"></i>Повторить ритуал
-            </button>
+              <button
+                onClick={loadRegistrations}
+                className="btn-primary"
+              >
+              <span className="inline-flex items-center">
+                <WuxiaIcon name="redo" className="w-4 h-4 mr-2" />
+                Повторить ритуал
+              </span>
+              </button>
           </div>
         </div>
       </section>
@@ -154,7 +158,7 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
-            <i className="fas fa-users mr-3"></i>
+            <WuxiaIcon name="registration" className="inline-block w-7 h-7 mr-3 text-red-400 align-text-bottom" />
             Реестр Культа
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">Состав ордена, ранги и клятвы каждого, кто носит наш знак.</p>
@@ -232,7 +236,7 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
                   <tr>
                     <td colSpan={9} className="py-12 text-center text-gray-500">
                       <div className="flex flex-col items-center">
-                        <i className="fas fa-users-slash text-3xl mb-3"></i>
+                        <WuxiaIcon name="usersSlash" className="w-10 h-10 mb-3 text-gray-400" />
                         <div className="text-lg">Записей не найдено</div>
                         <div className="text-sm">Смени поиск или фильтры</div>
                       </div>
@@ -244,7 +248,6 @@ export default function RegistrationSection({ user }: RegistrationSectionProps) 
                       <td className="text-red-400 font-medium">#{index + 1}</td>
                       <td className="font-medium">
                         <div className="flex items-center space-x-2">
-                          <i className="fab fa-discord text-blue-400"></i>
                           <span>{registration.discord}</span>
                         </div>
                       </td>

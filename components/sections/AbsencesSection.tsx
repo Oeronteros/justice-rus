@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Absence, User } from '@/types';
 import { apiService } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
+import WuxiaIcon from '../WuxiaIcons';
 
 interface AbsencesSectionProps {
   user: User;
@@ -58,7 +59,7 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-2">
-              <i className="fas fa-calendar-times mr-3"></i>
+              <WuxiaIcon name="absences" className="inline-block w-6 h-6 mr-3 text-red-400 align-text-bottom" />
               Отлучения
             </h2>
             <p className="text-gray-400">Собираем клятвы отсутствия...</p>
@@ -86,7 +87,7 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
           <div className="text-center py-12">
             <div className="flex justify-center mb-6">
               <div className="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center">
-                <i className="fas fa-exclamation-triangle text-2xl text-red-400"></i>
+                <WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />
               </div>
             </div>
             <h3 className="text-2xl font-bold text-red-400 mb-2">Отлучения недоступны</h3>
@@ -95,7 +96,7 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
               onClick={loadAbsences}
               className="btn-primary"
             >
-              <i className="fas fa-redo mr-2"></i>Повторить ритуал
+              <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />Повторить ритуал
             </button>
           </div>
         </div>
@@ -108,7 +109,7 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
-            <i className="fas fa-calendar-times mr-3"></i>
+            <WuxiaIcon name="absences" className="inline-block w-7 h-7 mr-3 text-red-400 align-text-bottom" />
             Отлучения
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">Учет отлучений, клятв и причин отсутствия в строю.</p>
@@ -132,7 +133,7 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
             <div className="text-center py-16">
               <div className="flex justify-center mb-6">
                 <div className="w-20 h-20 bg-gray-800/50 rounded-full flex items-center justify-center">
-                  <i className="fas fa-calendar-times text-3xl text-gray-500"></i>
+                  <WuxiaIcon name="calendarX" className="w-10 h-10 text-gray-500" />
                 </div>
               </div>
               <h3 className="text-xl font-bold text-gray-400 mb-2">Отлучения не найдены</h3>
@@ -148,7 +149,7 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
                       absence.status
                     )}`}
                   >
-                    <i className="fas fa-circle mr-2"></i>
+                    <span className="inline-block w-2 h-2 rounded-full bg-current mr-2 opacity-80" />
                     {statusLabels[absence.status] || absence.status}
                   </span>
                 </div>
@@ -174,17 +175,17 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
                   {user.role !== 'member' && (
                     <>
                       <button className="px-4 py-2 bg-green-700 hover:bg-green-600 rounded-lg transition text-sm font-medium">
-                        <i className="fas fa-check mr-2"></i>
+                        <WuxiaIcon name="check" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
                         Одобрить
                       </button>
                       <button className="px-4 py-2 bg-red-700 hover:bg-red-600 rounded-lg transition text-sm font-medium">
-                        <i className="fas fa-times mr-2"></i>
+                        <WuxiaIcon name="x" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
                         Отклонить
                       </button>
                     </>
                   )}
                   <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition text-sm font-medium">
-                    <i className="fas fa-edit mr-2"></i>
+                    <WuxiaIcon name="edit" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
                     Редактировать
                   </button>
                 </div>

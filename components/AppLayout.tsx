@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Header from './Header';
 import MobileNav from './MobileNav';
+import WuxiaIcon from './WuxiaIcons';
 import RegistrationSection from './sections/RegistrationSection';
 import ScheduleSection from './sections/ScheduleSection';
 import HelpSection from './sections/HelpSection';
@@ -10,7 +11,7 @@ import NewsSection from './sections/NewsSection';
 import GuidesSection from './sections/GuidesSection';
 import AbsencesSection from './sections/AbsencesSection';
 import { User, Section } from '@/types';
-import { Language } from '@/lib/i18n';
+import { Language, portalCopy } from '@/lib/i18n';
 
 interface AppLayoutProps {
   user: User;
@@ -72,6 +73,14 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
     }
   };
 
+  const jumpTo = (section: Section) => {
+    setCurrentSection(section);
+    if (typeof window === 'undefined') return;
+    window.requestAnimationFrame(() => {
+      document.getElementById('portal-main')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+
   const renderSection = () => {
     switch (currentSection) {
       case 'registration':
@@ -114,29 +123,44 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
           <div className="wuxia-hero-grid">
           <div className="space-y-4 wuxia-parallax wuxia-parallax-text">
             <span className="wuxia-tag">
-              <i className="fas fa-circle-notch"></i>
-              Клятва ордена Demonic Cult
+              <WuxiaIcon name="seal" className="w-4 h-4" />
+              {portalCopy[language].heroTag}
             </span>
-            <h2 className="text-3xl sm:text-4xl font-orbitron text-[#e6eff5]">
-              Тайное братство Justice Mobile: школа дуэлей, рейдов и власти над тенью.
+            <h2 className="text-3xl sm:text-4xl font-orbitron dc-text">
+              {portalCopy[language].heroTitle}
             </h2>
-            <p className="text-[#b7c9d6] max-w-2xl">
-              Мы не просто гильдия. Мы дисциплина, ритуал и сила. Здесь рождаются командиры рейдов,
-              мастера клинка и хранители закона крови. Вступив, ты получаешь путь, знак и круг,
-              который держит слово крепче стали.
+            <p className="dc-muted max-w-2xl">
+              {portalCopy[language].heroSubtitle}
             </p>
+
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <button type="button" className="btn-primary" onClick={() => jumpTo('schedule')}>
+                {portalCopy[language].heroCtaPrimary}
+              </button>
+              <button type="button" className="btn-secondary" onClick={() => jumpTo('guides')}>
+                {portalCopy[language].heroCtaSecondary}
+              </button>
+            </div>
+
+            <details className="dc-details">
+              <summary className="dc-summary">{portalCopy[language].heroManifestoTitle}</summary>
+              <p className="dc-muted mt-3 leading-relaxed">
+                {portalCopy[language].heroManifestoBody}
+              </p>
+            </details>
+
             <div className="wuxia-rituals">
               <div className="wuxia-ritual">
-                <span className="wuxia-ritual-title">Обряд входа</span>
-                Проверка клинка, духа и верности.
+                <span className="wuxia-ritual-title">{portalCopy[language].ritualOneTitle}</span>
+                {portalCopy[language].ritualOneBody}
               </div>
               <div className="wuxia-ritual">
-                <span className="wuxia-ritual-title">Кодекс крови</span>
-                Тишина, дисциплина, победа.
+                <span className="wuxia-ritual-title">{portalCopy[language].ritualTwoTitle}</span>
+                {portalCopy[language].ritualTwoBody}
               </div>
               <div className="wuxia-ritual">
-                <span className="wuxia-ritual-title">Печать ордена</span>
-                Знак, что знают даже враги.
+                <span className="wuxia-ritual-title">{portalCopy[language].ritualThreeTitle}</span>
+                {portalCopy[language].ritualThreeBody}
               </div>
             </div>
           </div>
@@ -151,28 +175,28 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
             <div className="wuxia-crest-caption">Demonic Cult</div>
             <div className="wuxia-crest-sub">Justice Mobile • Wuxia Order</div>
           </div>
-          <div className="wuxia-pillars wuxia-parallax wuxia-parallax-light">
+            <div className="wuxia-pillars wuxia-parallax wuxia-parallax-light">
             <div className="wuxia-pillar">
-              <div className="text-xs uppercase tracking-widest text-[#8fb9cc]">Ступень I</div>
-              <div className="mt-2 font-semibold">Посвящение и дисциплина</div>
+              <div className="text-xs uppercase tracking-widest dc-accent">{language === 'ru' ? 'Ступень I' : 'Step I'}</div>
+              <div className="mt-2 font-semibold">{portalCopy[language].pillarOne}</div>
             </div>
             <div className="wuxia-pillar">
-              <div className="text-xs uppercase tracking-widest text-[#8fb9cc]">Ступень II</div>
-              <div className="mt-2 font-semibold">Школа дуэлей и контроля</div>
+              <div className="text-xs uppercase tracking-widest dc-accent">{language === 'ru' ? 'Ступень II' : 'Step II'}</div>
+              <div className="mt-2 font-semibold">{portalCopy[language].pillarTwo}</div>
             </div>
             <div className="wuxia-pillar">
-              <div className="text-xs uppercase tracking-widest text-[#8fb9cc]">Ступень III</div>
-              <div className="mt-2 font-semibold">Охота за легендами</div>
+              <div className="text-xs uppercase tracking-widest dc-accent">{language === 'ru' ? 'Ступень III' : 'Step III'}</div>
+              <div className="mt-2 font-semibold">{portalCopy[language].pillarThree}</div>
             </div>
             <div className="wuxia-pillar">
-              <div className="text-xs uppercase tracking-widest text-[#8fb9cc]">Ступень IV</div>
-              <div className="mt-2 font-semibold">Венчание рейдов и титулов</div>
+              <div className="text-xs uppercase tracking-widest dc-accent">{language === 'ru' ? 'Ступень IV' : 'Step IV'}</div>
+              <div className="mt-2 font-semibold">{portalCopy[language].pillarFour}</div>
             </div>
           </div>
         </div>
         </div>
       </section>
-      <main className="min-h-screen">
+      <main id="portal-main" className="min-h-screen">
         <div
           key={currentSection}
           className={`wuxia-section wuxia-section-${currentSection}`}

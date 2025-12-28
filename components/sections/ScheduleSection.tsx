@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Schedule, User } from '@/types';
 import { apiService } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
+import WuxiaIcon from '../WuxiaIcons';
 
 interface ScheduleSectionProps {
   user: User;
@@ -38,7 +39,10 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-2">
-              <i className="fas fa-calendar-alt mr-3"></i>
+              <WuxiaIcon
+                name="schedule"
+                className="inline-block w-6 h-6 mr-3 text-red-400 align-text-bottom"
+              />
               Расписание Ритуалов
             </h2>
             <p className="text-gray-400">Открываем свитки грядущих рейдов...</p>
@@ -65,7 +69,7 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
           <div className="text-center py-12">
             <div className="flex justify-center mb-6">
               <div className="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center">
-                <i className="fas fa-exclamation-triangle text-2xl text-red-400"></i>
+                <WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />
               </div>
             </div>
             <h3 className="text-2xl font-bold text-red-400 mb-2">Расписание недоступно</h3>
@@ -74,7 +78,7 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
               onClick={loadSchedule}
               className="btn-primary"
             >
-              <i className="fas fa-redo mr-2"></i>Повторить ритуал
+              <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />Повторить ритуал
             </button>
           </div>
         </div>
@@ -87,7 +91,10 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
-            <i className="fas fa-calendar-alt mr-3"></i>
+            <WuxiaIcon
+              name="schedule"
+              className="inline-block w-7 h-7 mr-3 text-red-400 align-text-bottom"
+            />
             Расписание Ритуалов
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">Список рейдов и действий ордена, где каждый дает клятву явки.</p>
@@ -98,7 +105,7 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
             <div className="text-center py-16">
               <div className="flex justify-center mb-6">
                 <div className="w-20 h-20 bg-gray-800/50 rounded-full flex items-center justify-center">
-                  <i className="fas fa-calendar-times text-3xl text-gray-500"></i>
+                  <WuxiaIcon name="calendarX" className="w-10 h-10 text-gray-500" />
                 </div>
               </div>
               <h3 className="text-xl font-bold text-gray-400 mb-2">Ритуалы не назначены</h3>
@@ -119,12 +126,15 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
 
                   <div className="flex justify-between items-center">
                     <span className="px-3 py-1 bg-gradient-to-r from-[#142636]/60 to-[#1d3b52]/60 text-[#8fb9cc] rounded-full text-sm font-medium">
-                      <i className="fas fa-tag mr-2"></i>
+                      <WuxiaIcon name="tag" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
                       {schedule.type}
                     </span>
 
                     <button className="text-sm font-medium text-[#8fb9cc] hover:text-[#bcd6e5] transition-colors">
-                      <i className="fas fa-calendar-check mr-1"></i>
+                      <WuxiaIcon
+                        name="calendarCheck"
+                        className="inline-block w-4 h-4 mr-1 align-text-bottom"
+                      />
                       Принять клятву
                     </button>
                   </div>

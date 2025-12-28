@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { News, User } from '@/types';
 import { apiService } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
+import WuxiaIcon from '../WuxiaIcons';
 
 interface NewsSectionProps {
   user: User;
@@ -44,7 +45,7 @@ export default function NewsSection({ user }: NewsSectionProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-2">
-              <i className="fas fa-newspaper mr-3"></i>
+              <WuxiaIcon name="news" className="inline-block w-6 h-6 mr-3 text-red-400 align-text-bottom" />
               News
             </h2>
             <p className="text-gray-400">Loading latest guild news and updates...</p>
@@ -72,7 +73,7 @@ export default function NewsSection({ user }: NewsSectionProps) {
           <div className="text-center py-12">
             <div className="flex justify-center mb-6">
               <div className="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center">
-                <i className="fas fa-exclamation-triangle text-2xl text-red-400"></i>
+                <WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />
               </div>
             </div>
             <h3 className="text-2xl font-bold text-red-400 mb-2">Error Loading News</h3>
@@ -81,7 +82,7 @@ export default function NewsSection({ user }: NewsSectionProps) {
               onClick={loadNews}
               className="btn-primary"
             >
-              <i className="fas fa-redo mr-2"></i>Try Again
+              <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />Try Again
             </button>
           </div>
         </div>
@@ -94,7 +95,7 @@ export default function NewsSection({ user }: NewsSectionProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
-            <i className="fas fa-newspaper mr-3"></i>
+            <WuxiaIcon name="news" className="inline-block w-7 h-7 mr-3 text-red-400 align-text-bottom" />
             News
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">Stay updated with the latest guild news, announcements, and updates</p>
@@ -105,7 +106,7 @@ export default function NewsSection({ user }: NewsSectionProps) {
             <div className="text-center py-16">
               <div className="flex justify-center mb-6">
                 <div className="w-20 h-20 bg-gray-800/50 rounded-full flex items-center justify-center">
-                  <i className="fas fa-newspaper text-3xl text-gray-500"></i>
+                  <WuxiaIcon name="news" className="w-10 h-10 text-gray-500" />
                 </div>
               </div>
               <h3 className="text-xl font-bold text-gray-400 mb-2">No News Available</h3>
@@ -116,7 +117,7 @@ export default function NewsSection({ user }: NewsSectionProps) {
               <div key={item.id} className="card p-8 hover:transform hover:-translate-y-1 transition-all duration-300">
                 {item.pinned && (
                   <div className="flex items-center mb-4 text-yellow-400">
-                    <i className="fas fa-thumbtack mr-2"></i>
+                    <WuxiaIcon name="thumbtack" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
                     <span className="text-sm font-bold uppercase tracking-wider">Pinned</span>
                   </div>
                 )}
@@ -131,18 +132,18 @@ export default function NewsSection({ user }: NewsSectionProps) {
                 <div className="flex flex-wrap justify-between items-center pt-6 border-t border-gray-700/50">
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-2">
-                      <i className="fas fa-user text-gray-400"></i>
+                      <WuxiaIcon name="user" className="w-4 h-4 text-gray-400" />
                       <span className="text-gray-400">{item.author}</span>
                     </div>
 
                     <div className="flex items-center space-x-2">
-                      <i className="fas fa-calendar text-gray-400"></i>
+                      <WuxiaIcon name="calendar" className="w-4 h-4 text-gray-400" />
                       <span className="text-gray-400">{formatDate(item.date)}</span>
                     </div>
                   </div>
 
                   <button className="text-sm font-medium text-red-400 hover:text-red-300 transition-colors">
-                    <i className="fas fa-comment-alt mr-2"></i>
+                    <WuxiaIcon name="comment" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
                     Comment
                   </button>
                 </div>
@@ -154,4 +155,3 @@ export default function NewsSection({ user }: NewsSectionProps) {
     </section>
   );
 }
-

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { User } from '@/types';
+import WuxiaIcon from './WuxiaIcons';
 
 interface PinScreenProps {
   onAuthSuccess: (user: User) => void;
@@ -58,7 +59,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
         <div className="mb-8">
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 bg-gradient-to-r from-[#2f6e8d] to-[#8fb9cc] rounded-full flex items-center justify-center shadow-lg shadow-[#0c1a24]/40">
-              <i className="fas fa-skull-crossbones text-3xl text-white"></i>
+              <WuxiaIcon name="skull" className="w-9 h-9 text-white" />
             </div>
           </div>
 
@@ -87,15 +88,21 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
             className="btn-primary w-full py-4 text-lg font-bold"
           >
             {loading ? (
-              <span><i className="fas fa-spinner fa-spin mr-3"></i>Loading...</span>
+              <span className="inline-flex items-center justify-center">
+                <WuxiaIcon name="spinner" className="w-4 h-4 mr-3 animate-spin" />
+                Loading...
+              </span>
             ) : (
-              <span><i className="fas fa-lock-open mr-3"></i>Enter Portal</span>
+              <span className="inline-flex items-center justify-center">
+                <WuxiaIcon name="lockOpen" className="w-4 h-4 mr-3" />
+                Enter Portal
+              </span>
             )}
           </button>
 
           {error && (
             <div className="text-[#bcd6e5] text-sm mt-2 p-4 bg-[#16202b]/65 rounded-xl border border-[#2f6e8d]/40">
-              <i className="fas fa-exclamation-triangle mr-2"></i>
+              <WuxiaIcon name="alertTriangle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
               {error}
             </div>
           )}
@@ -103,7 +110,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
 
         <div className="mt-8 pt-6 border-t border-gray-800">
           <p className="text-xs text-gray-500 font-medium">
-            <i className="fas fa-shield-alt mr-2"></i>
+            <WuxiaIcon name="shield" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
             Secure Guild Access
           </p>
         </div>

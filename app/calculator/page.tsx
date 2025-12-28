@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import WuxiaIcon from '@/components/WuxiaIcons';
 
 type BuildInput = {
   name: string;
@@ -96,7 +97,7 @@ export default function CalculatorPage() {
             onClick={addBuild}
             className="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm font-semibold transition"
           >
-            <i className="fas fa-plus mr-2"></i>
+            <WuxiaIcon name="plus" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
             Add build
           </button>
         </div>
@@ -107,7 +108,7 @@ export default function CalculatorPage() {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-gradient-to-r from-[#2f6e8d] to-[#8fb9cc] rounded-full flex items-center justify-center shadow-lg shadow-[#0c1a24]/40">
-                    <i className="fas fa-sword text-white"></i>
+                    <WuxiaIcon name="sword" className="w-6 h-6 text-white" />
                   </div>
                   <input
                     value={build.name}
@@ -121,7 +122,7 @@ export default function CalculatorPage() {
                     className="text-gray-400 hover:text-[#8fb9cc] transition"
                     title="Remove build"
                   >
-                    <i className="fas fa-trash"></i>
+                    <WuxiaIcon name="trash" className="w-5 h-5" />
                   </button>
                 )}
               </div>
