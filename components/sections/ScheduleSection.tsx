@@ -93,63 +93,104 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
     );
   }
 
+  const today = new Date();
+  const todayLabel = today.toLocaleDateString('ru-RU', {
+    weekday: 'long',
+    day: '2-digit',
+    month: 'long',
+  });
+
   return (
     <section className="py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
+        <div className="text-center mb-10">
           <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
             <WuxiaIcon
               name="schedule"
               className="inline-block w-7 h-7 mr-3 text-red-400 align-text-bottom"
             />
-            Расписание Ритуалов
+            Ритуалы сегодня
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">Список рейдов и действий ордена, где каждый дает клятву явки.</p>
+          <p className="text-gray-400 max-w-2xl mx-auto">
+            {todayLabel}. Только текущий день — без лишнего шума.
+          </p>
         </div>
 
-        <div className="space-y-6">
-          {schedules.length === 0 ? (
-            <div className="text-center py-16">
-              <div className="flex justify-center mb-6">
-                <div className="w-20 h-20 bg-gray-800/50 rounded-full flex items-center justify-center">
-                  <WuxiaIcon name="calendarX" className="w-10 h-10 text-gray-500" />
+        <div className="card p-7 mb-8">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div>
+              <span className="wuxia-tag wuxia-tag-compact">
+                <WuxiaIcon name="seal" className="w-4 h-4" />
+                Печать дня
+              </span>
+              <div className="mt-3 text-2xl font-bold font-orbitron text-[#e6eff5]">
+                {formatDate(today.toISOString())}
+              </div>
+              <div className="mt-2 text-gray-400">
+                {schedules.length === 0
+                  ? 'Сегодня орден молчит. Если нужна помощь — открой запрос.'
+                  : `Назначено ритуалов: ${schedules.length}`}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={loadSchedule}
+              className="dc-icon-btn p-2.5 rounded-xl self-start md:self-auto"
+              title="Обновить"
+            >
+              <WuxiaIcon name="refresh" className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {schedules.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 bg-gray-800/50 rounded-full flex items-center justify-center">
+                <WuxiaIcon name="calendarX" className="w-10 h-10 text-gray-500" />
+              </div>
+            </div>
+            <h3 className="text-xl font-bold text-gray-400 mb-2">Ничего не назначено</h3>
+            <p className="text-gray-500 max-w-md mx-auto">
+              Когда появится приказ — он будет здесь. А пока можно заняться билдами и подготовкой.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {schedules.map((schedule, index) => (
+              <div
+                key={`${schedule.date}_${index}`}
+                className="card p-6 hover:transform hover:-translate-y-1 transition-all duration-300"
+              >
+                <div className="flex items-start justify-between gap-4 mb-4">
+                  <div className="min-w-0">
+                    <div className="inline-flex flex-wrap items-center gap-2">
+                      <span className="px-3 py-1 bg-gradient-to-r from-[#142636]/60 to-[#1d3b52]/60 text-[#8fb9cc] rounded-full text-sm font-medium">
+                        <WuxiaIcon name="tag" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                        {schedule.type}
+                      </span>
+                      {schedule.registration && (
+                        <span className="text-sm text-gray-400 inline-flex items-center gap-2">
+                          <WuxiaIcon name="user" className="w-4 h-4" />
+                          {schedule.registration}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <span className="text-sm font-medium bg-[#121a22]/70 px-3 py-1 rounded-full whitespace-nowrap">
+                    {formatDate(schedule.date)}
+                  </span>
+                </div>
+
+                <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                  {schedule.description || 'Без описания'}
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-gray-400 mb-2">Ритуалы не назначены</h3>
-              <p className="text-gray-500">Ждем нового приказа на сбор</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {schedules.map((schedule, index) => (
-                <div key={index} className="card p-6 hover:transform hover:-translate-y-1 transition-all duration-300">
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-xl font-bold font-orbitron text-red-400">{schedule.registration}</h3>
-                    <span className="text-sm font-medium bg-[#121a22]/70 px-3 py-1 rounded-full">
-                      {formatDate(schedule.date)}
-                    </span>
-                  </div>
-
-                  <p className="text-gray-300 mb-4">{schedule.description}</p>
-
-                  <div className="flex justify-between items-center">
-                    <span className="px-3 py-1 bg-gradient-to-r from-[#142636]/60 to-[#1d3b52]/60 text-[#8fb9cc] rounded-full text-sm font-medium">
-                      <WuxiaIcon name="tag" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
-                      {schedule.type}
-                    </span>
-
-                    <button className="text-sm font-medium text-[#8fb9cc] hover:text-[#bcd6e5] transition-colors">
-                      <WuxiaIcon
-                        name="calendarCheck"
-                        className="inline-block w-4 h-4 mr-1 align-text-bottom"
-                      />
-                      Принять клятву
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
