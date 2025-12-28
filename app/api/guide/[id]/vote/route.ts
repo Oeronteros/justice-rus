@@ -78,7 +78,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     );
 
     let voted = false;
-    if (already.rowCount > 0) {
+    if ((already.rowCount ?? 0) > 0) {
       await pool.query(`DELETE FROM guide_vote WHERE guide_id = $1 AND voter_key = $2`, [guideId, payload.voterKey]);
       voted = false;
     } else {
@@ -110,4 +110,3 @@ export async function OPTIONS() {
     },
   });
 }
-

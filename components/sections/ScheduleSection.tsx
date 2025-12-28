@@ -3,26 +3,28 @@
 import { useEffect, useState } from 'react';
 import { Schedule, User } from '@/types';
 import { formatDate } from '@/lib/utils';
+import { Language } from '@/lib/i18n';
 import WuxiaIcon from '../WuxiaIcons';
 
 interface ScheduleSectionProps {
   user: User;
+  language: Language;
 }
 
-export default function ScheduleSection({ user }: ScheduleSectionProps) {
+export default function ScheduleSection({ user, language }: ScheduleSectionProps) {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadSchedule();
-  }, []);
+  }, [language]);
 
   const loadSchedule = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('/api/schedule', { cache: 'no-store' });
+      const response = await fetch(`/api/schedule?language=${encodeURIComponent(language)}`, { cache: 'no-store' });
       const payload = (await response.json().catch(() => ({}))) as any;
 
       if (!response.ok) {
@@ -94,7 +96,7 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
   }
 
   const today = new Date();
-  const todayLabel = today.toLocaleDateString('ru-RU', {
+  const todayLabel = today.toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US', {
     weekday: 'long',
     day: '2-digit',
     month: 'long',

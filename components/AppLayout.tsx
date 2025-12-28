@@ -50,7 +50,7 @@ export default function AppLayout({ user, onLogout }: AppLayoutProps) {
       case 'registration':
         return <RegistrationSection user={user} />;
       case 'schedule':
-        return <ScheduleSection user={user} />;
+        return <ScheduleSection user={user} language={language} />;
       case 'about':
         return (
           <AboutSection
