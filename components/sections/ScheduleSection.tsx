@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { Schedule, User } from '@/types';
-import { apiService } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '../WuxiaIcons';
 
@@ -23,8 +22,16 @@ export default function ScheduleSection({ user }: ScheduleSectionProps) {
     try {
       setLoading(true);
       setError(null);
-      const data = await apiService.getSchedule();
-      setSchedules(data);
+      const response = await fetch('/api/schedule', { cache: 'no-store' });
+      const payload = (await response.json().catch(() => ({}))) as any;
+
+      if (!response.ok) {
+        throw new Error(payload?.error || payload?.message || `HTTP ${response.status}`);
+      }
+
+      const data = payload?.data ?? payload;
+      const normalized: Schedule[] = Array.isArray(data) ? data : data ? [data] : [];
+      setSchedules(normalized);
     } catch (err) {
       setError('Не удалось загрузить расписание');
       console.error('Failed to load schedule:', err);
