@@ -155,18 +155,18 @@ export default function ScheduleSection({ user, language }: ScheduleSectionProps
             </div>
             <h3 className="text-xl font-bold text-gray-400 mb-2">Ничего не назначено</h3>
             <p className="text-gray-500 max-w-md mx-auto">
-              Когда появится приказ — он будет здесь. А пока можно заняться билдами и подготовкой.
+              Когда появятся события — они будут здесь. А пока можно заняться билдами и подготовкой.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {schedules.map((schedule, index) => (
-              <div
-                key={`${schedule.date}_${index}`}
-                className="card p-6 hover:transform hover:-translate-y-1 transition-all duration-300"
-              >
-                <div className="flex items-start justify-between gap-4 mb-4">
-                  <div className="min-w-0">
+          <div className="card p-6">
+            <div className="space-y-5">
+              {schedules.map((schedule, index) => (
+                <div
+                  key={`${schedule.date}_${index}`}
+                  className={`pb-5 ${index < schedules.length - 1 ? 'border-b border-gray-700/50' : ''}`}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
                     <div className="inline-flex flex-wrap items-center gap-2">
                       <span className="px-3 py-1 bg-gradient-to-r from-[#142636]/60 to-[#1d3b52]/60 text-[#8fb9cc] rounded-full text-sm font-medium">
                         <WuxiaIcon name="tag" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
@@ -179,18 +179,18 @@ export default function ScheduleSection({ user, language }: ScheduleSectionProps
                         </span>
                       )}
                     </div>
+
+                    <span className="text-sm font-medium bg-[#121a22]/70 px-3 py-1 rounded-full whitespace-nowrap self-start">
+                      {formatDate(schedule.date)}
+                    </span>
                   </div>
 
-                  <span className="text-sm font-medium bg-[#121a22]/70 px-3 py-1 rounded-full whitespace-nowrap">
-                    {formatDate(schedule.date)}
-                  </span>
+                  <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                    {schedule.description || 'Без описания'}
+                  </div>
                 </div>
-
-                <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-                  {schedule.description || 'Без описания'}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
       </div>

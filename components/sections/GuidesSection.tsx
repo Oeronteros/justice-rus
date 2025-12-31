@@ -532,7 +532,7 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
       </div>
 
       {createOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/65 backdrop-blur-sm flex items-center justify-center px-4 py-10" style={{ perspective: 'none', transform: 'none' }}>
+        <div className="fixed inset-0 z-[9999] bg-black/75 backdrop-blur-md flex items-center justify-center px-4 py-10" style={{ perspective: 'none', transform: 'none' }}>
           <div className="card w-full max-w-4xl p-6 md:p-8 relative max-h-[85vh] overflow-auto">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
               <div>
@@ -671,7 +671,7 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
       )}
 
       {openGuideId && (
-        <div className="fixed inset-0 z-[100] bg-black/65 backdrop-blur-sm flex items-center justify-center px-4 py-10" style={{ perspective: 'none', transform: 'none' }}>
+        <div className="fixed inset-0 z-[9999] bg-black/75 backdrop-blur-md flex items-center justify-center px-4 py-10" style={{ perspective: 'none', transform: 'none' }}>
           <div className="card w-full max-w-4xl p-6 md:p-8 relative max-h-[85vh] overflow-auto">
             <div className="flex items-start justify-between gap-4 mb-4">
               <div className="min-w-0">
