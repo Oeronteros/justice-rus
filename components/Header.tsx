@@ -14,9 +14,9 @@ interface HeaderProps {
   onLanguageChange: (language: Language) => void;
 }
 
-type OrderStep = 'registration' | 'schedule' | 'guides' | 'help' | 'absences' | 'more';
+type OrderStep = 'about' | 'news' | 'registration' | 'schedule' | 'guides' | 'help' | 'absences' | 'more';
 
-const moreSections: Section[] = ['about', 'news', 'calculator'];
+const moreSections: Section[] = ['calculator'];
 
 export default function Header({
   currentSection,
@@ -99,6 +99,14 @@ export default function Header({
   }, []);
 
   useEffect(() => {
+    if (currentSection === 'about') {
+      setActiveOrderStep('about');
+      return;
+    }
+    if (currentSection === 'news') {
+      setActiveOrderStep('news');
+      return;
+    }
     if (currentSection === 'registration') {
       setActiveOrderStep('registration');
       return;
@@ -173,6 +181,14 @@ export default function Header({
     scrollToMain();
   };
 
+  const goToAbout = () => {
+    goToSection('about');
+  };
+
+  const goToNews = () => {
+    goToSection('news');
+  };
+
   const goToRegistration = () => {
     goToSection('registration');
   };
@@ -196,6 +212,8 @@ export default function Header({
   const orderLabels = useMemo(() => {
     if (language === 'ru') {
       return {
+        about: 'О нас',
+        news: 'Новости',
         registration: 'Участники',
         schedule: 'Расписание',
         guides: 'Гайды',
@@ -206,6 +224,8 @@ export default function Header({
     }
 
     return {
+      about: 'About',
+      news: 'News',
       registration: 'Members',
       schedule: 'Schedule',
       guides: 'Guides',
@@ -293,6 +313,28 @@ export default function Header({
 
         <nav className="hidden md:block mt-2">
           <div className={`dc-order ${headerCompact ? 'dc-order--compact' : 'dc-order--full'}`}>
+            <button
+              type="button"
+              onClick={goToAbout}
+              className={`dc-order-step ${activeOrderStep === 'about' ? 'is-active' : ''}`}
+            >
+              <span className="dc-order-dot dc-accent">
+                <WuxiaIcon name="about" className="w-4 h-4" />
+              </span>
+              <span className="dc-order-label">{orderLabels.about}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={goToNews}
+              className={`dc-order-step ${activeOrderStep === 'news' ? 'is-active' : ''}`}
+            >
+              <span className="dc-order-dot dc-accent">
+                <WuxiaIcon name="news" className="w-4 h-4" />
+              </span>
+              <span className="dc-order-label">{orderLabels.news}</span>
+            </button>
+
             <button
               type="button"
               onClick={goToRegistration}

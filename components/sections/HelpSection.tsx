@@ -18,7 +18,7 @@ export default function HelpSection({ user }: HelpSectionProps) {
   const [author, setAuthor] = useState('');
   const [title, setTitle] = useState('');
   const [details, setDetails] = useState('');
-  const [category, setCategory] = useState('general');
+  const [category, setCategory] = useState('outer_city_heroic');
 
   const canModerate = user.role === 'officer' || user.role === 'gm';
 
@@ -52,13 +52,12 @@ export default function HelpSection({ user }: HelpSectionProps) {
 
   const categories = useMemo(
     () => [
-      { value: 'general', label: 'Общее' },
-      { value: 'pve', label: 'PvE / Рейды' },
-      { value: 'pvp', label: 'PvP / Дуэли' },
-      { value: 'build', label: 'Билд / Сборка' },
-      { value: 'farm', label: 'Фарм / Ресурсы' },
-      { value: 'craft', label: 'Крафт' },
-      { value: 'training', label: 'Тренировки' },
+      { value: 'outer_city_heroic', label: 'Outer City Heroic' },
+      { value: 'inner_city_heroic', label: 'Inner City Heroic' },
+      { value: 'battle_royal', label: 'Battle Royal' },
+      { value: '12vs12', label: '12vs12' },
+      { value: '3vs3', label: '3vs3' },
+      { value: 'secret_realm', label: 'Secret Realm' },
     ],
     []
   );
@@ -94,7 +93,7 @@ export default function HelpSection({ user }: HelpSectionProps) {
       setRequests((prev) => [payload as HelpRequest, ...prev]);
       setTitle('');
       setDetails('');
-      setCategory('general');
+      setCategory('outer_city_heroic');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Не удалось создать запрос');
       console.error('Failed to create help request:', err);

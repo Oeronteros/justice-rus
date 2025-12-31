@@ -15,6 +15,11 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [submitting, setSubmitting] = useState(false);
+  const [member, setMember] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [reason, setReason] = useState('');
   const statusLabels: Record<string, string> = {
     pending: 'На рассмотрении',
     approved: 'Одобрено',
@@ -23,6 +28,12 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
 
   useEffect(() => {
     loadAbsences();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const stored = localStorage.getItem('dc_absence_member');
+    if (stored) setMember(stored);
   }, []);
 
   const loadAbsences = async () => {
@@ -36,6 +47,39 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
       console.error('Failed to load absences:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const submitAbsence = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!member.trim() || !startDate || !endDate || !reason.trim()) return;
+
+    try {
+      setSubmitting(true);
+      setError(null);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('dc_absence_member', member.trim());
+      }
+
+      const newAbsence: Absence = {
+        id: `temp_${Date.now()}`,
+        member: member.trim(),
+        startDate,
+        endDate,
+        reason: reason.trim(),
+        status: 'pending',
+      };
+
+      setAbsences((prev) => [newAbsence, ...prev]);
+      setMember('');
+      setStartDate('');
+      setEndDate('');
+      setReason('');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Не удалось создать заявку');
+      console.error('Failed to create absence:', err);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -115,20 +159,103 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
           <p className="text-gray-400 max-w-2xl mx-auto">Учет отлучений, клятв и причин отсутствия в строю.</p>
         </div>
 
-        <div className="flex justify-center mb-8">
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="select-field max-w-xs"
-          >
-            <option value="all">Все статусы</option>
-            <option value="pending">На рассмотрении</option>
-            <option value="approved">Одобрено</option>
-            <option value="rejected">Отклонено</option>
-          </select>
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+          <div className="lg:col-span-2 card p-8">
+            <div className="flex items-center mb-6">
+              <div className="w-12 h-12 bg-gradient-to-r from-[#2f6e8d]/30 to-[#8fb9cc]/30 rounded-full flex items-center justify-center mr-4">
+                <WuxiaIcon name="plus" className="w-7 h-7 text-[#8fb9cc]" />
+              </div>
+              <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5]">Создать заявку</h3>
+            </div>
 
-        <div className="space-y-6">
+            <form onSubmit={submitAbsence} className="space-y-4">
+              <input
+                value={member}
+                onChange={(e) => setMember(e.target.value)}
+                placeholder="Твой ник"
+                className="input-field"
+                maxLength={60}
+                required
+              />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">Начало отсутствия</label>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="input-field"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">Окончание отсутствия</label>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="input-field"
+                    required
+                  />
+                </div>
+              </div>
+
+              <textarea
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder="Причина отсутствия..."
+                className="input-field min-h-[120px]"
+                maxLength={500}
+                required
+              />
+
+              <button type="submit" className="btn-primary w-full py-3" disabled={submitting}>
+                {submitting ? (
+                  <span className="inline-flex items-center justify-center">
+                    <WuxiaIcon name="spinner" className="w-4 h-4 mr-3 animate-spin" />
+                    Отправляем...
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center justify-center">
+                    <WuxiaIcon name="seal" className="w-4 h-4 mr-3" />
+                    Подать заявку
+                  </span>
+                )}
+              </button>
+
+              {error && (
+                <div className="text-[#bcd6e5] text-sm mt-2 p-4 bg-[#16202b]/65 rounded-xl border border-[#2f6e8d]/40">
+                  <WuxiaIcon name="alertTriangle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
+                  {error}
+                </div>
+              )}
+            </form>
+          </div>
+
+          <div className="lg:col-span-3 space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-gray-400">Фильтр:</span>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="select-field max-w-xs"
+                >
+                  <option value="all">Все статусы</option>
+                  <option value="pending">На рассмотрении</option>
+                  <option value="approved">Одобрено</option>
+                  <option value="rejected">Отклонено</option>
+                </select>
+              </div>
+
+              <button type="button" className="dc-icon-btn p-2.5 rounded-xl" onClick={loadAbsences} title="Обновить">
+                <WuxiaIcon name="refresh" className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-6">
           {filteredAbsences.length === 0 ? (
             <div className="text-center py-16">
               <div className="flex justify-center mb-6">
@@ -192,6 +319,8 @@ export default function AbsencesSection({ user }: AbsencesSectionProps) {
               </div>
             ))
           )}
+            </div>
+          </div>
         </div>
       </div>
     </section>

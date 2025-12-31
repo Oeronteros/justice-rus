@@ -110,6 +110,13 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
     loadGuides();
   }, []);
 
+  useEffect(() => {
+    if (createOpen || openGuideId) {
+      document.documentElement.style.setProperty('--tilt-x', '0deg');
+      document.documentElement.style.setProperty('--tilt-y', '0deg');
+    }
+  }, [createOpen, openGuideId]);
+
   const loadGuides = async () => {
     try {
       setLoading(true);
@@ -461,8 +468,8 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
       </div>
 
       {createOpen && (
-        <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-center justify-center px-4 py-10">
-          <div className="card w-full max-w-4xl p-6 md:p-8 relative">
+        <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-center justify-center px-4 py-10" style={{ perspective: 'none', transform: 'none' }}>
+          <div className="card w-full max-w-4xl p-6 md:p-8 relative mt-20">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
               <div>
                 <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5]">Новый гайд</h3>
@@ -564,8 +571,8 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
       )}
 
       {openGuideId && (
-        <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-center justify-center px-4 py-10">
-          <div className="card w-full max-w-4xl p-6 md:p-8 relative max-h-[90vh] overflow-auto">
+        <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-center justify-center px-4 py-10" style={{ perspective: 'none', transform: 'none' }}>
+          <div className="card w-full max-w-4xl p-6 md:p-8 relative max-h-[85vh] overflow-auto mt-20">
             <div className="flex items-start justify-between gap-4 mb-4">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-3">

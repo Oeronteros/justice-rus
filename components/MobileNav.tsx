@@ -11,13 +11,13 @@ interface MobileNavProps {
 }
 
 const sections: Section[] = [
+  'about',
+  'news',
   'registration',
   'schedule',
-  'help',
-  'news',
   'guides',
+  'help',
   'absences',
-  'calculator',
 ];
 
 export default function MobileNav({ currentSection, onSectionChange, language }: MobileNavProps) {
