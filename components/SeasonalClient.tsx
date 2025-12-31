@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, memo } from 'react';
 import { NEWYEAR_STORAGE_KEY, resolveNewYearEnabled } from '@/lib/seasonal';
 
-export default function SeasonalClient() {
+function SeasonalClient() {
   useEffect(() => {
     const stored = typeof window !== 'undefined' ? localStorage.getItem(NEWYEAR_STORAGE_KEY) : null;
     const enabled = resolveNewYearEnabled(new Date(), stored);
@@ -13,4 +13,6 @@ export default function SeasonalClient() {
 
   return null;
 }
+
+export default memo(SeasonalClient);
 

@@ -1,15 +1,25 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Для Vercel и локальной разработки
-  output: undefined, // Используем стандартный SSR режим
+  output: undefined,
   
-  // Оптимизация изображений
   images: {
     unoptimized: false,
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   
-  // Headers для безопасности
+  compress: true,
+  
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  
+  experimental: {
+    optimizeCss: true,
+  },
+  
   async headers() {
     return [
       {
@@ -29,10 +39,36 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        source: "/videos/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/_next/static/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/emblem.svg",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
     ];
   },
   
-  // Rewrites для API
   async rewrites() {
     return {
       beforeFiles: [

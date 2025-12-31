@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, memo } from 'react';
 
-export default function PointerEffectsClient() {
+function PointerEffectsClient() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -55,4 +55,6 @@ export default function PointerEffectsClient() {
 
   return null;
 }
+
+export default memo(PointerEffectsClient);
 

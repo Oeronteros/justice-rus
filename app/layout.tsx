@@ -1,12 +1,38 @@
 import type { Metadata } from "next";
+import { Noto_Serif } from 'next/font/google';
 import "./globals.css";
-import Script from "next/script";
 import SeasonalClient from "@/components/SeasonalClient";
 import PointerEffectsClient from "@/components/PointerEffectsClient";
+import BackgroundEffects from "@/components/BackgroundEffects";
+
+const notoSerif = Noto_Serif({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin', 'cyrillic'],
+  display: 'swap',
+  variable: '--font-noto-serif',
+});
 
 export const metadata: Metadata = {
   title: "Demonic Cult | Justice Mobile",
   description: "Wuxia guild portal for the Demonic Cult community.",
+  keywords: ["wuxia", "justice mobile", "demonic cult", "guild", "clan"],
+  authors: [{ name: "Demonic Cult" }],
+  openGraph: {
+    title: "Demonic Cult | Justice Mobile",
+    description: "Wuxia guild portal for the Demonic Cult community.",
+    type: "website",
+    locale: "ru_RU",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({
@@ -15,40 +41,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru">
-      <head>
-        <link
-          href="https://cdn.quilljs.com/1.3.7/quill.snow.css"
-          rel="stylesheet"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="theme-wuxia">
+    <html lang="ru" className={notoSerif.variable}>
+      <body className={`theme-wuxia ${notoSerif.className}`}>
         <SeasonalClient />
         <PointerEffectsClient />
-        <div className="fixed inset-0 z-0 overflow-hidden">
-          <div className="absolute inset-0 wuxia-backdrop"></div>
-          <div className="absolute inset-0 wuxia-aurora"></div>
-          <div className="absolute inset-0 wuxia-cursor-glow"></div>
-          <div className="absolute inset-0 wuxia-constellation"></div>
-          <div className="absolute inset-0 wuxia-noise"></div>
-          <div className="absolute inset-0 wuxia-smoke"></div>
-          <div className="absolute inset-0 wuxia-scroll-grid opacity-30"></div>
-          <div className="absolute inset-0 wuxia-snow"></div>
-          <div className="absolute inset-0 wuxia-sparkles"></div>
-          <div className="absolute inset-0 wuxia-frost"></div>
-          <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full wuxia-glow"></div>
-          <div className="absolute bottom-[-120px] right-[-80px] h-[420px] w-[420px] rounded-full wuxia-moon"></div>
-          <div className="absolute top-[18%] left-[-120px] h-[360px] w-[360px] rounded-full wuxia-ink"></div>
-        </div>
-
+        <BackgroundEffects />
         <div className="relative z-10">{children}</div>
-
-        <Script src="https://cdn.jsdelivr.net/npm/chart.js" strategy="afterInteractive" />
-        <Script src="https://cdn.quilljs.com/1.3.7/quill.min.js" strategy="afterInteractive" />
       </body>
     </html>
   );
