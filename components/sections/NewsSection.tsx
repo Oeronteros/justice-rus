@@ -23,14 +23,14 @@ export default function NewsSection({ user }: NewsSectionProps) {
     try {
       setLoading(true);
       setError(null);
-      const data = await apiService.getNews();
-      // Сортируем: сначала закрепленные
-      const sorted = data.sort((a, b) => {
-        if (a.pinned && !b.pinned) return -1;
-        if (!a.pinned && b.pinned) return 1;
-        return 0;
-      });
-      setNews(sorted);
+      
+      const response = await fetch('/api/news', { credentials: 'include' });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      setNews(data);
     } catch (err) {
       setError('Failed to load news');
       console.error('Failed to load news:', err);

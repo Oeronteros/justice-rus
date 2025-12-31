@@ -31,7 +31,12 @@ export type IconName =
   | 'plus'
   | 'trash'
   | 'sword'
-  | 'usersSlash';
+  | 'usersSlash'
+  | 'list'
+  | 'quote'
+  | 'image'
+  | 'upload'
+  | 'link';
 
 interface IconProps {
   name: IconName;
@@ -342,6 +347,45 @@ export default function WuxiaIcon({ name, className = '' }: IconProps) {
           <circle cx="10" cy="9" r="3" />
           <path d="M3.8 19c.6-2.9 3-4.6 6.2-4.6 1.4 0 2.6.3 3.6.9" />
           <path d="M16.8 8.6c.2-1.2 1.2-2 2.6-2 1.6 0 2.8 1.2 2.8 2.8 0 1.2-.7 2.2-1.7 2.6" />
+        </svg>
+      );
+    case 'list':
+      return (
+        <svg viewBox="0 0 24 24" className={className} {...baseProps}>
+          <path d="M8 6h13M8 12h13M8 18h13" />
+          <circle cx="4" cy="6" r="1" fill="currentColor" stroke="none" />
+          <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none" />
+          <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none" />
+        </svg>
+      );
+    case 'quote':
+      return (
+        <svg viewBox="0 0 24 24" className={className} {...baseProps}>
+          <path d="M10 10c0-1.7-1.3-3-3-3H5c-.6 0-1 .4-1 1v6c0 .6.4 1 1 1h2c1.7 0 3-1.3 3-3v-2z" />
+          <path d="M20 10c0-1.7-1.3-3-3-3h-2c-.6 0-1 .4-1 1v6c0 .6.4 1 1 1h2c1.7 0 3-1.3 3-3v-2z" />
+        </svg>
+      );
+    case 'image':
+      return (
+        <svg viewBox="0 0 24 24" className={className} {...baseProps}>
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <circle cx="8.5" cy="8.5" r="1.5" />
+          <path d="M21 15l-5-5L5 21" />
+        </svg>
+      );
+    case 'upload':
+      return (
+        <svg viewBox="0 0 24 24" className={className} {...baseProps}>
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="17 8 12 3 7 8" />
+          <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
+      );
+    case 'link':
+      return (
+        <svg viewBox="0 0 24 24" className={className} {...baseProps}>
+          <path d="M10 13a5 5 0 0 0 7.5 4.3l3-3a5 5 0 0 0-7-7l-1.5 1.5" />
+          <path d="M14 11a5 5 0 0 0-7.5-4.3l-3 3a5 5 0 0 0 7 7l1.5-1.5" />
         </svg>
       );
     default:

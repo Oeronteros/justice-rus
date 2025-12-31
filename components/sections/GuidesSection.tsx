@@ -70,6 +70,7 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
   const [commentSubmitting, setCommentSubmitting] = useState(false);
 
   const editorRef = useRef<HTMLTextAreaElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const categories = useMemo(() => Array.from(new Set(guides.map((g) => g.category))), [guides]);
 
@@ -199,6 +200,69 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
     requestAnimationFrame(() => {
       const cursor = start + prefix.length;
       textarea.setSelectionRange(cursor, cursor);
+    });
+  };
+
+  const handleImageUpload = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Пожалуйста, выберите изображение');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Размер изображения не должен превышать 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target?.result as string;
+      const textarea = editorRef.current;
+      if (!textarea) return;
+
+      const start = textarea.selectionStart ?? 0;
+      const value = textarea.value;
+      const imageMarkdown = `\n![Изображение](${base64})\n`;
+      const next = value.slice(0, start) + imageMarkdown + value.slice(start);
+      setCreateContent(next);
+
+      requestAnimationFrame(() => {
+        const cursor = start + imageMarkdown.length;
+        textarea.setSelectionRange(cursor, cursor);
+        textarea.focus();
+      });
+    };
+    reader.readAsDataURL(file);
+    
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const insertImageUrl = () => {
+    const url = prompt('Введите URL изображения:');
+    if (!url) return;
+
+    const textarea = editorRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart ?? 0;
+    const value = textarea.value;
+    const imageMarkdown = `\n![Изображение](${url})\n`;
+    const next = value.slice(0, start) + imageMarkdown + value.slice(start);
+    setCreateContent(next);
+
+    requestAnimationFrame(() => {
+      const cursor = start + imageMarkdown.length;
+      textarea.setSelectionRange(cursor, cursor);
+      textarea.focus();
     });
   };
 
@@ -468,8 +532,8 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
       </div>
 
       {createOpen && (
-        <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-center justify-center px-4 py-10" style={{ perspective: 'none', transform: 'none' }}>
-          <div className="card w-full max-w-4xl p-6 md:p-8 relative mt-20">
+        <div className="fixed inset-0 z-[100] bg-black/65 backdrop-blur-sm flex items-center justify-center px-4 py-10" style={{ perspective: 'none', transform: 'none' }}>
+          <div className="card w-full max-w-4xl p-6 md:p-8 relative max-h-[85vh] overflow-auto">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
               <div>
                 <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5]">Новый гайд</h3>
@@ -515,33 +579,69 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
             {createTab === 'write' ? (
               <>
                 <div className="flex flex-wrap items-center gap-2 mb-3">
-                  <button type="button" className="dc-icon-btn p-2 rounded-xl" onClick={() => applyLinePrefix('### ')} title="Заголовок">
-                    H
+                  <button type="button" className="dc-icon-btn p-2 rounded-xl" onClick={() => applyLinePrefix('# ')} title="Заголовок H1">
+                    H1
                   </button>
+                  <button type="button" className="dc-icon-btn p-2 rounded-xl" onClick={() => applyLinePrefix('## ')} title="Заголовок H2">
+                    H2
+                  </button>
+                  <button type="button" className="dc-icon-btn p-2 rounded-xl" onClick={() => applyLinePrefix('### ')} title="Заголовок H3">
+                    H3
+                  </button>
+                  <span className="w-px h-6 bg-gray-700"></span>
                   <button type="button" className="dc-icon-btn p-2 rounded-xl" onClick={() => applyWrap('**')} title="Жирный">
-                    <strong>Ж</strong>
+                    <strong>B</strong>
                   </button>
                   <button type="button" className="dc-icon-btn p-2 rounded-xl" onClick={() => applyWrap('*')} title="Курсив">
-                    <em>К</em>
+                    <em>I</em>
                   </button>
+                  <button type="button" className="dc-icon-btn p-2 rounded-xl" onClick={() => applyWrap('~~')} title="Зачеркнутый">
+                    <s>S</s>
+                  </button>
+                  <span className="w-px h-6 bg-gray-700"></span>
                   <button type="button" className="dc-icon-btn p-2 rounded-xl" onClick={() => applyLinePrefix('- ')} title="Список">
-                    •
+                    <WuxiaIcon name="list" className="w-4 h-4" />
                   </button>
+                  <button type="button" className="dc-icon-btn p-2 rounded-xl" onClick={() => applyLinePrefix('1. ')} title="Нумерованный список">
+                    1.
+                  </button>
+                  <button type="button" className="dc-icon-btn p-2 rounded-xl" onClick={() => applyLinePrefix('> ')} title="Цитата">
+                    <WuxiaIcon name="quote" className="w-4 h-4" />
+                  </button>
+                  <span className="w-px h-6 bg-gray-700"></span>
                   <button type="button" className="dc-icon-btn p-2 rounded-xl" onClick={() => applyWrap('`')} title="Код">
-                    <span className="font-mono">`</span>
+                    <span className="font-mono text-xs">{'<>'}</span>
                   </button>
+                  <button type="button" className="dc-icon-btn p-2 rounded-xl" onClick={() => applyWrap('```\n', '\n```')} title="Блок кода">
+                    <span className="font-mono text-xs">{'{}'}</span>
+                  </button>
+                  <span className="w-px h-6 bg-gray-700"></span>
                   <button type="button" className="dc-icon-btn p-2 rounded-xl" onClick={() => applyWrap('[текст](', ')')} title="Ссылка">
-                    Link
+                    <WuxiaIcon name="link" className="w-4 h-4" />
+                  </button>
+                  <button type="button" className="dc-icon-btn p-2 rounded-xl" onClick={insertImageUrl} title="Вставить URL изображения">
+                    <WuxiaIcon name="image" className="w-4 h-4" />
+                  </button>
+                  <button type="button" className="dc-icon-btn dc-icon-btn-accent p-2 rounded-xl" onClick={handleImageUpload} title="Загрузить изображение">
+                    <WuxiaIcon name="upload" className="w-4 h-4" />
                   </button>
                 </div>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
 
                 <textarea
                   ref={editorRef}
                   value={createContent}
                   onChange={(e) => setCreateContent(e.target.value)}
                   className="input-field min-h-[320px] font-mono text-sm leading-relaxed"
-                  placeholder="Пиши здесь..."
-                  maxLength={50_000}
+                  placeholder="Пиши здесь... Используй кнопки выше для форматирования или загрузки изображений."
+                  maxLength={500_000}
                 />
               </>
             ) : (
@@ -571,8 +671,8 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
       )}
 
       {openGuideId && (
-        <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-center justify-center px-4 py-10" style={{ perspective: 'none', transform: 'none' }}>
-          <div className="card w-full max-w-4xl p-6 md:p-8 relative max-h-[85vh] overflow-auto mt-20">
+        <div className="fixed inset-0 z-[100] bg-black/65 backdrop-blur-sm flex items-center justify-center px-4 py-10" style={{ perspective: 'none', transform: 'none' }}>
+          <div className="card w-full max-w-4xl p-6 md:p-8 relative max-h-[85vh] overflow-auto">
             <div className="flex items-start justify-between gap-4 mb-4">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-3">
