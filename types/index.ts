@@ -28,15 +28,8 @@ export interface Registration {
   status: RegistrationStatus;
 }
 
-// Deprecated: используйте Registration
-export interface Member extends Registration {}
-
 export type RegistrationRank = 'novice' | 'member' | 'veteran' | 'elite' | 'legend' | 'gm';
 export type RegistrationStatus = 'active' | 'inactive' | 'pending' | 'leave';
-
-// Deprecated: используйте RegistrationRank и RegistrationStatus
-export type MemberRank = RegistrationRank;
-export type MemberStatus = RegistrationStatus;
 
 export interface Schedule {
   date: string;
@@ -44,9 +37,6 @@ export interface Schedule {
   type: string;
   description: string;
 }
-
-// Deprecated: используйте Schedule
-export interface Activity extends Schedule {}
 
 export interface News {
   id: string;
@@ -101,4 +91,23 @@ export interface VerifyAuthResponse {
   role: UserRole;
   discordId?: string | null;
 }
+
+// Re-export types from schemas for convenience
+export type {
+  GuideSummary,
+  GuideDetail,
+  GuideComment,
+  CreateGuideDto,
+  CreateCommentDto,
+} from '@/lib/schemas/guide';
+
+export type {
+  HelpRequest as HelpRequestSchema,
+  CreateHelpRequestDto,
+  UpdateHelpRequestDto,
+} from '@/lib/schemas/help';
+
+export type {
+  CreateAbsenceDto,
+} from '@/lib/schemas/absence';
 

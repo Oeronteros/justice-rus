@@ -4,6 +4,8 @@ import "./globals.css";
 import SeasonalClient from "@/components/SeasonalClient";
 import PointerEffectsClient from "@/components/PointerEffectsClient";
 import BackgroundEffects from "@/components/BackgroundEffects";
+import { QueryProvider } from "@/lib/providers/QueryProvider";
+import { I18nProvider } from "@/lib/i18n/context";
 
 const notoSerif = Noto_Serif({
   weight: ['400', '500', '600', '700'],
@@ -43,10 +45,14 @@ export default function RootLayout({
   return (
     <html lang="ru" className={notoSerif.variable}>
       <body className={`theme-wuxia ${notoSerif.className}`}>
-        <SeasonalClient />
-        <PointerEffectsClient />
-        <BackgroundEffects />
-        <div className="relative z-10">{children}</div>
+        <QueryProvider>
+          <I18nProvider>
+            <SeasonalClient />
+            <PointerEffectsClient />
+            <BackgroundEffects />
+            <div className="relative z-10">{children}</div>
+          </I18nProvider>
+        </QueryProvider>
       </body>
     </html>
   );
