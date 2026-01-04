@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Section } from '@/types';
 import { Language, portalCopy, sectionLabels } from '@/lib/i18n';
-import { formatCountdownParts, NEWYEAR_STORAGE_KEY, resolveNewYearEnabled } from '@/lib/seasonal';
+import { NEWYEAR_STORAGE_KEY, resolveNewYearEnabled } from '@/lib/seasonal';
 import WuxiaIcon from './WuxiaIcons';
 
 interface HeaderProps {
@@ -26,7 +26,6 @@ export default function Header({
   onLanguageChange,
 }: HeaderProps) {
   const [newYearMode, setNewYearMode] = useState(false);
-  const [ticker, setTicker] = useState(0);
   const [headerCompact, setHeaderCompact] = useState(false);
   const [activeOrderStep, setActiveOrderStep] = useState<OrderStep>('registration');
   const [moreOpen, setMoreOpen] = useState(false);
@@ -44,36 +43,13 @@ export default function Header({
     document.body.classList.toggle('dc-season-newyear', enabled);
   }, []);
 
-  useEffect(() => {
-    if (!newYearMode) return;
-    const interval = window.setInterval(() => setTicker((t) => (t + 1) % 10_000), 1000);
-    return () => window.clearInterval(interval);
-  }, [newYearMode]);
-
   const seasonalBadge = useMemo(() => {
     if (!newYearMode) return null;
 
-    const now = new Date();
-    // Показываем обратный отсчёт только в декабре до Нового года
-    if (now.getMonth() === 11) {
-      const target = new Date(now.getFullYear() + 1, 0, 1, 0, 0, 0, 0);
-      const diff = target.getTime() - now.getTime();
-      const { days, hours, minutes } = formatCountdownParts(diff);
-
-      if (language === 'ru') return `До Нового года: ${days}д ${hours}ч ${minutes}м`;
-      return `New Year in: ${days}d ${hours}h ${minutes}m`;
-    }
-
-    // В январе первую неделю — поздравление
-    if (now.getMonth() === 0 && now.getDate() <= 7) {
-      if (language === 'ru') return 'С Новым годом!';
-      return 'Happy New Year!';
-    }
-
-    // В остальное зимнее время — просто зимняя тема
-    if (language === 'ru') return 'Зимняя тема';
-    return 'Winter theme';
-  }, [language, newYearMode, ticker]);
+    // Просто зимняя тема без новогодних надписей
+    if (language === 'ru') return 'Зима';
+    return 'Winter';
+  }, [language, newYearMode]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

@@ -53,91 +53,97 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
 
   return (
     <div
-      className="fixed inset-0 z-[9999] bg-black/75 backdrop-blur-md flex items-start justify-center px-4 pt-20 pb-10 overflow-auto"
+      className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md flex items-start justify-center px-4 pt-24 pb-10 overflow-y-auto"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
       style={{ perspective: 'none', transform: 'none' }}
     >
-      <div className="card w-full max-w-4xl p-6 md:p-8 relative my-auto">
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2 mb-3">
-              <span className="px-3 py-1 bg-gradient-to-r from-[#142636]/60 to-[#1d3b52]/60 text-[#8fb9cc] rounded-full text-sm font-medium">
-                <WuxiaIcon name="tag" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
-                {guideDetail?.guide.category || '...'}
-              </span>
-              {guideDetail && (
-                <span className="text-sm text-gray-400">
-                  {formatDate(guideDetail.guide.updatedAt)}
+      <div className="w-full max-w-3xl bg-[#0d1419] border border-[#2a3f4f]/60 rounded-2xl shadow-2xl">
+        {/* Шапка */}
+        <div className="sticky top-0 z-10 bg-[#0d1419]/95 backdrop-blur-sm border-b border-[#2a3f4f]/40 p-5 rounded-t-2xl">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <span className="px-3 py-1 bg-[#1a2a38] text-[#8fb9cc] rounded-full text-sm">
+                  {guideDetail?.guide.category || '...'}
                 </span>
+                {guideDetail && (
+                  <span className="text-sm text-gray-500">
+                    {formatDate(guideDetail.guide.updatedAt)}
+                  </span>
+                )}
+              </div>
+              <h3 className="text-xl font-bold text-[#e6eff5] break-words">
+                {guideDetail?.guide.title || 'Загрузка...'}
+              </h3>
+              {guideDetail && (
+                <div className="text-sm text-gray-500 mt-1">
+                  {guideDetail.guide.author}
+                </div>
               )}
             </div>
-            <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5] break-words">
-              {guideDetail?.guide.title || 'Загрузка...'}
-            </h3>
-            {guideDetail && (
-              <div className="text-sm text-gray-400 mt-2 inline-flex items-center gap-2">
-                <WuxiaIcon name="user" className="w-4 h-4" />
-                {guideDetail.guide.author}
-              </div>
-            )}
-          </div>
 
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {guideDetail && (
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {guideDetail && (
+                <button
+                  type="button"
+                  className={`p-2 rounded-lg transition-colors ${guideDetail.voted ? 'bg-[#2a4a5a] text-[#8fb9cc]' : 'bg-[#1a2a38] text-gray-400 hover:text-[#8fb9cc]'}`}
+                  onClick={handleVote}
+                  disabled={voteGuide.isPending}
+                  title="Нравится"
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    <WuxiaIcon name="seal" className="w-4 h-4" />
+                    <span className="text-sm">{guideDetail.votes}</span>
+                  </span>
+                </button>
+              )}
               <button
                 type="button"
-                className={`dc-icon-btn p-2.5 rounded-xl ${guideDetail.voted ? 'dc-icon-btn-active' : ''}`}
-                onClick={handleVote}
-                disabled={voteGuide.isPending}
-                title="Печать одобрения"
+                className="p-2 rounded-lg bg-[#1a2a38] text-gray-400 hover:text-white transition-colors"
+                onClick={onClose}
+                title="Закрыть"
               >
-                <span className="inline-flex items-center gap-2">
-                  <WuxiaIcon name="seal" className="w-5 h-5" />
-                  <span className="text-sm font-semibold">{guideDetail.votes}</span>
-                </span>
+                <WuxiaIcon name="x" className="w-5 h-5" />
               </button>
-            )}
-            <button
-              type="button"
-              className="dc-icon-btn p-2.5 rounded-xl"
-              onClick={onClose}
-              title="Закрыть"
-            >
-              <WuxiaIcon name="x" className="w-5 h-5" />
-            </button>
+            </div>
           </div>
         </div>
 
-        {isLoading && (
-          <div className="card p-6">
-            <div className="h-5 bg-gray-800 rounded w-2/3 animate-pulse mb-3"></div>
-            <div className="h-4 bg-gray-800 rounded w-full animate-pulse mb-2"></div>
-            <div className="h-4 bg-gray-800 rounded w-5/6 animate-pulse"></div>
-          </div>
-        )}
+        {/* Контент */}
+        <div className="p-6">
+          {isLoading && (
+            <div className="space-y-3">
+              <div className="h-5 bg-gray-800 rounded w-2/3 animate-pulse"></div>
+              <div className="h-4 bg-gray-800 rounded w-full animate-pulse"></div>
+              <div className="h-4 bg-gray-800 rounded w-5/6 animate-pulse"></div>
+            </div>
+          )}
 
-        {error && (
-          <div className="text-[#bcd6e5] text-sm mt-2 p-4 bg-[#16202b]/65 rounded-xl border border-[#2f6e8d]/40">
-            <WuxiaIcon name="alertTriangle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
-            {error instanceof Error ? error.message : 'Не удалось загрузить гайд'}
-          </div>
-        )}
+          {error && (
+            <div className="text-red-400 text-sm p-4 bg-red-900/20 rounded-xl border border-red-800/40">
+              {error instanceof Error ? error.message : 'Не удалось загрузить гайд'}
+            </div>
+          )}
 
-        {guideDetail && (
-          <>
-            <div
-              className="card p-6 dc-md"
-              dangerouslySetInnerHTML={{ __html: markdownToHtml(guideDetail.guide.content) }}
-            />
+          {guideDetail && (
+            <>
+              <div
+                className="dc-md"
+                dangerouslySetInnerHTML={{ __html: markdownToHtml(guideDetail.guide.content) }}
+              />
 
-            <GuideComments
-              guideId={guideId}
-              comments={guideDetail.comments}
-              defaultAuthor={defaultAuthor}
-              canModerate={canModerate}
-              userRole={userRole}
-            />
-          </>
-        )}
+              <div className="mt-8 pt-6 border-t border-[#2a3f4f]/40">
+                <GuideComments
+                  guideId={guideId}
+                  comments={guideDetail.comments}
+                  defaultAuthor={defaultAuthor}
+                  canModerate={canModerate}
+                  userRole={userRole}
+                />
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
