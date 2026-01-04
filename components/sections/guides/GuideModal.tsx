@@ -42,9 +42,12 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
     setDefaultAuthor(getStoredAuthor());
   }, []);
 
+  // Блокируем скролл body при открытии
   useEffect(() => {
-    document.documentElement.style.setProperty('--tilt-x', '0deg');
-    document.documentElement.style.setProperty('--tilt-y', '0deg');
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, []);
 
   const handleVote = () => {
@@ -53,55 +56,44 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
 
   return (
     <div
-      className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md flex items-start justify-center px-4 pt-24 pb-10 overflow-y-auto"
+      className="fixed inset-0 z-[9999] bg-black/85"
       onClick={(e) => e.target === e.currentTarget && onClose()}
-      style={{ perspective: 'none', transform: 'none' }}
     >
-      <div className="w-full max-w-3xl bg-[#0d1419] border border-[#2a3f4f]/60 rounded-2xl shadow-2xl">
-        {/* Шапка */}
-        <div className="sticky top-0 z-10 bg-[#0d1419]/95 backdrop-blur-sm border-b border-[#2a3f4f]/40 p-5 rounded-t-2xl">
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2 mb-2">
-                <span className="px-3 py-1 bg-[#1a2a38] text-[#8fb9cc] rounded-full text-sm">
-                  {guideDetail?.guide.category || '...'}
-                </span>
-                {guideDetail && (
-                  <span className="text-sm text-gray-500">
-                    {formatDate(guideDetail.guide.updatedAt)}
-                  </span>
-                )}
-              </div>
-              <h3 className="text-xl font-bold text-[#e6eff5] break-words">
+      {/* Контейнер с фиксированной шапкой */}
+      <div className="fixed inset-0 flex flex-col">
+        {/* Шапка - фиксированная */}
+        <div className="flex-shrink-0 bg-[#0a0f14] border-b border-[#2a3f4f]/50 px-4 py-3 mt-16">
+          <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <h3 className="text-lg font-semibold text-[#e6eff5] truncate">
                 {guideDetail?.guide.title || 'Загрузка...'}
               </h3>
-              {guideDetail && (
-                <div className="text-sm text-gray-500 mt-1">
-                  {guideDetail.guide.author}
-                </div>
-              )}
+              <div className="flex items-center gap-3 text-sm text-gray-500 mt-0.5">
+                {guideDetail && (
+                  <>
+                    <span>{guideDetail.guide.author}</span>
+                    <span>•</span>
+                    <span>{guideDetail.guide.category}</span>
+                  </>
+                )}
+              </div>
             </div>
 
             <div className="flex items-center gap-2 flex-shrink-0">
               {guideDetail && (
                 <button
                   type="button"
-                  className={`p-2 rounded-lg transition-colors ${guideDetail.voted ? 'bg-[#2a4a5a] text-[#8fb9cc]' : 'bg-[#1a2a38] text-gray-400 hover:text-[#8fb9cc]'}`}
+                  className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${guideDetail.voted ? 'bg-[#2a4a5a] text-[#8fb9cc]' : 'bg-[#1a2a38] text-gray-400 hover:text-[#8fb9cc]'}`}
                   onClick={handleVote}
                   disabled={voteGuide.isPending}
-                  title="Нравится"
                 >
-                  <span className="inline-flex items-center gap-1.5">
-                    <WuxiaIcon name="seal" className="w-4 h-4" />
-                    <span className="text-sm">{guideDetail.votes}</span>
-                  </span>
+                  ♥ {guideDetail.votes}
                 </button>
               )}
               <button
                 type="button"
                 className="p-2 rounded-lg bg-[#1a2a38] text-gray-400 hover:text-white transition-colors"
                 onClick={onClose}
-                title="Закрыть"
               >
                 <WuxiaIcon name="x" className="w-5 h-5" />
               </button>
@@ -109,40 +101,41 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
           </div>
         </div>
 
-        {/* Контент */}
-        <div className="p-6">
-          {isLoading && (
-            <div className="space-y-3">
-              <div className="h-5 bg-gray-800 rounded w-2/3 animate-pulse"></div>
-              <div className="h-4 bg-gray-800 rounded w-full animate-pulse"></div>
-              <div className="h-4 bg-gray-800 rounded w-5/6 animate-pulse"></div>
-            </div>
-          )}
-
-          {error && (
-            <div className="text-red-400 text-sm p-4 bg-red-900/20 rounded-xl border border-red-800/40">
-              {error instanceof Error ? error.message : 'Не удалось загрузить гайд'}
-            </div>
-          )}
-
-          {guideDetail && (
-            <>
-              <div
-                className="dc-md"
-                dangerouslySetInnerHTML={{ __html: markdownToHtml(guideDetail.guide.content) }}
-              />
-
-              <div className="mt-8 pt-6 border-t border-[#2a3f4f]/40">
-                <GuideComments
-                  guideId={guideId}
-                  comments={guideDetail.comments}
-                  defaultAuthor={defaultAuthor}
-                  canModerate={canModerate}
-                  userRole={userRole}
-                />
+        {/* Контент - скроллится */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-3xl mx-auto px-4 py-6">
+            {isLoading && (
+              <div className="space-y-3">
+                <div className="h-5 bg-gray-800 rounded w-2/3 animate-pulse"></div>
+                <div className="h-4 bg-gray-800 rounded w-full animate-pulse"></div>
+                <div className="h-4 bg-gray-800 rounded w-5/6 animate-pulse"></div>
               </div>
-            </>
-          )}
+            )}
+
+            {error && (
+              <div className="text-red-400 text-sm p-4 bg-red-900/20 rounded-xl border border-red-800/40">
+                {error instanceof Error ? error.message : 'Не удалось загрузить гайд'}
+              </div>
+            )}
+
+            {guideDetail && (
+              <>
+                <div className="dc-md">
+                  <div dangerouslySetInnerHTML={{ __html: markdownToHtml(guideDetail.guide.content) }} />
+                </div>
+
+                <div className="mt-8 pt-6 border-t border-[#2a3f4f]/40">
+                  <GuideComments
+                    guideId={guideId}
+                    comments={guideDetail.comments}
+                    defaultAuthor={defaultAuthor}
+                    canModerate={canModerate}
+                    userRole={userRole}
+                  />
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

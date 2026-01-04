@@ -1172,50 +1172,50 @@ body {
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 8px 10px;
-    border-radius: 999px;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 12px;
     background: rgba(10, 16, 24, 0.55);
     border: 1px solid rgba(143, 185, 204, 0.16);
-    box-shadow: 0 16px 32px rgba(5, 10, 16, 0.5);
-    backdrop-filter: blur(12px);
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .dc-order::-webkit-scrollbar {
+    display: none;
   }
 
   .dc-order--compact {
     justify-content: flex-end;
-    padding: 8px 10px;
+    padding: 6px 8px;
   }
 
   .dc-order--full::before {
-    content: '';
-    position: absolute;
-    left: 22px;
-    right: 22px;
-    top: 50%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(143, 185, 204, 0.34), transparent);
-    opacity: 0.85;
-    pointer-events: none;
+    display: none;
   }
 
   .dc-order-step {
-    @apply border border-transparent transition-all duration-300;
+    @apply border border-transparent transition-all duration-200;
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 7px 10px;
-    border-radius: 999px;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 8px;
     background: transparent;
     border: 1px solid transparent;
-    color: rgba(223, 232, 242, 0.92);
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    color: rgba(223, 232, 242, 0.85);
+    font-weight: 500;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .dc-order--compact .dc-order-step {
-    padding: 7px 9px;
+    padding: 6px 8px;
   }
 
   .dc-order--compact .dc-order-label {
@@ -1223,10 +1223,8 @@ body {
   }
 
   .dc-order-step:hover {
-    @apply transform -translate-y-0.5;
-    border-color: rgba(143, 185, 204, 0.45);
-    box-shadow: 0 12px 24px rgba(5, 10, 16, 0.4);
-    background: rgba(18, 34, 48, 0.55);
+    border-color: rgba(143, 185, 204, 0.35);
+    background: rgba(18, 34, 48, 0.5);
   }
 
   .dc-order-step.is-active {
@@ -1604,125 +1602,18 @@ body {
 
   /* Карточки */
 .card {
-  @apply rounded-2xl border transition-all duration-300;
-  --card-rim: conic-gradient(
-    from 180deg at 50% 50%,
-    rgba(143, 185, 204, 0.06) 0 8%,
-    rgba(143, 185, 204, 0.34) 8% 10%,
-    rgba(12, 20, 30, 0.18) 10% 28%,
-    rgba(143, 185, 204, 0.2) 28% 30%,
-    rgba(12, 20, 30, 0.18) 30% 56%,
-    rgba(143, 185, 204, 0.24) 56% 58%,
-    rgba(12, 20, 30, 0.18) 58% 78%,
-    rgba(143, 185, 204, 0.2) 78% 80%,
-    rgba(12, 20, 30, 0.18) 80% 90%,
-    rgba(143, 185, 204, 0.32) 90% 92%,
-    rgba(143, 185, 204, 0.06) 92% 100%
-  );
-  border: 1px solid transparent;
-  background:
-    linear-gradient(145deg, rgba(10, 16, 24, 0.92), rgba(6, 10, 16, 0.98)) padding-box,
-    var(--card-rim) border-box;
-  box-shadow: 0 24px 50px rgba(4, 8, 12, 0.6);
-  backdrop-filter: blur(14px);
+  @apply rounded-2xl border transition-all duration-200;
+  border: 1px solid rgba(42, 63, 79, 0.5);
+  background: linear-gradient(145deg, rgba(10, 16, 24, 0.92), rgba(6, 10, 16, 0.98));
+  box-shadow: 0 8px 24px rgba(4, 8, 12, 0.4);
   position: relative;
   overflow: hidden;
-  transform-style: preserve-3d;
-  transform: perspective(1000px) rotateX(calc(var(--tilt-x) * 0.35)) rotateY(calc(var(--tilt-y) * 0.35));
-}
-
-.theme-wuxia.dc-season-newyear .card {
-  --card-rim: conic-gradient(
-    from 180deg at 50% 50%,
-    rgba(207, 230, 245, 0.08) 0 8%,
-    rgba(207, 230, 245, 0.38) 8% 10%,
-    rgba(12, 20, 30, 0.16) 10% 28%,
-    rgba(207, 230, 245, 0.22) 28% 30%,
-    rgba(12, 20, 30, 0.16) 30% 56%,
-    rgba(207, 230, 245, 0.26) 56% 58%,
-    rgba(12, 20, 30, 0.16) 58% 78%,
-    rgba(207, 230, 245, 0.22) 78% 80%,
-    rgba(12, 20, 30, 0.16) 80% 90%,
-    rgba(207, 230, 245, 0.36) 90% 92%,
-    rgba(207, 230, 245, 0.08) 92% 100%
-  );
 }
 
 .card:hover {
-  transform: translateY(-6px)
-    perspective(1000px)
-    rotateX(calc(var(--tilt-x) * 0.35 + 2deg))
-    rotateY(calc(var(--tilt-y) * 0.35 - 2deg));
-  box-shadow: 0 32px 70px rgba(4, 8, 12, 0.75);
+  border-color: rgba(60, 90, 110, 0.6);
+  box-shadow: 0 12px 32px rgba(4, 8, 12, 0.5);
 }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background:
-      radial-gradient(
-        circle at var(--cursor-x) var(--cursor-y),
-        rgba(143, 185, 204, 0.22),
-        transparent 60%
-      ),
-      radial-gradient(circle at 18% 12%, rgba(143, 185, 204, 0.12), transparent 65%);
-    opacity: 0;
-    transition: opacity 0.25s ease;
-    mix-blend-mode: screen;
-    pointer-events: none;
-  }
-
-  .theme-wuxia.dc-season-newyear .card::before {
-    background:
-      radial-gradient(
-        circle at var(--cursor-x) var(--cursor-y),
-        rgba(207, 230, 245, 0.18),
-        transparent 60%
-      ),
-      radial-gradient(circle at 18% 12%, rgba(143, 185, 204, 0.1), transparent 65%);
-  }
-
-  .card::after {
-    content: '';
-    position: absolute;
-    top: 16px;
-    right: 18px;
-    width: 32px;
-    height: 32px;
-    border-radius: 999px;
-    border: 1px solid rgba(143, 185, 204, 0.4);
-    background: radial-gradient(circle, rgba(143, 185, 204, 0.25), transparent 70%);
-    box-shadow: inset 0 0 10px rgba(143, 185, 204, 0.2);
-    opacity: 0;
-    animation: stampPop 0.7s ease forwards;
-    pointer-events: none;
-    z-index: 2;
-  }
-
-  .theme-wuxia.dc-season-newyear .card::after {
-    border-radius: 16px;
-    border-color: rgba(207, 230, 245, 0.55);
-    background:
-      radial-gradient(circle, rgba(207, 230, 245, 0.22), transparent 70%),
-      conic-gradient(
-        from 0deg,
-        rgba(207, 230, 245, 0.0) 0 10%,
-        rgba(207, 230, 245, 0.26) 10% 12%,
-        rgba(207, 230, 245, 0.0) 12% 35%,
-        rgba(207, 230, 245, 0.22) 35% 37%,
-        rgba(207, 230, 245, 0.0) 37% 60%,
-        rgba(207, 230, 245, 0.24) 60% 62%,
-        rgba(207, 230, 245, 0.0) 62% 85%,
-        rgba(207, 230, 245, 0.22) 85% 87%,
-        rgba(207, 230, 245, 0.0) 87% 100%
-      );
-  }
-
-  .card:hover::before {
-    opacity: 0.9;
-  }
 
   .card > * {
     position: relative;
