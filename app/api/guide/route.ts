@@ -69,9 +69,9 @@ async function seedGuidesIfEmpty() {
     `
     INSERT INTO guide (title, content_md, category, author)
     VALUES
-      ($1, $2, 'general', 'Demonic Cult'),
-      ($3, $4, 'pve', 'Demonic Cult'),
-      ($5, $6, 'pvp', 'Demonic Cult')
+      ($1, $2, 'general', 'Cult'),
+      ($3, $4, 'pve', 'Cult'),
+      ($5, $6, 'pvp', 'Cult')
     `,
     [
       'Кодекс ордена: дисциплина и польза',

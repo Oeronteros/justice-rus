@@ -1602,7 +1602,7 @@ body {
     }
   }
 
-  /* Ахуенные карточки */
+  /* Карточки */
 .card {
   @apply rounded-2xl border transition-all duration-300;
   --card-rim: conic-gradient(
@@ -1729,7 +1729,7 @@ body {
     z-index: 1;
   }
 
-  /* Ахуенные кнопки */
+  /* Кнопки */
   .btn-primary {
     @apply text-white font-medium py-3 px-6 rounded-xl transition-all duration-300;
     background: linear-gradient(130deg, #24648a, #8fb9cc);
@@ -1755,7 +1755,7 @@ body {
     border-color: rgba(143, 185, 204, 0.45);
   }
 
-  /* Ахуенные инпуты */
+  /* Инпуты */
   .input-field {
     @apply w-full rounded-xl px-4 py-3 transition-all duration-300;
     background: rgba(8, 12, 18, 0.78);
@@ -1770,7 +1770,7 @@ body {
     box-shadow: 0 0 0 2px rgba(74, 144, 176, 0.25);
   }
 
-  /* Ахуенные таблички */
+  /* Таблицы */
   .table-modern {
     @apply min-w-full divide-y divide-gray-700/50;
     border: 1px solid rgba(143, 185, 204, 0.15);
@@ -1797,7 +1797,7 @@ body {
     background: rgba(20, 34, 46, 0.6);
   }
 
-  /* Ахуенные селекты */
+  /* Селекты */
   .select-field {
     @apply text-white rounded-xl px-4 py-3 focus:outline-none transition-all duration-300;
     background: rgba(8, 12, 18, 0.78);

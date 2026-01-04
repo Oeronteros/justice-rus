@@ -59,12 +59,12 @@ export default function AboutSection({ language, onOpenSchedule, onOpenGuides }:
             <div className="wuxia-crest-frame">
               <img
                 src="/emblem.svg"
-                alt="Demonic Cult Sigil"
+                alt="Cult Emblem"
                 className="w-36 h-36 opacity-90 wuxia-emblem drop-shadow-[0_18px_35px_rgba(0,0,0,0.55)]"
               />
             </div>
-            <div className="wuxia-crest-caption">Demonic Cult</div>
-            <div className="wuxia-crest-sub">Justice Mobile • Wuxia Order</div>
+            <div className="wuxia-crest-caption">Cult</div>
+            <div className="wuxia-crest-sub">Game Community • Justice Mobile</div>
           </div>
 
           <div className="wuxia-pillars wuxia-parallax wuxia-parallax-light">

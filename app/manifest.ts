@@ -2,9 +2,9 @@ import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Demonic Cult | Justice Mobile',
-    short_name: 'Demonic Cult',
-    description: 'Wuxia guild portal for the Demonic Cult community',
+    name: 'Cult | Game Community',
+    short_name: 'Cult',
+    description: 'Gaming community portal for Justice Mobile players',
     start_url: '/',
     display: 'standalone',
     background_color: '#0a0f14',

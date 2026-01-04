@@ -15,13 +15,13 @@ const notoSerif = Noto_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "Demonic Cult | Justice Mobile",
-  description: "Wuxia guild portal for the Demonic Cult community.",
-  keywords: ["wuxia", "justice mobile", "demonic cult", "guild", "clan"],
-  authors: [{ name: "Demonic Cult" }],
+  title: "Cult | Game Community",
+  description: "Gaming community portal for Justice Mobile players.",
+  keywords: ["justice mobile", "cult", "guild", "gaming community", "mmorpg"],
+  authors: [{ name: "Cult | Game Community" }],
   openGraph: {
-    title: "Demonic Cult | Justice Mobile",
-    description: "Wuxia guild portal for the Demonic Cult community.",
+    title: "Cult | Game Community",
+    description: "Gaming community portal for Justice Mobile players.",
     type: "website",
     locale: "ru_RU",
   },
