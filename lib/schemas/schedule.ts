@@ -5,6 +5,7 @@ export const scheduleSchema = z.object({
   registration: z.string(),
   type: z.string(),
   description: z.string(),
+  group: z.string().optional(),
 });
 
 export const schedulesArraySchema = z.array(scheduleSchema);

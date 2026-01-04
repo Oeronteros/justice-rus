@@ -23,10 +23,10 @@ export async function GET(request: NextRequest) {
       const titleField = language === 'en' ? 'title_en' : 'title_ru';
       const result = await pool.query(
         `
-        SELECT day_type, time, ${titleField} AS title
+        SELECT day_type, time, ${titleField} AS title, group_name
         FROM schedule
         WHERE active = 1
-        ORDER BY order_index ASC, time ASC
+        ORDER BY group_name ASC, order_index ASC, time ASC
         `
       );
 
@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
         registration: row.title || '',
         type: row.day_type || '',
         description: row.time ? String(row.time) : '',
+        group: row.group_name || '',
       }));
 
       return NextResponse.json(data);

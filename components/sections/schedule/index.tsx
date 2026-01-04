@@ -1,8 +1,6 @@
 'use client';
 
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
-import { LoadingState } from '@/components/shared/LoadingState';
-import { EmptyState } from '@/components/shared/EmptyState';
 import { useSchedule } from '@/lib/hooks/useSchedule';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/types';
@@ -24,25 +22,27 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
     year: 'numeric',
   });
 
-  // Группируем по типу дня (day_type)
-  const grouped = schedules.reduce((acc, item) => {
-    const key = item.type || 'other';
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(item);
+  // Группируем по группам
+  const groupedByGroup = schedules.reduce((acc, item) => {
+    const groupName = item.group || (language === 'ru' ? 'Общее' : 'General');
+    if (!acc[groupName]) acc[groupName] = [];
+    acc[groupName].push(item);
     return acc;
   }, {} as Record<string, typeof schedules>);
 
-  const typeLabels: Record<string, { ru: string; en: string; emoji: string }> = {
-    daily: { ru: 'Рутина', en: 'Daily', emoji: '🟢' },
-    weekly: { ru: 'На этой неделе', en: 'This week', emoji: '📋' },
-    event: { ru: 'События', en: 'Events', emoji: '⭐' },
-    other: { ru: 'Прочее', en: 'Other', emoji: '📌' },
-  };
+  const sortedGroups = Object.keys(groupedByGroup).sort((a, b) => {
+    // "Общее" / "General" всегда первым
+    if (a === 'Общее' || a === 'General') return -1;
+    if (b === 'Общее' || b === 'General') return 1;
+    return a.localeCompare(b);
+  });
 
   if (isLoading) {
     return (
       <div className="py-4 px-4 max-w-5xl mx-auto">
-        <div className="text-gray-500 text-sm">Загрузка расписания...</div>
+        <div className="text-gray-500 text-sm">
+          {language === 'ru' ? 'Загрузка расписания...' : 'Loading schedule...'}
+        </div>
       </div>
     );
   }
@@ -51,9 +51,10 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
     return (
       <div className="py-4 px-4 max-w-5xl mx-auto">
         <div className="text-red-400 text-sm">
-          Ошибка: {error instanceof Error ? error.message : 'Не удалось загрузить'}
+          {language === 'ru' ? 'Ошибка: ' : 'Error: '}
+          {error instanceof Error ? error.message : language === 'ru' ? 'Не удалось загрузить' : 'Failed to load'}
           <button onClick={() => refetch()} className="ml-2 text-[#8fb9cc] hover:underline">
-            Повторить
+            {language === 'ru' ? 'Повторить' : 'Retry'}
           </button>
         </div>
       </div>
@@ -72,7 +73,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
           <button
             onClick={() => refetch()}
             className="text-gray-500 hover:text-white p-1"
-            title="Обновить"
+            title={language === 'ru' ? 'Обновить' : 'Refresh'}
           >
             <WuxiaIcon name="refresh" className="w-4 h-4" />
           </button>
@@ -83,33 +84,60 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
             {language === 'ru' ? 'Нет событий на сегодня' : 'No events today'}
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 gap-6">
-            {Object.entries(grouped).map(([type, items]) => {
-              const label = typeLabels[type] || typeLabels.other;
-              return (
-                <div key={type}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span>{label.emoji}</span>
-                    <span className="text-sm font-medium text-gray-300">
-                      {language === 'ru' ? label.ru : label.en}
-                    </span>
-                  </div>
-                  <ol className="space-y-1 text-sm">
-                    {items.map((item, i) => (
-                      <li key={i} className="flex gap-2 text-gray-400">
-                        <span className="text-gray-600 w-4 flex-shrink-0">{i + 1}.</span>
-                        <div className="min-w-0">
-                          {item.description && (
-                            <span className="text-[#8fb9cc]">{item.description} </span>
-                          )}
-                          <span>{item.registration}</span>
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              );
-            })}
+          <div className="bg-[#1a1a1a] rounded-lg border border-gray-800 overflow-hidden">
+            {/* Таблица расписания по группам */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-[#252525] border-b border-gray-800">
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium w-40">
+                      {language === 'ru' ? 'Группа' : 'Group'}
+                    </th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium w-24">
+                      {language === 'ru' ? 'Время' : 'Time'}
+                    </th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium">
+                      {language === 'ru' ? 'Событие' : 'Event'}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedGroups.map((groupName) => {
+                    const items = groupedByGroup[groupName];
+                    return items.map((item, idx) => (
+                      <tr
+                        key={`${groupName}-${idx}`}
+                        className="border-b border-gray-800/50 hover:bg-[#222] transition-colors"
+                      >
+                        {/* Показываем название группы только для первой строки группы */}
+                        <td className="py-2.5 px-4">
+                          {idx === 0 ? (
+                            <span className="inline-flex items-center gap-1.5">
+                              <span className="w-2 h-2 rounded-full bg-[#8fb9cc]"></span>
+                              <span className="text-white font-medium">{groupName}</span>
+                            </span>
+                          ) : null}
+                        </td>
+                        <td className="py-2.5 px-4 text-gray-400 font-mono text-xs">
+                          {item.description || '—'}
+                        </td>
+                        <td className="py-2.5 px-4 text-gray-300">
+                          {item.registration}
+                        </td>
+                      </tr>
+                    ));
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Итого */}
+            <div className="bg-[#252525] px-4 py-2 text-xs text-gray-500 border-t border-gray-800">
+              {language === 'ru' 
+                ? `${sortedGroups.length} групп • ${schedules.length} событий`
+                : `${sortedGroups.length} groups • ${schedules.length} events`
+              }
+            </div>
           </div>
         )}
       </div>
