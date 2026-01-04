@@ -19,18 +19,18 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
 
   const today = new Date();
   const todayLabel = today.toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US', {
-    weekday: 'long',
+    weekday: 'short',
     day: 'numeric',
-    month: 'long',
+    month: 'short',
   });
 
   if (isLoading) {
     return (
       <LoadingState
         title="Расписание"
-        subtitle="Загружаем события..."
-        icon={<WuxiaIcon name="schedule" className="w-6 h-6 text-[#8fb9cc]" />}
-        skeletonCount={3}
+        subtitle="Загрузка..."
+        icon={<WuxiaIcon name="schedule" className="w-5 h-5 text-[#8fb9cc]" />}
+        skeletonCount={2}
       />
     );
   }
@@ -38,80 +38,58 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
   if (error) {
     return (
       <EmptyState
-        icon={<WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />}
-        title="Не удалось загрузить"
-        description={error instanceof Error ? error.message : 'Ошибка загрузки расписания'}
-        action={
-          <button onClick={() => refetch()} className="btn-primary">
-            Повторить
-          </button>
-        }
+        icon={<WuxiaIcon name="alertTriangle" className="w-6 h-6 text-red-400" />}
+        title="Ошибка загрузки"
+        description={error instanceof Error ? error.message : 'Не удалось загрузить'}
+        action={<button onClick={() => refetch()} className="btn-primary text-sm py-2 px-4">Повторить</button>}
         variant="error"
       />
     );
   }
 
   return (
-    <section className="py-10">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+    <section className="py-6">
+      <div className="max-w-4xl mx-auto px-4">
         {/* Заголовок */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-[#e6eff5] mb-1">
-              Расписание
-            </h2>
-            <p className="text-gray-500 text-sm capitalize">{todayLabel}</p>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <h2 className="text-xl font-semibold text-[#e6eff5]">Расписание</h2>
+            <span className="text-sm text-gray-500">{todayLabel}</span>
           </div>
-          <button
-            type="button"
-            onClick={() => refetch()}
-            className="p-2 rounded-lg bg-[#1a2a38] text-gray-400 hover:text-white transition-colors"
-            title="Обновить"
-          >
-            <WuxiaIcon name="refresh" className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Счётчик */}
-        <div className="bg-[#0d1419] border border-[#2a3f4f]/50 rounded-xl p-4 mb-6">
-          <div className="flex items-center justify-between">
-            <span className="text-gray-400">Событий сегодня</span>
-            <span className="text-2xl font-bold text-[#8fb9cc]">{schedules.length}</span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-[#8fb9cc]">{schedules.length} событий</span>
+            <button
+              type="button"
+              onClick={() => refetch()}
+              className="p-1.5 rounded-md text-gray-500 hover:text-white hover:bg-[#1a2a38] transition-colors"
+            >
+              <WuxiaIcon name="refresh" className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
-        {/* Список событий */}
+        {/* Список */}
         {schedules.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
-            <WuxiaIcon name="calendarX" className="w-12 h-12 mx-auto mb-3 opacity-50" />
-            <p>На сегодня ничего не запланировано</p>
+          <div className="text-center py-8 text-gray-500 text-sm">
+            Нет событий на сегодня
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {schedules.map((schedule, index) => (
               <div
                 key={`${schedule.date}_${index}`}
-                className="bg-[#0d1419] border border-[#2a3f4f]/50 rounded-xl p-4 hover:border-[#3a5f7f]/50 transition-colors"
+                className="flex items-start gap-3 p-3 bg-[#0d1419]/80 border border-[#2a3f4f]/40 rounded-lg"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="px-2 py-0.5 bg-[#1a2a38] text-[#8fb9cc] rounded text-xs">
-                        {schedule.type}
-                      </span>
-                      {schedule.registration && (
-                        <span className="text-xs text-gray-500">
-                          {schedule.registration}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-gray-300 text-sm">
-                      {schedule.description || 'Без описания'}
-                    </p>
-                  </div>
-                  <span className="text-xs text-gray-500 whitespace-nowrap">
-                    {formatDate(schedule.date)}
-                  </span>
+                <span className="px-2 py-0.5 bg-[#1a2a38] text-[#8fb9cc] rounded text-xs flex-shrink-0">
+                  {schedule.type}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-gray-300 truncate">
+                    {schedule.description || 'Без описания'}
+                  </p>
+                  {schedule.registration && (
+                    <span className="text-xs text-gray-500">{schedule.registration}</span>
+                  )}
                 </div>
               </div>
             ))}
