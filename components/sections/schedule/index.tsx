@@ -17,11 +17,16 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
   const { data: schedules = [], isLoading, error, refetch } = useSchedule(language);
 
   const today = new Date();
-  const todayLabel = today.toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
+  const dayName = today.toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US', { weekday: 'long' });
+  const dateStr = today.toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
   });
+
+  // Разделяем на две колонки: Рутина и На этой неделе
+  const routine = schedules.filter(s => s.type === 'daily');
+  const weekly = schedules.filter(s => s.type !== 'daily');
 
   if (isLoading) {
     return (
@@ -37,61 +42,67 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
   if (error) {
     return (
       <EmptyState
-        icon={<WuxiaIcon name="alertTriangle" className="w-6 h-6 text-red-400" />}
-        title="Ошибка загрузки"
-        description={error instanceof Error ? error.message : 'Не удалось загрузить'}
-        action={<button onClick={() => refetch()} className="btn-primary text-sm py-2 px-4">Повторить</button>}
+        icon={<WuxiaIcon name="alertTriangle" className="w-5 h-5 text-red-400" />}
+        title="Ошибка"
+        description="Не удалось загрузить"
+        action={<button onClick={() => refetch()} className="text-sm text-[#8fb9cc] hover:underline">Повторить</button>}
         variant="error"
       />
     );
   }
 
   return (
-    <section className="py-6">
-      <div className="max-w-4xl mx-auto px-4">
-        {/* Заголовок */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <h2 className="text-xl font-semibold text-[#e6eff5]">Расписание</h2>
-            <span className="text-sm text-gray-500">{todayLabel}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-[#8fb9cc]">{schedules.length} событий</span>
-            <button
-              type="button"
-              onClick={() => refetch()}
-              className="p-1.5 rounded-md text-gray-500 hover:text-white hover:bg-[#1a2a38] transition-colors"
-            >
-              <WuxiaIcon name="refresh" className="w-4 h-4" />
-            </button>
-          </div>
+    <section className="py-4">
+      <div className="max-w-5xl mx-auto px-4">
+        {/* Заголовок как в Discord */}
+        <div className="mb-4">
+          <div className="text-lg font-semibold text-white capitalize">{dayName}</div>
+          <div className="text-sm text-gray-500">{dateStr}</div>
         </div>
 
-        {/* Список */}
         {schedules.length === 0 ? (
-          <div className="text-center py-8 text-gray-500 text-sm">
-            Нет событий на сегодня
-          </div>
+          <div className="text-gray-500 text-sm">Нет событий</div>
         ) : (
-          <div className="space-y-2">
-            {schedules.map((schedule, index) => (
-              <div
-                key={`${schedule.date}_${index}`}
-                className="flex items-start gap-3 p-3 bg-[#0d1419]/80 border border-[#2a3f4f]/40 rounded-lg"
-              >
-                <span className="px-2 py-0.5 bg-[#1a2a38] text-[#8fb9cc] rounded text-xs flex-shrink-0">
-                  {schedule.type}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-300 truncate">
-                    {schedule.description || 'Без описания'}
-                  </p>
-                  {schedule.registration && (
-                    <span className="text-xs text-gray-500">{schedule.registration}</span>
-                  )}
-                </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Левая колонка - Рутина */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-green-500">🟢</span>
+                <span className="text-sm font-medium text-gray-300">Рутина</span>
               </div>
-            ))}
+              <ol className="space-y-1.5 text-sm">
+                {routine.length > 0 ? routine.map((item, i) => (
+                  <li key={i} className="flex gap-2 text-gray-400">
+                    <span className="text-gray-600">{i + 1}.</span>
+                    <span>{item.description || 'Без описания'}</span>
+                  </li>
+                )) : (
+                  <li className="text-gray-600 text-xs">Нет рутинных задач</li>
+                )}
+              </ol>
+            </div>
+
+            {/* Правая колонка - На этой неделе */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-yellow-500">📋</span>
+                <span className="text-sm font-medium text-gray-300">На этой неделе</span>
+              </div>
+              <ol className="space-y-1.5 text-sm">
+                {weekly.length > 0 ? weekly.map((item, i) => (
+                  <li key={i} className="flex gap-2 text-gray-400">
+                    <span className="text-gray-600">{i + 1}.</span>
+                    <div>
+                      <span className="text-[#8fb9cc]">{item.type}</span>
+                      {item.registration && <span className="text-gray-500"> | {item.registration}</span>}
+                      <span> | {item.description || 'Без описания'}</span>
+                    </div>
+                  </li>
+                )) : (
+                  <li className="text-gray-600 text-xs">Нет событий на неделе</li>
+                )}
+              </ol>
+            </div>
           </div>
         )}
       </div>
