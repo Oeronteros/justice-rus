@@ -1,18 +1,10 @@
 import type { Metadata } from "next";
-import { Noto_Serif } from 'next/font/google';
 import "./globals.css";
 import SeasonalClient from "@/components/SeasonalClient";
 import PointerEffectsClient from "@/components/PointerEffectsClient";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import { QueryProvider } from "@/lib/providers/QueryProvider";
 import { I18nProvider } from "@/lib/i18n/context";
-
-const notoSerif = Noto_Serif({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin', 'cyrillic'],
-  display: 'swap',
-  variable: '--font-noto-serif',
-});
 
 export const metadata: Metadata = {
   title: "Cult | Game Community",
@@ -43,8 +35,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={notoSerif.variable}>
-      <body className={`theme-wuxia ${notoSerif.className}`}>
+    <html lang="ru">
+      <body className="theme-wuxia">
         <QueryProvider>
           <I18nProvider>
             <SeasonalClient />
