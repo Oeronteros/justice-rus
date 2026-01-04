@@ -4,7 +4,6 @@ import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { useSchedule } from '@/lib/hooks/useSchedule';
-import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/types';
 import type { Language } from '@/lib/i18n';

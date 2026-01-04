@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { formatDate } from '@/lib/utils';
 import { markdownToHtml } from '@/lib/markdown';
 import { useGuide, useVoteGuide } from '@/lib/hooks/useGuides';
 import { GuideComments } from './GuideComments';
