@@ -1230,11 +1230,13 @@ body {
   .dc-order-step.is-active {
     background: rgba(30, 50, 65, 0.7);
     border-color: rgba(143, 185, 204, 0.5);
+    box-shadow: 0 0 12px rgba(143, 185, 204, 0.1);
   }
 
   .dc-order-step.is-active .dc-order-dot {
     background: rgba(74, 144, 176, 0.6);
     border-color: rgba(143, 185, 204, 0.6);
+    box-shadow: 0 0 8px rgba(143, 185, 204, 0.2);
   }
 
   .dc-order--full .dc-order-step:not(.dc-more-trigger)::after {
@@ -1601,10 +1603,20 @@ body {
   border: 1px solid rgba(42, 63, 79, 0.4);
   background: rgba(10, 16, 24, 0.9);
   position: relative;
+  transition: border-color 0.15s ease;
 }
 
 .card:hover {
-  border-color: rgba(60, 90, 110, 0.5);
+  border-color: rgba(143, 185, 204, 0.4);
+}
+
+/* Лёгкое свечение для интерактивных элементов */
+.glow-hover {
+  transition: box-shadow 0.15s ease;
+}
+
+.glow-hover:hover {
+  box-shadow: 0 0 20px rgba(143, 185, 204, 0.15);
 }
 
   .card > * {

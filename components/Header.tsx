@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Section } from '@/types';
-import { Language, portalCopy, sectionLabels } from '@/lib/i18n';
+import { Language, portalCopy } from '@/lib/i18n';
 import { NEWYEAR_STORAGE_KEY, resolveNewYearEnabled } from '@/lib/seasonal';
 import WuxiaIcon from './WuxiaIcons';
 
@@ -14,9 +14,7 @@ interface HeaderProps {
   onLanguageChange: (language: Language) => void;
 }
 
-type OrderStep = 'about' | 'news' | 'registration' | 'schedule' | 'guides' | 'help' | 'absences' | 'more';
-
-const moreSections: Section[] = ['calculator'];
+type OrderStep = 'about' | 'news' | 'registration' | 'schedule' | 'guides' | 'help' | 'absences' | 'calculator';
 
 export default function Header({
   currentSection,
@@ -28,8 +26,6 @@ export default function Header({
   const [newYearMode, setNewYearMode] = useState(false);
   const [headerCompact, setHeaderCompact] = useState(false);
   const [activeOrderStep, setActiveOrderStep] = useState<OrderStep>('registration');
-  const [moreOpen, setMoreOpen] = useState(false);
-  const moreRef = useRef<HTMLDivElement | null>(null);
 
   const handleRefresh = () => {
     window.location.reload();
@@ -106,35 +102,13 @@ export default function Header({
       setActiveOrderStep('absences');
       return;
     }
+    if (currentSection === 'calculator') {
+      setActiveOrderStep('calculator');
+      return;
+    }
 
-    setActiveOrderStep('more');
+    setActiveOrderStep('about');
   }, [currentSection]);
-
-  useEffect(() => {
-    if (!moreOpen) return;
-
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target as Node | null;
-      if (!target) return;
-      if (!moreRef.current) return;
-      if (!moreRef.current.contains(target)) {
-        setMoreOpen(false);
-      }
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setMoreOpen(false);
-      }
-    };
-
-    window.addEventListener('pointerdown', handlePointerDown);
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('pointerdown', handlePointerDown);
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [moreOpen]);
 
   const toggleNewYearMode = () => {
     const next = !newYearMode;
@@ -188,6 +162,10 @@ export default function Header({
     goToSection('absences');
   };
 
+  const goToCalculator = () => {
+    goToSection('calculator');
+  };
+
   const orderLabels = useMemo(() => {
     if (language === 'ru') {
       return {
@@ -198,7 +176,7 @@ export default function Header({
         guides: 'Гайды',
         help: 'Помощь',
         absences: 'Отсутствия',
-        more: 'Ещё',
+        calculator: 'Калькулятор',
       };
     }
 
@@ -210,7 +188,7 @@ export default function Header({
       guides: 'Guides',
       help: 'Help',
       absences: 'Absences',
-      more: 'More',
+      calculator: 'Calculator',
     };
   }, [language]);
 
@@ -369,37 +347,16 @@ export default function Header({
               <span className="dc-order-label">{orderLabels.absences}</span>
             </button>
 
-            <div ref={moreRef} className="dc-more">
-              <button
-                type="button"
-                className={`dc-order-step dc-more-trigger ${moreOpen ? 'is-open' : ''} ${activeOrderStep === 'more' ? 'is-active' : ''}`}
-                onClick={() => setMoreOpen((v) => !v)}
-              >
-                <span className="dc-order-dot dc-accent">
-                  <WuxiaIcon name="dots" className="w-4 h-4" />
-                </span>
-                <span className="dc-order-label">{orderLabels.more}</span>
-              </button>
-
-              {moreOpen && (
-                <div className="dc-more-menu" role="menu">
-                  {moreSections.map((section) => (
-                    <button
-                      key={section}
-                      type="button"
-                      className="dc-more-item"
-                      role="menuitem"
-                      onClick={() => goToSection(section)}
-                    >
-                      <span className="dc-accent inline-flex">
-                        <WuxiaIcon name={section} className="w-4 h-4" />
-                      </span>
-                      <span>{sectionLabels[language][section]}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            <button
+              type="button"
+              onClick={goToCalculator}
+              className={`dc-order-step ${activeOrderStep === 'calculator' ? 'is-active' : ''}`}
+            >
+              <span className="dc-order-dot dc-accent">
+                <WuxiaIcon name="calculator" className="w-4 h-4" />
+              </span>
+              <span className="dc-order-label">{orderLabels.calculator}</span>
+            </button>
           </div>
         </nav>
       </div>

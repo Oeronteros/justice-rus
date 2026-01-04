@@ -54,28 +54,25 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
 
   return (
     <div
-      className="fixed inset-0 z-[9999] bg-black/70 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[9999] bg-black/80 flex flex-col"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full max-w-2xl max-h-[80vh] bg-[#0c1218] border border-[#2a3f4f]/60 rounded-xl shadow-2xl flex flex-col">
-        {/* Шапка */}
-        <div className="flex items-center justify-between gap-3 px-5 py-3 border-b border-[#2a3f4f]/40">
+      {/* Шапка модалки - компактная */}
+      <div className="flex-shrink-0 bg-[#0a0e12] border-b border-[#1a2a38] px-4 py-2">
+        <div className="max-w-3xl mx-auto flex items-center justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
-              <span className="px-2 py-0.5 bg-[#1a2a38] text-[#8fb9cc] rounded">
-                {guideDetail?.guide.category || '...'}
-              </span>
-              {guideDetail && <span>{guideDetail.guide.author}</span>}
-            </div>
-            <h3 className="text-base font-semibold text-[#e6eff5] truncate">
+            <h3 className="text-sm font-medium text-white truncate">
               {guideDetail?.guide.title || 'Загрузка...'}
             </h3>
+            <div className="text-xs text-gray-500">
+              {guideDetail && `${guideDetail.guide.author} • ${guideDetail.guide.category}`}
+            </div>
           </div>
           <div className="flex items-center gap-2">
             {guideDetail && (
               <button
                 type="button"
-                className={`px-2 py-1 rounded text-xs transition-colors ${guideDetail.voted ? 'bg-[#2a4a5a] text-[#8fb9cc]' : 'text-gray-500 hover:text-[#8fb9cc]'}`}
+                className={`text-xs px-2 py-1 rounded ${guideDetail.voted ? 'text-[#8fb9cc]' : 'text-gray-500'}`}
                 onClick={handleVote}
                 disabled={voteGuide.isPending}
               >
@@ -84,27 +81,25 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
             )}
             <button
               type="button"
-              className="p-1.5 rounded text-gray-500 hover:text-white transition-colors"
+              className="text-gray-500 hover:text-white p-1"
               onClick={onClose}
             >
-              <WuxiaIcon name="x" className="w-4 h-4" />
+              ✕
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Контент */}
-        <div className="flex-1 overflow-y-auto px-5 py-4">
+      {/* Контент - занимает всё оставшееся место */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-3xl mx-auto px-4 py-4">
           {isLoading && (
-            <div className="space-y-2">
-              <div className="h-4 bg-gray-800 rounded w-2/3 animate-pulse"></div>
-              <div className="h-3 bg-gray-800 rounded w-full animate-pulse"></div>
-              <div className="h-3 bg-gray-800 rounded w-5/6 animate-pulse"></div>
-            </div>
+            <div className="text-gray-500 text-sm">Загрузка...</div>
           )}
 
           {error && (
             <div className="text-red-400 text-sm">
-              {error instanceof Error ? error.message : 'Ошибка загрузки'}
+              {error instanceof Error ? error.message : 'Ошибка'}
             </div>
           )}
 
@@ -114,7 +109,7 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
                 <div dangerouslySetInnerHTML={{ __html: markdownToHtml(guideDetail.guide.content) }} />
               </div>
 
-              <div className="mt-6 pt-4 border-t border-[#2a3f4f]/40">
+              <div className="mt-6 pt-4 border-t border-[#1a2a38]">
                 <GuideComments
                   guideId={guideId}
                   comments={guideDetail.comments}
