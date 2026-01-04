@@ -54,6 +54,7 @@ export default function Header({
     if (!newYearMode) return null;
 
     const now = new Date();
+    // Показываем обратный отсчёт только в декабре до Нового года
     if (now.getMonth() === 11) {
       const target = new Date(now.getFullYear() + 1, 0, 1, 0, 0, 0, 0);
       const diff = target.getTime() - now.getTime();
@@ -63,13 +64,15 @@ export default function Header({
       return `New Year in: ${days}d ${hours}h ${minutes}m`;
     }
 
+    // В январе первую неделю — поздравление
     if (now.getMonth() === 0 && now.getDate() <= 7) {
       if (language === 'ru') return 'С Новым годом!';
       return 'Happy New Year!';
     }
 
-    if (language === 'ru') return 'Зимний ритуал';
-    return 'Winter rite';
+    // В остальное зимнее время — просто зимняя тема
+    if (language === 'ru') return 'Зимняя тема';
+    return 'Winter theme';
   }, [language, newYearMode, ticker]);
 
   useEffect(() => {
@@ -255,9 +258,9 @@ export default function Header({
             </div>
             <div className="text-left">
               <h1 className="text-2xl font-bold font-orbitron dc-text drop-shadow">
-                Demonic Cult
+                Cult
               </h1>
-              <p className="text-sm dc-muted font-roboto whitespace-nowrap">Justice Mobile · Wuxia Order</p>
+              <p className="text-sm dc-muted font-roboto whitespace-nowrap">Game Community · Justice Mobile</p>
               <span className="dc-header-oath wuxia-tag wuxia-tag-compact mt-1.5 block">
                 <WuxiaIcon name="eye" className="w-4 h-4" />
                 <span className="wuxia-tag-text">{portalCopy[language].oath}</span>
@@ -288,7 +291,7 @@ export default function Header({
             <button
               onClick={toggleNewYearMode}
               className={`dc-icon-btn p-2.5 rounded-xl ${newYearMode ? 'dc-icon-btn-active' : ''}`}
-              title={language === 'ru' ? 'Новогодний режим' : 'New Year mode'}
+              title={language === 'ru' ? 'Зимняя тема' : 'Winter theme'}
             >
               <WuxiaIcon name="snowflake" className="w-5 h-5" />
             </button>

@@ -53,10 +53,10 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
 
   return (
     <div
-      className="fixed inset-0 z-[9999] bg-black/75 backdrop-blur-md flex items-center justify-center px-4 py-10"
+      className="fixed inset-0 z-[9999] bg-black/75 backdrop-blur-md flex items-start justify-center px-4 pt-20 pb-10 overflow-auto"
       style={{ perspective: 'none', transform: 'none' }}
     >
-      <div className="card w-full max-w-4xl p-6 md:p-8 relative max-h-[85vh] overflow-auto">
+      <div className="card w-full max-w-4xl p-6 md:p-8 relative my-auto">
         <div className="flex items-start justify-between gap-4 mb-4">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-3">

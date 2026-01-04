@@ -1,15 +1,15 @@
-export const NEWYEAR_STORAGE_KEY = 'dc_season_newyear';
+export const NEWYEAR_STORAGE_KEY = 'dc_season_winter';
 
-export function isNewYearSeason(date: Date): boolean {
+export function isWinterSeason(date: Date): boolean {
   const month = date.getMonth();
-  const day = date.getDate();
-  return (month === 11 && day >= 15) || (month === 0 && day <= 15);
+  // Зимний сезон: декабрь, январь, февраль
+  return month === 11 || month === 0 || month === 1;
 }
 
 export function resolveNewYearEnabled(date: Date, storedValue: string | null): boolean {
   if (storedValue === 'on') return true;
   if (storedValue === 'off') return false;
-  return isNewYearSeason(date);
+  return isWinterSeason(date);
 }
 
 export function formatCountdownParts(milliseconds: number): {
