@@ -129,7 +129,6 @@ export default function Header({
   };
 
   const goToSection = (section: Section) => {
-    setMoreOpen(false);
     onSectionChange(section);
     scrollToMain();
   };
