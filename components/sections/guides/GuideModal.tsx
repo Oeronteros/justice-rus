@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { markdownToHtml } from '@/lib/markdown';
 import { useGuide, useVoteGuide } from '@/lib/hooks/useGuides';
 import { GuideComments } from './GuideComments';
-import WuxiaIcon from '@/components/WuxiaIcons';
 
 interface GuideModalProps {
   guideId: string;
@@ -33,11 +33,13 @@ function getStoredAuthor(): string {
 export function GuideModal({ guideId, onClose, canModerate = false, userRole }: GuideModalProps) {
   const [voterKey] = useState(getVoterKey);
   const [defaultAuthor, setDefaultAuthor] = useState('');
+  const [mounted, setMounted] = useState(false);
   
   const { data: guideDetail, isLoading, error } = useGuide(guideId, voterKey);
   const voteGuide = useVoteGuide();
 
   useEffect(() => {
+    setMounted(true);
     setDefaultAuthor(getStoredAuthor());
   }, []);
 
@@ -48,31 +50,46 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
     };
   }, []);
 
+  // Закрытие по Escape
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [onClose]);
+
   const handleVote = () => {
     voteGuide.mutate({ id: guideId, voterKey });
   };
 
-  return (
+  const handleClose = useCallback(() => {
+    onClose();
+  }, [onClose]);
+
+  if (!mounted) return null;
+
+  const modalContent = (
     <div
-      className="fixed inset-0 z-[9999] bg-black/80 flex flex-col"
-      onClick={(e) => e.target === e.currentTarget && onClose()}
+      className="fixed inset-0 bg-[#080c10] flex flex-col"
+      style={{ zIndex: 99999 }}
     >
-      {/* Шапка модалки - компактная */}
-      <div className="flex-shrink-0 bg-[#0a0e12] border-b border-[#1a2a38] px-4 py-2">
-        <div className="max-w-3xl mx-auto flex items-center justify-between gap-3">
+      {/* Шапка */}
+      <div className="flex-shrink-0 bg-[#0a0e12] border-b border-[#1a2a38] px-4 py-3">
+        <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
           <div className="min-w-0 flex-1">
-            <h3 className="text-sm font-medium text-white truncate">
+            <h3 className="text-base font-medium text-white truncate">
               {guideDetail?.guide.title || 'Загрузка...'}
             </h3>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-gray-500 mt-0.5">
               {guideDetail && `${guideDetail.guide.author} • ${guideDetail.guide.category}`}
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {guideDetail && (
               <button
                 type="button"
-                className={`text-xs px-2 py-1 rounded ${guideDetail.voted ? 'text-[#8fb9cc]' : 'text-gray-500'}`}
+                className={`text-sm px-3 py-1 rounded ${guideDetail.voted ? 'bg-[#1a2a38] text-[#8fb9cc]' : 'text-gray-500 hover:text-[#8fb9cc]'}`}
                 onClick={handleVote}
                 disabled={voteGuide.isPending}
               >
@@ -81,8 +98,8 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
             )}
             <button
               type="button"
-              className="text-gray-500 hover:text-white p-1"
-              onClick={onClose}
+              className="text-gray-400 hover:text-white text-xl px-2 py-1 rounded hover:bg-[#1a2a38]"
+              onClick={handleClose}
             >
               ✕
             </button>
@@ -90,26 +107,26 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
         </div>
       </div>
 
-      {/* Контент - занимает всё оставшееся место */}
+      {/* Контент */}
       <div className="flex-1 overflow-y-auto">
-        <div className="max-w-3xl mx-auto px-4 py-4">
+        <div className="max-w-3xl mx-auto px-4 py-6">
           {isLoading && (
-            <div className="text-gray-500 text-sm">Загрузка...</div>
+            <div className="text-gray-500">Загрузка гайда...</div>
           )}
 
           {error && (
-            <div className="text-red-400 text-sm">
-              {error instanceof Error ? error.message : 'Ошибка'}
+            <div className="text-red-400">
+              {error instanceof Error ? error.message : 'Ошибка загрузки'}
             </div>
           )}
 
           {guideDetail && (
             <>
-              <div className="dc-md text-sm">
+              <div className="dc-md">
                 <div dangerouslySetInnerHTML={{ __html: markdownToHtml(guideDetail.guide.content) }} />
               </div>
 
-              <div className="mt-6 pt-4 border-t border-[#1a2a38]">
+              <div className="mt-8 pt-6 border-t border-[#1a2a38]">
                 <GuideComments
                   guideId={guideId}
                   comments={guideDetail.comments}
@@ -124,4 +141,6 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
