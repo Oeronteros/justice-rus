@@ -1,31 +1,44 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { Section } from '@/types';
 import { Language, portalCopy } from '@/lib/i18n';
 import { NEWYEAR_STORAGE_KEY, resolveNewYearEnabled } from '@/lib/seasonal';
-import WuxiaIcon from './WuxiaIcons';
+import WuxiaIcon, { type IconName } from './WuxiaIcons';
 
 interface HeaderProps {
   currentSection: Section;
-  onSectionChange: (section: Section) => void;
   onLogout: () => void;
   language: Language;
   onLanguageChange: (language: Language) => void;
 }
 
-type OrderStep = 'about' | 'news' | 'registration' | 'schedule' | 'guides' | 'help' | 'absences' | 'calculator';
+type NavItem = {
+  section: Section;
+  href: string;
+  icon: IconName;
+};
+
+const navItems: NavItem[] = [
+  { section: 'about', href: '/', icon: 'about' },
+  { section: 'news', href: '/news', icon: 'news' },
+  { section: 'registration', href: '/members', icon: 'registration' },
+  { section: 'schedule', href: '/schedule', icon: 'schedule' },
+  { section: 'guides', href: '/guides', icon: 'guides' },
+  { section: 'help', href: '/help', icon: 'help' },
+  { section: 'absences', href: '/absences', icon: 'absences' },
+  { section: 'calculator', href: '/calculator', icon: 'calculator' },
+];
 
 export default function Header({
   currentSection,
-  onSectionChange,
   onLogout,
   language,
   onLanguageChange,
 }: HeaderProps) {
   const [newYearMode, setNewYearMode] = useState(false);
   const [headerCompact, setHeaderCompact] = useState(false);
-  const [activeOrderStep, setActiveOrderStep] = useState<OrderStep>('registration');
 
   const handleRefresh = () => {
     window.location.reload();
@@ -41,8 +54,6 @@ export default function Header({
 
   const seasonalBadge = useMemo(() => {
     if (!newYearMode) return null;
-
-    // Просто зимняя тема без новогодних надписей
     if (language === 'ru') return 'Зима';
     return 'Winter';
   }, [language, newYearMode]);
@@ -73,43 +84,6 @@ export default function Header({
     };
   }, []);
 
-  useEffect(() => {
-    if (currentSection === 'about') {
-      setActiveOrderStep('about');
-      return;
-    }
-    if (currentSection === 'news') {
-      setActiveOrderStep('news');
-      return;
-    }
-    if (currentSection === 'registration') {
-      setActiveOrderStep('registration');
-      return;
-    }
-    if (currentSection === 'schedule') {
-      setActiveOrderStep('schedule');
-      return;
-    }
-    if (currentSection === 'guides') {
-      setActiveOrderStep('guides');
-      return;
-    }
-    if (currentSection === 'help') {
-      setActiveOrderStep('help');
-      return;
-    }
-    if (currentSection === 'absences') {
-      setActiveOrderStep('absences');
-      return;
-    }
-    if (currentSection === 'calculator') {
-      setActiveOrderStep('calculator');
-      return;
-    }
-
-    setActiveOrderStep('about');
-  }, [currentSection]);
-
   const toggleNewYearMode = () => {
     const next = !newYearMode;
     setNewYearMode(next);
@@ -119,50 +93,6 @@ export default function Header({
     }
 
     document.body.classList.toggle('dc-season-newyear', next);
-  };
-
-  const scrollToMain = () => {
-    if (typeof window === 'undefined') return;
-    window.requestAnimationFrame(() => {
-      document.getElementById('portal-main')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  };
-
-  const goToSection = (section: Section) => {
-    onSectionChange(section);
-    scrollToMain();
-  };
-
-  const goToAbout = () => {
-    goToSection('about');
-  };
-
-  const goToNews = () => {
-    goToSection('news');
-  };
-
-  const goToRegistration = () => {
-    goToSection('registration');
-  };
-
-  const goToSchedule = () => {
-    goToSection('schedule');
-  };
-
-  const goToGuides = () => {
-    goToSection('guides');
-  };
-
-  const goToHelp = () => {
-    goToSection('help');
-  };
-
-  const goToAbsences = () => {
-    goToSection('absences');
-  };
-
-  const goToCalculator = () => {
-    goToSection('calculator');
   };
 
   const orderLabels = useMemo(() => {
@@ -195,12 +125,7 @@ export default function Header({
     <header className={`dc-header sticky top-0 z-40 ${headerCompact ? 'dc-header--compact' : ''}`}>
       <div className={`max-w-7xl mx-auto px-6 ${headerCompact ? 'py-2.5' : 'py-3.5'}`}>
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-          <button
-            type="button"
-            onClick={() => goToSection('about')}
-            className="flex items-center gap-4 text-left group"
-            title={language === 'ru' ? 'О нас' : 'About'}
-          >
+          <Link href="/" className="flex items-center gap-4 text-left group">
             <div className="relative">
               <div className="seal-ring">
                 <div className="seal-core">
@@ -219,7 +144,7 @@ export default function Header({
                 <span className="wuxia-tag-text">{portalCopy[language].oath}</span>
               </span>
             </div>
-          </button>
+          </Link>
 
           <div className="flex flex-wrap items-center justify-center lg:justify-end gap-2">
             {seasonalBadge && (
@@ -269,93 +194,18 @@ export default function Header({
 
         <nav className="hidden md:block mt-2">
           <div className={`dc-order ${headerCompact ? 'dc-order--compact' : 'dc-order--full'}`}>
-            <button
-              type="button"
-              onClick={goToAbout}
-              className={`dc-order-step ${activeOrderStep === 'about' ? 'is-active' : ''}`}
-            >
-              <span className="dc-order-dot dc-accent">
-                <WuxiaIcon name="about" className="w-4 h-4" />
-              </span>
-              <span className="dc-order-label">{orderLabels.about}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={goToNews}
-              className={`dc-order-step ${activeOrderStep === 'news' ? 'is-active' : ''}`}
-            >
-              <span className="dc-order-dot dc-accent">
-                <WuxiaIcon name="news" className="w-4 h-4" />
-              </span>
-              <span className="dc-order-label">{orderLabels.news}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={goToRegistration}
-              className={`dc-order-step ${activeOrderStep === 'registration' ? 'is-active' : ''}`}
-            >
-              <span className="dc-order-dot dc-accent">
-                <WuxiaIcon name="registration" className="w-4 h-4" />
-              </span>
-              <span className="dc-order-label">{orderLabels.registration}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={goToSchedule}
-              className={`dc-order-step ${activeOrderStep === 'schedule' ? 'is-active' : ''}`}
-            >
-              <span className="dc-order-dot dc-accent">
-                <WuxiaIcon name="schedule" className="w-4 h-4" />
-              </span>
-              <span className="dc-order-label">{orderLabels.schedule}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={goToGuides}
-              className={`dc-order-step ${activeOrderStep === 'guides' ? 'is-active' : ''}`}
-            >
-              <span className="dc-order-dot dc-accent">
-                <WuxiaIcon name="guides" className="w-4 h-4" />
-              </span>
-              <span className="dc-order-label">{orderLabels.guides}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={goToHelp}
-              className={`dc-order-step ${activeOrderStep === 'help' ? 'is-active' : ''}`}
-            >
-              <span className="dc-order-dot dc-accent">
-                <WuxiaIcon name="help" className="w-4 h-4" />
-              </span>
-              <span className="dc-order-label">{orderLabels.help}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={goToAbsences}
-              className={`dc-order-step ${activeOrderStep === 'absences' ? 'is-active' : ''}`}
-            >
-              <span className="dc-order-dot dc-accent">
-                <WuxiaIcon name="absences" className="w-4 h-4" />
-              </span>
-              <span className="dc-order-label">{orderLabels.absences}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={goToCalculator}
-              className={`dc-order-step ${activeOrderStep === 'calculator' ? 'is-active' : ''}`}
-            >
-              <span className="dc-order-dot dc-accent">
-                <WuxiaIcon name="calculator" className="w-4 h-4" />
-              </span>
-              <span className="dc-order-label">{orderLabels.calculator}</span>
-            </button>
+            {navItems.map((item) => (
+              <Link
+                key={item.section}
+                href={item.href}
+                className={`dc-order-step ${currentSection === item.section ? 'is-active' : ''}`}
+              >
+                <span className="dc-order-dot dc-accent">
+                  <WuxiaIcon name={item.icon} className="w-4 h-4" />
+                </span>
+                <span className="dc-order-label">{orderLabels[item.section]}</span>
+              </Link>
+            ))}
           </div>
         </nav>
       </div>

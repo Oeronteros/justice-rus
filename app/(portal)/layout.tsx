@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import MainLayout from '@/components/MainLayout';
 import PinScreen from '@/components/PinScreen';
-import AppLayout from '@/components/AppLayout';
+import { AuthProvider } from '@/lib/auth/context';
 import { User } from '@/types';
 
-export default function Home() {
+export default function PortalLayout({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -67,6 +68,11 @@ export default function Home() {
     return <PinScreen onAuthSuccess={handleAuthSuccess} />;
   }
 
-  return <AppLayout user={user} onLogout={handleLogout} />;
+  return (
+    <AuthProvider user={user}>
+      <MainLayout user={user} onLogout={handleLogout}>
+        {children}
+      </MainLayout>
+    </AuthProvider>
+  );
 }
-
