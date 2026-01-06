@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { User } from '@/types';
 import { formatDate } from '@/lib/utils';
 import { markdownToHtml } from '@/lib/markdown';
+import { useHeader } from '@/lib/ui/headerContext';
 import WuxiaIcon from '../WuxiaIcons';
 
 interface GuidesSectionProps {
@@ -45,6 +46,7 @@ type GuideDetail = {
 
 export default function GuidesSection({ user }: GuidesSectionProps) {
   const canModerate = user.role === 'officer' || user.role === 'gm';
+  const { hideHeader, showHeader } = useHeader();
 
   const [guides, setGuides] = useState<GuideSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -142,6 +144,7 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
     setGuideDetail(null);
     setCommentText('');
     setDetailLoading(true);
+    hideHeader(); // Скрываем шапку при открытии гайда
 
     try {
       const voterKey = getVoterKey();
@@ -165,6 +168,7 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
     setOpenGuideId(null);
     setGuideDetail(null);
     setDetailError(null);
+    showHeader(); // Показываем шапку при закрытии гайда
   };
 
   const applyWrap = (before: string, after: string = before) => {
@@ -375,6 +379,12 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
   const closeCreate = () => {
     setCreateOpen(false);
     setCreateTab('write');
+    showHeader(); // Показываем шапку при закрытии редактора
+  };
+
+  const openCreate = () => {
+    setCreateOpen(true);
+    hideHeader(); // Скрываем шапку при открытии редактора
   };
 
   if (loading) {
@@ -454,7 +464,7 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
               </button>
             </div>
 
-            <button type="button" className="btn-primary px-5 py-3" onClick={() => setCreateOpen(true)}>
+            <button type="button" className="btn-primary px-5 py-3" onClick={openCreate}>
               <WuxiaIcon name="edit" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
               Написать гайд
             </button>

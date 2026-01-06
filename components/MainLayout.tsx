@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Header from './Header';
 import MobileNav from './MobileNav';
+import { HeaderProvider, useHeader } from '@/lib/ui/headerContext';
 import { User, Section } from '@/types';
 import { Language } from '@/lib/i18n';
 
@@ -24,9 +25,10 @@ const pathToSection: Record<string, Section> = {
   '/calculator': 'calculator',
 };
 
-export default function MainLayout({ user, onLogout, children }: MainLayoutProps) {
+function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
   const pathname = usePathname();
   const [language, setLanguage] = useState<Language>('ru');
+  const { isHeaderHidden } = useHeader();
 
   const currentSection = pathToSection[pathname] || 'about';
 
@@ -47,18 +49,30 @@ export default function MainLayout({ user, onLogout, children }: MainLayoutProps
 
   return (
     <div className="relative z-30">
-      <Header
-        currentSection={currentSection}
-        onLogout={onLogout}
-        language={language}
-        onLanguageChange={handleLanguageChange}
-      />
-      <main id="portal-main" className="min-h-screen pb-20 md:pb-0">
+      <div className={`transition-transform duration-300 ${isHeaderHidden ? '-translate-y-full' : ''}`}>
+        <Header
+          currentSection={currentSection}
+          onLogout={onLogout}
+          language={language}
+          onLanguageChange={handleLanguageChange}
+        />
+      </div>
+      <main id="portal-main" className={`min-h-screen pb-20 md:pb-0 ${isHeaderHidden ? '-mt-[var(--header-height,80px)]' : ''}`}>
         <div className={`wuxia-section wuxia-section-${currentSection}`}>
           {children}
         </div>
       </main>
-      <MobileNav currentSection={currentSection} language={language} />
+      <div className={`transition-transform duration-300 ${isHeaderHidden ? 'translate-y-full' : ''}`}>
+        <MobileNav currentSection={currentSection} language={language} />
+      </div>
     </div>
+  );
+}
+
+export default function MainLayout(props: MainLayoutProps) {
+  return (
+    <HeaderProvider>
+      <MainLayoutContent {...props} />
+    </HeaderProvider>
   );
 }
