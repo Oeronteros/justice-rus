@@ -19,31 +19,38 @@ export async function GET(request: NextRequest) {
     const language = searchParams.get('language') || 'ru';
 
     if (hasDatabaseUrl()) {
-      const pool = getPool();
-      const titleField = language === 'en' ? 'title_en' : 'title_ru';
-      const result = await pool.query(
-        `
-        SELECT day_type, time, ${titleField} AS title, group_name
-        FROM schedule
-        WHERE active = 1
-        ORDER BY group_name ASC, order_index ASC, time ASC
-        `
-      );
+      try {
+        const pool = getPool();
+        const titleField = language === 'en' ? 'title_en' : 'title_ru';
+        const result = await pool.query(
+          `
+          SELECT day_type, time, ${titleField} AS title, group_name
+          FROM schedule
+          WHERE active = 1
+          ORDER BY group_name ASC, order_index ASC, time ASC
+          `
+        );
 
-      const today = new Date().toISOString();
-      const data = result.rows.map((row) => ({
-        date: today,
-        registration: row.title || '',
-        type: row.day_type || '',
-        description: row.time ? String(row.time) : '',
-        group: row.group_name || '',
-      }));
+        const today = new Date().toISOString();
+        const data = result.rows.map((row) => ({
+          date: today,
+          registration: row.title || '',
+          type: row.day_type || '',
+          description: row.time ? String(row.time) : '',
+          group: row.group_name || '',
+        }));
 
-      return NextResponse.json(data);
+        return NextResponse.json(data);
+      } catch (dbError) {
+        console.error('Database error fetching schedule:', dbError);
+        // Продолжаем к bot API если БД недоступна
+      }
     }
 
     if (!BOT_API_KEY) {
-      return NextResponse.json({ error: 'Missing BOT_API_KEY' }, { status: 500 });
+      // Возвращаем пустой массив вместо ошибки если нет ключа
+      console.warn('No BOT_API_KEY configured, returning empty schedule');
+      return NextResponse.json([]);
     }
 
     const url = new URL('/api/schedule/today', BOT_API_URL);
@@ -72,13 +79,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error proxying schedule request to bot:', error);
-    return NextResponse.json(
-      {
-        error: 'Failed to connect to bot',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    // Возвращаем пустой массив вместо ошибки чтобы UI не ломался
+    return NextResponse.json([]);
   }
 }
 
