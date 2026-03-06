@@ -142,7 +142,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 ) : (
                   <span className="inline-flex items-center justify-center">
                     <WuxiaIcon name="seal" className="w-4 h-4 mr-3" />
-                    Вызвать орден
+                    Отправить в штаб
                   </span>
                 )}
               </button>
@@ -204,7 +204,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                   </div>
                 </div>
                 <div className="text-xl font-semibold text-[#e6eff5]">Тишина в зале ритуалов</div>
-                <p className="text-gray-400 mt-2">Пока нет запросов. Открой первый — и орден откликнется.</p>
+                <p className="text-gray-400 mt-2">Пока нет запросов. Открой первый — и штаб откликнется.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-6">

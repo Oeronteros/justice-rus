@@ -125,7 +125,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
   if (isLoading) {
     return (
       <LoadingState
-        title="Гайды ордена"
+        title="Гайды гильдии"
         subtitle="Загружаем свитки знаний..."
         icon={<WuxiaIcon name="guides" className="w-6 h-6 text-red-400" />}
         skeletonCount={3}

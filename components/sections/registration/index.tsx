@@ -51,8 +51,8 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
   if (isLoading) {
     return (
       <LoadingState
-        title="Реестр Культа"
-        subtitle="Призываем записи ордена..."
+        title="Реестр гильдии"
+        subtitle="Собираем актуальный состав..."
         icon={<WuxiaIcon name="registration" className="w-6 h-6 text-red-400" />}
         skeletonCount={3}
       />

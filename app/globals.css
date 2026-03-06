@@ -172,6 +172,35 @@ body {
   animation: portalPulse 14s ease-in-out infinite;
 }
 
+.theme-wuxia .moonfall-crescent {
+  position: relative;
+  border-radius: 999px;
+  background: radial-gradient(circle at 32% 48%, rgba(224, 239, 249, 0.56), rgba(136, 176, 196, 0.12) 56%, transparent 72%);
+  box-shadow: 0 0 48px rgba(187, 218, 235, 0.2);
+  transform: rotate(-14deg);
+  opacity: 0.8;
+}
+
+.theme-wuxia .moonfall-crescent::after {
+  content: '';
+  position: absolute;
+  inset: 20% 8% 12% 34%;
+  border-radius: 999px;
+  background: rgba(8, 14, 20, 0.86);
+}
+
+.theme-wuxia .moonfall-fall {
+  background-image:
+    radial-gradient(circle at 18% 8%, rgba(205, 229, 242, 0.36) 0 1px, transparent 2px),
+    radial-gradient(circle at 46% 2%, rgba(171, 208, 227, 0.28) 0 1px, transparent 2px),
+    radial-gradient(circle at 71% 12%, rgba(205, 229, 242, 0.32) 0 1px, transparent 2px),
+    radial-gradient(circle at 86% 4%, rgba(171, 208, 227, 0.24) 0 1px, transparent 2px);
+  background-size: 480px 380px;
+  opacity: 0.32;
+  mix-blend-mode: screen;
+  animation: moonfallDrift 28s linear infinite;
+}
+
 .theme-wuxia .wuxia-smoke {
   background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.04), transparent 50%),
     radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.03), transparent 55%),
@@ -179,6 +208,15 @@ body {
   filter: blur(16px);
   animation: smokeDrift 26s ease-in-out infinite;
   opacity: 0.45;
+}
+
+@keyframes moonfallDrift {
+  0% {
+    transform: translateY(-4%);
+  }
+  100% {
+    transform: translateY(6%);
+  }
 }
 
 .theme-wuxia .wuxia-ink {

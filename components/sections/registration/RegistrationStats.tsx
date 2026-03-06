@@ -22,7 +22,7 @@ export function RegistrationStats({ registrations }: RegistrationStatsProps) {
         <div className="text-3xl font-bold font-orbitron text-red-400 mb-2">
           {stats.total}
         </div>
-        <div className="text-gray-400">Всего в ордене</div>
+        <div className="text-gray-400">Всего в гильдии</div>
       </div>
       <div className="card p-6 text-center">
         <div className="text-3xl font-bold font-orbitron text-green-400 mb-2">
