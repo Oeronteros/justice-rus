@@ -12,6 +12,7 @@ export const sectionLabels: Record<Language, Record<Section, string>> = {
     help: 'Помощь',
     about: 'О нас',
     calculator: 'Калькулятор',
+    profile: 'Кабинет',
   },
   en: {
     registration: 'Members',
@@ -22,6 +23,7 @@ export const sectionLabels: Record<Language, Record<Section, string>> = {
     help: 'Help',
     about: 'About',
     calculator: 'Calculator',
+    profile: 'Profile',
   },
   zh: {
     registration: '成员',
@@ -32,6 +34,7 @@ export const sectionLabels: Record<Language, Record<Section, string>> = {
     help: '求助',
     about: '关于',
     calculator: '计算器',
+    profile: '个人页',
   },
 };
 

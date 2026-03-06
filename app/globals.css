@@ -970,6 +970,14 @@ body {
     pointer-events: none;
   }
 
+  .portal-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, rgba(185, 218, 235, 0.1), transparent 28%, transparent 70%, rgba(136, 176, 196, 0.08));
+    pointer-events: none;
+  }
+
   .portal-hero-main,
   .portal-hero-actions {
     position: relative;

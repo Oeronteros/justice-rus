@@ -24,6 +24,7 @@ const navItems: NavItem[] = [
   { section: 'help', href: '/help' },
   { section: 'absences', href: '/absences' },
   { section: 'calculator', href: '/calculator' },
+  { section: 'profile', href: '/profile' },
 ];
 
 export default function MobileNav({ currentSection, language }: MobileNavProps) {

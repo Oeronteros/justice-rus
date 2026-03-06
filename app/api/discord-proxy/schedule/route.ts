@@ -11,6 +11,46 @@ const bypassHeader: Record<string, string> = (DISCORD_BOT_API_URL.includes('.loc
   ? { 'bypass-tunnel-reminder': '1' }
   : {};
 
+async function queryScheduleFromDb() {
+  const pool = getPool();
+
+  try {
+    const result = await pool.query(
+      `
+      SELECT day_type, time, title_ru, title_en, group_name
+      FROM schedule
+      WHERE active = 1
+      ORDER BY order_index ASC, time ASC
+      `
+    );
+
+    const today = new Date().toISOString();
+    return result.rows.map((row) => ({
+      date: today,
+      registration: row.title_ru || row.title_en || '',
+      type: row.day_type || '',
+      description: row.time ? String(row.time) : '',
+      group: row.group_name || '',
+    }));
+  } catch {
+    const legacy = await pool.query(
+      `
+      SELECT date, registration, type, description
+      FROM schedule
+      ORDER BY date ASC, registration ASC
+      `
+    );
+
+    return legacy.rows.map((row) => ({
+      date: row.date ? String(row.date) : new Date().toISOString(),
+      registration: row.registration || '',
+      type: row.type || '',
+      description: row.description || '',
+      group: '',
+    }));
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
     const headerToken = request.headers.get('authorization');
@@ -22,23 +62,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (hasDatabaseUrl()) {
-      const pool = getPool();
-      const result = await pool.query(
-        `
-        SELECT day_type, time, title_ru, title_en
-        FROM schedule
-        WHERE active = 1
-        ORDER BY order_index ASC, time ASC
-        `
-      );
-
-      const today = new Date().toISOString();
-      const data = result.rows.map((row) => ({
-        date: today,
-        registration: row.title_ru || row.title_en || '',
-        type: row.day_type || '',
-        description: row.time ? String(row.time) : '',
-      }));
+      const data = await queryScheduleFromDb();
 
       return NextResponse.json(data);
     }

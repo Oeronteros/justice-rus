@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
     await ensureHelpSchema();
     const pool = getPool();
 
-    const author = payload.author || decoded.discordId || decoded.role;
+    const author = payload.author || decoded.nickname || decoded.discordId || decoded.role;
     const category = payload.category || 'general';
 
     const inserted = await pool.query(
@@ -228,4 +228,3 @@ export async function OPTIONS() {
     },
   });
 }
-

@@ -57,7 +57,8 @@ async function ensureGuideSchema() {
 export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const token = getAuthToken(request);
-    if (!token || !verifyToken(token)) {
+    const decoded = token ? verifyToken(token) : null;
+    if (!decoded) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -78,7 +79,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
     }
 
     const { searchParams } = new URL(request.url);
-    const voterKey = (searchParams.get('voterKey') || '').trim();
+    const voterKey = decoded.id ? `account:${decoded.id}` : (searchParams.get('voterKey') || '').trim();
 
     const guideRes = await pool.query(
       `
@@ -230,4 +231,3 @@ export async function OPTIONS() {
     },
   });
 }
-

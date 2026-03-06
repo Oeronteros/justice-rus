@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { GuideForm } from '@/components/forms/GuideForm';
 import { useCreateGuide } from '@/lib/hooks/useGuides';
 import WuxiaIcon from '@/components/WuxiaIcons';
@@ -11,29 +11,23 @@ interface GuideEditorProps {
   onSuccess?: (guideId: string) => void;
 }
 
-function getStoredAuthor(): string {
-  if (typeof window === 'undefined') return '';
-  return localStorage.getItem('dc_guide_author') || '';
-}
-
 export function GuideEditor({ onClose, onSuccess }: GuideEditorProps) {
-  const [defaultAuthor, setDefaultAuthor] = useState('');
   const createGuide = useCreateGuide();
-
-  useEffect(() => {
-    setDefaultAuthor(getStoredAuthor());
-  }, []);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--tilt-x', '0deg');
     document.documentElement.style.setProperty('--tilt-y', '0deg');
   }, []);
 
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
+
   const handleSubmit = async (data: CreateGuideDto) => {
-    if (typeof window !== 'undefined' && data.author) {
-      localStorage.setItem('dc_guide_author', data.author.trim());
-    }
-    
     const result = await createGuide.mutateAsync(data);
     onClose();
     
@@ -70,7 +64,6 @@ export function GuideEditor({ onClose, onSuccess }: GuideEditorProps) {
           onSubmit={handleSubmit}
           onCancel={onClose}
           isSubmitting={createGuide.isPending}
-          defaultAuthor={defaultAuthor}
         />
 
         {createGuide.error && (

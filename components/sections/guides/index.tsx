@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { GuidesList } from './GuidesList';
 import { GuideModal } from './GuideModal';
 import { GuideEditor } from './GuideEditor';
 import type { User } from '@/types';
+import { useHeader } from '@/lib/ui/headerContext';
 
 interface GuidesSectionProps {
   user: User;
@@ -14,6 +15,7 @@ interface GuidesSectionProps {
 function GuidesSectionContent({ user }: GuidesSectionProps) {
   const [openGuideId, setOpenGuideId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
+  const { hideHeader, showHeader } = useHeader();
 
   const canModerate = user.role === 'officer' || user.role === 'gm';
 
@@ -36,6 +38,19 @@ function GuidesSectionContent({ user }: GuidesSectionProps) {
   const handleCreateSuccess = (guideId: string) => {
     setOpenGuideId(guideId);
   };
+
+  useEffect(() => {
+    const modalOpen = Boolean(openGuideId) || createOpen;
+    if (modalOpen) {
+      hideHeader();
+    } else {
+      showHeader();
+    }
+
+    return () => {
+      showHeader();
+    };
+  }, [createOpen, hideHeader, openGuideId, showHeader]);
 
   return (
     <section className="py-12">

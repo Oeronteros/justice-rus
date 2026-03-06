@@ -75,7 +75,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
     }
 
-    const author = payload.author || decoded.discordId || decoded.role;
+    const author = payload.author || decoded.nickname || decoded.discordId || decoded.role;
 
     const inserted = await pool.query(
       `
@@ -116,4 +116,3 @@ export async function OPTIONS() {
     },
   });
 }
-

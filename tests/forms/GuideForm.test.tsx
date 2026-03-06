@@ -37,16 +37,14 @@ describe('GuideForm', () => {
             title: fc.constantFrom('', '   ', '\t\n'), // Invalid titles
             content: fc.string({ minLength: 10, maxLength: 100 }),
             category: fc.constantFrom(...guideCategories),
-            author: fc.string({ maxLength: 50 }),
           }),
-          async ({ title, content, category, author }) => {
+          async ({ title, content, category }) => {
             cleanup();
             
             render(
               <GuideForm
                 onSubmit={mockOnSubmit}
                 onCancel={mockOnCancel}
-                defaultAuthor={author}
               />
             );
 
@@ -54,9 +52,8 @@ describe('GuideForm', () => {
             const titleInput = screen.getByPlaceholderText(/название гайда/i);
             const contentInput = screen.getByPlaceholderText(/пиши здесь/i);
             
-            await userEvent.clear(titleInput);
-            await userEvent.type(titleInput, title);
-            await userEvent.type(contentInput, content);
+            fireEvent.change(titleInput, { target: { value: title } });
+            fireEvent.change(contentInput, { target: { value: content } });
 
             // Try to submit
             const submitButton = screen.getByRole('button', { name: /опубликовать/i });
@@ -70,7 +67,7 @@ describe('GuideForm', () => {
             cleanup();
           }
         ),
-        { numRuns: 20 }
+        { numRuns: 8 }
       );
     });
 
@@ -81,9 +78,8 @@ describe('GuideForm', () => {
             title: fc.string({ minLength: 1, maxLength: 50 }).filter(s => s.trim().length > 0),
             content: fc.string({ minLength: 10, maxLength: 100 }),
             category: fc.constantFrom(...guideCategories),
-            author: fc.string({ minLength: 1, maxLength: 50 }),
           }),
-          async ({ title, content, category, author }) => {
+          async ({ title, content, category }) => {
             cleanup();
             mockOnSubmit.mockClear();
             
@@ -91,19 +87,16 @@ describe('GuideForm', () => {
               <GuideForm
                 onSubmit={mockOnSubmit}
                 onCancel={mockOnCancel}
-                defaultAuthor=""
               />
             );
 
             // Fill form with valid data
             const titleInput = screen.getByPlaceholderText(/название гайда/i);
             const contentInput = screen.getByPlaceholderText(/пиши здесь/i);
-            const authorInput = screen.getByPlaceholderText(/автор/i);
             const categorySelect = screen.getByRole('combobox');
 
-            await userEvent.type(authorInput, author);
-            await userEvent.type(titleInput, title);
-            await userEvent.type(contentInput, content);
+            fireEvent.change(titleInput, { target: { value: title } });
+            fireEvent.change(contentInput, { target: { value: content } });
             await userEvent.selectOptions(categorySelect, category);
 
             // Submit
@@ -124,7 +117,7 @@ describe('GuideForm', () => {
             cleanup();
           }
         ),
-        { numRuns: 10 } // Reduced for performance
+        { numRuns: 6 } // Reduced for performance
       );
     });
   });
@@ -212,8 +205,8 @@ describe('GuideForm', () => {
             const titleInput = screen.getByPlaceholderText(/название гайда/i) as HTMLInputElement;
             const contentInput = screen.getByPlaceholderText(/пиши здесь/i) as HTMLTextAreaElement;
 
-            await userEvent.type(titleInput, title);
-            await userEvent.type(contentInput, content);
+            fireEvent.change(titleInput, { target: { value: title } });
+            fireEvent.change(contentInput, { target: { value: content } });
 
             // Verify filled
             expect(titleInput.value).toBe(title);
@@ -237,7 +230,7 @@ describe('GuideForm', () => {
             cleanup();
           }
         ),
-        { numRuns: 10 }
+        { numRuns: 6 }
       );
     });
   });

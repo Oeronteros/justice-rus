@@ -9,12 +9,26 @@ export type Section =
   | 'absences'
   | 'news'
   | 'about'
-  | 'calculator';
+  | 'calculator'
+  | 'profile';
 
 export interface User {
+  id?: string;
+  nickname?: string;
   role: UserRole;
+  isActive?: boolean;
+  authMethod?: 'account' | 'pin';
   discordId?: string | null;
   exp?: number;
+}
+
+export interface PortalAccount {
+  id: string;
+  nickname: string;
+  role: UserRole;
+  isActive: boolean;
+  createdAt: string;
+  lastLoginAt: string | null;
 }
 
 export interface Registration {
@@ -83,13 +97,12 @@ export interface ApiResponse<T> {
 
 export interface AuthResponse {
   success: boolean;
-  role: UserRole;
+  user: User;
 }
 
 export interface VerifyAuthResponse {
   valid: boolean;
-  role: UserRole;
-  discordId?: string | null;
+  user: User;
 }
 
 // Re-export types from schemas for convenience

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -34,16 +34,9 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
   const createAbsence = useCreateAbsence();
   
   const [statusFilter, setStatusFilter] = useState('all');
-  const [member, setMember] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [reason, setReason] = useState('');
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const stored = localStorage.getItem('dc_absence_member');
-    if (stored) setMember(stored);
-  }, []);
 
   const filteredAbsences = statusFilter === 'all'
     ? absences
@@ -51,14 +44,9 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!member.trim() || !startDate || !endDate || !reason.trim()) return;
-
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('dc_absence_member', member.trim());
-    }
+    if (!startDate || !endDate || !reason.trim()) return;
 
     await createAbsence.mutateAsync({
-      member: member.trim(),
       startDate,
       endDate,
       reason: reason.trim(),
@@ -119,14 +107,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                value={member}
-                onChange={(e) => setMember(e.target.value)}
-                placeholder="Твой ник"
-                className="input-field"
-                maxLength={60}
-                required
-              />
+              <div className="text-sm text-gray-400">Заявка будет оформлена от профиля: <span className="text-[#c9deea]">{user.nickname || 'текущий пользователь'}</span></div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>

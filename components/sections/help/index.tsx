@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -20,7 +20,6 @@ function HelpSectionContent({ user }: HelpSectionProps) {
   const createRequest = useCreateHelpRequest();
   const updateStatus = useUpdateHelpStatus();
 
-  const [author, setAuthor] = useState('');
   const [title, setTitle] = useState('');
   const [details, setDetails] = useState('');
   const [category, setCategory] = useState('outer_city_heroic');
@@ -39,25 +38,14 @@ function HelpSectionContent({ user }: HelpSectionProps) {
     []
   );
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const stored = localStorage.getItem('dc_help_author');
-    if (stored) setAuthor(stored);
-  }, []);
-
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!title.trim() || !details.trim()) return;
-
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('dc_help_author', author.trim());
-    }
 
     await createRequest.mutateAsync({
       title,
       details,
       category,
-      author: author.trim() || undefined,
     });
 
     setTitle('');
@@ -93,13 +81,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <input
-                  value={author}
-                  onChange={(e) => setAuthor(e.target.value)}
-                  placeholder="Твой ник (желательно)"
-                  className="input-field"
-                  maxLength={60}
-                />
+                <div className="input-field flex items-center text-sm text-gray-400">От профиля: <span className="text-[#d2e5ef] ml-2">{user.nickname || 'текущий пользователь'}</span></div>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}

@@ -42,9 +42,6 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
     setIsImporting(true);
     setNotice(null);
 
-    const defaultAuthor =
-      typeof window !== 'undefined' ? (localStorage.getItem('dc_guide_author') || '').trim() : '';
-
     let imported = 0;
     let skipped = 0;
     let failed = 0;
@@ -69,7 +66,6 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
           title,
           content: content.slice(0, 50_000),
           category: 'general',
-          author: defaultAuthor || undefined,
         });
 
         imported += 1;

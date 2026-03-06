@@ -8,10 +8,9 @@ import WuxiaIcon from '@/components/WuxiaIcons';
 interface CommentFormProps {
   onSubmit: (data: CreateCommentDto) => Promise<void>;
   isSubmitting?: boolean;
-  defaultAuthor?: string;
 }
 
-export function CommentForm({ onSubmit, isSubmitting = false, defaultAuthor = '' }: CommentFormProps) {
+export function CommentForm({ onSubmit, isSubmitting = false }: CommentFormProps) {
   const {
     register,
     handleSubmit,
@@ -20,29 +19,19 @@ export function CommentForm({ onSubmit, isSubmitting = false, defaultAuthor = ''
   } = useForm<CreateCommentDto>({
     resolver: zodResolver(createCommentSchema),
     defaultValues: {
-      author: defaultAuthor,
       comment: '',
     },
   });
 
   const handleFormSubmit = async (data: CreateCommentDto) => {
     await onSubmit(data);
-    reset({ author: data.author, comment: '' });
+    reset({ comment: '' });
   };
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="card p-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <input
-            {...register('author')}
-            placeholder="Твой ник"
-            className="input-field w-full"
-          />
-          {errors.author && (
-            <span className="text-red-400 text-sm mt-1">{errors.author.message}</span>
-          )}
-        </div>
+        <div className="text-sm text-gray-400 flex items-center">Комментарий будет опубликован от твоего профиля</div>
         <button
           type="submit"
           disabled={isSubmitting}

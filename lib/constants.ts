@@ -18,13 +18,22 @@ const requireAnyEnv = (...names: string[]): string => {
   throw new Error(`Missing required env vars: ${names.join(' or ')}`);
 };
 
+const optionalAnyEnv = (...names: string[]): string | null => {
+  for (const name of names) {
+    const value = process.env[name];
+    if (value && value.trim()) {
+      return value.trim();
+    }
+  }
+  return null;
+};
 
 // Отладка: выводим значения переменных окружения при запуске (только для отладки)
 
 export const PASSWORDS = {
-  member: requireAnyEnv('MEMBER_PASSWORD', 'MEMBER_PIN'),
-  officer: requireAnyEnv('OFFICER_PASSWORD', 'OFFICER_PIN'),
-  gm: requireAnyEnv('GM_PASSWORD', 'GM_PIN'),
+  member: optionalAnyEnv('MEMBER_PASSWORD', 'MEMBER_PIN'),
+  officer: optionalAnyEnv('OFFICER_PASSWORD', 'OFFICER_PIN'),
+  gm: optionalAnyEnv('GM_PASSWORD', 'GM_PIN'),
 } as const;
 
 

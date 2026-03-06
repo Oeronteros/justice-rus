@@ -7,7 +7,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const voteSchema = z.object({
-  voterKey: z.string().trim().min(8).max(120),
+  voterKey: z.string().trim().min(8).max(120).optional(),
 });
 
 function getAuthToken(request: NextRequest): string | null {
@@ -45,7 +45,8 @@ async function ensureGuideSchema() {
 export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const token = getAuthToken(request);
-    if (!token || !verifyToken(token)) {
+    const decoded = token ? verifyToken(token) : null;
+    if (!decoded) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -57,6 +58,10 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     }
 
     const payload = voteSchema.parse(await request.json());
+    const voterKey = decoded.id ? `account:${decoded.id}` : (payload.voterKey || '').trim();
+    if (!voterKey) {
+      return NextResponse.json({ error: 'Missing voter key' }, { status: 400 });
+    }
 
     await ensureGuideSchema();
     const pool = getPool();
@@ -74,15 +79,15 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
 
     const already = await pool.query(
       `SELECT 1 FROM guide_vote WHERE guide_id = $1 AND voter_key = $2 LIMIT 1`,
-      [guideId, payload.voterKey]
+      [guideId, voterKey]
     );
 
     let voted = false;
     if ((already.rowCount ?? 0) > 0) {
-      await pool.query(`DELETE FROM guide_vote WHERE guide_id = $1 AND voter_key = $2`, [guideId, payload.voterKey]);
+      await pool.query(`DELETE FROM guide_vote WHERE guide_id = $1 AND voter_key = $2`, [guideId, voterKey]);
       voted = false;
     } else {
-      await pool.query(`INSERT INTO guide_vote (guide_id, voter_key) VALUES ($1, $2)`, [guideId, payload.voterKey]);
+      await pool.query(`INSERT INTO guide_vote (guide_id, voter_key) VALUES ($1, $2)`, [guideId, voterKey]);
       voted = true;
     }
 

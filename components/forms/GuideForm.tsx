@@ -11,10 +11,9 @@ interface GuideFormProps {
   onSubmit: (data: CreateGuideDto) => Promise<void>;
   onCancel: () => void;
   isSubmitting?: boolean;
-  defaultAuthor?: string;
 }
 
-export function GuideForm({ onSubmit, onCancel, isSubmitting = false, defaultAuthor = '' }: GuideFormProps) {
+export function GuideForm({ onSubmit, onCancel, isSubmitting = false }: GuideFormProps) {
   const [tab, setTab] = useState<'write' | 'preview'>('write');
   const editorRef = useRef<HTMLTextAreaElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -32,7 +31,6 @@ export function GuideForm({ onSubmit, onCancel, isSubmitting = false, defaultAut
       title: '',
       content: '',
       category: 'general',
-      author: defaultAuthor,
     },
   });
 
@@ -133,27 +131,15 @@ export function GuideForm({ onSubmit, onCancel, isSubmitting = false, defaultAut
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <div>
-          <input
-            {...register('author')}
-            placeholder="Автор (ник)"
-            className="input-field w-full"
-          />
-          {errors.author && (
-            <span className="text-red-400 text-sm mt-1">{errors.author.message}</span>
-          )}
-        </div>
-        <div className="md:col-span-2">
-          <input
-            {...register('title')}
-            placeholder="Название гайда"
-            className="input-field w-full"
-          />
-          {errors.title && (
-            <span className="text-red-400 text-sm mt-1">{errors.title.message}</span>
-          )}
-        </div>
+      <div className="mb-4">
+        <input
+          {...register('title')}
+          placeholder="Название гайда"
+          className="input-field w-full"
+        />
+        {errors.title && (
+          <span className="text-red-400 text-sm mt-1">{errors.title.message}</span>
+        )}
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">

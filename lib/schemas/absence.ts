@@ -14,7 +14,7 @@ export const absenceSchema = z.object({
 export const absencesArraySchema = z.array(absenceSchema);
 
 export const createAbsenceSchema = z.object({
-  member: z.string().min(1, 'Имя обязательно'),
+  member: z.string().max(120).optional(),
   startDate: z.string().min(1, 'Дата начала обязательна'),
   endDate: z.string().min(1, 'Дата окончания обязательна'),
   reason: z.string().min(1, 'Причина обязательна').max(500, 'Максимум 500 символов'),

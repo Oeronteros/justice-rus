@@ -28,6 +28,7 @@ const navItems: NavItem[] = [
   { section: 'help', href: '/help', icon: 'help' },
   { section: 'absences', href: '/absences', icon: 'absences' },
   { section: 'calculator', href: '/calculator', icon: 'calculator' },
+  { section: 'profile', href: '/profile', icon: 'profile' },
 ];
 
 export default function Header({
@@ -81,6 +82,7 @@ export default function Header({
         help: 'Помощь',
         absences: 'Отсутствия',
         calculator: 'Калькулятор',
+        profile: 'Кабинет',
         refresh: 'Обновить данные',
         logout: 'Выйти',
       };
@@ -98,6 +100,7 @@ export default function Header({
         help: '求助',
         absences: '请假',
         calculator: '计算器',
+        profile: '个人页',
         refresh: '刷新数据',
         logout: '退出',
       };
@@ -114,6 +117,7 @@ export default function Header({
       help: 'Help',
       absences: 'Absences',
       calculator: 'Calculator',
+      profile: 'Profile',
       refresh: 'Refresh data',
       logout: 'Logout',
     };
@@ -129,6 +133,7 @@ export default function Header({
       help: labels.help,
       absences: labels.absences,
       calculator: labels.calculator,
+      profile: labels.profile,
     };
   }, [labels]);
 

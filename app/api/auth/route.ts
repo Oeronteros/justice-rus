@@ -2,8 +2,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateToken, getClientIp, safeEqual } from '@/lib/auth';
 import { AUTH_TOKEN_MAX_AGE_SECONDS, PASSWORDS } from '@/lib/constants';
-import { AuthResponse } from '@/types';
+import { AuthResponse, UserRole } from '@/types';
 import { z } from 'zod';
+import { getPool, hasDatabaseUrl } from '@/lib/neon';
+import { ensureAccountsSchema, normalizeNickname, verifyPassword } from '@/lib/auth/accounts';
+
+export const runtime = 'nodejs';
 
 const AUTH_WINDOW_MS = 15 * 60 * 1000;
 const AUTH_MAX_ATTEMPTS = 8;
@@ -16,6 +20,11 @@ type AttemptState = {
 };
 
 const loginAttempts = new Map<string, AttemptState>();
+
+const authSchema = z.object({
+  nickname: z.string().trim().min(3).max(32).optional(),
+  password: z.string().min(1).max(128),
+});
 
 function cleanupAttempts(now: number) {
   for (const [ip, state] of loginAttempts.entries()) {
@@ -74,17 +83,18 @@ function isSameOrigin(request: NextRequest): boolean {
   if (!host) return false;
 
   try {
-    const originHost = new URL(origin).host;
-    return originHost === host;
+    return new URL(origin).host === host;
   } catch {
     return false;
   }
 }
 
-const authSchema = z.object({
-  password: z.string().min(1),
-  discordId: z.string().optional(),
-});
+function legacyPinRole(password: string): UserRole | null {
+  // Member PIN intentionally disabled for migration to account-based auth.
+  if (safeEqual(password, PASSWORDS.officer)) return 'officer';
+  if (safeEqual(password, PASSWORDS.gm)) return 'gm';
+  return null;
+}
 
 export async function POST(request: NextRequest) {
   const now = Date.now();
@@ -108,34 +118,77 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const { password, discordId } = authSchema.parse(body);
+    const payload = authSchema.parse(await request.json());
+    const password = payload.password.trim();
+    const nickname = payload.nickname ? normalizeNickname(payload.nickname) : '';
 
-    // Проверяем пароль
-    let role: 'member' | 'officer' | 'gm' | null = null;
-    const normalizedPassword = String(password).trim();
+    let user: AuthResponse['user'] | null = null;
 
-    if (safeEqual(normalizedPassword, PASSWORDS.member)) {
-      role = 'member';
-    } else if (safeEqual(normalizedPassword, PASSWORDS.officer)) {
-      role = 'officer';
-    } else if (safeEqual(normalizedPassword, PASSWORDS.gm)) {
-      role = 'gm';
-    }
+    if (nickname) {
+      if (!hasDatabaseUrl()) {
+        return NextResponse.json({ error: 'Database is not configured' }, { status: 503 });
+      }
 
-    if (!role) {
-      registerFailure(ip, now);
-      console.warn('[auth] failed login', { ip });
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+      await ensureAccountsSchema();
+      const pool = getPool();
+      const result = await pool.query(
+        `
+        SELECT id, nickname, role, is_active, password_hash
+        FROM portal_account
+        WHERE LOWER(nickname) = LOWER($1)
+        LIMIT 1
+        `,
+        [nickname]
+      );
+
+      const row = result.rows[0];
+      const validPassword = row ? verifyPassword(password, row.password_hash) : false;
+      if (!row || !validPassword) {
+        registerFailure(ip, now);
+        return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+      }
+
+      if (!row.is_active) {
+        return NextResponse.json(
+          { error: 'Account exists but is not active yet. Ask officer/GM to activate it.' },
+          { status: 403 }
+        );
+      }
+
+      await pool.query(
+        `UPDATE portal_account SET last_login_at = NOW(), updated_at = NOW() WHERE id = $1`,
+        [row.id]
+      );
+
+      user = {
+        id: String(row.id),
+        nickname: row.nickname,
+        role: row.role,
+        isActive: true,
+        authMethod: 'account',
+      };
+    } else {
+      const role = legacyPinRole(password);
+      if (!role) {
+        registerFailure(ip, now);
+        return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+      }
+
+      user = {
+        id: `pin-${role}`,
+        nickname: `${role.toUpperCase()} PIN`,
+        role,
+        isActive: true,
+        authMethod: 'pin',
+      };
     }
 
     clearFailures(ip);
 
-    const token = generateToken(role, discordId);
-
+    const token = generateToken(user);
     const responseBody: AuthResponse = {
       success: true,
-      role,
+      user,
     };
 
     const response = NextResponse.json(responseBody);
@@ -149,7 +202,8 @@ export async function POST(request: NextRequest) {
       maxAge: AUTH_TOKEN_MAX_AGE_SECONDS,
       priority: 'high',
     });
-    console.info('[auth] login success', { ip, role });
+    response.headers.set('Cache-Control', 'no-store');
+    console.info('[auth] login success', { ip, role: user.role, nickname: user.nickname });
     return response;
   } catch (error) {
     registerFailure(ip, now);
@@ -179,4 +233,3 @@ export async function OPTIONS() {
     },
   });
 }
-

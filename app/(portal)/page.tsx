@@ -74,6 +74,22 @@ export default function AboutPage() {
             ? '查看成员、职责与团队就绪度。'
             : 'Check roster, roles, and raid readiness in one place.',
     },
+    {
+      href: '/profile',
+      section: 'profile' as const,
+      title:
+        language === 'ru'
+          ? 'Личный кабинет'
+          : language === 'zh'
+            ? '个人页'
+            : 'Profile',
+      body:
+        language === 'ru'
+          ? 'Управляй своим аккаунтом и проверяй валидность учеток (для админов).'
+          : language === 'zh'
+            ? '管理个人账户；管理员可审核账号有效性。'
+            : 'Manage your account and account validity (for admins).',
+    },
   ];
 
   return (
@@ -162,7 +178,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
             {commandCards.map((card, index) => (
               <Link
                 key={card.href}

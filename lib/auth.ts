@@ -5,20 +5,38 @@ import { User, UserRole } from '@/types';
 import { JWT_EXPIRES_IN, JWT_SECRET } from './constants';
 import { timingSafeEqual } from 'node:crypto';
 
-type JwtPayload = User & {
+type JwtPayload = {
+  id?: string;
+  nickname?: string;
+  role: UserRole;
+  isActive?: boolean;
+  authMethod?: 'account' | 'pin';
+  discordId?: string | null;
+  exp?: number;
   iss?: string;
   aud?: string;
   sub?: string;
 };
 
-export function generateToken(role: UserRole, discordId?: string | null): string {
+export function generateToken(user: {
+  id?: string;
+  nickname?: string;
+  role: UserRole;
+  isActive?: boolean;
+  authMethod?: 'account' | 'pin';
+  discordId?: string | null;
+}): string {
   return jwt.sign(
     {
-      role,
-      discordId: discordId || null,
+      id: user.id,
+      nickname: user.nickname,
+      role: user.role,
+      isActive: user.isActive ?? true,
+      authMethod: user.authMethod ?? 'account',
+      discordId: user.discordId || null,
       iss: 'silent-moonfall-portal',
       aud: 'silent-moonfall-users',
-      sub: discordId || role,
+      sub: user.id || user.nickname || user.role,
     },
     JWT_SECRET,
     {
@@ -33,8 +51,17 @@ export function verifyToken(token: string): User | null {
       issuer: 'silent-moonfall-portal',
       audience: 'silent-moonfall-users',
     }) as JwtPayload;
+
+    if (!decoded.role) {
+      return null;
+    }
+
     return {
+      id: decoded.id,
+      nickname: decoded.nickname,
       role: decoded.role,
+      isActive: decoded.isActive ?? true,
+      authMethod: decoded.authMethod ?? 'account',
       discordId: decoded.discordId || null,
       exp: decoded.exp,
     };
@@ -51,7 +78,11 @@ export function getTokenFromRequest(request: Request): string | null {
   return authHeader.split(' ')[1];
 }
 
-export function safeEqual(input: string, expected: string): boolean {
+export function safeEqual(input: string, expected: string | null | undefined): boolean {
+  if (!expected) {
+    return false;
+  }
+
   const left = Buffer.from(String(input), 'utf8');
   const right = Buffer.from(String(expected), 'utf8');
   if (left.length !== right.length) {

@@ -9,7 +9,6 @@ import type { GuideComment, CreateCommentDto } from '@/lib/schemas/guide';
 interface GuideCommentsProps {
   guideId: string;
   comments: GuideComment[];
-  defaultAuthor?: string;
   canModerate?: boolean;
   userRole?: string;
 }
@@ -17,16 +16,12 @@ interface GuideCommentsProps {
 export function GuideComments({
   guideId,
   comments,
-  defaultAuthor = '',
   canModerate = false,
   userRole,
 }: GuideCommentsProps) {
   const addComment = useAddComment();
 
   const handleSubmit = async (data: CreateCommentDto) => {
-    if (typeof window !== 'undefined' && data.author) {
-      localStorage.setItem('dc_guide_author', data.author.trim());
-    }
     await addComment.mutateAsync({ id: guideId, data });
   };
 
@@ -70,7 +65,6 @@ export function GuideComments({
         <CommentForm
           onSubmit={handleSubmit}
           isSubmitting={addComment.isPending}
-          defaultAuthor={defaultAuthor}
         />
         
         {canModerate && userRole && (

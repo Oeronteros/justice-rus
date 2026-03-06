@@ -23,6 +23,7 @@ const pathToSection: Record<string, Section> = {
   '/help': 'help',
   '/absences': 'absences',
   '/calculator': 'calculator',
+  '/profile': 'profile',
 };
 
 function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {

@@ -25,14 +25,8 @@ function getVoterKey(): string {
   return generated;
 }
 
-function getStoredAuthor(): string {
-  if (typeof window === 'undefined') return '';
-  return localStorage.getItem('dc_guide_author') || '';
-}
-
 export function GuideModal({ guideId, onClose, canModerate = false, userRole }: GuideModalProps) {
   const [voterKey] = useState(getVoterKey);
-  const [defaultAuthor, setDefaultAuthor] = useState('');
   const [mounted, setMounted] = useState(false);
   
   const { data: guideDetail, isLoading, error } = useGuide(guideId, voterKey);
@@ -40,7 +34,6 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
 
   useEffect(() => {
     setMounted(true);
-    setDefaultAuthor(getStoredAuthor());
   }, []);
 
   useEffect(() => {
@@ -130,7 +123,6 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
                 <GuideComments
                   guideId={guideId}
                   comments={guideDetail.comments}
-                  defaultAuthor={defaultAuthor}
                   canModerate={canModerate}
                   userRole={userRole}
                 />

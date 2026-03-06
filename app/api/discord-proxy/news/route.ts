@@ -1,12 +1,23 @@
 // API Route: /api/discord-proxy/news
-// Прокси для получения новостей через Discord бота
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
 
 const DISCORD_BOT_API_URL = process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
-const bypassHeader: Record<string, string> = (DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me'))
-  ? { 'bypass-tunnel-reminder': '1' }
-  : {};
+const bypassHeader: Record<string, string> =
+  DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me')
+    ? { 'bypass-tunnel-reminder': '1' }
+    : {};
+
+function normalizeNews(data: any[]): Array<{ id: string; title: string; content: string; author: string; date: string; pinned: boolean }> {
+  return data.map((item, index) => ({
+    id: String(item.id ?? item.news_id ?? item.message_id ?? index + 1),
+    title: String(item.title ?? item.headline ?? item.content ?? 'Untitled'),
+    content: String(item.content ?? item.body ?? item.text ?? ''),
+    author: String(item.author ?? item.author_name ?? item.username ?? 'Discord'),
+    date: String(item.date ?? item.created_at ?? item.published_at ?? new Date().toISOString()),
+    pinned: Boolean(item.pinned),
+  }));
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,8 +29,28 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Discord bot does not expose a news endpoint; return empty list to keep UI stable.
-    return NextResponse.json([]);
+    const response = await fetch(`${DISCORD_BOT_API_URL}/api/news`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        ...bypassHeader,
+      },
+      cache: 'no-store',
+    });
+
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      return NextResponse.json(
+        {
+          error: 'Failed to fetch news from Discord bot',
+          message: (payload as any).error || (payload as any).message || `HTTP ${response.status}`,
+        },
+        { status: response.status }
+      );
+    }
+
+    const raw = Array.isArray(payload) ? payload : Array.isArray((payload as any).data) ? (payload as any).data : [];
+    return NextResponse.json(normalizeNews(raw));
   } catch (error) {
     console.error('Error proxying news request to Discord bot:', error);
     return NextResponse.json(
@@ -42,4 +73,3 @@ export async function OPTIONS() {
     },
   });
 }
-

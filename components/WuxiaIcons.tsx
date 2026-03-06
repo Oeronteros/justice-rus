@@ -115,6 +115,14 @@ export default function WuxiaIcon({ name, className = '' }: IconProps) {
           <path d="M8.3 7.5h.8M11.8 7.5h.8M15.3 7.5h.8" />
         </svg>
       );
+    case 'profile':
+      return (
+        <svg viewBox="0 0 24 24" className={className} {...baseProps}>
+          <circle cx="12" cy="8" r="3.3" />
+          <path d="M4 20a8 8 0 0 1 16 0" />
+          <path d="M17.5 4.5h2.8M18.9 3.1v2.8" />
+        </svg>
+      );
 
     case 'seal':
       return (

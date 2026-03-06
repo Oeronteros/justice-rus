@@ -33,8 +33,7 @@ export function useAuth() {
 export function useUser() {
   const { user } = useAuth();
   if (!user) {
-    // Возвращаем дефолтного пользователя для страниц где user не критичен
-    return { id: '', name: '', role: 'member' as const };
+    return { id: '', nickname: '', role: 'member' as const, isActive: false };
   }
   return user;
 }

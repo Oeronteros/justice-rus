@@ -13,6 +13,49 @@ const bypassHeader: Record<string, string> =
     ? { 'bypass-tunnel-reminder': '1' }
     : {};
 
+async function queryScheduleFromDb(language: string) {
+  const pool = getPool();
+
+  try {
+    const result = await pool.query(
+      `
+      SELECT day_type, time, title_ru, title_en, group_name
+      FROM schedule
+      WHERE active = 1
+      ORDER BY group_name ASC, order_index ASC, time ASC
+      `
+    );
+
+    const today = new Date().toISOString();
+    return result.rows.map((row) => ({
+      date: today,
+      registration:
+        language === 'ru'
+          ? row.title_ru || row.title_en || ''
+          : row.title_en || row.title_ru || '',
+      type: row.day_type || '',
+      description: row.time ? String(row.time) : '',
+      group: row.group_name || '',
+    }));
+  } catch {
+    const result = await pool.query(
+      `
+      SELECT date, registration, type, description
+      FROM schedule
+      ORDER BY date ASC, registration ASC
+      `
+    );
+
+    return result.rows.map((row) => ({
+      date: row.date ? String(row.date) : new Date().toISOString(),
+      registration: row.registration || '',
+      type: row.type || '',
+      description: row.description || '',
+      group: '',
+    }));
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -20,27 +63,7 @@ export async function GET(request: NextRequest) {
 
     if (hasDatabaseUrl()) {
       try {
-        const pool = getPool();
-        const result = await pool.query(
-          `
-          SELECT day_type, time, title_ru, title_en, group_name
-          FROM schedule
-          WHERE active = 1
-          ORDER BY group_name ASC, order_index ASC, time ASC
-          `
-        );
-
-        const today = new Date().toISOString();
-        const data = result.rows.map((row) => ({
-          date: today,
-          registration:
-            language === 'ru'
-              ? row.title_ru || row.title_en || ''
-              : row.title_en || row.title_ru || '',
-          type: row.day_type || '',
-          description: row.time ? String(row.time) : '',
-          group: row.group_name || '',
-        }));
+        const data = await queryScheduleFromDb(language);
 
         return NextResponse.json(data);
       } catch (dbError) {
