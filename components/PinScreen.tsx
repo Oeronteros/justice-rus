@@ -35,7 +35,8 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
       });
 
       if (!response.ok) {
-        throw new Error('Invalid password');
+        const payload = (await response.json().catch(() => ({}))) as { error?: string };
+        throw new Error(payload.error || 'Invalid credentials');
       }
 
       const data = await response.json();
@@ -43,7 +44,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
       onAuthSuccess({ role: data.role });
 
     } catch (error) {
-      setError('Invalid password');
+      setError(error instanceof Error ? error.message : 'Invalid credentials');
       setPin('');
     } finally {
       setLoading(false);
@@ -64,7 +65,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
           </div>
 
           <h2 className="text-4xl font-bold font-orbitron text-[#e6eff5] mb-3">
-            Cult Game Community
+            Silent Moonfall
           </h2>
           <p className="text-[#b7c9d6] text-lg">Guild Portal - Justice Mobile</p>
         </div>

@@ -6,6 +6,13 @@ import {
 
 export const scheduleApi = {
   list: async (language: string = 'ru'): Promise<Schedule[]> => {
-    return api.get(`schedule?language=${encodeURIComponent(language)}`, schedulesArraySchema);
+    const data = await api.get(`schedule?language=${encodeURIComponent(language)}`, schedulesArraySchema);
+    return data.map((item) => ({
+      date: item.date || '',
+      registration: item.registration || '',
+      type: item.type || '',
+      description: item.description || '',
+      group: item.group || '',
+    }));
   },
 };

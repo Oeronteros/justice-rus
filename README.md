@@ -1,6 +1,6 @@
-# Justice Mobile Guild Portal
+# Silent Moonfall Guild Portal
 
-Веб-портал для управления гильдией Justice Mobile в игре Cult Game Community.
+Веб-портал для управления гильдией Silent Moonfall в Justice Mobile.
 
 ## Технологии
 

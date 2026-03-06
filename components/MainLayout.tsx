@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import Header from './Header';
 import MobileNav from './MobileNav';
 import { HeaderProvider, useHeader } from '@/lib/ui/headerContext';
 import { User, Section } from '@/types';
-import { Language } from '@/lib/i18n';
+import { useLanguage } from '@/lib/i18n/context';
 
 interface MainLayoutProps {
   user: User;
@@ -27,25 +27,12 @@ const pathToSection: Record<string, Section> = {
 
 function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
   const pathname = usePathname();
-  const [language, setLanguage] = useState<Language>('ru');
+  const { language, setLanguage } = useLanguage();
   const { isHeaderHidden } = useHeader();
 
-  const currentSection = pathToSection[pathname] || 'about';
+  const currentSection = useMemo(() => pathToSection[pathname] || 'about', [pathname]);
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const stored = localStorage.getItem('guild_portal_lang');
-    if (stored === 'ru' || stored === 'en') {
-      setLanguage(stored);
-    }
-  }, []);
-
-  const handleLanguageChange = (lang: Language) => {
-    setLanguage(lang);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('guild_portal_lang', lang);
-    }
-  };
+  const handleLanguageChange = setLanguage;
 
   return (
     <div className="relative z-30">

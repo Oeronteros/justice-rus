@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Section } from '@/types';
 import { Language, portalCopy } from '@/lib/i18n';
-import { NEWYEAR_STORAGE_KEY, resolveNewYearEnabled } from '@/lib/seasonal';
 import WuxiaIcon, { type IconName } from './WuxiaIcons';
 
 interface HeaderProps {
@@ -37,26 +36,11 @@ export default function Header({
   language,
   onLanguageChange,
 }: HeaderProps) {
-  const [newYearMode, setNewYearMode] = useState(false);
   const [headerCompact, setHeaderCompact] = useState(false);
 
   const handleRefresh = () => {
     window.location.reload();
   };
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const stored = localStorage.getItem(NEWYEAR_STORAGE_KEY);
-    const enabled = resolveNewYearEnabled(new Date(), stored);
-    setNewYearMode(enabled);
-    document.body.classList.toggle('dc-season-newyear', enabled);
-  }, []);
-
-  const seasonalBadge = useMemo(() => {
-    if (!newYearMode) return null;
-    if (language === 'ru') return 'Зима';
-    return 'Winter';
-  }, [language, newYearMode]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -84,20 +68,10 @@ export default function Header({
     };
   }, []);
 
-  const toggleNewYearMode = () => {
-    const next = !newYearMode;
-    setNewYearMode(next);
-
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(NEWYEAR_STORAGE_KEY, next ? 'on' : 'off');
-    }
-
-    document.body.classList.toggle('dc-season-newyear', next);
-  };
-
-  const orderLabels = useMemo(() => {
+  const labels = useMemo(() => {
     if (language === 'ru') {
       return {
+        brandSubtitle: 'Гильдия · Justice Mobile',
         about: 'О нас',
         news: 'Новости',
         registration: 'Участники',
@@ -106,10 +80,29 @@ export default function Header({
         help: 'Помощь',
         absences: 'Отсутствия',
         calculator: 'Калькулятор',
+        refresh: 'Обновить данные',
+        logout: 'Выйти',
+      };
+    }
+
+    if (language === 'zh') {
+      return {
+        brandSubtitle: '公会 · Justice Mobile',
+        about: '关于',
+        news: '公告',
+        registration: '成员',
+        schedule: '日程',
+        guides: '攻略',
+        help: '求助',
+        absences: '请假',
+        calculator: '计算器',
+        refresh: '刷新数据',
+        logout: '退出',
       };
     }
 
     return {
+      brandSubtitle: 'Guild · Justice Mobile',
       about: 'About',
       news: 'News',
       registration: 'Members',
@@ -118,8 +111,23 @@ export default function Header({
       help: 'Help',
       absences: 'Absences',
       calculator: 'Calculator',
+      refresh: 'Refresh data',
+      logout: 'Logout',
     };
   }, [language]);
+
+  const orderLabels = useMemo(() => {
+    return {
+      about: labels.about,
+      news: labels.news,
+      registration: labels.registration,
+      schedule: labels.schedule,
+      guides: labels.guides,
+      help: labels.help,
+      absences: labels.absences,
+      calculator: labels.calculator,
+    };
+  }, [labels]);
 
   return (
     <header className={`dc-header sticky top-0 z-40 ${headerCompact ? 'dc-header--compact' : ''}`}>
@@ -136,9 +144,9 @@ export default function Header({
             </div>
             <div className="text-left">
               <h1 className="text-2xl font-bold font-orbitron dc-text drop-shadow">
-                Cult
+                Silent Moonfall
               </h1>
-              <p className="text-sm dc-muted font-roboto whitespace-nowrap">Game Community · Justice Mobile</p>
+              <p className="text-sm dc-muted font-roboto whitespace-nowrap">{labels.brandSubtitle}</p>
               <span className="dc-header-oath wuxia-tag wuxia-tag-compact mt-1.5 block">
                 <WuxiaIcon name="eye" className="w-4 h-4" />
                 <span className="wuxia-tag-text">{portalCopy[language].oath}</span>
@@ -147,15 +155,6 @@ export default function Header({
           </Link>
 
           <div className="flex flex-wrap items-center justify-center lg:justify-end gap-2">
-            {seasonalBadge && (
-              <div className="dc-season-badge hidden lg:flex items-center gap-2 px-3 py-2 rounded-xl">
-                <span className="dc-accent inline-flex">
-                  <WuxiaIcon name="sparkle" className="w-4 h-4" />
-                </span>
-                <span>{seasonalBadge}</span>
-              </div>
-            )}
-
             <select
               id="langSwitch"
               value={language}
@@ -164,20 +163,13 @@ export default function Header({
             >
               <option value="ru">RU</option>
               <option value="en">EN</option>
+              <option value="zh">简体中文</option>
             </select>
-
-            <button
-              onClick={toggleNewYearMode}
-              className={`dc-icon-btn p-2.5 rounded-xl ${newYearMode ? 'dc-icon-btn-active' : ''}`}
-              title={language === 'ru' ? 'Зимняя тема' : 'Winter theme'}
-            >
-              <WuxiaIcon name="snowflake" className="w-5 h-5" />
-            </button>
 
             <button
               onClick={handleRefresh}
               className="dc-icon-btn p-2.5 rounded-xl"
-              title="Refresh data"
+              title={labels.refresh}
             >
               <WuxiaIcon name="refresh" className="w-5 h-5" />
             </button>
@@ -185,7 +177,7 @@ export default function Header({
             <button
               onClick={onLogout}
               className="dc-icon-btn dc-icon-btn-accent p-2.5 rounded-xl"
-              title="Logout"
+              title={labels.logout}
             >
               <WuxiaIcon name="logout" className="w-5 h-5" />
             </button>

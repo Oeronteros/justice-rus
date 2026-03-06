@@ -44,6 +44,19 @@ type GuideDetail = {
   comments: GuideComment[];
 };
 
+function extractTitleFromMarkdown(content: string, fallbackFileName: string): string {
+  const heading = content
+    .split('\n')
+    .map((line) => line.trim())
+    .find((line) => line.startsWith('# '));
+
+  if (heading) {
+    return heading.replace(/^#\s+/, '').trim().slice(0, 140);
+  }
+
+  return fallbackFileName.replace(/\.(md|markdown)$/i, '').trim().slice(0, 140) || 'Imported guide';
+}
+
 export default function GuidesSection({ user }: GuidesSectionProps) {
   const canModerate = user.role === 'officer' || user.role === 'gm';
   const { hideHeader, showHeader } = useHeader();
@@ -51,6 +64,7 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
   const [guides, setGuides] = useState<GuideSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [search, setSearch] = useState('');
 
@@ -70,9 +84,11 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
   const [commentAuthor, setCommentAuthor] = useState('');
   const [commentText, setCommentText] = useState('');
   const [commentSubmitting, setCommentSubmitting] = useState(false);
+  const [importingGuides, setImportingGuides] = useState(false);
 
   const editorRef = useRef<HTMLTextAreaElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const markdownInputRef = useRef<HTMLInputElement | null>(null);
 
   const categories = useMemo(() => Array.from(new Set(guides.map((g) => g.category))), [guides]);
 
@@ -270,6 +286,88 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
     });
   };
 
+  const openMarkdownImporter = () => {
+    markdownInputRef.current?.click();
+  };
+
+  const handleMarkdownImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    setImportingGuides(true);
+    setError(null);
+    setNotice(null);
+
+    const defaultAuthor =
+      typeof window !== 'undefined' ? (localStorage.getItem('dc_guide_author') || '').trim() : '';
+
+    const createdGuides: GuideSummary[] = [];
+    let skipped = 0;
+    let failed = 0;
+
+    for (const file of files) {
+      const isMarkdown = /\.(md|markdown)$/i.test(file.name);
+      if (!isMarkdown) {
+        skipped += 1;
+        continue;
+      }
+
+      try {
+        const raw = await file.text();
+        const content = raw.replace(/\r\n/g, '\n').trim();
+        if (!content) {
+          skipped += 1;
+          continue;
+        }
+
+        const title = extractTitleFromMarkdown(content, file.name);
+
+        const response = await fetch('/api/guide', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title,
+            content: content.slice(0, 50_000),
+            category: 'general',
+            author: defaultAuthor || undefined,
+          }),
+        });
+
+        const payload = (await response.json().catch(() => ({}))) as any;
+        if (!response.ok) {
+          failed += 1;
+          console.error('Failed to import guide:', file.name, payload);
+          continue;
+        }
+
+        createdGuides.push(payload as GuideSummary);
+      } catch (err) {
+        failed += 1;
+        console.error('Failed to parse markdown guide:', file.name, err);
+      }
+    }
+
+    if (createdGuides.length > 0) {
+      setGuides((prev) => [...createdGuides, ...prev]);
+    }
+
+    const parts: string[] = [];
+    if (createdGuides.length > 0) parts.push(`Импортировано: ${createdGuides.length}`);
+    if (skipped > 0) parts.push(`Пропущено: ${skipped}`);
+    if (failed > 0) parts.push(`С ошибкой: ${failed}`);
+
+    if (parts.length > 0) {
+      setNotice(parts.join(' · '));
+    }
+
+    if (markdownInputRef.current) {
+      markdownInputRef.current.value = '';
+    }
+
+    setImportingGuides(false);
+  };
+
   const submitGuide = async () => {
     if (!createTitle.trim() || !createContent.trim()) return;
     try {
@@ -459,10 +557,39 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
                 className="input-field"
               />
 
+              <input
+                ref={markdownInputRef}
+                type="file"
+                accept=".md,.markdown,text/markdown,text/plain"
+                multiple
+                onChange={handleMarkdownImport}
+                className="hidden"
+              />
+
               <button type="button" className="dc-icon-btn p-2.5 rounded-xl" onClick={loadGuides} title="Обновить">
                 <WuxiaIcon name="refresh" className="w-5 h-5" />
               </button>
             </div>
+
+            <button
+              type="button"
+              className="btn-secondary px-5 py-3"
+              onClick={openMarkdownImporter}
+              disabled={importingGuides}
+              title="Импортировать файлы Markdown"
+            >
+              {importingGuides ? (
+                <span className="inline-flex items-center justify-center">
+                  <WuxiaIcon name="spinner" className="w-4 h-4 mr-3 animate-spin" />
+                  Импорт...
+                </span>
+              ) : (
+                <span className="inline-flex items-center justify-center">
+                  <WuxiaIcon name="upload" className="w-4 h-4 mr-2" />
+                  Импорт .md
+                </span>
+              )}
+            </button>
 
             <button type="button" className="btn-primary px-5 py-3" onClick={openCreate}>
               <WuxiaIcon name="edit" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
@@ -470,6 +597,13 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
             </button>
           </div>
         </div>
+
+        {notice && (
+          <div className="mb-6 text-sm text-[#bcd6e5] p-4 bg-[#16202b]/65 rounded-xl border border-[#2f6e8d]/40">
+            <WuxiaIcon name="checkCircle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
+            {notice}
+          </div>
+        )}
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
@@ -812,4 +946,3 @@ export default function GuidesSection({ user }: GuidesSectionProps) {
     </section>
   );
 }
-

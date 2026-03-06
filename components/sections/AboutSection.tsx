@@ -59,36 +59,36 @@ export default function AboutSection({ language, onOpenSchedule, onOpenGuides }:
             <div className="wuxia-crest-frame">
               <img
                 src="/emblem.svg"
-                alt="Cult Emblem"
+                alt="Silent Moonfall Emblem"
                 className="w-36 h-36 opacity-90 wuxia-emblem drop-shadow-[0_18px_35px_rgba(0,0,0,0.55)]"
               />
             </div>
-            <div className="wuxia-crest-caption">Cult</div>
-            <div className="wuxia-crest-sub">Game Community • Justice Mobile</div>
+            <div className="wuxia-crest-caption">Silent Moonfall</div>
+            <div className="wuxia-crest-sub">Guild • Justice Mobile</div>
           </div>
 
           <div className="wuxia-pillars wuxia-parallax wuxia-parallax-light">
             <div className="wuxia-pillar">
               <div className="text-xs uppercase tracking-widest dc-accent">
-                {language === 'ru' ? 'Ступень I' : 'Step I'}
+                {language === 'ru' ? 'Ступень I' : language === 'zh' ? '阶段 I' : 'Step I'}
               </div>
               <div className="mt-2 font-semibold">{portalCopy[language].pillarOne}</div>
             </div>
             <div className="wuxia-pillar">
               <div className="text-xs uppercase tracking-widest dc-accent">
-                {language === 'ru' ? 'Ступень II' : 'Step II'}
+                {language === 'ru' ? 'Ступень II' : language === 'zh' ? '阶段 II' : 'Step II'}
               </div>
               <div className="mt-2 font-semibold">{portalCopy[language].pillarTwo}</div>
             </div>
             <div className="wuxia-pillar">
               <div className="text-xs uppercase tracking-widest dc-accent">
-                {language === 'ru' ? 'Ступень III' : 'Step III'}
+                {language === 'ru' ? 'Ступень III' : language === 'zh' ? '阶段 III' : 'Step III'}
               </div>
               <div className="mt-2 font-semibold">{portalCopy[language].pillarThree}</div>
             </div>
             <div className="wuxia-pillar">
               <div className="text-xs uppercase tracking-widest dc-accent">
-                {language === 'ru' ? 'Ступень IV' : 'Step IV'}
+                {language === 'ru' ? 'Ступень IV' : language === 'zh' ? '阶段 IV' : 'Step IV'}
               </div>
               <div className="mt-2 font-semibold">{portalCopy[language].pillarFour}</div>
             </div>
@@ -98,4 +98,3 @@ export default function AboutSection({ language, onOpenSchedule, onOpenGuides }:
     </section>
   );
 }
-

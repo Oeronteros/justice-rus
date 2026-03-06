@@ -36,6 +36,7 @@ function TestComponent() {
       <span data-testid="loading-text">{t.common.loading}</span>
       <button onClick={() => setLanguage('ru')} data-testid="set-ru">RU</button>
       <button onClick={() => setLanguage('en')} data-testid="set-en">EN</button>
+      <button onClick={() => setLanguage('zh')} data-testid="set-zh">ZH</button>
     </div>
   );
 }
@@ -48,7 +49,7 @@ describe('I18n Context', () => {
    */
   describe('Property 11: Language Persistence', () => {
     it('should persist language to localStorage on change', () => {
-      const languages: Language[] = ['ru', 'en'];
+      const languages: Language[] = ['ru', 'en', 'zh'];
       
       fc.assert(
         fc.property(
@@ -57,7 +58,7 @@ describe('I18n Context', () => {
           (initialLang, newLang) => {
             localStorageMock.clear();
 
-            render(
+            const { unmount } = render(
               <I18nProvider defaultLanguage={initialLang}>
                 <TestComponent />
               </I18nProvider>
@@ -74,6 +75,7 @@ describe('I18n Context', () => {
               newLang
             );
             expect(localStorageMock.store['guild_portal_lang']).toBe(newLang);
+            unmount();
           }
         ),
         { numRuns: 100 }
@@ -108,7 +110,7 @@ describe('I18n Context', () => {
    */
   describe('Property 12: Language Restoration', () => {
     it('should restore language from localStorage on mount', () => {
-      const languages: Language[] = ['ru', 'en'];
+      const languages: Language[] = ['ru', 'en', 'zh'];
       
       fc.assert(
         fc.property(

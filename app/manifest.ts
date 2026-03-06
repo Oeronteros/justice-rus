@@ -2,9 +2,9 @@ import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Cult | Game Community',
-    short_name: 'Cult',
-    description: 'Gaming community portal for Justice Mobile players',
+    name: 'Silent Moonfall | Guild Portal',
+    short_name: 'Moonfall',
+    description: 'Official Silent Moonfall guild portal for Justice Mobile players',
     start_url: '/',
     display: 'standalone',
     background_color: '#0a0f14',

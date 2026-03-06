@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 export const scheduleSchema = z.object({
-  date: z.string().optional().default(''),
-  registration: z.string().optional().default(''),
-  type: z.string().optional().default(''),
-  description: z.string().optional().default(''),
-  group: z.string().optional().default(''),
+  date: z.string().default(''),
+  registration: z.string().default(''),
+  type: z.string().default(''),
+  description: z.string().default(''),
+  group: z.string().default(''),
 });
 
 export const schedulesArraySchema = z.array(scheduleSchema);

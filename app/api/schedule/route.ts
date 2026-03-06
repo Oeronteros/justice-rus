@@ -21,10 +21,9 @@ export async function GET(request: NextRequest) {
     if (hasDatabaseUrl()) {
       try {
         const pool = getPool();
-        const titleField = language === 'en' ? 'title_en' : 'title_ru';
         const result = await pool.query(
           `
-          SELECT day_type, time, ${titleField} AS title, group_name
+          SELECT day_type, time, title_ru, title_en, group_name
           FROM schedule
           WHERE active = 1
           ORDER BY group_name ASC, order_index ASC, time ASC
@@ -34,7 +33,10 @@ export async function GET(request: NextRequest) {
         const today = new Date().toISOString();
         const data = result.rows.map((row) => ({
           date: today,
-          registration: row.title || '',
+          registration:
+            language === 'ru'
+              ? row.title_ru || row.title_en || ''
+              : row.title_en || row.title_ru || '',
           type: row.day_type || '',
           description: row.time ? String(row.time) : '',
           group: row.group_name || '',

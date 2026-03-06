@@ -8,19 +8,30 @@ const requireEnv = (name: string): string => {
   return value.trim();
 };
 
+const requireAnyEnv = (...names: string[]): string => {
+  for (const name of names) {
+    const value = process.env[name];
+    if (value && value.trim()) {
+      return value.trim();
+    }
+  }
+  throw new Error(`Missing required env vars: ${names.join(' or ')}`);
+};
+
 
 // Отладка: выводим значения переменных окружения при запуске (только для отладки)
 
 export const PASSWORDS = {
-  member: requireEnv('MEMBER_PASSWORD'),
-  officer: requireEnv('OFFICER_PASSWORD'),
-  gm: requireEnv('GM_PASSWORD'),
+  member: requireAnyEnv('MEMBER_PASSWORD', 'MEMBER_PIN'),
+  officer: requireAnyEnv('OFFICER_PASSWORD', 'OFFICER_PIN'),
+  gm: requireAnyEnv('GM_PASSWORD', 'GM_PIN'),
 } as const;
 
 
 export const JWT_SECRET = requireEnv('JWT_SECRET');
 
 export const JWT_EXPIRES_IN = '24h';
+export const AUTH_TOKEN_MAX_AGE_SECONDS = 60 * 60 * 12;
 
 // Удалено: больше не используем Google Sheets
 // export const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID || '1-ay4I-83j1mSMsU9Y5Txt_vdnEH6IVZTLnHpJbwIbJk';

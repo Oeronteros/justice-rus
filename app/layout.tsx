@@ -1,19 +1,18 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import SeasonalClient from "@/components/SeasonalClient";
 import PointerEffectsClient from "@/components/PointerEffectsClient";
 import BackgroundEffects from "@/components/BackgroundEffects";
 import { QueryProvider } from "@/lib/providers/QueryProvider";
 import { I18nProvider } from "@/lib/i18n/context";
 
 export const metadata: Metadata = {
-  title: "Cult | Game Community",
-  description: "Gaming community portal for Justice Mobile players.",
-  keywords: ["justice mobile", "cult", "guild", "gaming community", "mmorpg"],
-  authors: [{ name: "Cult | Game Community" }],
+  title: "Silent Moonfall | Guild Portal",
+  description: "Official Silent Moonfall guild portal for Justice Mobile players.",
+  keywords: ["justice mobile", "silent moonfall", "guild", "guild portal", "mmorpg"],
+  authors: [{ name: "Silent Moonfall" }],
   openGraph: {
-    title: "Cult | Game Community",
-    description: "Gaming community portal for Justice Mobile players.",
+    title: "Silent Moonfall | Guild Portal",
+    description: "Official Silent Moonfall guild portal for Justice Mobile players.",
     type: "website",
     locale: "ru_RU",
   },
@@ -39,7 +38,6 @@ export default function RootLayout({
       <body className="theme-wuxia">
         <QueryProvider>
           <I18nProvider>
-            <SeasonalClient />
             <PointerEffectsClient />
             <BackgroundEffects />
             <div className="relative z-10">{children}</div>

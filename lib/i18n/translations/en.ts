@@ -25,8 +25,8 @@ export const en: Translations = {
     logout: 'Logout',
   },
   guides: {
-    title: 'Order Guides',
-    subtitle: 'Write scrolls. Rate with seal. Discuss — and make the cult stronger.',
+    title: 'Guild Guides',
+    subtitle: 'Write scrolls. Rate with seals. Discuss — and make the guild stronger.',
     create: 'Write Guide',
     search: 'Search by title/author...',
     empty: 'Nothing found',
@@ -60,7 +60,7 @@ export const en: Translations = {
     },
   },
   registration: {
-    title: 'Cult Registry',
+    title: 'Guild Registry',
     subtitle: 'Order composition, ranks and oaths of everyone who bears our mark.',
     loading: 'Summoning order records...',
     error: 'Registry unavailable',

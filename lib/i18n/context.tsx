@@ -3,10 +3,11 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import { ru, type Translations } from './translations/ru';
 import { en } from './translations/en';
+import { zh } from './translations/zh';
 
-export type Language = 'ru' | 'en';
+export type Language = 'ru' | 'en' | 'zh';
 
-const translations: Record<Language, Translations> = { ru, en };
+const translations: Record<Language, Translations> = { ru, en, zh };
 
 interface I18nContextValue {
   language: Language;
@@ -29,7 +30,7 @@ export function I18nProvider({ children, defaultLanguage = 'ru' }: I18nProviderP
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === 'ru' || stored === 'en') {
+    if (stored === 'ru' || stored === 'en' || stored === 'zh') {
       setLanguageState(stored);
     }
   }, []);

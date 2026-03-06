@@ -1,6 +1,6 @@
 import { Section } from '@/types';
 
-export type Language = 'ru' | 'en';
+export type Language = 'ru' | 'en' | 'zh';
 
 export const sectionLabels: Record<Language, Record<Section, string>> = {
   ru: {
@@ -22,6 +22,16 @@ export const sectionLabels: Record<Language, Record<Section, string>> = {
     help: 'Help',
     about: 'About',
     calculator: 'Calculator',
+  },
+  zh: {
+    registration: '成员',
+    schedule: '日程',
+    news: '公告',
+    guides: '攻略',
+    absences: '请假',
+    help: '求助',
+    about: '关于',
+    calculator: '计算器',
   },
 };
 
@@ -49,47 +59,69 @@ export const portalCopy: Record<
   }
 > = {
   ru: {
-    oath: 'Организация · Стратегия · Результат',
-    heroTag: 'Cult | Game Community',
-    heroTitle: 'Cult — игровое сообщество в Justice Mobile',
+    oath: 'Дисциплина · Командная игра · Победа',
+    heroTag: 'Silent Moonfall | Гильдия',
+    heroTitle: 'Silent Moonfall — гильдия в Justice Mobile',
     heroSubtitle:
-      'Объединяем игроков для совместного прохождения контента. Рейды, PvP, обмен опытом и дружеская атмосфера.',
+      'Собираем сильных игроков для рейдов, PvP и прогресса. Четкая коммуникация, уважение и стабильный онлайн.',
     heroCtaPrimary: 'Расписание',
     heroCtaSecondary: 'Гайды',
     heroManifestoTitle: 'О сообществе',
     heroManifestoBody:
-      'Мы — активное игровое сообщество, где каждый участник важен. Помогаем новичкам освоиться, делимся знаниями и вместе проходим сложный контент. Главное для нас — комфортная игра и взаимопомощь.',
+      'Silent Moonfall — гильдия игроков, которые приходят за результатом и остаются за атмосферой. Мы помогаем расти новичкам, усиливаем опытных и играем как единая команда.',
     ritualOneTitle: 'Вступление',
-    ritualOneBody: 'Простая регистрация и знакомство с командой.',
+    ritualOneBody: 'Быстрый вход и знакомство с составом.',
     ritualTwoTitle: 'Правила',
-    ritualTwoBody: 'Уважение, активность, готовность помочь.',
+    ritualTwoBody: 'Уважение, активность и ответственность.',
     ritualThreeTitle: 'Сообщество',
-    ritualThreeBody: 'Дружный коллектив с хорошей репутацией на сервере.',
+    ritualThreeBody: 'Стабильная команда с сильной репутацией.',
     pillarOne: 'Активное участие',
     pillarTwo: 'Развитие навыков',
     pillarThree: 'Совместный контент',
     pillarFour: 'Командные достижения',
   },
   en: {
-    oath: 'Organization · Strategy · Results',
-    heroTag: 'Cult | Game Community',
-    heroTitle: 'Cult — gaming community in Justice Mobile',
+    oath: 'Discipline · Teamplay · Victory',
+    heroTag: 'Silent Moonfall | Guild',
+    heroTitle: 'Silent Moonfall — guild in Justice Mobile',
     heroSubtitle:
-      'We bring players together for group content. Raids, PvP, knowledge sharing and friendly atmosphere.',
+      'We bring focused players together for raids, PvP and steady progress. Clear communication, respect and consistent activity.',
     heroCtaPrimary: 'Schedule',
     heroCtaSecondary: 'Guides',
-    heroManifestoTitle: 'About us',
+    heroManifestoTitle: 'About the guild',
     heroManifestoBody:
-      'We are an active gaming community where every member matters. We help newcomers get started, share knowledge and tackle challenging content together. Our focus is comfortable gameplay and mutual support.',
+      'Silent Moonfall is a guild built for results without losing the human side. We help new players grow, sharpen veterans, and clear hard content together as one team.',
     ritualOneTitle: 'Joining',
-    ritualOneBody: 'Simple registration and team introduction.',
+    ritualOneBody: 'Quick entry and team onboarding.',
     ritualTwoTitle: 'Guidelines',
-    ritualTwoBody: 'Respect, activity, willingness to help.',
+    ritualTwoBody: 'Respect, activity, accountability.',
     ritualThreeTitle: 'Community',
-    ritualThreeBody: 'Friendly team with good server reputation.',
+    ritualThreeBody: 'Reliable roster with strong server reputation.',
     pillarOne: 'Active participation',
     pillarTwo: 'Skill development',
     pillarThree: 'Group content',
     pillarFour: 'Team achievements',
+  },
+  zh: {
+    oath: '纪律 · 协作 · 胜利',
+    heroTag: 'Silent Moonfall | 公会',
+    heroTitle: 'Silent Moonfall — Justice Mobile 公会',
+    heroSubtitle:
+      '我们集结专注的玩家进行团本、PvP 与稳定成长。清晰沟通、相互尊重、长期活跃。',
+    heroCtaPrimary: '日程',
+    heroCtaSecondary: '攻略',
+    heroManifestoTitle: '关于公会',
+    heroManifestoBody:
+      'Silent Moonfall 追求成绩，也重视团队氛围。我们帮助新成员成长，打磨核心成员，作为一个整体挑战高难内容。',
+    ritualOneTitle: '加入',
+    ritualOneBody: '快速入会并完成团队熟悉。',
+    ritualTwoTitle: '规则',
+    ritualTwoBody: '尊重、活跃、责任感。',
+    ritualThreeTitle: '团队',
+    ritualThreeBody: '稳定阵容，良好服务器口碑。',
+    pillarOne: '积极参与',
+    pillarTwo: '能力提升',
+    pillarThree: '团队内容',
+    pillarFour: '共同成就',
   },
 };
