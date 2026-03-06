@@ -8,6 +8,7 @@ import { useAbsences, useCreateAbsence } from '@/lib/hooks/useAbsences';
 import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/types';
+import { SectionHero } from '@/components/shared/SectionHero';
 
 interface AbsencesSectionProps {
   user: User;
@@ -99,14 +100,13 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
   return (
     <section className="py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
-            <WuxiaIcon name="absences" className="inline-block w-7 h-7 mr-3 text-red-400 align-text-bottom" />
-            Отлучения
-          </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Учет отлучений, клятв и причин отсутствия в строю.
-          </p>
+        <div className="mb-10">
+          <SectionHero
+            icon={<WuxiaIcon name="absences" className="w-5 h-5" />}
+            title="Отсутствия"
+            subtitle="Отмечай периоды отсутствия заранее, чтобы рейд-лиды быстро перестроили состав."
+            chips={['Roster Health', 'Requests', 'Status Tracking']}
+          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">

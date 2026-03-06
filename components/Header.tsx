@@ -72,6 +72,7 @@ export default function Header({
     if (language === 'ru') {
       return {
         brandSubtitle: 'Гильдия · Justice Mobile',
+        activeSection: 'Раздел',
         about: 'О нас',
         news: 'Новости',
         registration: 'Участники',
@@ -88,6 +89,7 @@ export default function Header({
     if (language === 'zh') {
       return {
         brandSubtitle: '公会 · Justice Mobile',
+        activeSection: '当前',
         about: '关于',
         news: '公告',
         registration: '成员',
@@ -103,6 +105,7 @@ export default function Header({
 
     return {
       brandSubtitle: 'Guild · Justice Mobile',
+      activeSection: 'Section',
       about: 'About',
       news: 'News',
       registration: 'Members',
@@ -129,6 +132,8 @@ export default function Header({
     };
   }, [labels]);
 
+  const sectionLabel = orderLabels[currentSection];
+
   return (
     <header className={`dc-header sticky top-0 z-40 ${headerCompact ? 'dc-header--compact' : ''}`}>
       <div className={`max-w-7xl mx-auto px-6 ${headerCompact ? 'py-2.5' : 'py-3.5'}`}>
@@ -147,10 +152,16 @@ export default function Header({
                 Silent Moonfall
               </h1>
               <p className="text-sm dc-muted font-roboto whitespace-nowrap">{labels.brandSubtitle}</p>
-              <span className="dc-header-oath wuxia-tag wuxia-tag-compact mt-1.5 block">
-                <WuxiaIcon name="eye" className="w-4 h-4" />
-                <span className="wuxia-tag-text">{portalCopy[language].oath}</span>
-              </span>
+              <div className="dc-header-oath flex flex-wrap items-center gap-2 mt-2">
+                <span className="wuxia-tag wuxia-tag-compact">
+                  <WuxiaIcon name="eye" className="w-4 h-4" />
+                  <span className="wuxia-tag-text">{portalCopy[language].oath}</span>
+                </span>
+                <span className="wuxia-tag wuxia-tag-compact">
+                  <WuxiaIcon name="seal" className="w-4 h-4" />
+                  <span className="wuxia-tag-text">{labels.activeSection}: {sectionLabel}</span>
+                </span>
+              </div>
             </div>
           </Link>
 

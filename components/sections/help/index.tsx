@@ -8,6 +8,7 @@ import { useHelp, useCreateHelpRequest, useUpdateHelpStatus } from '@/lib/hooks/
 import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/types';
+import { SectionHero } from '@/components/shared/SectionHero';
 
 interface HelpSectionProps {
   user: User;
@@ -72,14 +73,13 @@ function HelpSectionContent({ user }: HelpSectionProps) {
   return (
     <section className="py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
-            <WuxiaIcon name="help" className="inline-block w-7 h-7 mr-3 text-red-400 align-text-bottom" />
-            Запросы помощи
-          </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Создавай запросы на помощь по билдам, дуэлям, фарму и рейдам. Орден отвечает быстро — когда ты формулируешь чётко.
-          </p>
+        <div className="mb-10">
+          <SectionHero
+            icon={<WuxiaIcon name="help" className="w-5 h-5" />}
+            title="Запросы помощи"
+            subtitle="Создавай точные запросы по механикам, билдам и тактике. Офицеры увидят контекст и ответят быстрее."
+            chips={['Support Board', 'Open / Closed', 'Officer Review']}
+          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">

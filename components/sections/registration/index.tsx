@@ -10,6 +10,7 @@ import { RegistrationFilters } from './RegistrationFilters';
 import { RegistrationTable } from './RegistrationTable';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/types';
+import { SectionHero } from '@/components/shared/SectionHero';
 
 interface RegistrationSectionProps {
   user: User;
@@ -78,14 +79,13 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
   return (
     <section className="py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
-            <WuxiaIcon name="registration" className="inline-block w-7 h-7 mr-3 text-red-400 align-text-bottom" />
-            Реестр Культа
-          </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Состав ордена, ранги и клятвы каждого, кто носит наш знак.
-          </p>
+        <div className="mb-10">
+          <SectionHero
+            icon={<WuxiaIcon name="registration" className="w-5 h-5" />}
+            title="Реестр гильдии"
+            subtitle="Состав гильдии, роли и текущая активность по каждому участнику."
+            chips={['Roster', 'Readiness', 'Roles']}
+          />
         </div>
 
         <RegistrationStats registrations={registrations} />

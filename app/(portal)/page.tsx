@@ -3,11 +3,78 @@
 import Link from 'next/link';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { useLanguage } from '@/lib/i18n/context';
-import { portalCopy } from '@/lib/i18n';
+import { portalCopy, sectionLabels } from '@/lib/i18n';
 import RulesBlock from '@/components/sections/about/RulesBlock';
 
 export default function AboutPage() {
   const { language } = useLanguage();
+
+  const commandCards = [
+    {
+      href: '/schedule',
+      section: 'schedule' as const,
+      title:
+        language === 'ru'
+          ? 'План на сегодня'
+          : language === 'zh'
+            ? '今日安排'
+            : 'Today Plan',
+      body:
+        language === 'ru'
+          ? 'Сразу видно следующее событие и окно для сбора.'
+          : language === 'zh'
+            ? '快速看到下一场活动和集结窗口。'
+            : 'See the next event and the best rally window instantly.',
+    },
+    {
+      href: '/guides',
+      section: 'guides' as const,
+      title:
+        language === 'ru'
+          ? 'База знаний'
+          : language === 'zh'
+            ? '知识库'
+            : 'Knowledge Base',
+      body:
+        language === 'ru'
+          ? 'Открывай сводки по билдам и загружай markdown из Obsidian.'
+          : language === 'zh'
+            ? '查看配装攻略，并可从 Obsidian 导入 Markdown。'
+            : 'Open build guides and import markdown directly from Obsidian.',
+    },
+    {
+      href: '/help',
+      section: 'help' as const,
+      title:
+        language === 'ru'
+          ? 'Боевой саппорт'
+          : language === 'zh'
+            ? '战斗支援'
+            : 'Combat Support',
+      body:
+        language === 'ru'
+          ? 'Оставляй запрос и отслеживай статус ответа офицеров.'
+          : language === 'zh'
+            ? '创建求助并追踪军官的处理状态。'
+            : 'Open support requests and track officer response status.',
+    },
+    {
+      href: '/members',
+      section: 'registration' as const,
+      title:
+        language === 'ru'
+          ? 'Состав гильдии'
+          : language === 'zh'
+            ? '公会成员'
+            : 'Guild Roster',
+      body:
+        language === 'ru'
+          ? 'Проверяй состав, роли и готовность рейд-пачек.'
+          : language === 'zh'
+            ? '查看成员、职责与团队就绪度。'
+            : 'Check roster, roles, and raid readiness in one place.',
+    },
+  ];
 
   return (
     <>
@@ -93,6 +160,29 @@ export default function AboutPage() {
                 <div className="mt-2 font-semibold">{portalCopy[language].pillarFour}</div>
               </div>
             </div>
+          </div>
+
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+            {commandCards.map((card, index) => (
+              <Link
+                key={card.href}
+                href={card.href}
+                className="card p-5 group"
+                style={{ animationDelay: `${index * 80}ms` }}
+              >
+                <div className="text-xs uppercase tracking-widest text-[#9cc3d7] mb-2">
+                  {sectionLabels[language][card.section]}
+                </div>
+                <div className="text-xl font-orbitron text-[#e6eff5] mb-2 group-hover:text-[#cde5f3] transition-colors">
+                  {card.title}
+                </div>
+                <p className="text-sm text-gray-400 leading-relaxed">{card.body}</p>
+                <div className="mt-4 text-sm text-[#8fb9cc] inline-flex items-center gap-2">
+                  <span>{language === 'ru' ? 'Открыть' : language === 'zh' ? '打开' : 'Open'}</span>
+                  <WuxiaIcon name="link" className="w-4 h-4" />
+                </div>
+              </Link>
+            ))}
           </div>
 
           {/* Блок правил */}

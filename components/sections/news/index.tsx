@@ -7,6 +7,7 @@ import { useNews } from '@/lib/hooks/useNews';
 import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/types';
+import { SectionHero } from '@/components/shared/SectionHero';
 
 interface NewsSectionProps {
   user: User;
@@ -46,14 +47,13 @@ function NewsSectionContent({ user }: NewsSectionProps) {
   return (
     <section className="py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
-            <WuxiaIcon name="news" className="inline-block w-7 h-7 mr-3 text-red-400 align-text-bottom" />
-            News
-          </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Stay updated with the latest guild news, announcements, and updates
-          </p>
+        <div className="mb-10">
+          <SectionHero
+            icon={<WuxiaIcon name="news" className="w-5 h-5" />}
+            title="Guild News"
+            subtitle="Оперативные анонсы, решения по рейдам и важные обновления по составу."
+            chips={['Announcements', 'Raid Plans', 'Updates']}
+          />
         </div>
 
         <div className="space-y-8">

@@ -58,8 +58,13 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
 
   if (loading) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center z-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
+      <div className="fixed inset-0 flex items-center justify-center z-20 bg-[#080e13]/96">
+        <div className="card px-8 py-7 text-center">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl border border-[#365268] bg-[#0f1a24]">
+            <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#8fb9cc]"></div>
+          </div>
+          <div className="mt-4 text-sm text-[#bdd5e4] tracking-wide">Checking secure session...</div>
+        </div>
       </div>
     );
   }

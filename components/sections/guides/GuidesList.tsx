@@ -1,10 +1,11 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { useGuides } from '@/lib/hooks/useGuides';
+import { useMemo, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
+import { useCreateGuide, useGuides } from '@/lib/hooks/useGuides';
 import { GuideCard } from './GuideCard';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
+import { SectionHero } from '@/components/shared/SectionHero';
 import WuxiaIcon from '@/components/WuxiaIcons';
 
 interface GuidesListProps {
@@ -14,8 +15,95 @@ interface GuidesListProps {
 
 export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
   const { data: guides = [], isLoading, error, refetch } = useGuides();
+  const createGuide = useCreateGuide();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [search, setSearch] = useState('');
+  const [notice, setNotice] = useState<string | null>(null);
+  const [isImporting, setIsImporting] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const markdownInputRef = useRef<HTMLInputElement | null>(null);
+
+  const extractTitleFromMarkdown = (content: string, fallbackFileName: string): string => {
+    const heading = content
+      .split('\n')
+      .map((line) => line.trim())
+      .find((line) => line.startsWith('# '));
+
+    if (heading) {
+      return heading.replace(/^#\s+/, '').trim().slice(0, 140);
+    }
+
+    return fallbackFileName.replace(/\.(md|markdown)$/i, '').trim().slice(0, 140) || 'Imported guide';
+  };
+
+  const processMarkdownFiles = async (files: File[]) => {
+    if (files.length === 0) return;
+
+    setIsImporting(true);
+    setNotice(null);
+
+    const defaultAuthor =
+      typeof window !== 'undefined' ? (localStorage.getItem('dc_guide_author') || '').trim() : '';
+
+    let imported = 0;
+    let skipped = 0;
+    let failed = 0;
+
+    for (const file of files) {
+      if (!/\.(md|markdown)$/i.test(file.name)) {
+        skipped += 1;
+        continue;
+      }
+
+      try {
+        const raw = await file.text();
+        const content = raw.replace(/\r\n/g, '\n').trim();
+        if (!content) {
+          skipped += 1;
+          continue;
+        }
+
+        const title = extractTitleFromMarkdown(content, file.name);
+
+        await createGuide.mutateAsync({
+          title,
+          content: content.slice(0, 50_000),
+          category: 'general',
+          author: defaultAuthor || undefined,
+        });
+
+        imported += 1;
+      } catch (err) {
+        failed += 1;
+        console.error('Failed to import markdown guide:', file.name, err);
+      }
+    }
+
+    await refetch();
+
+    const parts: string[] = [];
+    if (imported > 0) parts.push(`Импортировано: ${imported}`);
+    if (skipped > 0) parts.push(`Пропущено: ${skipped}`);
+    if (failed > 0) parts.push(`С ошибкой: ${failed}`);
+    if (parts.length > 0) setNotice(parts.join(' · '));
+
+    setIsImporting(false);
+  };
+
+  const handleMarkdownInput = async (event: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    await processMarkdownFiles(files);
+    if (markdownInputRef.current) {
+      markdownInputRef.current.value = '';
+    }
+  };
+
+  const handleDrop = async (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragOver(false);
+    const files = Array.from(event.dataTransfer.files || []);
+    await processMarkdownFiles(files);
+  };
 
   const categories = useMemo(
     () => Array.from(new Set(guides.map((g) => g.category))),
@@ -64,25 +152,36 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
-        <div className="text-center lg:text-left">
-          <h2 className="text-4xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-3">
-            <WuxiaIcon name="guides" className="inline-block w-7 h-7 mr-3 text-red-400 align-text-bottom" />
-            Гайды ордена
-          </h2>
-          <p className="text-gray-400 max-w-2xl">
-            Пиши свитки. Оценивай печатью. Обсуждай — и делай культ сильнее.
-          </p>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-center lg:justify-end">
-          <div className="flex gap-3">
+      <SectionHero
+        icon={<WuxiaIcon name="guides" className="w-5 h-5" />}
+        title="Гайды гильдии"
+        subtitle="Единая база знаний с поддержкой импорта Markdown из Obsidian и быстрым поиском по авторам/темам."
+        chips={['Markdown Import', 'Voting', 'Comments']}
+        actions={
+          <>
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Поиск по названию/автору..."
-              className="input-field"
+              className="input-field min-w-[220px]"
             />
+            <input
+              ref={markdownInputRef}
+              type="file"
+              accept=".md,.markdown,text/markdown,text/plain"
+              multiple
+              onChange={handleMarkdownInput}
+              className="hidden"
+            />
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => markdownInputRef.current?.click()}
+              disabled={isImporting}
+            >
+              <WuxiaIcon name="upload" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+              {isImporting ? 'Импорт...' : 'Импорт .md'}
+            </button>
             <button
               type="button"
               className="dc-icon-btn p-2.5 rounded-xl"
@@ -91,14 +190,36 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
             >
               <WuxiaIcon name="refresh" className="w-5 h-5" />
             </button>
-          </div>
+            <button type="button" className="btn-primary px-5 py-3" onClick={onCreateClick}>
+              <WuxiaIcon name="edit" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
+              Написать гайд
+            </button>
+          </>
+        }
+      />
 
-          <button type="button" className="btn-primary px-5 py-3" onClick={onCreateClick}>
-            <WuxiaIcon name="edit" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
-            Написать гайд
-          </button>
+      <div
+        className="portal-dropzone mb-6"
+        data-over={isDragOver ? 'true' : 'false'}
+        onDragOver={(event) => {
+          event.preventDefault();
+          setIsDragOver(true);
+        }}
+        onDragLeave={() => setIsDragOver(false)}
+        onDrop={handleDrop}
+      >
+        <div className="text-sm text-[#bdd5e4]">
+          <WuxiaIcon name="upload" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+          Перетащи файлы `.md` сюда или используй кнопку импорта.
         </div>
       </div>
+
+      {notice && (
+        <div className="mb-6 text-sm text-[#bcd6e5] p-4 bg-[#16202b]/65 rounded-xl border border-[#2f6e8d]/40">
+          <WuxiaIcon name="checkCircle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
+          {notice}
+        </div>
+      )}
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">

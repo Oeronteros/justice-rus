@@ -44,9 +44,11 @@ function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
           onLanguageChange={handleLanguageChange}
         />
       </div>
-      <main id="portal-main" className={`min-h-screen pb-20 md:pb-0 ${isHeaderHidden ? '-mt-[var(--header-height,80px)]' : ''}`}>
-        <div className={`wuxia-section wuxia-section-${currentSection}`}>
-          {children}
+      <main id="portal-main" className={`min-h-screen pb-24 md:pb-0 ${isHeaderHidden ? '-mt-[var(--header-height,80px)]' : ''}`}>
+        <div className="mx-auto max-w-[1280px] px-3 sm:px-5 lg:px-8 pt-4 sm:pt-6">
+          <div className={`wuxia-section wuxia-section-${currentSection} rounded-2xl overflow-hidden`}> 
+            {children}
+          </div>
         </div>
       </main>
       <div className={`transition-transform duration-300 ${isHeaderHidden ? 'translate-y-full' : ''}`}>

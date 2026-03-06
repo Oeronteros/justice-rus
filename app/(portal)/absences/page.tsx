@@ -1,6 +1,6 @@
 'use client';
 
-import AbsencesSection from '@/components/sections/AbsencesSection';
+import AbsencesSection from '@/components/sections/absences';
 import { useUser } from '@/lib/auth/context';
 
 export default function AbsencesPage() {

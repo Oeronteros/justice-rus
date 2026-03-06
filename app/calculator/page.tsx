@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from 'react';
 import WuxiaIcon from '@/components/WuxiaIcons';
+import { useLanguage } from '@/lib/i18n/context';
+import { SectionHero } from '@/components/shared/SectionHero';
 
 type BuildInput = {
   name: string;
@@ -37,10 +39,74 @@ const parseNum = (value: string, fallback = 0) => {
 };
 
 export default function CalculatorPage() {
+  const { language } = useLanguage();
   const [builds, setBuilds] = useState<BuildInput[]>([
     createBuild('Build A'),
     createBuild('Build B'),
   ]);
+
+  const copy = useMemo(() => {
+    if (language === 'ru') {
+      return {
+        title: 'Калькулятор билдов',
+        subtitle: 'Сравнивай средний удар, DPS и урон за бой. Удобно для подготовки к рейдам и PvP.',
+        upTo: 'До 4 билдов для сравнения.',
+        addBuild: 'Добавить билд',
+        removeBuild: 'Удалить билд',
+        baseDamage: 'Базовый урон',
+        flatDamage: 'Плоский бонус',
+        attackSpeed: 'Скорость атак (уд/с)',
+        critChance: 'Шанс крита (%)',
+        critMultiplier: 'Множитель крита',
+        bonusDamage: 'Бонус урона (%)',
+        duration: 'Длительность боя (сек)',
+        avgHit: 'Средний удар',
+        dps: 'DPS',
+        totalDamage: 'Общий урон',
+        formula: 'Формула: средний удар = (база + плоский бонус) × (1 + бонус%) × (1 + шанс крита × (множитель - 1)); DPS = средний удар × скорость атак.',
+      };
+    }
+
+    if (language === 'zh') {
+      return {
+        title: '配装计算器',
+        subtitle: '对比平均单击、DPS 与总伤，快速确定团本与 PvP 的最优方案。',
+        upTo: '最多可对比 4 套配置。',
+        addBuild: '新增配置',
+        removeBuild: '删除配置',
+        baseDamage: '基础伤害',
+        flatDamage: '固定加成',
+        attackSpeed: '攻速（次/秒）',
+        critChance: '暴击率 (%)',
+        critMultiplier: '暴击倍率',
+        bonusDamage: '伤害加成 (%)',
+        duration: '战斗时长（秒）',
+        avgHit: '平均单次',
+        dps: 'DPS',
+        totalDamage: '总伤害',
+        formula: '公式：平均单次 = (基础 + 固定加成) × (1 + 伤害加成%) × (1 + 暴击率 × (暴击倍率 - 1)); DPS = 平均单次 × 攻速。',
+      };
+    }
+
+    return {
+      title: 'Build Calculator',
+      subtitle: 'Compare average hit, DPS, and total damage to choose the most reliable setup for raids and PvP.',
+      upTo: 'Up to 4 builds for comparison.',
+      addBuild: 'Add build',
+      removeBuild: 'Remove build',
+      baseDamage: 'Base damage',
+      flatDamage: 'Flat bonus damage',
+      attackSpeed: 'Attack speed (hits/s)',
+      critChance: 'Crit chance (%)',
+      critMultiplier: 'Crit multiplier',
+      bonusDamage: 'Bonus damage (%)',
+      duration: 'Fight duration (sec)',
+      avgHit: 'Average hit',
+      dps: 'DPS',
+      totalDamage: 'Total damage',
+      formula: 'Formula: avg hit = (base + flat bonus) x (1 + bonus%) x (1 + crit chance x (crit mult - 1)); DPS = avg hit x attack speed.',
+    };
+  }, [language]);
 
   const updateBuild = (index: number, key: keyof BuildInput, value: string) => {
     setBuilds(prev => prev.map((build, i) => (i == index ? { ...build, [key]: value } : build)));
@@ -80,25 +146,23 @@ export default function CalculatorPage() {
   }, [builds]);
 
   return (
-    <div className="min-h-screen bg-[#0a0f14] pt-20 pb-10">
+    <section className="py-10">
       <div className="container mx-auto px-4 max-w-6xl">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold font-orbitron text-[#e6eff5] mb-4">
-            Build Calculator (DPS & Damage)
-          </h1>
-          <p className="text-[#b7c9d6] text-lg max-w-2xl mx-auto">
-            Compare builds by average hit, DPS, and total damage over a fight duration.
-          </p>
-        </div>
+        <SectionHero
+          icon={<WuxiaIcon name="calculator" className="w-5 h-5" />}
+          title={copy.title}
+          subtitle={copy.subtitle}
+          chips={['DPS', 'Raid Prep', 'PvP Tuning']}
+        />
 
         <div className="flex items-center justify-between mb-6">
-          <div className="text-gray-400 text-sm">Up to 4 builds for comparison.</div>
+          <div className="text-gray-400 text-sm">{copy.upTo}</div>
           <button
             onClick={addBuild}
-            className="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm font-semibold transition"
+            className="btn-secondary px-4 py-2 text-sm font-semibold"
           >
             <WuxiaIcon name="plus" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
-            Add build
+            {copy.addBuild}
           </button>
         </div>
 
@@ -117,19 +181,19 @@ export default function CalculatorPage() {
                   />
                 </div>
                 {builds.length > 1 && (
-                  <button
-                    onClick={() => removeBuild(index)}
-                    className="text-gray-400 hover:text-[#8fb9cc] transition"
-                    title="Remove build"
-                  >
-                    <WuxiaIcon name="trash" className="w-5 h-5" />
-                  </button>
+                    <button
+                      onClick={() => removeBuild(index)}
+                      className="text-gray-400 hover:text-[#8fb9cc] transition"
+                      title={copy.removeBuild}
+                    >
+                      <WuxiaIcon name="trash" className="w-5 h-5" />
+                    </button>
                 )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-[#e6eff5] mb-2 text-sm">Base damage</label>
+                  <label className="block text-[#e6eff5] mb-2 text-sm">{copy.baseDamage}</label>
                   <input
                     type="number"
                     value={build.baseDamage}
@@ -140,7 +204,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[#e6eff5] mb-2 text-sm">Flat bonus damage</label>
+                  <label className="block text-[#e6eff5] mb-2 text-sm">{copy.flatDamage}</label>
                   <input
                     type="number"
                     value={build.flatDamage}
@@ -151,7 +215,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[#e6eff5] mb-2 text-sm">Attack speed (hits/s)</label>
+                  <label className="block text-[#e6eff5] mb-2 text-sm">{copy.attackSpeed}</label>
                   <input
                     type="number"
                     value={build.attacksPerSecond}
@@ -162,7 +226,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[#e6eff5] mb-2 text-sm">Crit chance (%)</label>
+                  <label className="block text-[#e6eff5] mb-2 text-sm">{copy.critChance}</label>
                   <input
                     type="number"
                     value={build.critChance}
@@ -173,7 +237,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[#e6eff5] mb-2 text-sm">Crit multiplier</label>
+                  <label className="block text-[#e6eff5] mb-2 text-sm">{copy.critMultiplier}</label>
                   <input
                     type="number"
                     value={build.critMultiplier}
@@ -184,7 +248,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[#e6eff5] mb-2 text-sm">Bonus damage (%)</label>
+                  <label className="block text-[#e6eff5] mb-2 text-sm">{copy.bonusDamage}</label>
                   <input
                     type="number"
                     value={build.bonusDamage}
@@ -195,7 +259,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-[#e6eff5] mb-2 text-sm">Fight duration (sec)</label>
+                  <label className="block text-[#e6eff5] mb-2 text-sm">{copy.duration}</label>
                   <input
                     type="number"
                     value={build.duration}
@@ -208,19 +272,19 @@ export default function CalculatorPage() {
 
               <div className="mt-6 space-y-3">
                 <div className="flex items-center justify-between rounded-xl bg-[#0f161d]/75 border border-[#243240] px-4 py-3">
-                  <span className="text-[#e6eff5] text-sm">Average hit</span>
+                  <span className="text-[#e6eff5] text-sm">{copy.avgHit}</span>
                   <span className="text-xl font-bold font-orbitron text-[#8fb9cc]">
                     {results[index].avgHit ? results[index].avgHit.toFixed(2) : '?'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between rounded-xl bg-[#0f161d]/75 border border-[#243240] px-4 py-3">
-                  <span className="text-[#e6eff5] text-sm">DPS</span>
+                  <span className="text-[#e6eff5] text-sm">{copy.dps}</span>
                   <span className="text-xl font-bold font-orbitron text-[#8fb9cc]">
                     {results[index].dps ? results[index].dps.toFixed(2) : '?'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between rounded-xl bg-[#0f161d]/75 border border-[#243240] px-4 py-3">
-                  <span className="text-[#e6eff5] text-sm">Total damage</span>
+                  <span className="text-[#e6eff5] text-sm">{copy.totalDamage}</span>
                   <span className="text-xl font-bold font-orbitron text-[#8fb9cc]">
                     {results[index].totalDamage ? results[index].totalDamage.toFixed(2) : '?'}
                   </span>
@@ -230,11 +294,10 @@ export default function CalculatorPage() {
           ))}
         </div>
 
-        <div className="mt-10 text-center text-gray-500 text-sm">
-          Formula: avg hit = (base + flat bonus) ? (1 + bonus% ) ? (1 + crit chance ? (crit mult ? 1));
-          DPS = avg hit ? attack speed.
+        <div className="mt-10 text-center text-gray-500 text-sm leading-relaxed">
+          {copy.formula}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
