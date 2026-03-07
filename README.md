@@ -45,10 +45,12 @@ npm run dev
 Новые аккаунты создаются в статусе `inactive` и активируются офицером/GM в личном кабинете.
 
 ### Discord Bot API
-- `DISCORD_BOT_API_URL` - URL API сервера Discord бота
+- `DISCORD_BOT_API_URL` или `BOT_API_URL` - URL API сервера Discord бота
+- `DISCORD_BOT_API_KEY` или `BOT_API_KEY` - ключ для чтения защищенных эндпоинтов бота *(нужен, если `/api/news` и другие bot endpoints закрыты)*
 
 **Важно:** 
 - Веб-сайт получает данные через Discord бота, а не напрямую из БД
+- Веб-сайт сам не читает Discord-канал по `DISCORD_NEWS_CHANNEL_ID`; он читает данные из API бота (`/api/news`) или из БД, которую наполняет бот
 - Если сайт на Vercel, а бот локально → используйте **Cloudflare Tunnel** (рекомендуется) или ngrok
 - Discord бот должен предоставлять HTTP API endpoints (см. `docs/discord-bot-integration.md`)
 
@@ -62,9 +64,26 @@ npm run dev
 - ngrok: `https://abc123.ngrok-free.app`
 - На сервере: `https://your-bot.railway.app`
 
-### Discord (опционально)
-- `DISCORD_BOT_TOKEN` - Токен Discord бота
-- `DISCORD_NEWS_CHANNEL_ID` - ID канала с новостями
+### Discord bot side (для чтения новостей именно из Discord-канала)
+- `DISCORD_BOT_TOKEN` - токен Discord-бота
+- `DISCORD_NEWS_CHANNEL_ID` - ID канала, из которого бот забирает новости
+- `DATABASE_URL` - нужен, если бот складывает новости в общую БД, из которой потом читает портал
+
+Для схемы `Discord channel -> bot -> website` минимальный набор такой:
+
+```env
+# website
+DISCORD_BOT_API_URL=http://localhost:3001
+# если bot API закрыт ключом
+BOT_API_KEY=your_shared_api_key
+
+# discord bot
+DISCORD_BOT_TOKEN=your_discord_bot_token
+DISCORD_NEWS_CHANNEL_ID=123456789012345678
+
+# если бот пишет новости в PostgreSQL
+DATABASE_URL=postgresql://user:password@host:5432/database
+```
 
 ## Структура проекта
 
