@@ -5,6 +5,7 @@ import { verifyToken } from '@/lib/auth';
 import { ensureAccountsSchema } from '@/lib/auth/accounts';
 import { hasRoleAtLeast } from '@/lib/authz';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
+import { isKnownClassName } from '@/lib/classes';
 
 export const runtime = 'nodejs';
 
@@ -48,6 +49,15 @@ type RegistrationRow = {
   duelWins: number;
   duelLosses: number;
   status: 'active' | 'inactive';
+};
+
+type PortalOnlyRow = {
+  id: number | string;
+  nickname: string;
+  class_name: string | null;
+  role: string;
+  is_active: boolean;
+  created_at: Date | string;
 };
 
 function getAuthToken(request: NextRequest): string | null {
@@ -200,7 +210,7 @@ async function getRegistrationsFromDb() {
     SELECT
       ${discordCol ? `COALESCE(r.${discordCol}, '') AS discord,` : `'' AS discord,`}
       r.${nickCol} AS nickname,
-      ${classCol ? `COALESCE(r.${classCol}, '') AS class_name,` : `'' AS class_name,`}
+      ${classCol ? `COALESCE(NULLIF(r.${classCol}, ''), a.class_name, '') AS class_name,` : `COALESCE(a.class_name, '') AS class_name,`}
       ${guildCol ? `COALESCE(r.${guildCol}, '') AS guild_name,` : `'' AS guild_name,`}
       ${joinCol ? `r.${joinCol} AS join_date,` : `NOW() AS join_date,`}
       COALESCE(a.role, 'guest') AS role,
@@ -223,9 +233,18 @@ async function getRegistrationsFromDb() {
     ORDER BY r.${joinCol || nickCol} DESC
   `;
 
-  const result = await pool.query(query);
+  const [result, portalAccounts] = await Promise.all([
+    pool.query(query),
+    pool.query(
+      `
+      SELECT id, nickname, class_name, role, is_active, created_at
+      FROM portal_account
+      ORDER BY created_at DESC
+      `
+    ).catch(() => ({ rows: [] as PortalOnlyRow[] })),
+  ]);
 
-  return buildComputedRows(result.rows.map((row) => ({
+  const baseRows: RegistrationRow[] = result.rows.map((row) => ({
     discord: String(row.discord || ''),
     nickname: String(row.nickname || ''),
     rank: String(row.role || 'guest'),
@@ -245,7 +264,34 @@ async function getRegistrationsFromDb() {
     duelWins: numericValue(row.duel_wins),
     duelLosses: numericValue(row.duel_losses),
     status: row.account_status === 'inactive' ? 'inactive' : 'active',
-  })));
+  }));
+
+  const seenNicknames = new Set(baseRows.map((row) => row.nickname.toLowerCase()));
+  const portalOnlyRows = portalAccounts.rows
+    .filter((row) => !seenNicknames.has(String(row.nickname || '').toLowerCase()))
+    .map((row) => ({
+      discord: `portal:${row.id}`,
+      nickname: String(row.nickname || ''),
+      rank: String(row.role || 'guest'),
+      class: String(row.class_name || ''),
+      guild: '',
+      joinDate: isoDate(row.created_at),
+      elo: 0,
+      mmr20: 0,
+      bounty: 0,
+      marks: 0,
+      outerHeroic: 0,
+      innerHeroic: 0,
+      crimsonSands: 0,
+      abyss: 0,
+      gvg: 0,
+      secretRealm: 0,
+      duelWins: 0,
+      duelLosses: 0,
+      status: row.is_active ? 'active' : 'inactive',
+    } satisfies RegistrationRow));
+
+  return buildComputedRows([...baseRows, ...portalOnlyRows]);
 }
 
 async function resolveRegistrationTarget(nickname: string) {
@@ -277,6 +323,15 @@ async function resolveRegistrationTarget(nickname: string) {
     classCol,
     discordCol,
   };
+}
+
+async function updatePortalAccountClass(nickname: string, className: string) {
+  const pool = getPool();
+  await ensureAccountsSchema();
+  await pool.query(
+    `UPDATE portal_account SET class_name = $2, updated_at = NOW() WHERE LOWER(nickname) = LOWER($1)`,
+    [nickname, className]
+  );
 }
 
 async function ensureActivityRow(discordId: string, nickname: string) {
@@ -354,6 +409,9 @@ export async function PATCH(request: NextRequest) {
     }
 
     const payload = updateStatsSchema.parse(await request.json());
+    if (payload.className !== undefined && !(await isKnownClassName(payload.className))) {
+      return NextResponse.json({ error: 'Unknown class selected' }, { status: 400 });
+    }
     const isOfficer = hasRoleAtLeast(decoded.role, 'officer');
     const isSelf = payload.nickname.toLowerCase() === String(decoded.nickname || '').toLowerCase();
 
@@ -368,10 +426,34 @@ export async function PATCH(request: NextRequest) {
     const pool = getPool();
     const target = await resolveRegistrationTarget(payload.nickname);
     if (!target.row) {
-      return NextResponse.json({ error: 'Registration not found' }, { status: 404 });
+      if (payload.className !== undefined) {
+        await updatePortalAccountClass(payload.nickname, payload.className);
+      }
+
+      const unsupportedPortalOnlyFields = [
+        payload.outerHeroic,
+        payload.innerHeroic,
+        payload.crimsonSands,
+        payload.abyss,
+        payload.gvg,
+        payload.secretRealm,
+        payload.mmr20,
+        payload.elo,
+        payload.bounty,
+      ].some((value) => value !== undefined && value !== 0);
+
+      if (unsupportedPortalOnlyFields) {
+        return NextResponse.json(
+          { error: 'Portal account exists, but Neon registration row is not linked yet for PvP/activity stats' },
+          { status: 409 }
+        );
+      }
+
+      return NextResponse.json({ success: true, portalOnly: true });
     }
 
     if (payload.className !== undefined && target.classCol) {
+      await updatePortalAccountClass(payload.nickname, payload.className);
       await pool.query(
         `UPDATE registrations SET ${target.classCol} = $2 WHERE LOWER(${target.nickCol}) = LOWER($1)`,
         [payload.nickname, payload.className]
