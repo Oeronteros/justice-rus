@@ -5,6 +5,7 @@ import { verifyToken } from '@/lib/auth';
 import { getAuthToken } from '@/lib/auth/request';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { pvpReportSchema } from '@/lib/schemas/pvp';
+import { calculateRating, deriveConfirmationStatus, resolveMatchWinner } from '@/lib/server/pvp/logic';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -29,6 +30,46 @@ type MatchRow = {
   updated_at: Date | string;
   confirmed_at: Date | string | null;
 };
+
+type RateLimitAction = 'queue' | 'report';
+
+const RATE_LIMIT_WINDOW_MS = 10_000;
+const rateLimitCaps: Record<RateLimitAction, number> = {
+  queue: 8,
+  report: 12,
+};
+const rateLimitBuckets = new Map<string, { windowStartedAt: number; count: number }>();
+
+class PvpRateLimitError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'PvpRateLimitError';
+  }
+}
+
+function touchRateLimit(actorId: string, action: RateLimitAction) {
+  const now = Date.now();
+  const key = `${action}:${actorId}`;
+  const cap = rateLimitCaps[action];
+  const current = rateLimitBuckets.get(key);
+
+  if (!current || now - current.windowStartedAt > RATE_LIMIT_WINDOW_MS) {
+    rateLimitBuckets.set(key, { windowStartedAt: now, count: 1 });
+  } else {
+    current.count += 1;
+    if (current.count > cap) {
+      throw new PvpRateLimitError('Too many PvP actions. Try again in a few seconds.');
+    }
+  }
+
+  if (rateLimitBuckets.size > 500) {
+    for (const [bucketKey, bucket] of rateLimitBuckets.entries()) {
+      if (now - bucket.windowStartedAt > RATE_LIMIT_WINDOW_MS * 3) {
+        rateLimitBuckets.delete(bucketKey);
+      }
+    }
+  }
+}
 
 function normalizedMatchSelect(whereClause?: string, orderClause?: string, limitClause?: string) {
   return `
@@ -62,11 +103,6 @@ function toIso(value: Date | string | null | undefined): string | null {
   if (value instanceof Date) return value.toISOString();
   const parsed = new Date(value);
   return Number.isFinite(parsed.getTime()) ? parsed.toISOString() : new Date().toISOString();
-}
-
-function calculateRating(current: number, opponent: number, score: 0 | 1): number {
-  const expected = 1 / (1 + Math.pow(10, (opponent - current) / 400));
-  return Math.round(current + 32 * (score - expected));
 }
 
 async function ensurePvpSchema() {
@@ -243,15 +279,10 @@ async function formatMatch(pool: Awaited<ReturnType<typeof getPool>>, row: Match
     }
   }
 
-  const uniqueWinners = new Set(confirmations.rows.map((item) => String(item.reported_winner_id)));
-  const confirmationStatus =
-    row.status === 'completed'
-      ? 'confirmed'
-      : confirmations.rows.length === 0
-        ? 'unreported'
-        : uniqueWinners.size > 1
-          ? 'disputed'
-          : 'waiting';
+  const confirmationStatus = deriveConfirmationStatus(
+    row.status,
+    confirmations.rows.map((item) => String(item.reported_winner_id))
+  );
 
   return {
     id: String(row.id),
@@ -321,23 +352,38 @@ async function loadState(viewerId: string | null) {
   };
 }
 
-async function completeMatch(match: MatchRow, winnerId: string) {
+async function completeMatch(matchId: number, winnerId: string): Promise<boolean> {
   const pool = getPool();
   const client = await pool.connect();
 
   try {
     await client.query('BEGIN');
 
+    const lockedMatchResult = await client.query(
+      normalizedMatchSelect('WHERE id = $1', '', 'LIMIT 1 FOR UPDATE'),
+      [matchId]
+    );
+    const lockedMatch = lockedMatchResult.rows[0] as MatchRow | undefined;
+
+    if (!lockedMatch || lockedMatch.status !== 'pending') {
+      await client.query('COMMIT');
+      return false;
+    }
+
     const playerOne: Actor = {
-      id: match.player_one_id,
-      nickname: match.player_one_nickname,
-      className: match.player_one_class,
+      id: lockedMatch.player_one_id,
+      nickname: lockedMatch.player_one_nickname,
+      className: lockedMatch.player_one_class,
     };
     const playerTwo: Actor = {
-      id: match.player_two_id,
-      nickname: match.player_two_nickname,
-      className: match.player_two_class,
+      id: lockedMatch.player_two_id,
+      nickname: lockedMatch.player_two_nickname,
+      className: lockedMatch.player_two_class,
     };
+
+    if (winnerId !== playerOne.id && winnerId !== playerTwo.id) {
+      throw new Error('Reported winner is not a participant of this match');
+    }
 
     await ensureRatingRow(client, playerOne);
     await ensureRatingRow(client, playerTwo);
@@ -389,12 +435,13 @@ async function completeMatch(match: MatchRow, winnerId: string) {
       `
       UPDATE duel_matches
       SET status = 'completed', winner_id = $2, confirmed_at = NOW(), completed_at = NOW(), updated_at = NOW()
-      WHERE id = $1
+      WHERE id = $1 AND status = 'pending'
       `,
-      [match.id, winnerId]
+      [lockedMatch.id, winnerId]
     );
 
     await client.query('COMMIT');
+    return true;
   } catch (error) {
     await client.query('ROLLBACK');
     throw error;
@@ -434,6 +481,7 @@ export async function POST(request: NextRequest) {
 
     await ensurePvpSchema();
     const actor = await resolveActor(decoded);
+    touchRateLimit(actor.id, 'queue');
     const pool = getPool();
     const client = await pool.connect();
 
@@ -510,6 +558,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(await loadState(actor.id));
   } catch (error) {
+    if (error instanceof PvpRateLimitError) {
+      return NextResponse.json({ error: error.message }, { status: 429 });
+    }
     console.error('Error joining PvP queue:', error);
     return NextResponse.json({ error: error instanceof Error ? error.message : 'Failed to join PvP queue' }, { status: 500 });
   }
@@ -528,11 +579,15 @@ export async function DELETE(request: NextRequest) {
     }
 
     await ensurePvpSchema();
+    touchRateLimit(actorId, 'queue');
     const pool = getPool();
     await pool.query(`DELETE FROM duel_queue WHERE discord_id = $1 OR player_id = $1`, [actorId]);
 
     return NextResponse.json(await loadState(actorId));
   } catch (error) {
+    if (error instanceof PvpRateLimitError) {
+      return NextResponse.json({ error: error.message }, { status: 429 });
+    }
     console.error('Error leaving PvP queue:', error);
     return NextResponse.json({ error: 'Failed to leave PvP queue' }, { status: 500 });
   }
@@ -553,6 +608,7 @@ export async function PATCH(request: NextRequest) {
     await ensurePvpSchema();
     const payload = pvpReportSchema.parse(await request.json());
     const pool = getPool();
+    touchRateLimit(actorId, 'report');
 
     const matchResult = await pool.query(
       normalizedMatchSelect(`WHERE id = $1 AND status = 'pending' AND (COALESCE(player_one_id, player1_id) = $2 OR COALESCE(player_two_id, player2_id) = $2)`, '', 'LIMIT 1'),
@@ -580,15 +636,25 @@ export async function PATCH(request: NextRequest) {
       `SELECT COALESCE(player_id, discord_id) AS player_id, COALESCE(reported_winner_id, confirmed_winner_id) AS reported_winner_id FROM duel_confirmations WHERE match_id = $1`,
       [Number(payload.matchId)]
     );
-    const players = new Set(confirmations.rows.map((row) => String(row.player_id)));
-    const winners = new Set(confirmations.rows.map((row) => String(row.reported_winner_id)));
 
-    if (players.has(match.player_one_id) && players.has(match.player_two_id) && winners.size === 1) {
-      await completeMatch(match, String(confirmations.rows[0].reported_winner_id));
+    const resolvedWinnerId = resolveMatchWinner(
+      match.player_one_id,
+      match.player_two_id,
+      confirmations.rows.map((row) => ({
+        playerId: String(row.player_id),
+        reportedWinnerId: String(row.reported_winner_id),
+      }))
+    );
+
+    if (resolvedWinnerId) {
+      await completeMatch(Number(payload.matchId), resolvedWinnerId);
     }
 
     return NextResponse.json(await loadState(actorId));
   } catch (error) {
+    if (error instanceof PvpRateLimitError) {
+      return NextResponse.json({ error: error.message }, { status: 429 });
+    }
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
     }

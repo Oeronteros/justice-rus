@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { LoadingState } from '@/components/shared/LoadingState';
@@ -8,6 +9,7 @@ import WuxiaIcon from '@/components/WuxiaIcons';
 import { useJoinPvpQueue, useLeavePvpQueue, usePvpState, useReportPvpResult } from '@/lib/hooks/usePvp';
 import type { PvpMatch } from '@/lib/schemas/pvp';
 import type { User } from '@/types';
+import { handleApiError } from '@/lib/api/client';
 
 interface PvpSectionProps {
   user: User;
@@ -40,6 +42,7 @@ function MatchCard({
   const isPlayerOne = viewerId === match.playerOne.id;
   const you = isPlayerOne ? match.playerOne : match.playerTwo;
   const opponent = isPlayerOne ? match.playerTwo : match.playerOne;
+  const hasReported = Boolean(match.yourReport);
 
   return (
     <div className="card p-6 space-y-5">
@@ -83,14 +86,20 @@ function MatchCard({
         {match.status === 'pending' && (
           <div className="flex flex-col sm:flex-row gap-3">
             <button type="button" className="btn-primary px-4 py-2" disabled={isReporting} onClick={() => onReport('win')}>
-              Сообщить победу
+              {hasReported ? 'Обновить: победа' : 'Сообщить победу'}
             </button>
             <button type="button" className="btn-secondary px-4 py-2" disabled={isReporting} onClick={() => onReport('loss')}>
-              Сообщить поражение
+              {hasReported ? 'Обновить: поражение' : 'Сообщить поражение'}
             </button>
           </div>
         )}
       </div>
+
+      {match.status === 'pending' && hasReported && (
+        <div className="rounded-2xl border border-[#2f6e8d]/40 bg-[#101a23]/70 px-4 py-3 text-xs text-[#8fb9cc]">
+          Твой отчет уже отправлен. При необходимости его можно обновить до подтверждения матча.
+        </div>
+      )}
     </div>
   );
 }
@@ -100,6 +109,38 @@ function PvpSectionContent({ user }: PvpSectionProps) {
   const joinQueue = useJoinPvpQueue();
   const leaveQueue = useLeavePvpQueue();
   const reportResult = useReportPvpResult();
+  const [actionNotice, setActionNotice] = useState<{ tone: 'error' | 'success'; message: string } | null>(null);
+
+  const reportActionError = (err: unknown) => {
+    setActionNotice({ tone: 'error', message: handleApiError(err) });
+  };
+
+  const joinQueueAction = async () => {
+    try {
+      await joinQueue.mutateAsync();
+      setActionNotice({ tone: 'success', message: 'Ты в очереди. Ждем соперника.' });
+    } catch (err) {
+      reportActionError(err);
+    }
+  };
+
+  const leaveQueueAction = async () => {
+    try {
+      await leaveQueue.mutateAsync();
+      setActionNotice({ tone: 'success', message: 'Активность в PvP снята.' });
+    } catch (err) {
+      reportActionError(err);
+    }
+  };
+
+  const reportMatchResult = async (matchId: string, result: 'win' | 'loss') => {
+    try {
+      await reportResult.mutateAsync({ matchId, result });
+      setActionNotice({ tone: 'success', message: 'Результат отправлен. Ждем подтверждение второго игрока.' });
+    } catch (err) {
+      reportActionError(err);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -136,6 +177,22 @@ function PvpSectionContent({ user }: PvpSectionProps) {
           chips={['Queue', 'Matchmaking', 'ELO']}
         />
 
+        {actionNotice && (
+          <div
+            className={`rounded-2xl border px-4 py-3 text-sm ${
+              actionNotice.tone === 'error'
+                ? 'border-red-900/50 bg-red-900/20 text-red-200'
+                : 'border-[#2f6e8d]/45 bg-[#12202c]/75 text-[#bcd6e5]'
+            }`}
+          >
+            <WuxiaIcon
+              name={actionNotice.tone === 'error' ? 'alertTriangle' : 'checkCircle'}
+              className="inline-block w-4 h-4 mr-2 align-text-bottom"
+            />
+            {actionNotice.message}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
           <div className="lg:col-span-2 space-y-6">
             <div className="card p-6 space-y-5">
@@ -165,7 +222,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
                   type="button"
                   className="btn-primary flex-1 py-3"
                   disabled={!canJoinQueue || joinQueue.isPending}
-                  onClick={() => joinQueue.mutate()}
+                  onClick={() => void joinQueueAction()}
                 >
                   {joinQueue.isPending ? 'Ставим в очередь...' : 'Встать в очередь'}
                 </button>
@@ -173,11 +230,17 @@ function PvpSectionContent({ user }: PvpSectionProps) {
                   type="button"
                   className="btn-secondary flex-1 py-3"
                   disabled={(!data.userInQueue && !data.activeMatch) || leaveQueue.isPending}
-                  onClick={() => leaveQueue.mutate()}
+                  onClick={() => void leaveQueueAction()}
                 >
                   {leaveQueue.isPending ? 'Выходим...' : data.activeMatch ? 'Снять активность' : 'Покинуть очередь'}
                 </button>
               </div>
+
+              {data.activeMatch && (
+                <div className="rounded-2xl border border-yellow-700/40 bg-yellow-900/15 p-4 text-xs text-yellow-200">
+                  Новый вход в очередь временно заблокирован, пока активный матч не будет подтвержден или закрыт.
+                </div>
+              )}
 
               <div className="rounded-2xl border border-dashed border-[#2f6e8d]/40 bg-[#0f1821]/65 p-4 text-sm text-gray-400">
                 Если второй игрок уже ждет, матч появится сразу. Если оба игрока отправят одинаковый результат, ELO обновится автоматически.
@@ -211,7 +274,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
                 user={user}
                 isReporting={reportResult.isPending}
                 onReport={async (result) => {
-                  await reportResult.mutateAsync({ matchId: data.activeMatch!.id, result });
+                  await reportMatchResult(data.activeMatch!.id, result);
                 }}
               />
             ) : (

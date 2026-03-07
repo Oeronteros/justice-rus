@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { handleApiError } from '@/lib/api/client';
 import { useUpdateRegistrationStats } from '@/lib/hooks';
 import { getKPIClass, getKpiIndicator, getRankClass, getStatusClass } from '@/lib/utils';
@@ -29,6 +30,64 @@ const statusLabels: Record<string, string> = {
   pending: 'Ожидает',
   leave: 'Отгул',
 };
+
+type EditableNumericKey =
+  | 'elo'
+  | 'mmr20'
+  | 'bounty'
+  | 'outerHeroic'
+  | 'innerHeroic'
+  | 'crimsonSands'
+  | 'abyss'
+  | 'gvg'
+  | 'secretRealm';
+
+type EditableRegistrationDraft = {
+  className: string;
+  guild: string;
+  elo: string;
+  mmr20: string;
+  bounty: string;
+  outerHeroic: string;
+  innerHeroic: string;
+  crimsonSands: string;
+  abyss: string;
+  gvg: string;
+  secretRealm: string;
+};
+
+const editableNumericFields: Array<{ key: EditableNumericKey; label: string }> = [
+  { key: 'elo', label: 'ELO дуэлей' },
+  { key: 'mmr20', label: 'Best MMR PvP (MMR20)' },
+  { key: 'bounty', label: 'Bounty' },
+  { key: 'outerHeroic', label: 'Outer Heroic' },
+  { key: 'innerHeroic', label: 'Inner Heroic' },
+  { key: 'crimsonSands', label: 'Crimson Sands' },
+  { key: 'abyss', label: 'Abyss' },
+  { key: 'gvg', label: 'GVG' },
+  { key: 'secretRealm', label: 'Secret Realm' },
+];
+
+function toEditDraft(registration: Registration): EditableRegistrationDraft {
+  return {
+    className: registration.class || '',
+    guild: registration.guild || '',
+    elo: String(registration.elo || 0),
+    mmr20: String(registration.mmr20 || 0),
+    bounty: String(registration.bounty || 0),
+    outerHeroic: String(registration.outerHeroic || 0),
+    innerHeroic: String(registration.innerHeroic || 0),
+    crimsonSands: String(registration.crimsonSands || 0),
+    abyss: String(registration.abyss || 0),
+    gvg: String(registration.gvg || 0),
+    secretRealm: String(registration.secretRealm || 0),
+  };
+}
+
+function normalizeNumberInput(value: string): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
 
 function getAvatarInitials(registration: Registration) {
   const base = registration.nickname || registration.discord || 'SM';
@@ -91,50 +150,62 @@ function KpiValue({ registration, user }: { registration: Registration; user: Us
 export function RegistrationTable({ registrations, user, onRefresh, columnLabels }: RegistrationTableProps) {
   const canSeeFullStats = hasRoleAtLeast(user.role, 'officer');
   const updateRegistrationStats = useUpdateRegistrationStats();
+  const [editingRegistration, setEditingRegistration] = useState<Registration | null>(null);
+  const [editDraft, setEditDraft] = useState<EditableRegistrationDraft | null>(null);
+  const [editError, setEditError] = useState<string | null>(null);
 
-  const editStats = async (registration: Registration) => {
-    const nextClass = prompt('Класс', registration.class || '');
-    if (nextClass === null) return;
-    const nextGuild = prompt('Клан', registration.guild || '');
-    if (nextGuild === null) return;
-    const nextElo = prompt('ELO дуэлей', String(registration.elo || 0));
-    if (nextElo === null) return;
-    const nextMmr = prompt('Best MMR PvP (MMR20)', String(registration.mmr20 || 0));
-    if (nextMmr === null) return;
-    const nextBounty = prompt('Bounty', String(registration.bounty || 0));
-    if (nextBounty === null) return;
-    const nextOuter = prompt('Outer Heroic', String(registration.outerHeroic || 0));
-    if (nextOuter === null) return;
-    const nextInner = prompt('Inner Heroic', String(registration.innerHeroic || 0));
-    if (nextInner === null) return;
-    const nextCrimson = prompt('Crimson Sands', String(registration.crimsonSands || 0));
-    if (nextCrimson === null) return;
-    const nextAbyss = prompt('Abyss', String(registration.abyss || 0));
-    if (nextAbyss === null) return;
-    const nextGvg = prompt('GVG', String(registration.gvg || 0));
-    if (nextGvg === null) return;
-    const nextSecretRealm = prompt('Secret Realm', String(registration.secretRealm || 0));
-    if (nextSecretRealm === null) return;
+  const openEditor = (registration: Registration) => {
+    setEditingRegistration(registration);
+    setEditDraft(toEditDraft(registration));
+    setEditError(null);
+  };
+
+  const closeEditor = () => {
+    if (updateRegistrationStats.isPending) {
+      return;
+    }
+
+    setEditingRegistration(null);
+    setEditDraft(null);
+    setEditError(null);
+  };
+
+  const updateDraftField = (key: keyof EditableRegistrationDraft, value: string) => {
+    setEditDraft((current) => {
+      if (!current) return current;
+      return {
+        ...current,
+        [key]: value,
+      };
+    });
+  };
+
+  const saveEditor = async () => {
+    if (!editingRegistration || !editDraft) {
+      return;
+    }
 
     try {
+      setEditError(null);
       await updateRegistrationStats.mutateAsync({
-          nickname: registration.nickname,
-          className: nextClass.trim(),
-          guild: nextGuild.trim(),
-          elo: Number(nextElo) || 0,
-          mmr20: Number(nextMmr) || 0,
-          bounty: Number(nextBounty) || 0,
-          outerHeroic: Number(nextOuter) || 0,
-          innerHeroic: Number(nextInner) || 0,
-          crimsonSands: Number(nextCrimson) || 0,
-          abyss: Number(nextAbyss) || 0,
-          gvg: Number(nextGvg) || 0,
-          secretRealm: Number(nextSecretRealm) || 0,
+        nickname: editingRegistration.nickname,
+        className: editDraft.className.trim(),
+        guild: editDraft.guild.trim(),
+        elo: normalizeNumberInput(editDraft.elo),
+        mmr20: normalizeNumberInput(editDraft.mmr20),
+        bounty: normalizeNumberInput(editDraft.bounty),
+        outerHeroic: normalizeNumberInput(editDraft.outerHeroic),
+        innerHeroic: normalizeNumberInput(editDraft.innerHeroic),
+        crimsonSands: normalizeNumberInput(editDraft.crimsonSands),
+        abyss: normalizeNumberInput(editDraft.abyss),
+        gvg: normalizeNumberInput(editDraft.gvg),
+        secretRealm: normalizeNumberInput(editDraft.secretRealm),
       });
 
+      closeEditor();
       onRefresh?.();
     } catch (error) {
-      alert(handleApiError(error));
+      setEditError(handleApiError(error));
     }
   };
 
@@ -210,7 +281,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
                 </td>
                 {canSeeFullStats && (
                   <td>
-                    <button type="button" className="btn-secondary px-3 py-2 text-xs" onClick={() => editStats(registration)}>
+                    <button type="button" className="btn-secondary px-3 py-2 text-xs" onClick={() => openEditor(registration)}>
                       Изменить
                     </button>
                   </td>
@@ -289,13 +360,98 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
             </div>
 
             {canSeeFullStats && (
-              <button type="button" className="btn-secondary w-full py-3" onClick={() => editStats(registration)}>
+              <button type="button" className="btn-secondary w-full py-3" onClick={() => openEditor(registration)}>
                 Изменить запись
               </button>
             )}
           </div>
         ))}
       </div>
+
+      {canSeeFullStats && editingRegistration && editDraft && (
+        <div className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center px-4 py-8" onClick={closeEditor}>
+          <div className="card w-full max-w-4xl p-6 md:p-8 max-h-[90vh] overflow-auto" onClick={(event) => event.stopPropagation()}>
+            <div className="flex items-start justify-between gap-4 mb-6">
+              <div>
+                <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5]">Редактирование записи</h3>
+                <p className="text-sm text-gray-400 mt-2">
+                  {editingRegistration.nickname} · {editingRegistration.discord || 'Без Discord ID'}
+                </p>
+              </div>
+              <button
+                type="button"
+                className="dc-icon-btn p-2.5 rounded-xl"
+                onClick={closeEditor}
+                disabled={updateRegistrationStats.isPending}
+                title="Закрыть"
+              >
+                <WuxiaIcon name="x" className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <label className="space-y-2 text-sm">
+                <span className="text-gray-400">Класс</span>
+                <input
+                  value={editDraft.className}
+                  onChange={(event) => updateDraftField('className', event.target.value)}
+                  className="input-field w-full"
+                  placeholder="Класс"
+                />
+              </label>
+              <label className="space-y-2 text-sm">
+                <span className="text-gray-400">Клан</span>
+                <input
+                  value={editDraft.guild}
+                  onChange={(event) => updateDraftField('guild', event.target.value)}
+                  className="input-field w-full"
+                  placeholder="Клан"
+                />
+              </label>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {editableNumericFields.map((field) => (
+                <label key={field.key} className="space-y-2 text-sm">
+                  <span className="text-gray-400">{field.label}</span>
+                  <input
+                    type="number"
+                    value={editDraft[field.key]}
+                    onChange={(event) => updateDraftField(field.key, event.target.value)}
+                    className="input-field w-full"
+                  />
+                </label>
+              ))}
+            </div>
+
+            {editError && (
+              <div className="mt-6 text-sm text-red-300 bg-red-900/20 border border-red-900/40 rounded-xl p-4">
+                <WuxiaIcon name="alertTriangle" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                {editError}
+              </div>
+            )}
+
+            <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:justify-end">
+              <button
+                type="button"
+                className="btn-secondary px-5 py-3"
+                onClick={closeEditor}
+                disabled={updateRegistrationStats.isPending}
+              >
+                Отмена
+              </button>
+              <button
+                type="button"
+                className="btn-primary px-5 py-3"
+                onClick={() => void saveEditor()}
+                disabled={updateRegistrationStats.isPending}
+              >
+                {updateRegistrationStats.isPending ? 'Сохраняем...' : 'Сохранить'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

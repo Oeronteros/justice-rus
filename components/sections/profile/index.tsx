@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import type { PortalAccount, User, UserRole } from '@/types';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { SectionHero } from '@/components/shared/SectionHero';
-import { canAssignRoles, canManageAccounts } from '@/lib/authz';
+import { canAssignRoles, canManageAccounts, roleOrder } from '@/lib/authz';
+import { roleExplainerRows, roleLabels } from '@/lib/roles';
 import { useAccounts, useUpdateAccount } from '@/lib/hooks/useAccounts';
 import { useKnownClasses } from '@/lib/hooks/useKnownClasses';
 import { useRegistrations, useUpdateRegistrationStats } from '@/lib/hooks/useRegistrations';
@@ -37,6 +38,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [profileDraft, setProfileDraft] = useState({
     className: '',
+    guild: '',
     mmr20: 0,
     outerHeroic: 0,
     innerHeroic: 0,
@@ -47,14 +49,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
   });
   const [profileNotice, setProfileNotice] = useState<string | null>(null);
 
-  const roleOptions: UserRole[] = ['guest', 'member', 'officer', 'head', 'sysadmin'];
-  const roleLabels: Record<UserRole, string> = {
-    guest: 'Гость',
-    member: 'Член',
-    officer: 'Офицер',
-    head: 'Глава',
-    sysadmin: 'Сис.Админ',
-  };
+  const roleOptions: UserRole[] = [...roleOrder];
 
   const profileRegistration = useMemo(
     () => roster.find((item) => item.nickname.toLowerCase() === (user.nickname || '').toLowerCase()),
@@ -95,6 +90,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
   useEffect(() => {
     setProfileDraft({
       className: profileRegistration?.class || user.className || '',
+      guild: profileRegistration?.guild || '',
       mmr20: profileRegistration?.mmr20 || 0,
       outerHeroic: profileRegistration?.outerHeroic || 0,
       innerHeroic: profileRegistration?.innerHeroic || 0,
@@ -134,6 +130,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
       await updateRegistrationStatsMutation.mutateAsync({
         nickname: user.nickname,
         className: profileDraft.className,
+        guild: profileDraft.guild.trim(),
         mmr20: Number(profileDraft.mmr20) || 0,
         outerHeroic: Number(profileDraft.outerHeroic) || 0,
         innerHeroic: Number(profileDraft.innerHeroic) || 0,
@@ -161,7 +158,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
 
         <div className="card p-6">
           <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-2">Профиль</div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm">
             <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
               <div className="text-gray-400 mb-1">Ник</div>
               <div className="text-[#e6eff5] font-medium">{user.nickname || '—'}</div>
@@ -171,6 +168,10 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
               <div className="text-[#e6eff5] font-medium">{profileRegistration?.class || user.className || '—'}</div>
             </div>
             <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+              <div className="text-gray-400 mb-1">Клан</div>
+              <div className="text-[#e6eff5] font-medium">{profileRegistration?.guild || '—'}</div>
+            </div>
+            <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
               <div className="text-gray-400 mb-1">Роль</div>
               <div className="text-[#e6eff5] font-medium">{roleLabels[user.role]}</div>
             </div>
@@ -178,6 +179,50 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
               <div className="text-gray-400 mb-1">Статус</div>
               <div className="text-[#e6eff5] font-medium">{user.isActive ? 'active' : 'inactive'}</div>
             </div>
+          </div>
+        </div>
+
+        <div className="card p-6 space-y-5">
+          <div>
+            <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-2">Роли и доступ</div>
+            <div className="text-gray-400 text-sm">
+              Актуальные права по текущей иерархии: guest - member - officer - head - sysadmin.
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 text-sm">
+            {roleExplainerRows.map((entry) => {
+              const isCurrentRole = entry.role === user.role;
+
+              return (
+                <article
+                  key={entry.role}
+                  className={`rounded-2xl border p-4 space-y-3 ${
+                    isCurrentRole
+                      ? 'border-[#2f6e8d]/70 bg-[#163042]/45'
+                      : 'border-[#2a3c4c]/60 bg-[#101a23]/65'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[#e6eff5] font-semibold">{entry.label}</span>
+                    {isCurrentRole && (
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-[#8fb9cc]">Твоя роль</span>
+                    )}
+                  </div>
+
+                  <p className="text-gray-300 text-xs leading-relaxed">{entry.summary}</p>
+
+                  <div className="space-y-2">
+                    {entry.capabilities.map((capability) => (
+                      <div key={capability} className="flex items-start gap-2 text-xs text-[#c8dce8]">
+                        <span className="mt-1 inline-flex h-1.5 w-1.5 rounded-full bg-[#8fb9cc] shrink-0" />
+                        <span>{capability}</span>
+                      </div>
+                    ))}
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </div>
 
@@ -235,7 +280,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <label className="space-y-2">
               <span className="text-gray-400">Класс</span>
               <select
@@ -248,6 +293,16 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
                   <option key={className} value={className}>{className}</option>
                 ))}
               </select>
+            </label>
+            <label className="space-y-2">
+              <span className="text-gray-400">Клан</span>
+              <input
+                type="text"
+                value={profileDraft.guild}
+                onChange={(e) => setProfileDraft((prev) => ({ ...prev, guild: e.target.value }))}
+                className="input-field w-full"
+                placeholder="Название клана"
+              />
             </label>
             <label className="space-y-2">
               <span className="text-gray-400">Best MMR</span>
