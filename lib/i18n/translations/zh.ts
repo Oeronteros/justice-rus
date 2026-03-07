@@ -21,7 +21,7 @@ export const zh: Translations = {
     absences: '请假',
     help: '求助',
     about: '关于',
-    calculator: '计算器',
+    calculator: 'DPS 计算器',
     profile: '个人页',
     logout: '退出',
   },

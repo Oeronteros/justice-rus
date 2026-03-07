@@ -39,6 +39,7 @@ export default function Header({
   onLanguageChange,
 }: HeaderProps) {
   const [headerCompact, setHeaderCompact] = useState(false);
+  const [marchThemeEnabled, setMarchThemeEnabled] = useState(false);
 
   const handleRefresh = () => {
     window.location.reload();
@@ -70,6 +71,22 @@ export default function Header({
     };
   }, []);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const stored = window.localStorage.getItem('theme-march-8');
+    if (stored === '1') {
+      setMarchThemeEnabled(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    document.body.classList.toggle('theme-march8', marchThemeEnabled);
+    window.localStorage.setItem('theme-march-8', marchThemeEnabled ? '1' : '0');
+  }, [marchThemeEnabled]);
+
   const labels = useMemo(() => {
     if (language === 'ru') {
       return {
@@ -83,10 +100,11 @@ export default function Header({
         guides: 'Гайды',
         help: 'Помощь',
         absences: 'Отсутствия',
-        calculator: 'Калькулятор',
+        calculator: 'Калькулятор DPS',
         profile: 'Кабинет',
         refresh: 'Обновить данные',
         logout: 'Выйти',
+        marchTheme: '8 Марта',
       };
     }
 
@@ -102,10 +120,11 @@ export default function Header({
         guides: '攻略',
         help: '求助',
         absences: '请假',
-        calculator: '计算器',
+        calculator: 'DPS 计算器',
         profile: '个人页',
         refresh: '刷新数据',
         logout: '退出',
+        marchTheme: '3月8日',
       };
     }
 
@@ -120,10 +139,11 @@ export default function Header({
       guides: 'Guides',
       help: 'Help',
       absences: 'Absences',
-      calculator: 'Calculator',
+      calculator: 'DPS Calculator',
       profile: 'Profile',
       refresh: 'Refresh data',
       logout: 'Logout',
+      marchTheme: 'March 8',
     };
   }, [language]);
 
@@ -186,6 +206,15 @@ export default function Header({
               <option value="en">EN</option>
               <option value="zh">简体中文</option>
             </select>
+
+            <button
+              type="button"
+              onClick={() => setMarchThemeEnabled((value) => !value)}
+              className={`dc-season-badge rounded-xl px-4 py-2 text-sm font-medium transition-all ${marchThemeEnabled ? 'border-[#f6b7c8]/70 text-[#ffeaf0]' : ''}`}
+              title={labels.marchTheme}
+            >
+              {labels.marchTheme}
+            </button>
 
             <button
               onClick={handleRefresh}

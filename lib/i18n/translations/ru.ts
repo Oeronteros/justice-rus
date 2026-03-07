@@ -19,7 +19,7 @@ export const ru = {
     absences: 'Отсутствия',
     help: 'Помощь',
     about: 'О нас',
-    calculator: 'Калькулятор',
+    calculator: 'Калькулятор DPS',
     profile: 'Кабинет',
     logout: 'Выход',
   },

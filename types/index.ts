@@ -35,6 +35,7 @@ export interface PortalAccount {
 
 export interface Registration {
   discord: string;
+  avatarUrl?: string | null;
   nickname: string;
   rank: RegistrationRank;
   class: string;

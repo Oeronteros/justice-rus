@@ -48,11 +48,17 @@ export default function CalculatorPage() {
   const copy = useMemo(() => {
     if (language === 'ru') {
       return {
-        title: 'Калькулятор билдов',
-        subtitle: 'Сравнивай средний удар, DPS и урон за бой. Удобно для подготовки к рейдам и PvP.',
+        title: 'Калькулятор DPS',
+        subtitle: 'Сравнивай ротации, средний удар и итоговый урон без лишней абстракции от остальных вкладок.',
         upTo: 'До 4 билдов для сравнения.',
         addBuild: 'Добавить билд',
         removeBuild: 'Удалить билд',
+        commandDeck: 'Боевой стол',
+        commandDeckHint: 'Сверяй скорость, криты и итоговый ДПС прямо в одном экране.',
+        bestSetup: 'Лучший текущий DPS',
+        bestSetupHint: 'Подсвечивается билд с наибольшим уроном в секунду.',
+        battleWindow: 'Окно боя',
+        battleWindowHint: 'Total Damage учитывает длительность боя, поэтому удобно тестировать burst и sustained.',
         baseDamage: 'Базовый урон',
         flatDamage: 'Плоский бонус',
         attackSpeed: 'Скорость атак (уд/с)',
@@ -69,11 +75,17 @@ export default function CalculatorPage() {
 
     if (language === 'zh') {
       return {
-        title: '配装计算器',
-        subtitle: '对比平均单击、DPS 与总伤，快速确定团本与 PvP 的最优方案。',
+        title: 'DPS 计算器',
+        subtitle: '直接对比循环、平均单击与总伤，不再显得像独立于其他页面的抽象工具。',
         upTo: '最多可对比 4 套配置。',
         addBuild: '新增配置',
         removeBuild: '删除配置',
+        commandDeck: '战斗台',
+        commandDeckHint: '在一个界面里对比攻速、暴击与最终 DPS。',
+        bestSetup: '当前最高 DPS',
+        bestSetupHint: '会高亮当前 DPS 最高的配置。',
+        battleWindow: '战斗时窗',
+        battleWindowHint: 'Total Damage 会结合战斗时长，适合测试 burst 与持续输出。',
         baseDamage: '基础伤害',
         flatDamage: '固定加成',
         attackSpeed: '攻速（次/秒）',
@@ -89,11 +101,17 @@ export default function CalculatorPage() {
     }
 
     return {
-      title: 'Build Calculator',
-      subtitle: 'Compare average hit, DPS, and total damage to choose the most reliable setup for raids and PvP.',
+      title: 'DPS Calculator',
+      subtitle: 'Compare rotations, average hit, and total damage in a page that feels like part of the combat toolkit.',
       upTo: 'Up to 4 builds for comparison.',
       addBuild: 'Add build',
       removeBuild: 'Remove build',
+      commandDeck: 'Combat Desk',
+      commandDeckHint: 'Match attack speed, crits, and final DPS in one focused workspace.',
+      bestSetup: 'Highest current DPS',
+      bestSetupHint: 'The build with the best DPS is highlighted automatically.',
+      battleWindow: 'Fight Window',
+      battleWindowHint: 'Total damage uses fight duration, so it works for burst and sustained checks.',
       baseDamage: 'Base damage',
       flatDamage: 'Flat bonus damage',
       attackSpeed: 'Attack speed (hits/s)',
@@ -145,6 +163,8 @@ export default function CalculatorPage() {
     });
   }, [builds]);
 
+  const topDps = useMemo(() => results.reduce((best, current) => Math.max(best, current.dps), 0), [results]);
+
   return (
     <section className="py-10">
       <div className="container mx-auto px-4 max-w-6xl">
@@ -152,33 +172,69 @@ export default function CalculatorPage() {
           icon={<WuxiaIcon name="calculator" className="w-5 h-5" />}
           title={copy.title}
           subtitle={copy.subtitle}
+          eyebrow={copy.commandDeck}
           chips={['DPS', 'Raid Prep', 'PvP Tuning']}
         />
 
-        <div className="flex items-center justify-between mb-6">
-          <div className="text-gray-400 text-sm">{copy.upTo}</div>
-          <button
-            onClick={addBuild}
-            className="btn-secondary px-4 py-2 text-sm font-semibold"
-          >
-            <WuxiaIcon name="plus" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
-            {copy.addBuild}
-          </button>
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.75fr)] gap-6 mb-8">
+          <div className="card p-6 md:p-7">
+            <div className="text-xs uppercase tracking-[0.24em] text-[#9ec5d8] mb-3">{copy.commandDeck}</div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="rounded-2xl border border-[#2a3c4c]/60 bg-[#0c151d]/80 p-4">
+                <div className="text-[#e6eff5] font-semibold mb-1">{copy.upTo}</div>
+                <div className="text-gray-400">{copy.commandDeckHint}</div>
+              </div>
+              <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4">
+                <div className="text-emerald-200 font-semibold mb-1">{copy.bestSetup}</div>
+                <div className="text-2xl font-orbitron text-emerald-300">{topDps ? topDps.toFixed(2) : '0.00'}</div>
+                <div className="mt-1 text-emerald-100/70">{copy.bestSetupHint}</div>
+              </div>
+              <div className="rounded-2xl border border-[#2a3c4c]/60 bg-[#0c151d]/80 p-4">
+                <div className="text-[#e6eff5] font-semibold mb-1">{copy.battleWindow}</div>
+                <div className="text-gray-400">{copy.battleWindowHint}</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="card p-6 flex flex-col justify-between gap-4">
+            <div>
+              <div className="text-xs uppercase tracking-[0.24em] text-[#9ec5d8] mb-3">DPS Formula</div>
+              <div className="rounded-2xl border border-[#2a3c4c]/60 bg-[#0c151d]/85 p-4 text-sm text-gray-300 leading-relaxed">
+                {copy.formula}
+              </div>
+            </div>
+
+            <button
+              onClick={addBuild}
+              className="btn-secondary px-4 py-3 text-sm font-semibold"
+            >
+              <WuxiaIcon name="plus" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+              {copy.addBuild}
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {builds.map((build, index) => (
-            <div key={`${build.name}-${index}`} className="card p-8">
+            <div
+              key={`${build.name}-${index}`}
+              className={`card p-8 ${results[index].dps > 0 && results[index].dps === topDps ? 'border-emerald-400/45 shadow-[0_28px_60px_rgba(16,185,129,0.16)]' : ''}`}
+            >
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-r from-[#2f6e8d] to-[#8fb9cc] rounded-full flex items-center justify-center shadow-lg shadow-[#0c1a24]/40">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg shadow-[#0c1a24]/40 ${results[index].dps > 0 && results[index].dps === topDps ? 'bg-gradient-to-r from-emerald-500 to-teal-300' : 'bg-gradient-to-r from-[#2f6e8d] to-[#8fb9cc]'}`}>
                     <WuxiaIcon name="sword" className="w-6 h-6 text-white" />
                   </div>
-                  <input
-                    value={build.name}
-                    onChange={(e) => updateBuild(index, 'name', e.target.value)}
-                    className="bg-transparent text-2xl font-bold font-orbitron text-[#8fb9cc] focus:outline-none"
-                  />
+                  <div>
+                    <input
+                      value={build.name}
+                      onChange={(e) => updateBuild(index, 'name', e.target.value)}
+                      className="bg-transparent text-2xl font-bold font-orbitron text-[#8fb9cc] focus:outline-none"
+                    />
+                    {results[index].dps > 0 && results[index].dps === topDps ? (
+                      <div className="mt-1 text-xs uppercase tracking-[0.24em] text-emerald-300">Top DPS</div>
+                    ) : null}
+                  </div>
                 </div>
                 {builds.length > 1 && (
                     <button
@@ -294,9 +350,6 @@ export default function CalculatorPage() {
           ))}
         </div>
 
-        <div className="mt-10 text-center text-gray-500 text-sm leading-relaxed">
-          {copy.formula}
-        </div>
       </div>
     </section>
   );

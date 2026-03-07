@@ -6,10 +6,22 @@ import WuxiaIcon from '@/components/WuxiaIcons';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { canAssignRoles, canManageAccounts } from '@/lib/authz';
 import { useKnownClasses } from '@/lib/hooks/useKnownClasses';
+import { getKPIClass } from '@/lib/utils';
 
 interface ProfileSectionProps {
   user: User;
 }
+
+type ActivityKey = 'outerHeroic' | 'innerHeroic' | 'crimsonSands' | 'abyss' | 'gvg' | 'secretRealm';
+
+const activityLabels: Array<{ key: ActivityKey; label: string }> = [
+  { key: 'outerHeroic', label: 'Outer Heroic' },
+  { key: 'innerHeroic', label: 'Inner Heroic' },
+  { key: 'crimsonSands', label: 'Crimson Sands' },
+  { key: 'abyss', label: 'Abyss' },
+  { key: 'gvg', label: 'GVG' },
+  { key: 'secretRealm', label: 'Secret Realm' },
+];
 
 export default function ProfileSection({ user }: ProfileSectionProps) {
   const isAdmin = canManageAccounts(user.role);
@@ -54,6 +66,18 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
     }
     return [...values].sort((a, b) => a.localeCompare(b, 'ru'));
   }, [knownClasses, profileDraft.className]);
+
+  const profileKpiClass = useMemo(() => getKPIClass(profileRegistration?.kpi ?? 0), [profileRegistration?.kpi]);
+
+  const profileKpiTone = useMemo(() => {
+    if (profileKpiClass === 'kpi-good') {
+      return 'border-green-500/35 bg-green-500/12 text-green-300';
+    }
+    if (profileKpiClass === 'kpi-medium') {
+      return 'border-yellow-500/35 bg-yellow-500/12 text-yellow-300';
+    }
+    return 'border-red-500/35 bg-red-500/12 text-red-300';
+  }, [profileKpiClass]);
 
   useEffect(() => {
     setProfileDraft({
@@ -246,9 +270,9 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
           )}
 
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 text-sm">
-            <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+            <div className={`p-4 rounded-xl border ${profileKpiTone}`}>
               <div className="text-gray-400 mb-1">KPI</div>
-              <div className="text-[#e6eff5] font-medium">{profileRegistration?.kpi ?? 0}</div>
+              <div className={`font-medium ${profileKpiClass}`}>{profileRegistration?.kpi ?? 0}</div>
             </div>
             <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
               <div className="text-gray-400 mb-1">ELO</div>
@@ -299,60 +323,46 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
                 className="input-field w-full"
               />
             </label>
-            <label className="space-y-2">
-              <span className="text-gray-400">Outer Heroic</span>
-              <input
-                type="number"
-                value={profileDraft.outerHeroic}
-                onChange={(e) => setProfileDraft((prev) => ({ ...prev, outerHeroic: Number(e.target.value) || 0 }))}
-                className="input-field w-full"
-              />
-            </label>
-            <label className="space-y-2">
-              <span className="text-gray-400">Inner Heroic</span>
-              <input
-                type="number"
-                value={profileDraft.innerHeroic}
-                onChange={(e) => setProfileDraft((prev) => ({ ...prev, innerHeroic: Number(e.target.value) || 0 }))}
-                className="input-field w-full"
-              />
-            </label>
-            <label className="space-y-2">
-              <span className="text-gray-400">Crimson Sands</span>
-              <input
-                type="number"
-                value={profileDraft.crimsonSands}
-                onChange={(e) => setProfileDraft((prev) => ({ ...prev, crimsonSands: Number(e.target.value) || 0 }))}
-                className="input-field w-full"
-              />
-            </label>
-            <label className="space-y-2">
-              <span className="text-gray-400">Abyss</span>
-              <input
-                type="number"
-                value={profileDraft.abyss}
-                onChange={(e) => setProfileDraft((prev) => ({ ...prev, abyss: Number(e.target.value) || 0 }))}
-                className="input-field w-full"
-              />
-            </label>
-            <label className="space-y-2">
-              <span className="text-gray-400">GVG</span>
-              <input
-                type="number"
-                value={profileDraft.gvg}
-                onChange={(e) => setProfileDraft((prev) => ({ ...prev, gvg: Number(e.target.value) || 0 }))}
-                className="input-field w-full"
-              />
-            </label>
-            <label className="space-y-2">
-              <span className="text-gray-400">Secret Realm</span>
-              <input
-                type="number"
-                value={profileDraft.secretRealm}
-                onChange={(e) => setProfileDraft((prev) => ({ ...prev, secretRealm: Number(e.target.value) || 0 }))}
-                className="input-field w-full"
-              />
-            </label>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 text-sm">
+            {activityLabels.map(({ key, label }) => {
+              const isMarked = (profileDraft[key] || 0) > 0;
+
+              return (
+                <div key={key} className="rounded-2xl border border-[#2a3c4c]/60 bg-[#101a23]/70 p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <div className="text-[#e6eff5] font-medium">{label}</div>
+                      <div className="mt-1 text-xs text-gray-400">
+                        Переключатель отметки: красный - нет, зелёный - да.
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={isMarked}
+                      onClick={() =>
+                        setProfileDraft((prev) => ({
+                          ...prev,
+                          [key]: prev[key] > 0 ? 0 : 1,
+                        }))
+                      }
+                      className={`relative inline-flex h-8 w-16 items-center rounded-full border transition-colors duration-200 ${
+                        isMarked
+                          ? 'border-green-400/60 bg-green-500/80 justify-end'
+                          : 'border-red-400/50 bg-red-500/75 justify-start'
+                      }`}
+                    >
+                      <span className="mx-1 inline-flex h-6 w-6 rounded-full bg-white/95 shadow-[0_6px_14px_rgba(0,0,0,0.28)]" />
+                    </button>
+                  </div>
+                  <div className={`mt-4 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${isMarked ? 'bg-green-500/15 text-green-300' : 'bg-red-500/15 text-red-200'}`}>
+                    {isMarked ? 'Отмечено' : 'Не отмечено'}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 

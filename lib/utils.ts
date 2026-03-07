@@ -67,8 +67,8 @@ export function getStatusClass(status: string): string {
 
 export function getKPIClass(kpi: number | string): string {
   const kpiNum = typeof kpi === 'string' ? parseInt(kpi) || 0 : kpi;
-  if (kpiNum >= 80) return 'kpi-good';
-  if (kpiNum >= 50) return 'kpi-medium';
+  if (kpiNum > 6) return 'kpi-good';
+  if (kpiNum >= 3) return 'kpi-medium';
   return 'kpi-bad';
 }
 

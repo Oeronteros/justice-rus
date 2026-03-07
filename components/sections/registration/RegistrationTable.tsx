@@ -28,6 +28,42 @@ const statusLabels: Record<string, string> = {
   leave: 'Отгул',
 };
 
+function getAvatarInitials(registration: Registration) {
+  const base = registration.nickname || registration.discord || 'SM';
+  return base
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join('') || 'SM';
+}
+
+function RegistrationIdentity({ registration, compact = false }: { registration: Registration; compact?: boolean }) {
+  const initials = getAvatarInitials(registration);
+  const sizeClass = compact ? 'h-11 w-11 text-xs' : 'h-9 w-9 text-[11px]';
+
+  return (
+    <div className="flex items-center gap-3 min-w-0">
+      {registration.avatarUrl ? (
+        <img
+          src={registration.avatarUrl}
+          alt={registration.nickname || registration.discord || 'Avatar'}
+          className={`${sizeClass} rounded-full border border-[#385264] object-cover bg-[#0c151d] shrink-0`}
+        />
+      ) : (
+        <div className={`${sizeClass} rounded-full border border-[#385264] bg-gradient-to-br from-[#223544] to-[#4a90b0] text-[#f7fbff] font-semibold shrink-0 grid place-items-center`}>
+          {initials}
+        </div>
+      )}
+
+      <div className="min-w-0">
+        <div className="font-medium truncate">{registration.discord || 'Без Discord ID'}</div>
+        <div className="text-xs text-gray-400 truncate">{registration.nickname}</div>
+      </div>
+    </div>
+  );
+}
+
 function renderActivityValue(value: number) {
   if (value <= 0) {
     return '—';
@@ -56,6 +92,8 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
   const editStats = async (registration: Registration) => {
     const nextClass = prompt('Класс', registration.class || '');
     if (nextClass === null) return;
+    const nextGuild = prompt('Клан', registration.guild || '');
+    if (nextGuild === null) return;
     const nextElo = prompt('ELO дуэлей', String(registration.elo || 0));
     if (nextElo === null) return;
     const nextMmr = prompt('Best MMR PvP (MMR20)', String(registration.mmr20 || 0));
@@ -83,6 +121,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
         body: JSON.stringify({
           nickname: registration.nickname,
           className: nextClass.trim(),
+          guild: nextGuild.trim(),
           elo: Number(nextElo) || 0,
           mmr20: Number(nextMmr) || 0,
           bounty: Number(nextBounty) || 0,
@@ -149,7 +188,9 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
             {registrations.map((registration, index) => (
               <tr key={`${registration.nickname}-${registration.discord || index}`} className="hover:bg-gray-800/50">
                 <td className="text-red-400 font-medium">#{index + 1}</td>
-                <td className="font-medium">{registration.discord}</td>
+                <td className="min-w-[220px]">
+                  <RegistrationIdentity registration={registration} />
+                </td>
                 <td className="font-medium">{registration.nickname}</td>
                 <td>
                   <span className={`px-3 py-1 rounded-full text-xs ${getRankClass(registration.rank)}`}>
@@ -191,10 +232,13 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
         {registrations.map((registration, index) => (
           <div key={`${registration.nickname}-${registration.discord || index}`} className="rounded-2xl border border-[#2a3c4c]/60 bg-[#101a23]/60 p-5 space-y-4">
             <div className="flex items-start justify-between gap-3">
-              <div>
+              <div className="flex items-start gap-3 min-w-0">
+                <RegistrationIdentity registration={registration} compact />
+                <div className="min-w-0">
                 <div className="text-xs uppercase tracking-[0.18em] text-[#9ec5d8] mb-1">#{index + 1}</div>
                 <div className="text-lg font-semibold text-[#e6eff5]">{registration.nickname}</div>
-                <div className="text-sm text-gray-400 mt-1">{registration.discord || 'Без Discord ID'}</div>
+                  <div className="text-sm text-gray-400 mt-1 truncate">{registration.discord || 'Без Discord ID'}</div>
+                </div>
               </div>
               <span className={`px-3 py-1 rounded-full text-xs ${getRankClass(registration.rank)}`}>
                 {rankLabels[registration.rank] || registration.rank}

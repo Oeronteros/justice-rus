@@ -21,7 +21,7 @@ export const en: Translations = {
     absences: 'Absences',
     help: 'Help',
     about: 'About',
-    calculator: 'Calculator',
+    calculator: 'DPS Calculator',
     profile: 'Profile',
     logout: 'Logout',
   },

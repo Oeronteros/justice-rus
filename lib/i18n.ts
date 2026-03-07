@@ -12,7 +12,7 @@ export const sectionLabels: Record<Language, Record<Section, string>> = {
     absences: 'Отсутствия',
     help: 'Помощь',
     about: 'О нас',
-    calculator: 'Калькулятор',
+    calculator: 'Калькулятор DPS',
     profile: 'Кабинет',
   },
   en: {
@@ -24,7 +24,7 @@ export const sectionLabels: Record<Language, Record<Section, string>> = {
     absences: 'Absences',
     help: 'Help',
     about: 'About',
-    calculator: 'Calculator',
+    calculator: 'DPS Calculator',
     profile: 'Profile',
   },
   zh: {
@@ -36,7 +36,7 @@ export const sectionLabels: Record<Language, Record<Section, string>> = {
     absences: '请假',
     help: '求助',
     about: '关于',
-    calculator: '计算器',
+    calculator: 'DPS 计算器',
     profile: '个人页',
   },
 };

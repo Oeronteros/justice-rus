@@ -18,6 +18,7 @@ const bypassHeader: Record<string, string> =
 const updateStatsSchema = z.object({
   nickname: z.string().trim().min(1),
   className: z.string().trim().min(1).max(100).optional(),
+  guild: z.string().trim().max(120).optional(),
   elo: z.number().optional(),
   mmr20: z.number().optional(),
   bounty: z.number().optional(),
@@ -31,6 +32,7 @@ const updateStatsSchema = z.object({
 
 type RegistrationRow = {
   discord: string;
+  avatarUrl: string | null;
   nickname: string;
   rank: string;
   class: string;
@@ -55,6 +57,7 @@ type PortalOnlyRow = {
   id: number | string;
   nickname: string;
   class_name: string | null;
+  guild_name?: string | null;
   role: string;
   is_active: boolean;
   created_at: Date | string;
@@ -296,6 +299,7 @@ async function getPortalOnlyRows(
         pa.id,
         pa.nickname,
         pa.class_name,
+        pa.guild_name,
         pa.role,
         pa.is_active,
         pa.created_at,
@@ -319,10 +323,11 @@ async function getPortalOnlyRows(
 
   return result.rows.map((row) => ({
     discord: portalStatsDiscordId(row.id),
+    avatarUrl: null,
     nickname: String(row.nickname || ''),
     rank: String(row.role || 'guest'),
     class: String(row.class_name || ''),
-    guild: '',
+    guild: String(row.guild_name || ''),
     joinDate: isoDate(row.created_at),
     elo: numericValue(row.duel_rating),
     mmr20: numericValue(row.best_mmr),
@@ -357,6 +362,7 @@ async function getRegistrationsFromDb() {
   const nickCol = pick(registrationColumns, 'nick', 'nickname');
   const classCol = pick(registrationColumns, 'class_name', 'class');
   const guildCol = pick(registrationColumns, 'guild_name', 'guild');
+  const avatarCol = pick(registrationColumns, 'avatar_url', 'profile_image', 'image_url');
   const joinCol = pick(registrationColumns, 'created_at', 'join_date', 'joined_at');
 
   if (!nickCol) {
@@ -405,9 +411,10 @@ async function getRegistrationsFromDb() {
   const query = `
     SELECT
       ${discordCol ? `COALESCE(r.${discordCol}, '') AS discord,` : `'' AS discord,`}
+      ${avatarCol ? `NULLIF(r.${avatarCol}, '') AS avatar_url,` : `NULL AS avatar_url,`}
       r.${nickCol} AS nickname,
       ${classCol ? `COALESCE(NULLIF(r.${classCol}, ''), a.class_name, '') AS class_name,` : `COALESCE(a.class_name, '') AS class_name,`}
-      ${guildCol ? `COALESCE(r.${guildCol}, '') AS guild_name,` : `'' AS guild_name,`}
+      ${guildCol ? `COALESCE(NULLIF(r.${guildCol}, ''), a.guild_name, '') AS guild_name,` : `COALESCE(a.guild_name, '') AS guild_name,`}
       ${joinCol ? `r.${joinCol} AS join_date,` : `NOW() AS join_date,`}
       COALESCE(a.role, 'guest') AS role,
       CASE WHEN a.is_active IS FALSE THEN 'inactive' ELSE 'active' END AS account_status,
@@ -433,6 +440,7 @@ async function getRegistrationsFromDb() {
 
   const baseRows: RegistrationRow[] = result.rows.map((row) => ({
     discord: String(row.discord || ''),
+    avatarUrl: typeof row.avatar_url === 'string' && row.avatar_url.trim() ? String(row.avatar_url) : null,
     nickname: String(row.nickname || ''),
     rank: String(row.role || 'guest'),
     class: String(row.class_name || ''),
@@ -467,6 +475,7 @@ async function resolveRegistrationTarget(nickname: string) {
   const nickCol = pick(registrationColumns, 'nick', 'nickname');
   const classCol = pick(registrationColumns, 'class_name', 'class');
   const discordCol = pick(registrationColumns, 'discord_login', 'discord', 'discord_id');
+  const guildCol = pick(registrationColumns, 'guild_name', 'guild');
 
   if (!nickCol) {
     throw new Error('Nickname column not found');
@@ -489,15 +498,33 @@ async function resolveRegistrationTarget(nickname: string) {
     nickCol,
     classCol,
     discordCol,
+    guildCol,
   };
 }
 
-async function updatePortalAccountClass(nickname: string, className: string) {
+async function updatePortalAccountProfile(nickname: string, next: { className?: string; guild?: string }) {
   const pool = getPool();
   await ensureAccountsSchema();
+  const updates: string[] = [];
+  const values: string[] = [nickname];
+
+  if (next.className !== undefined) {
+    values.push(next.className);
+    updates.push(`class_name = $${values.length}`);
+  }
+
+  if (next.guild !== undefined) {
+    values.push(next.guild);
+    updates.push(`guild_name = $${values.length}`);
+  }
+
+  if (updates.length === 0) {
+    return;
+  }
+
   await pool.query(
-    `UPDATE portal_account SET class_name = $2, updated_at = NOW() WHERE LOWER(nickname) = LOWER($1)`,
-    [nickname, className]
+    `UPDATE portal_account SET ${updates.join(', ')}, updated_at = NOW() WHERE LOWER(nickname) = LOWER($1)`,
+    values
   );
 }
 
@@ -615,14 +642,24 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Registration target was not found' }, { status: 404 });
     }
 
-    if (payload.className !== undefined) {
-      await updatePortalAccountClass(payload.nickname, payload.className);
+    if (payload.className !== undefined || payload.guild !== undefined) {
+      await updatePortalAccountProfile(payload.nickname, {
+        className: payload.className,
+        guild: payload.guild,
+      });
     }
 
     if (payload.className !== undefined && target.row && target.classCol) {
       await pool.query(
         `UPDATE registrations SET ${target.classCol} = $2 WHERE LOWER(${target.nickCol}) = LOWER($1)`,
         [payload.nickname, payload.className]
+      );
+    }
+
+    if (payload.guild !== undefined && target.row && target.guildCol) {
+      await pool.query(
+        `UPDATE registrations SET ${target.guildCol} = $2 WHERE LOWER(${target.nickCol}) = LOWER($1)`,
+        [payload.nickname, payload.guild]
       );
     }
 

@@ -33,6 +33,57 @@ body {
   font-family: 'Manrope', 'Noto Sans', 'Segoe UI', sans-serif;
 }
 
+.theme-wuxia.theme-march8 {
+  --wuxia-ink: #180b12;
+  --wuxia-ink-soft: #25101a;
+  --wuxia-paper: #fff1f6;
+  --wuxia-vermillion: #d95f8d;
+  --wuxia-crimson: #913858;
+  --wuxia-gold: #f7bfd1;
+  --wuxia-jade: #f6d7a8;
+  --wuxia-shadow: #1e0a14;
+  --wuxia-ice: #ffe4ee;
+  --wuxia-steel: #3e1b2c;
+  --wuxia-glass: rgba(31, 10, 20, 0.76);
+  --wuxia-line: rgba(247, 191, 209, 0.28);
+  --wuxia-glow: rgba(245, 159, 190, 0.28);
+  background:
+    radial-gradient(circle at 16% 12%, rgba(244, 170, 196, 0.22), transparent 40%),
+    radial-gradient(circle at 82% 14%, rgba(247, 215, 168, 0.16), transparent 38%),
+    linear-gradient(160deg, #180b12 0%, #25101a 54%, #15070f 100%);
+}
+
+.theme-wuxia.theme-march8 .dc-header {
+  background:
+    radial-gradient(circle at 10% 10%, rgba(245, 171, 197, 0.22), transparent 34%),
+    linear-gradient(105deg, rgba(27, 11, 18, 0.97), rgba(45, 17, 30, 0.95), rgba(27, 11, 18, 0.97));
+  border-bottom-color: rgba(229, 146, 177, 0.42);
+}
+
+.theme-wuxia.theme-march8 .portal-hero,
+.theme-wuxia.theme-march8 .card {
+  border-color: rgba(236, 160, 190, 0.34);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(245, 170, 196, 0.12), transparent 44%),
+    radial-gradient(circle at 84% 18%, rgba(247, 215, 168, 0.08), transparent 42%),
+    linear-gradient(145deg, rgba(29, 12, 20, 0.94), rgba(21, 8, 15, 0.9));
+}
+
+.theme-wuxia.theme-march8 .portal-hero-chip,
+.theme-wuxia.theme-march8 .dc-order-step.is-active,
+.theme-wuxia.theme-march8 .nav-chip.is-active,
+.theme-wuxia.theme-march8 .nav-btn.is-active {
+  border-color: rgba(246, 183, 200, 0.55);
+  background: linear-gradient(125deg, rgba(75, 26, 46, 0.88), rgba(44, 17, 30, 0.94));
+  box-shadow: 0 16px 30px rgba(17, 4, 11, 0.6), 0 0 18px rgba(244, 170, 196, 0.16);
+}
+
+.theme-wuxia.theme-march8 .dc-season-badge {
+  background: linear-gradient(120deg, rgba(76, 25, 45, 0.92), rgba(161, 73, 109, 0.75));
+  border-color: rgba(248, 198, 215, 0.48);
+  color: #fff3f8;
+}
+
 .theme-wuxia .dc-text {
   color: var(--wuxia-paper);
 }
