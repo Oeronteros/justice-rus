@@ -5,6 +5,7 @@ import type { PortalAccount, Registration, User, UserRole } from '@/types';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { canAssignRoles, canManageAccounts } from '@/lib/authz';
+import { useKnownClasses } from '@/lib/hooks/useKnownClasses';
 
 interface ProfileSectionProps {
   user: User;
@@ -13,6 +14,7 @@ interface ProfileSectionProps {
 export default function ProfileSection({ user }: ProfileSectionProps) {
   const isAdmin = canManageAccounts(user.role);
   const canChangeRoles = canAssignRoles(user.role);
+  const { data: knownClasses = [] } = useKnownClasses();
 
   const [accounts, setAccounts] = useState<PortalAccount[]>([]);
   const [roster, setRoster] = useState<Registration[]>([]);
@@ -45,6 +47,13 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
     () => roster.find((item) => item.nickname.toLowerCase() === (user.nickname || '').toLowerCase()),
     [roster, user.nickname]
   );
+  const classOptions = useMemo(() => {
+    const values = new Set(knownClasses);
+    if (profileDraft.className) {
+      values.add(profileDraft.className);
+    }
+    return [...values].sort((a, b) => a.localeCompare(b, 'ru'));
+  }, [knownClasses, profileDraft.className]);
 
   useEffect(() => {
     setProfileDraft({
@@ -270,12 +279,16 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
             <label className="space-y-2">
               <span className="text-gray-400">Класс</span>
-              <input
+              <select
                 value={profileDraft.className}
                 onChange={(e) => setProfileDraft((prev) => ({ ...prev, className: e.target.value }))}
-                className="input-field w-full"
-                placeholder="Класс"
-              />
+                className="select-field w-full"
+              >
+                <option value="">Выбери класс</option>
+                {classOptions.map((className) => (
+                  <option key={className} value={className}>{className}</option>
+                ))}
+              </select>
             </label>
             <label className="space-y-2">
               <span className="text-gray-400">Best MMR</span>

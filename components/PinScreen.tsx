@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { User } from '@/types';
 import WuxiaIcon from './WuxiaIcons';
+import { useKnownClasses } from '@/lib/hooks/useKnownClasses';
 
 interface PinScreenProps {
   onAuthSuccess: (user: User) => void;
@@ -11,6 +12,7 @@ interface PinScreenProps {
 type Mode = 'login' | 'register';
 
 export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
+  const { data: knownClasses = [] } = useKnownClasses();
   const [mode, setMode] = useState<Mode>('login');
   const [nickname, setNickname] = useState('');
   const [className, setClassName] = useState('');
@@ -250,24 +252,17 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
 
             {mode === 'register' && (
               <>
-                <input
+                <select
                   value={className}
                   onChange={(e) => setClassName(e.target.value)}
-                  className="input-field w-full"
-                  placeholder="Класс"
-                  list="guild-class-options"
+                  className="select-field w-full"
                   disabled={loading}
-                />
-                <datalist id="guild-class-options">
-                  <option value="Warrior" />
-                  <option value="Tank" />
-                  <option value="Assassin" />
-                  <option value="Archer" />
-                  <option value="Mage" />
-                  <option value="Priest" />
-                  <option value="Support" />
-                  <option value="Bard" />
-                </datalist>
+                >
+                  <option value="">Выбери класс</option>
+                  {knownClasses.map((knownClass) => (
+                    <option key={knownClass} value={knownClass}>{knownClass}</option>
+                  ))}
+                </select>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={confirmPassword}
