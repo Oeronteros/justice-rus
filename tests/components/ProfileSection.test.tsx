@@ -4,6 +4,31 @@ import ProfileSection from '@/components/sections/profile';
 import type { Registration, User } from '@/types';
 
 const mutateProfileStats = vi.fn();
+const mockedRoster: Registration[] = [
+  {
+    discord: 'discord-001',
+    avatarUrl: null,
+    nickname: 'Tester',
+    rank: 'member',
+    class: 'Numina',
+    guild: 'Moonfall',
+    joinDate: '2025-01-01',
+    kpi: 50,
+    elo: 1200,
+    mmr20: 1400,
+    bounty: 3,
+    marks: 0,
+    outerHeroic: 1,
+    innerHeroic: 0,
+    crimsonSands: 1,
+    abyss: 0,
+    gvg: 0,
+    secretRealm: 1,
+    duelWins: 5,
+    duelLosses: 2,
+    status: 'active',
+  },
+];
 
 vi.mock('@/lib/hooks/useAccounts', () => ({
   useAccounts: () => ({
@@ -27,31 +52,7 @@ vi.mock('@/lib/hooks/useKnownClasses', () => ({
 
 vi.mock('@/lib/hooks/useRegistrations', () => ({
   useRegistrations: () => ({
-    data: [
-      {
-        discord: 'discord-001',
-        avatarUrl: null,
-        nickname: 'Tester',
-        rank: 'member',
-        class: 'Numina',
-        guild: 'Moonfall',
-        joinDate: '2025-01-01',
-        kpi: 50,
-        elo: 1200,
-        mmr20: 1400,
-        bounty: 3,
-        marks: 0,
-        outerHeroic: 1,
-        innerHeroic: 0,
-        crimsonSands: 1,
-        abyss: 0,
-        gvg: 0,
-        secretRealm: 1,
-        duelWins: 5,
-        duelLosses: 2,
-        status: 'active',
-      } as Registration,
-    ],
+    data: mockedRoster,
   }),
   useUpdateRegistrationStats: () => ({
     mutateAsync: mutateProfileStats,
