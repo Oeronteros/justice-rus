@@ -219,8 +219,13 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
       nickname: editingRegistration.nickname,
     };
 
+    const trimmedDiscordHandle = editDraft.discordHandle.trim();
     const trimmedClassName = editDraft.className.trim();
     const trimmedGuild = editDraft.guild.trim();
+
+    if (trimmedDiscordHandle !== (editingRegistration.discordHandle || '')) {
+      payload.discordHandle = trimmedDiscordHandle;
+    }
 
     if (trimmedClassName && trimmedClassName !== editingRegistration.class) {
       payload.className = trimmedClassName;
@@ -348,7 +353,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
                 <div className="min-w-0">
                 <div className="text-xs uppercase tracking-[0.18em] text-[#9ec5d8] mb-1">#{index + 1}</div>
                 <div className="text-lg font-semibold text-[#e6eff5]">{registration.nickname}</div>
-                  <div className="text-sm text-gray-400 mt-1 truncate">{registration.discord || 'Без Discord ID'}</div>
+                  <div className="text-sm text-gray-400 mt-1 truncate">{getDisplayDiscord(registration) || 'Discord не указан'}</div>
                 </div>
               </div>
               <span className={`px-3 py-1 rounded-full text-xs ${getRankClass(registration.rank)}`}>
@@ -422,7 +427,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
               <div>
                 <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5]">Редактирование записи</h3>
                 <p className="text-sm text-gray-400 mt-2">
-                  {editingRegistration.nickname} · {editingRegistration.discord || 'Без Discord ID'}
+                  {editingRegistration.nickname} · {getDisplayDiscord(editingRegistration) || 'Discord не указан'}
                 </p>
               </div>
               <button
@@ -437,6 +442,15 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <label className="space-y-2 text-sm md:col-span-2">
+                <span className="text-gray-400">Discord</span>
+                <input
+                  value={editDraft.discordHandle}
+                  onChange={(event) => updateDraftField('discordHandle', event.target.value)}
+                  className="input-field w-full"
+                  placeholder="@example"
+                />
+              </label>
               <label className="space-y-2 text-sm">
                 <span className="text-gray-400">Класс</span>
                 <input

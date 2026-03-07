@@ -54,7 +54,7 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
       const searchLower = searchTerm.toLowerCase();
       filtered = filtered.filter(
         (registration) =>
-          registration.discord.toLowerCase().includes(searchLower) ||
+          (registration.discordHandle || registration.discord).toLowerCase().includes(searchLower) ||
           registration.nickname.toLowerCase().includes(searchLower) ||
           registration.class.toLowerCase().includes(searchLower)
       );
