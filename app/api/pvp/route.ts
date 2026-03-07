@@ -29,6 +29,28 @@ type MatchRow = {
   confirmed_at: Date | string | null;
 };
 
+function normalizedMatchSelect(whereClause?: string, orderClause?: string, limitClause?: string) {
+  return `
+    SELECT
+      id,
+      COALESCE(player_one_id, player1_id) AS player_one_id,
+      COALESCE(player_one_nickname, player1_id) AS player_one_nickname,
+      player_one_class,
+      COALESCE(player_two_id, player2_id) AS player_two_id,
+      COALESCE(player_two_nickname, player2_id) AS player_two_nickname,
+      player_two_class,
+      status,
+      winner_id,
+      created_at,
+      updated_at,
+      COALESCE(confirmed_at, completed_at) AS confirmed_at
+    FROM duel_matches
+    ${whereClause || ''}
+    ${orderClause || ''}
+    ${limitClause || ''}
+  `;
+}
+
 function getAuthToken(request: NextRequest): string | null {
   const headerToken = request.headers.get('authorization');
   const cookieToken = request.cookies.get('auth_token')?.value;
@@ -65,10 +87,13 @@ async function ensurePvpSchema() {
     );
   `);
   await pool.query(`ALTER TABLE duel_queue ADD COLUMN IF NOT EXISTS player_id TEXT;`);
+  await pool.query(`ALTER TABLE duel_queue ADD COLUMN IF NOT EXISTS discord_id TEXT;`);
   await pool.query(`ALTER TABLE duel_queue ADD COLUMN IF NOT EXISTS nickname TEXT;`);
   await pool.query(`ALTER TABLE duel_queue ADD COLUMN IF NOT EXISTS class_name TEXT NOT NULL DEFAULT '';`);
+  await pool.query(`ALTER TABLE duel_queue ADD COLUMN IF NOT EXISTS queued_at TIMESTAMP NULL;`);
   await pool.query(`ALTER TABLE duel_queue ADD COLUMN IF NOT EXISTS created_at TIMESTAMP NOT NULL DEFAULT NOW();`);
   await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS duel_queue_player_id_idx ON duel_queue(player_id);`);
+  await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS duel_queue_discord_id_idx ON duel_queue(discord_id);`);
   await pool.query(`CREATE INDEX IF NOT EXISTS duel_queue_created_at_idx ON duel_queue(created_at ASC);`);
 
   await pool.query(`
@@ -88,9 +113,11 @@ async function ensurePvpSchema() {
     );
   `);
   await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player_one_id TEXT;`);
+  await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player1_id TEXT;`);
   await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player_one_nickname TEXT;`);
   await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player_one_class TEXT NOT NULL DEFAULT '';`);
   await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player_two_id TEXT;`);
+  await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player2_id TEXT;`);
   await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player_two_nickname TEXT;`);
   await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player_two_class TEXT NOT NULL DEFAULT '';`);
   await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'pending';`);
@@ -98,6 +125,7 @@ async function ensurePvpSchema() {
   await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS created_at TIMESTAMP NOT NULL DEFAULT NOW();`);
   await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP NOT NULL DEFAULT NOW();`);
   await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS confirmed_at TIMESTAMP;`);
+  await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS completed_at TIMESTAMP;`);
   await pool.query(`CREATE INDEX IF NOT EXISTS duel_matches_status_idx ON duel_matches(status);`);
   await pool.query(`CREATE INDEX IF NOT EXISTS duel_matches_player_one_idx ON duel_matches(player_one_id);`);
   await pool.query(`CREATE INDEX IF NOT EXISTS duel_matches_player_two_idx ON duel_matches(player_two_id);`);
@@ -113,11 +141,15 @@ async function ensurePvpSchema() {
     );
   `);
   await pool.query(`ALTER TABLE duel_confirmations ADD COLUMN IF NOT EXISTS match_id INTEGER;`);
+  await pool.query(`ALTER TABLE duel_confirmations ADD COLUMN IF NOT EXISTS discord_id TEXT;`);
+  await pool.query(`ALTER TABLE duel_confirmations ADD COLUMN IF NOT EXISTS confirmed_winner_id TEXT;`);
+  await pool.query(`ALTER TABLE duel_confirmations ADD COLUMN IF NOT EXISTS confirmed_at TIMESTAMP;`);
   await pool.query(`ALTER TABLE duel_confirmations ADD COLUMN IF NOT EXISTS player_id TEXT;`);
   await pool.query(`ALTER TABLE duel_confirmations ADD COLUMN IF NOT EXISTS reported_winner_id TEXT;`);
   await pool.query(`ALTER TABLE duel_confirmations ADD COLUMN IF NOT EXISTS created_at TIMESTAMP NOT NULL DEFAULT NOW();`);
   await pool.query(`ALTER TABLE duel_confirmations ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP NOT NULL DEFAULT NOW();`);
   await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS duel_confirmations_match_player_idx ON duel_confirmations(match_id, player_id);`);
+  await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS duel_confirmations_match_discord_idx ON duel_confirmations(match_id, discord_id);`);
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS duel_ratings (
@@ -185,7 +217,13 @@ async function ensureRatingRow(client: PoolClient, actor: Actor) {
 
 async function formatMatch(pool: Awaited<ReturnType<typeof getPool>>, row: MatchRow, viewerId: string | null) {
   const confirmations = await pool.query(
-    `SELECT player_id, reported_winner_id FROM duel_confirmations WHERE match_id = $1`,
+    `
+    SELECT
+      COALESCE(player_id, discord_id) AS player_id,
+      COALESCE(reported_winner_id, confirmed_winner_id) AS reported_winner_id
+    FROM duel_confirmations
+    WHERE match_id = $1
+    `,
     [row.id]
   );
 
@@ -247,26 +285,11 @@ async function loadState(viewerId: string | null) {
   const pool = getPool();
 
   const [queueResult, leaderboardResult, recentResult, activeResult] = await Promise.all([
-    pool.query(`SELECT player_id, nickname, class_name, created_at FROM duel_queue ORDER BY created_at ASC LIMIT 20`),
+    pool.query(`SELECT COALESCE(player_id, discord_id) AS player_id, nickname, class_name, COALESCE(created_at, queued_at) AS created_at FROM duel_queue ORDER BY COALESCE(queued_at, created_at) ASC LIMIT 20`),
     pool.query(`SELECT discord_id, username, rating, wins, losses FROM duel_ratings ORDER BY rating DESC, wins DESC, losses ASC LIMIT 10`),
-    pool.query(`
-      SELECT *
-      FROM duel_matches
-      WHERE status = 'completed'
-      ORDER BY confirmed_at DESC NULLS LAST, updated_at DESC NULLS LAST
-      LIMIT 8
-    `),
+    pool.query(normalizedMatchSelect(`WHERE status = 'completed'`, `ORDER BY COALESCE(confirmed_at, completed_at) DESC NULLS LAST, updated_at DESC NULLS LAST`, `LIMIT 8`)),
     viewerId
-      ? pool.query(
-          `
-          SELECT *
-          FROM duel_matches
-          WHERE status = 'pending' AND (player_one_id = $1 OR player_two_id = $1)
-          ORDER BY created_at DESC
-          LIMIT 1
-          `,
-          [viewerId]
-        )
+      ? pool.query(normalizedMatchSelect(`WHERE status = 'pending' AND (COALESCE(player_one_id, player1_id) = $1 OR COALESCE(player_two_id, player2_id) = $1)`, `ORDER BY created_at DESC`, `LIMIT 1`), [viewerId])
       : Promise.resolve({ rows: [] }),
   ]);
 
@@ -370,7 +393,7 @@ async function completeMatch(match: MatchRow, winnerId: string) {
     await client.query(
       `
       UPDATE duel_matches
-      SET status = 'completed', winner_id = $2, confirmed_at = NOW(), updated_at = NOW()
+      SET status = 'completed', winner_id = $2, confirmed_at = NOW(), completed_at = NOW(), updated_at = NOW()
       WHERE id = $1
       `,
       [match.id, winnerId]
@@ -423,12 +446,7 @@ export async function POST(request: NextRequest) {
       await client.query('BEGIN');
 
       const pendingMatch = await client.query(
-        `
-        SELECT id
-        FROM duel_matches
-        WHERE status = 'pending' AND (player_one_id = $1 OR player_two_id = $1)
-        LIMIT 1
-        `,
+        normalizedMatchSelect(`WHERE status = 'pending' AND (COALESCE(player_one_id, player1_id) = $1 OR COALESCE(player_two_id, player2_id) = $1)`, '', 'LIMIT 1'),
         [actor.id]
       );
       if (pendingMatch.rowCount) {
@@ -438,21 +456,24 @@ export async function POST(request: NextRequest) {
 
       await client.query(
         `
-        INSERT INTO duel_queue (player_id, nickname, class_name, created_at)
-        VALUES ($1, $2, $3, NOW())
-        ON CONFLICT (player_id) DO UPDATE
-        SET nickname = EXCLUDED.nickname,
-            class_name = EXCLUDED.class_name
+        INSERT INTO duel_queue (discord_id, player_id, nickname, class_name, queued_at, created_at)
+        VALUES ($1, $1, $2, $3, NOW(), NOW())
+        ON CONFLICT (discord_id) DO UPDATE
+        SET player_id = EXCLUDED.player_id,
+            nickname = EXCLUDED.nickname,
+            class_name = EXCLUDED.class_name,
+            queued_at = NOW(),
+            created_at = COALESCE(duel_queue.created_at, NOW())
         `,
         [actor.id, actor.nickname, actor.className]
       );
 
       const opponent = await client.query(
         `
-        SELECT player_id, nickname, class_name
+        SELECT COALESCE(player_id, discord_id) AS player_id, nickname, class_name
         FROM duel_queue
-        WHERE player_id <> $1
-        ORDER BY created_at ASC
+        WHERE COALESCE(player_id, discord_id) <> $1
+        ORDER BY COALESCE(queued_at, created_at) ASC
         LIMIT 1
         FOR UPDATE SKIP LOCKED
         `,
@@ -464,6 +485,8 @@ export async function POST(request: NextRequest) {
         await client.query(
           `
           INSERT INTO duel_matches (
+            player1_id,
+            player2_id,
             player_one_id,
             player_one_nickname,
             player_one_class,
@@ -474,11 +497,11 @@ export async function POST(request: NextRequest) {
             created_at,
             updated_at
           )
-          VALUES ($1, $2, $3, $4, $5, $6, 'pending', NOW(), NOW())
+          VALUES ($1, $4, $1, $2, $3, $4, $5, $6, 'pending', NOW(), NOW())
           `,
           [rival.player_id, rival.nickname, rival.class_name || '', actor.id, actor.nickname, actor.className]
         );
-        await client.query(`DELETE FROM duel_queue WHERE player_id = ANY($1::text[])`, [[actor.id, String(rival.player_id)]]);
+        await client.query(`DELETE FROM duel_queue WHERE discord_id = ANY($1::text[]) OR player_id = ANY($1::text[])`, [[actor.id, String(rival.player_id)]]);
       }
 
       await ensureRatingRow(client, actor);
@@ -511,7 +534,7 @@ export async function DELETE(request: NextRequest) {
 
     await ensurePvpSchema();
     const pool = getPool();
-    await pool.query(`DELETE FROM duel_queue WHERE player_id = $1`, [actorId]);
+    await pool.query(`DELETE FROM duel_queue WHERE discord_id = $1 OR player_id = $1`, [actorId]);
 
     return NextResponse.json(await loadState(actorId));
   } catch (error) {
@@ -537,12 +560,7 @@ export async function PATCH(request: NextRequest) {
     const pool = getPool();
 
     const matchResult = await pool.query(
-      `
-      SELECT *
-      FROM duel_matches
-      WHERE id = $1 AND status = 'pending' AND (player_one_id = $2 OR player_two_id = $2)
-      LIMIT 1
-      `,
+      normalizedMatchSelect(`WHERE id = $1 AND status = 'pending' AND (COALESCE(player_one_id, player1_id) = $2 OR COALESCE(player_two_id, player2_id) = $2)`, '', 'LIMIT 1'),
       [Number(payload.matchId), actorId]
     );
     const match = matchResult.rows[0] as MatchRow | undefined;
@@ -555,16 +573,16 @@ export async function PATCH(request: NextRequest) {
 
     await pool.query(
       `
-      INSERT INTO duel_confirmations (match_id, player_id, reported_winner_id, created_at, updated_at)
-      VALUES ($1, $2, $3, NOW(), NOW())
-      ON CONFLICT (match_id, player_id)
-      DO UPDATE SET reported_winner_id = EXCLUDED.reported_winner_id, updated_at = NOW()
+      INSERT INTO duel_confirmations (match_id, discord_id, confirmed_winner_id, confirmed_at, player_id, reported_winner_id, created_at, updated_at)
+      VALUES ($1, $2, $3, NOW(), $2, $3, NOW(), NOW())
+      ON CONFLICT (match_id, discord_id)
+      DO UPDATE SET confirmed_winner_id = EXCLUDED.confirmed_winner_id, confirmed_at = NOW(), player_id = EXCLUDED.player_id, reported_winner_id = EXCLUDED.reported_winner_id, updated_at = NOW()
       `,
       [Number(payload.matchId), actorId, winnerId]
     );
 
     const confirmations = await pool.query(
-      `SELECT player_id, reported_winner_id FROM duel_confirmations WHERE match_id = $1`,
+      `SELECT COALESCE(player_id, discord_id) AS player_id, COALESCE(reported_winner_id, confirmed_winner_id) AS reported_winner_id FROM duel_confirmations WHERE match_id = $1`,
       [Number(payload.matchId)]
     );
     const players = new Set(confirmations.rows.map((row) => String(row.player_id)));
