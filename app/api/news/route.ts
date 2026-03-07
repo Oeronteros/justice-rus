@@ -12,32 +12,57 @@ const bypassHeader: Record<string, string> =
 function normalizeNews(data: any[]) {
   return data.map((item, index) => ({
     id: String(item.id ?? item.news_id ?? item.message_id ?? index + 1),
-    title: String(item.title ?? item.headline ?? item.content ?? 'Untitled'),
-    content: String(item.content ?? item.body ?? item.text ?? ''),
-    author: String(item.author ?? item.author_name ?? item.username ?? 'Discord'),
-    date: String(item.date ?? item.created_at ?? item.published_at ?? new Date().toISOString()),
+    title: String(item.title ?? item.headline ?? item.name ?? item.content ?? item.description ?? 'Untitled'),
+    content: String(item.content ?? item.body ?? item.text ?? item.description ?? ''),
+    author: String(item.author ?? item.author_name ?? item.username ?? item.created_by ?? item.event_type ?? 'DiscordBot2'),
+    date: String(item.date ?? item.created_at ?? item.published_at ?? item.start_time ?? new Date().toISOString()),
     pinned: Boolean(item.pinned),
   }));
 }
 
-async function fetchNewsFromBot(token: string) {
-  const response = await fetch(`${DISCORD_BOT_API_URL}/api/news`, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-      ...(BOT_API_KEY ? { 'X-API-KEY': BOT_API_KEY } : {}),
-      ...bypassHeader,
-    },
-    cache: 'no-store',
-  });
+function buildBotHeaders(token: string) {
+  return {
+    'Content-Type': 'application/json',
+    ...(BOT_API_KEY ? { 'X-API-KEY': BOT_API_KEY, Authorization: `Bearer ${BOT_API_KEY}` } : { Authorization: `Bearer ${token}` }),
+    ...bypassHeader,
+  };
+}
 
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error((payload as any).error || (payload as any).message || `HTTP ${response.status}`);
+async function fetchNewsFromBot(token: string) {
+  const attempts = [
+    {
+      url: `${DISCORD_BOT_API_URL}/api/news`,
+      extract: (payload: any) => (Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : []),
+    },
+    {
+      url: `${DISCORD_BOT_API_URL}/api/events?page=1&page_size=20`,
+      extract: (payload: any) => (Array.isArray(payload?.items) ? payload.items : Array.isArray(payload?.data) ? payload.data : []),
+    },
+  ];
+
+  const errors: string[] = [];
+  for (const attempt of attempts) {
+    const response = await fetch(attempt.url, {
+      headers: buildBotHeaders(token),
+      cache: 'no-store',
+    });
+
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      errors.push(`${attempt.url}: ${(payload as any).error || (payload as any).message || `HTTP ${response.status}`}`);
+      continue;
+    }
+
+    const rows = attempt.extract(payload);
+    if (rows.length > 0) {
+      return normalizeNews(rows);
+    }
   }
 
-  const rows = Array.isArray(payload) ? payload : Array.isArray((payload as any).data) ? (payload as any).data : [];
-  return normalizeNews(rows);
+  const hint = BOT_API_KEY
+    ? 'Проверь BOT_API_URL / DISCORD_BOT_API_URL и доступность DiscordBot2.'
+    : 'Добавь BOT_API_KEY или DISCORD_BOT_API_KEY для чтения защищенных эндпоинтов DiscordBot2.';
+  throw new Error(`${errors.join(' | ') || 'No bot news endpoints returned data'}. ${hint}`);
 }
 
 export async function GET(request: NextRequest) {
