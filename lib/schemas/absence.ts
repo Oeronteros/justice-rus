@@ -20,7 +20,13 @@ export const createAbsenceSchema = z.object({
   reason: z.string().min(1, 'Причина обязательна').max(500, 'Максимум 500 символов'),
 });
 
+export const updateAbsenceStatusSchema = z.object({
+  id: z.string().min(1),
+  status: z.enum(absenceStatuses),
+});
+
 // Inferred types
 export type Absence = z.infer<typeof absenceSchema>;
 export type AbsenceStatus = typeof absenceStatuses[number];
 export type CreateAbsenceDto = z.infer<typeof createAbsenceSchema>;
+export type UpdateAbsenceStatusDto = z.infer<typeof updateAbsenceStatusSchema>;

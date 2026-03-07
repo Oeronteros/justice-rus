@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
 import { getAuthToken } from '@/lib/auth/request';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
-import { createAbsenceSchema } from '@/lib/schemas/absence';
+import { createAbsenceSchema, updateAbsenceStatusSchema } from '@/lib/schemas/absence';
+import { canManageAccounts } from '@/lib/authz';
 import { z } from 'zod';
 
 export const runtime = 'nodejs';
@@ -62,6 +63,11 @@ async function getAbsencesFromDb() {
   }
 }
 
+async function ensureAbsenceStatusColumn() {
+  const pool = getPool();
+  await pool.query(`ALTER TABLE absences ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'pending';`).catch(() => undefined);
+}
+
 export async function GET(request: NextRequest) {
   try {
     const token = getAuthToken(request);
@@ -70,6 +76,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (hasDatabaseUrl()) {
+      await ensureAbsenceStatusColumn();
       const data = await getAbsencesFromDb();
       return NextResponse.json(data);
     }
@@ -120,6 +127,7 @@ export async function POST(request: NextRequest) {
 
     if (hasDatabaseUrl()) {
       const pool = getPool();
+      await ensureAbsenceStatusColumn();
 
       try {
         const inserted = await pool.query(
@@ -211,12 +219,69 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export async function PATCH(request: NextRequest) {
+  try {
+    const token = getAuthToken(request);
+    const decoded = token ? verifyToken(token) : null;
+    if (!decoded) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (!canManageAccounts(decoded.role)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!hasDatabaseUrl()) {
+      return NextResponse.json({ error: 'Database is not configured' }, { status: 503 });
+    }
+
+    const payload = updateAbsenceStatusSchema.parse(await request.json());
+    const pool = getPool();
+    await ensureAbsenceStatusColumn();
+
+    const updated = await pool.query(
+      `
+      UPDATE absences
+      SET status = $2
+      WHERE id = $1
+      RETURNING id
+      `,
+      [payload.id, payload.status]
+    );
+
+    if ((updated.rowCount || 0) === 0) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    const data = await getAbsencesFromDb();
+    const item = data.find((absence) => absence.id === payload.id);
+    if (!item) {
+      return NextResponse.json({ error: 'Updated absence not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(item);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
+    }
+
+    console.error('Error updating absence:', error);
+    return NextResponse.json(
+      {
+        error: 'Failed to update absence',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
+  }
+}
+
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     },
   });

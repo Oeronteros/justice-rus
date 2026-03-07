@@ -4,11 +4,12 @@ import { useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
-import { useAbsences, useCreateAbsence } from '@/lib/hooks/useAbsences';
+import { useAbsences, useCreateAbsence, useUpdateAbsenceStatus } from '@/lib/hooks/useAbsences';
 import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/types';
 import { SectionHero } from '@/components/shared/SectionHero';
+import { hasRoleAtLeast } from '@/lib/authz';
 
 interface AbsencesSectionProps {
   user: User;
@@ -32,6 +33,8 @@ const getStatusClass = (status: string) => {
 function AbsencesSectionContent({ user }: AbsencesSectionProps) {
   const { data: absences = [], isLoading, error, refetch } = useAbsences();
   const createAbsence = useCreateAbsence();
+  const updateAbsenceStatus = useUpdateAbsenceStatus();
+  const canModerateAbsences = hasRoleAtLeast(user.role, 'officer');
   
   const [statusFilter, setStatusFilter] = useState('all');
   const [startDate, setStartDate] = useState('');
@@ -55,6 +58,10 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
     setStartDate('');
     setEndDate('');
     setReason('');
+  };
+
+  const handleStatusChange = async (id: string, status: 'approved' | 'rejected') => {
+    await updateAbsenceStatus.mutateAsync({ id, status });
   };
 
   if (isLoading) {
@@ -234,22 +241,32 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                     </div>
 
                     <div className="flex justify-end space-x-3 mt-6">
-                      {user.role !== 'member' && (
+                      {canModerateAbsences && absence.status === 'pending' && (
                         <>
-                          <button className="px-4 py-2 bg-green-700 hover:bg-green-600 rounded-lg transition text-sm font-medium">
+                          <button
+                            type="button"
+                            className="px-4 py-2 bg-green-700 hover:bg-green-600 rounded-lg transition text-sm font-medium disabled:opacity-60"
+                            onClick={() => void handleStatusChange(absence.id, 'approved')}
+                            disabled={updateAbsenceStatus.isPending}
+                          >
                             <WuxiaIcon name="check" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
-                            Одобрить
+                            {updateAbsenceStatus.isPending && updateAbsenceStatus.variables?.id === absence.id && updateAbsenceStatus.variables?.status === 'approved'
+                              ? 'Одобряем...'
+                              : 'Одобрить'}
                           </button>
-                          <button className="px-4 py-2 bg-red-700 hover:bg-red-600 rounded-lg transition text-sm font-medium">
+                          <button
+                            type="button"
+                            className="px-4 py-2 bg-red-700 hover:bg-red-600 rounded-lg transition text-sm font-medium disabled:opacity-60"
+                            onClick={() => void handleStatusChange(absence.id, 'rejected')}
+                            disabled={updateAbsenceStatus.isPending}
+                          >
                             <WuxiaIcon name="x" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
-                            Отклонить
+                            {updateAbsenceStatus.isPending && updateAbsenceStatus.variables?.id === absence.id && updateAbsenceStatus.variables?.status === 'rejected'
+                              ? 'Отклоняем...'
+                              : 'Отклонить'}
                           </button>
                         </>
                       )}
-                      <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition text-sm font-medium">
-                        <WuxiaIcon name="edit" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
-                        Редактировать
-                      </button>
                     </div>
                   </div>
                 ))
