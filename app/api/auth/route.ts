@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
       const pool = getPool();
       const result = await pool.query(
         `
-        SELECT id, nickname, class_name, role, is_active, password_hash
+        SELECT id, nickname, class_name, discord_handle, role, is_active, password_hash
         FROM portal_account
         WHERE LOWER(nickname) = LOWER($1)
         LIMIT 1
@@ -172,6 +172,7 @@ export async function POST(request: NextRequest) {
           role: row.role,
           isActive: true,
           authMethod: 'account',
+          discordHandle: row.discord_handle || null,
           className: (await resolveClassName(row.nickname)) || row.class_name || null,
         };
     } else {
@@ -187,6 +188,7 @@ export async function POST(request: NextRequest) {
         role,
         isActive: true,
         authMethod: 'pin',
+        discordHandle: null,
         className: null,
       };
     }

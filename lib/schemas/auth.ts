@@ -10,6 +10,7 @@ export const authUserSchema = z.object({
   isActive: z.boolean().optional(),
   authMethod: authMethodSchema.optional(),
   discordId: z.string().nullable().optional(),
+  discordHandle: z.string().nullable().optional(),
   className: z.string().nullable().optional(),
   exp: z.number().optional(),
 });

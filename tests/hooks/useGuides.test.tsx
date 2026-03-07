@@ -29,8 +29,11 @@ const mockGuidesApi = guidesApi as unknown as {
 };
 
 const isoDateArb = fc
-  .date({ min: new Date('2000-01-01T00:00:00.000Z'), max: new Date('2100-12-31T23:59:59.999Z') })
-  .map((date) => date.toISOString());
+  .integer({
+    min: Date.parse('2000-01-01T00:00:00.000Z'),
+    max: Date.parse('2100-12-31T23:59:59.999Z'),
+  })
+  .map((timestamp) => new Date(timestamp).toISOString());
 
 // Generator for valid GuideSummary
 const guideSummaryArb = fc.record({

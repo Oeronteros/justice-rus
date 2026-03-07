@@ -39,6 +39,9 @@ export default function MobileNav({ currentSection, language }: MobileNavProps) 
             className={`nav-chip flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 ${
               currentSection === item.section ? 'is-active' : ''
             }`}
+            aria-label={sectionLabels[language][item.section]}
+            aria-current={currentSection === item.section ? 'page' : undefined}
+            title={sectionLabels[language][item.section]}
           >
             <span className="mb-1 dc-accent">
               <WuxiaIcon name={item.section} className="w-5 h-5" />

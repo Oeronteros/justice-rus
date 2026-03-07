@@ -12,6 +12,7 @@ type JwtPayload = {
   isActive?: boolean;
   authMethod?: 'account' | 'pin';
   discordId?: string | null;
+  discordHandle?: string | null;
   exp?: number;
   iss?: string;
   aud?: string;
@@ -25,6 +26,7 @@ export function generateToken(user: {
   isActive?: boolean;
   authMethod?: 'account' | 'pin';
   discordId?: string | null;
+  discordHandle?: string | null;
 }): string {
   return jwt.sign(
     {
@@ -34,6 +36,7 @@ export function generateToken(user: {
       isActive: user.isActive ?? true,
       authMethod: user.authMethod ?? 'account',
       discordId: user.discordId || null,
+      discordHandle: user.discordHandle || null,
       iss: 'silent-moonfall-portal',
       aud: 'silent-moonfall-users',
       sub: user.id || user.nickname || user.role,
@@ -63,6 +66,7 @@ export function verifyToken(token: string): User | null {
       isActive: decoded.isActive ?? true,
       authMethod: decoded.authMethod ?? 'account',
       discordId: decoded.discordId || null,
+      discordHandle: decoded.discordHandle || null,
       exp: decoded.exp,
     };
   } catch (error) {

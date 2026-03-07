@@ -7,6 +7,7 @@ import { getKPIClass, getKpiIndicator, getRankClass, getStatusClass } from '@/li
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { Registration, User } from '@/types';
 import { canSeeNumericKpi, hasRoleAtLeast } from '@/lib/authz';
+import type { UpdateRegistrationStatsPayload } from '@/lib/api/registrations';
 import type { RegistrationColumnLabels } from './columnLabels';
 
 interface RegistrationTableProps {
@@ -87,6 +88,18 @@ function toEditDraft(registration: Registration): EditableRegistrationDraft {
 function normalizeNumberInput(value: string): number {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function appendChangedNumber(
+  payload: UpdateRegistrationStatsPayload,
+  key: EditableNumericKey,
+  nextValue: string,
+  currentValue: number
+) {
+  const parsed = normalizeNumberInput(nextValue);
+  if (parsed !== currentValue) {
+    payload[key] = parsed;
+  }
 }
 
 function getAvatarInitials(registration: Registration) {
@@ -185,22 +198,39 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
       return;
     }
 
+    const payload: UpdateRegistrationStatsPayload = {
+      nickname: editingRegistration.nickname,
+    };
+
+    const trimmedClassName = editDraft.className.trim();
+    const trimmedGuild = editDraft.guild.trim();
+
+    if (trimmedClassName && trimmedClassName !== editingRegistration.class) {
+      payload.className = trimmedClassName;
+    }
+
+    if (trimmedGuild !== editingRegistration.guild) {
+      payload.guild = trimmedGuild;
+    }
+
+    appendChangedNumber(payload, 'elo', editDraft.elo, editingRegistration.elo);
+    appendChangedNumber(payload, 'mmr20', editDraft.mmr20, editingRegistration.mmr20);
+    appendChangedNumber(payload, 'bounty', editDraft.bounty, editingRegistration.bounty);
+    appendChangedNumber(payload, 'outerHeroic', editDraft.outerHeroic, editingRegistration.outerHeroic);
+    appendChangedNumber(payload, 'innerHeroic', editDraft.innerHeroic, editingRegistration.innerHeroic);
+    appendChangedNumber(payload, 'crimsonSands', editDraft.crimsonSands, editingRegistration.crimsonSands);
+    appendChangedNumber(payload, 'abyss', editDraft.abyss, editingRegistration.abyss);
+    appendChangedNumber(payload, 'gvg', editDraft.gvg, editingRegistration.gvg);
+    appendChangedNumber(payload, 'secretRealm', editDraft.secretRealm, editingRegistration.secretRealm);
+
+    if (Object.keys(payload).length === 1) {
+      closeEditor();
+      return;
+    }
+
     try {
       setEditError(null);
-      await updateRegistrationStats.mutateAsync({
-        nickname: editingRegistration.nickname,
-        className: editDraft.className.trim(),
-        guild: editDraft.guild.trim(),
-        elo: normalizeNumberInput(editDraft.elo),
-        mmr20: normalizeNumberInput(editDraft.mmr20),
-        bounty: normalizeNumberInput(editDraft.bounty),
-        outerHeroic: normalizeNumberInput(editDraft.outerHeroic),
-        innerHeroic: normalizeNumberInput(editDraft.innerHeroic),
-        crimsonSands: normalizeNumberInput(editDraft.crimsonSands),
-        abyss: normalizeNumberInput(editDraft.abyss),
-        gvg: normalizeNumberInput(editDraft.gvg),
-        secretRealm: normalizeNumberInput(editDraft.secretRealm),
-      });
+      await updateRegistrationStats.mutateAsync(payload);
 
       closeEditor();
       onRefresh?.();

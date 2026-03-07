@@ -7,6 +7,7 @@ export type AccountRecord = {
   nickname: string;
   class_name?: string | null;
   guild_name?: string | null;
+  discord_handle?: string | null;
   role: UserRole;
   is_active: boolean;
   password_hash: string;
@@ -26,6 +27,7 @@ export async function ensureAccountsSchema() {
       nickname TEXT NOT NULL,
       class_name TEXT NULL,
       guild_name TEXT NULL,
+      discord_handle TEXT NULL,
       password_hash TEXT NOT NULL,
       role TEXT NOT NULL DEFAULT 'guest',
       is_active BOOLEAN NOT NULL DEFAULT FALSE,
@@ -39,6 +41,7 @@ export async function ensureAccountsSchema() {
   await pool.query(`ALTER TABLE portal_account DROP CONSTRAINT IF EXISTS portal_account_role_chk;`);
   await pool.query(`ALTER TABLE portal_account ADD COLUMN IF NOT EXISTS class_name TEXT NULL;`).catch(() => undefined);
   await pool.query(`ALTER TABLE portal_account ADD COLUMN IF NOT EXISTS guild_name TEXT NULL;`).catch(() => undefined);
+  await pool.query(`ALTER TABLE portal_account ADD COLUMN IF NOT EXISTS discord_handle TEXT NULL;`).catch(() => undefined);
   await pool.query(`ALTER TABLE portal_account ALTER COLUMN role SET DEFAULT 'guest';`);
   await pool.query(`UPDATE portal_account SET role = 'head' WHERE role = 'gm';`).catch(() => undefined);
   await pool.query(`
@@ -86,6 +89,7 @@ export function toPublicAccount(record: AccountRecord) {
     nickname: record.nickname,
     role: record.role,
     isActive: Boolean(record.is_active),
+    discordHandle: record.discord_handle || null,
     createdAt: (record.created_at || new Date()).toISOString(),
     lastLoginAt: record.last_login_at ? new Date(record.last_login_at).toISOString() : null,
   };

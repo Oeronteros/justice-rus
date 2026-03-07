@@ -6,6 +6,7 @@ export const portalAccountSchema = z.object({
   nickname: z.string(),
   role: userRoleSchema,
   isActive: z.boolean(),
+  discordHandle: z.string().nullable().optional(),
   createdAt: z.string(),
   lastLoginAt: z.string().nullable(),
 });

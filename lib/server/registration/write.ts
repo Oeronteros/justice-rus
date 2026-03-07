@@ -126,27 +126,6 @@ export async function updateRegistrationStats(
     throw new RegistrationUpdateError('Registration target was not found', 404);
   }
 
-  if (payload.className !== undefined || payload.guild !== undefined) {
-    await updatePortalAccountProfile(payload.nickname, {
-      className: payload.className,
-      guild: payload.guild,
-    });
-  }
-
-  if (payload.className !== undefined && target.row && target.classCol) {
-    await pool.query(
-      `UPDATE registrations SET ${target.classCol} = $2 WHERE LOWER(${target.nickCol}) = LOWER($1)`,
-      [payload.nickname, payload.className]
-    );
-  }
-
-  if (payload.guild !== undefined && target.row && target.guildCol) {
-    await pool.query(
-      `UPDATE registrations SET ${target.guildCol} = $2 WHERE LOWER(${target.nickCol}) = LOWER($1)`,
-      [payload.nickname, payload.guild]
-    );
-  }
-
   const statsDiscordId = target.row
     ? String(target.row.discord_id || '')
     : portalAccount
@@ -170,6 +149,27 @@ export async function updateRegistrationStats(
         ? 'Registration row is missing Discord identifier for PvP/activity stats'
         : 'Portal account exists, but stats identity could not be resolved',
       409
+    );
+  }
+
+  if (payload.className !== undefined || payload.guild !== undefined) {
+    await updatePortalAccountProfile(payload.nickname, {
+      className: payload.className,
+      guild: payload.guild,
+    });
+  }
+
+  if (payload.className !== undefined && target.row && target.classCol) {
+    await pool.query(
+      `UPDATE registrations SET ${target.classCol} = $2 WHERE LOWER(${target.nickCol}) = LOWER($1)`,
+      [payload.nickname, payload.className]
+    );
+  }
+
+  if (payload.guild !== undefined && target.row && target.guildCol) {
+    await pool.query(
+      `UPDATE registrations SET ${target.guildCol} = $2 WHERE LOWER(${target.nickCol}) = LOWER($1)`,
+      [payload.nickname, payload.guild]
     );
   }
 

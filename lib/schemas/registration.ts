@@ -10,6 +10,7 @@ export const registrationStatuses = [
 
 export const registrationSchema = z.object({
   discord: z.string(),
+  discordHandle: z.string().nullable().optional(),
   avatarUrl: z.string().nullable().optional(),
   nickname: z.string(),
   rank: z.enum(registrationRanks),

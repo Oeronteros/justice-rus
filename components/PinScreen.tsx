@@ -17,6 +17,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
   const [mode, setMode] = useState<Mode>('login');
   const [nickname, setNickname] = useState('');
   const [className, setClassName] = useState('');
+  const [discordHandle, setDiscordHandle] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [adminPin, setAdminPin] = useState('');
@@ -84,12 +85,14 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
       const payload = await authApi.register({
         nickname: nickname.trim(),
         className: className.trim(),
+        discordHandle: discordHandle.trim(),
         password,
       });
 
       setNotice(payload.message || 'Аккаунт создан и ожидает активации офицером/главой/сис.админом.');
       setMode('login');
       setClassName('');
+      setDiscordHandle('');
       setPassword('');
       setConfirmPassword('');
     } catch (err) {
@@ -228,6 +231,13 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                     <option key={knownClass} value={knownClass}>{knownClass}</option>
                   ))}
                 </select>
+                <input
+                  value={discordHandle}
+                  onChange={(e) => setDiscordHandle(e.target.value)}
+                  className="input-field w-full"
+                  placeholder="Discord @example (необязательно)"
+                  disabled={loading}
+                />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={confirmPassword}

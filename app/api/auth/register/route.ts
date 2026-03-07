@@ -10,6 +10,7 @@ export const runtime = 'nodejs';
 const registerSchema = z.object({
   nickname: z.string().trim().min(3).max(32),
   className: z.string().trim().min(1).max(100),
+  discordHandle: z.string().trim().max(120).optional().or(z.literal('')),
   password: z.string().min(8).max(128),
 });
 
@@ -26,6 +27,7 @@ export async function POST(request: NextRequest) {
     const payload = registerSchema.parse(await request.json());
     const nickname = normalizeNickname(payload.nickname);
     const className = payload.className.trim();
+    const discordHandle = payload.discordHandle?.trim() || null;
     if (!(await isKnownClassName(className))) {
       return NextResponse.json({ error: 'Unknown class selected' }, { status: 400 });
     }
@@ -45,11 +47,11 @@ export async function POST(request: NextRequest) {
 
     const created = await pool.query(
       `
-      INSERT INTO portal_account (nickname, class_name, password_hash, role, is_active)
-      VALUES ($1, $2, $3, 'guest', FALSE)
-      RETURNING id, nickname, class_name, role, is_active, created_at
+      INSERT INTO portal_account (nickname, class_name, discord_handle, password_hash, role, is_active)
+      VALUES ($1, $2, $3, $4, 'guest', FALSE)
+      RETURNING id, nickname, class_name, discord_handle, role, is_active, created_at
       `,
-      [nickname, className, passwordHash]
+      [nickname, className, discordHandle, passwordHash]
     );
 
     const row = created.rows[0];
@@ -62,6 +64,7 @@ export async function POST(request: NextRequest) {
           id: String(row.id),
           nickname: row.nickname,
           className: row.class_name || className,
+          discordHandle: row.discord_handle || null,
           role: row.role,
           isActive: Boolean(row.is_active),
           createdAt: (row.created_at || new Date()).toISOString(),

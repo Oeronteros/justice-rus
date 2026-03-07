@@ -20,6 +20,7 @@ export interface User {
   isActive?: boolean;
   authMethod?: 'account' | 'pin';
   discordId?: string | null;
+  discordHandle?: string | null;
   className?: string | null;
   exp?: number;
 }
@@ -29,12 +30,14 @@ export interface PortalAccount {
   nickname: string;
   role: UserRole;
   isActive: boolean;
+  discordHandle?: string | null;
   createdAt: string;
   lastLoginAt: string | null;
 }
 
 export interface Registration {
   discord: string;
+  discordHandle?: string | null;
   avatarUrl?: string | null;
   nickname: string;
   rank: RegistrationRank;

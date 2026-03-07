@@ -105,6 +105,7 @@ export default function Header({
         refresh: 'Обновить данные',
         logout: 'Выйти',
         marchTheme: '8 Марта',
+        languageSwitcher: 'Язык интерфейса',
       };
     }
 
@@ -125,6 +126,7 @@ export default function Header({
         refresh: '刷新数据',
         logout: '退出',
         marchTheme: '3月8日',
+        languageSwitcher: '界面语言',
       };
     }
 
@@ -144,6 +146,7 @@ export default function Header({
       refresh: 'Refresh data',
       logout: 'Logout',
       marchTheme: 'March 8',
+      languageSwitcher: 'Interface language',
     };
   }, [language]);
 
@@ -200,6 +203,7 @@ export default function Header({
               id="langSwitch"
               value={language}
               onChange={(e) => onLanguageChange(e.target.value as Language)}
+              aria-label={labels.languageSwitcher}
               className="dc-select rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a90b0]/40 transition-all font-medium"
             >
               <option value="ru">RU</option>
@@ -220,6 +224,7 @@ export default function Header({
               onClick={handleRefresh}
               className="dc-icon-btn p-2.5 rounded-xl"
               title={labels.refresh}
+              aria-label={labels.refresh}
             >
               <WuxiaIcon name="refresh" className="w-5 h-5" />
             </button>
@@ -228,6 +233,7 @@ export default function Header({
               onClick={onLogout}
               className="dc-icon-btn dc-icon-btn-accent p-2.5 rounded-xl"
               title={labels.logout}
+              aria-label={labels.logout}
             >
               <WuxiaIcon name="logout" className="w-5 h-5" />
             </button>
@@ -241,6 +247,9 @@ export default function Header({
                 key={item.section}
                 href={item.href}
                 className={`dc-order-step ${currentSection === item.section ? 'is-active' : ''}`}
+                aria-label={orderLabels[item.section]}
+                aria-current={currentSection === item.section ? 'page' : undefined}
+                title={orderLabels[item.section]}
               >
                 <span className="dc-order-dot dc-accent">
                   <WuxiaIcon name={item.icon} className="w-4 h-4" />

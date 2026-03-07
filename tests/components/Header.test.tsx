@@ -1,0 +1,47 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { cleanup, render, screen } from '@testing-library/react';
+import Header from '@/components/Header';
+
+interface MockLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+  href: string;
+}
+
+vi.mock('next/link', () => ({
+  default: ({ href, children, ...props }: MockLinkProps) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ),
+}));
+
+describe('Header navigation accessibility', () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it('keeps nav links and icon buttons accessible when labels collapse visually', () => {
+    render(
+      <Header
+        currentSection="guides"
+        onLogout={vi.fn()}
+        language="en"
+        onLanguageChange={vi.fn()}
+      />
+    );
+
+    const guidesLink = screen.getByRole('link', { name: 'Guides' });
+
+    expect(guidesLink).toHaveAttribute('href', '/guides');
+    expect(guidesLink).toHaveAttribute('aria-current', 'page');
+    expect(guidesLink).toHaveAttribute('aria-label', 'Guides');
+
+    expect(screen.getByRole('button', { name: 'Refresh data' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Logout' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Interface language' })).toBeInTheDocument();
+  });
+});

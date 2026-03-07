@@ -2,6 +2,7 @@
 
 import type { Registration, User } from '@/types';
 import { canSeeNumericKpi } from '@/lib/authz';
+import { getKPIClass } from '@/lib/utils';
 
 interface RegistrationStatsProps {
   registrations: Registration[];
@@ -9,14 +10,16 @@ interface RegistrationStatsProps {
 }
 
 export function RegistrationStats({ registrations, user }: RegistrationStatsProps) {
+  const isSilentMoonfall = (guild: string) => guild.trim().toLowerCase() === 'silent moonfall';
   const stats = {
     total: registrations.length,
-    online: registrations.filter((r) => r.status === 'active').length,
+    online: registrations.filter((r) => r.status === 'active' && isSilentMoonfall(r.guild)).length,
     avgKPI:
       registrations.length > 0
         ? (registrations.reduce((sum, r) => sum + r.kpi, 0) / registrations.length).toFixed(1)
         : '0',
   };
+  const avgKpiClass = getKPIClass(Number(stats.avgKPI));
 
   return (
     <div id="registration-kpi" className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -24,7 +27,7 @@ export function RegistrationStats({ registrations, user }: RegistrationStatsProp
         <div className="text-3xl font-bold font-orbitron text-red-400 mb-2">
           {stats.total}
         </div>
-        <div className="text-gray-400">Всего в гильдии</div>
+        <div className="text-gray-400">Всего учетных записей</div>
       </div>
       <div className="card p-6 text-center">
         <div className="text-3xl font-bold font-orbitron text-green-400 mb-2">
@@ -34,7 +37,7 @@ export function RegistrationStats({ registrations, user }: RegistrationStatsProp
       </div>
       {canSeeNumericKpi(user.role) && (
         <div className="card p-6 text-center">
-          <div className="text-3xl font-bold font-orbitron text-yellow-400 mb-2">
+          <div className={`text-3xl font-bold font-orbitron mb-2 ${avgKpiClass}`}>
             {stats.avgKPI}
           </div>
           <div className="text-gray-400">Средний KPI</div>

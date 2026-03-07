@@ -18,6 +18,7 @@ const loginPayloadSchema = z.object({
 const registerPayloadSchema = z.object({
   nickname: z.string().trim().min(1),
   className: z.string().trim().min(1),
+  discordHandle: z.string().trim().max(120).optional(),
   password: z.string().min(8),
 });
 

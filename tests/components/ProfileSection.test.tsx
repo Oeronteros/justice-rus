@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import ProfileSection from '@/components/sections/profile';
 import type { Registration, User } from '@/types';
 
@@ -87,5 +87,17 @@ describe('ProfileSection role explainer and guild fields', () => {
 
     expect(screen.getAllByText('Клан').length).toBeGreaterThan(0);
     expect(screen.getByDisplayValue('Moonfall')).toBeInTheDocument();
+  });
+
+  it('gives each activity switch a discernible name and updates its state', () => {
+    render(<ProfileSection user={user} />);
+
+    const outerHeroicSwitch = screen.getByRole('switch', { name: 'Outer Heroic' });
+
+    expect(outerHeroicSwitch).toHaveAttribute('aria-checked', 'true');
+
+    fireEvent.click(outerHeroicSwitch);
+
+    expect(outerHeroicSwitch).toHaveAttribute('aria-checked', 'false');
   });
 });
