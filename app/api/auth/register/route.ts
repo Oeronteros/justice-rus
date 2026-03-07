@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     const created = await pool.query(
       `
       INSERT INTO portal_account (nickname, password_hash, role, is_active)
-      VALUES ($1, $2, 'member', FALSE)
+      VALUES ($1, $2, 'guest', FALSE)
       RETURNING id, nickname, role, is_active, created_at
       `,
       [nickname, passwordHash]
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
       {
         success: true,
         pendingApproval: true,
-        message: 'Account created. Ask officer/GM to activate it.',
+        message: 'Account created. Ask officer/head/sysadmin to activate it.',
         user: {
           id: String(row.id),
           nickname: row.nickname,

@@ -42,12 +42,11 @@ export function escapeHtml(text: string | null | undefined): string {
 
 export function getRankClass(rank: string): string {
   const rankMap: Record<string, string> = {
-    'novice': 'level-novice',
+    'guest': 'level-novice',
     'member': 'level-member',
-    'veteran': 'level-veteran',
-    'elite': 'level-elite',
-    'legend': 'level-legend',
-    'gm': 'level-gm'
+    'officer': 'level-veteran',
+    'head': 'level-elite',
+    'sysadmin': 'level-gm'
   };
   
   const lowerRank = rank?.toLowerCase();
@@ -71,5 +70,12 @@ export function getKPIClass(kpi: number | string): string {
   if (kpiNum >= 80) return 'kpi-good';
   if (kpiNum >= 50) return 'kpi-medium';
   return 'kpi-bad';
+}
+
+export function getKpiIndicator(kpi: number | string): { label: string; className: string } {
+  const className = getKPIClass(kpi);
+  if (className === 'kpi-good') return { label: 'Green', className };
+  if (className === 'kpi-medium') return { label: 'Yellow', className };
+  return { label: 'Red', className };
 }
 

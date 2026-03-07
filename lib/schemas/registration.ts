@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const registrationRanks = [
-  'novice', 'member', 'veteran', 'elite', 'legend', 'gm'
+  'guest', 'member', 'officer', 'head', 'sysadmin'
 ] as const;
 
 export const registrationStatuses = [
@@ -16,6 +16,10 @@ export const registrationSchema = z.object({
   guild: z.string(),
   joinDate: z.string(),
   kpi: z.number(),
+  elo: z.number().default(0),
+  mmr20: z.number().default(0),
+  bounty: z.number().default(0),
+  marks: z.number().default(0),
   status: z.enum(registrationStatuses),
 });
 

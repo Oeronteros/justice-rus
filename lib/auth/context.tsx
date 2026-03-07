@@ -33,7 +33,7 @@ export function useAuth() {
 export function useUser() {
   const { user } = useAuth();
   if (!user) {
-    return { id: '', nickname: '', role: 'member' as const, isActive: false };
+    return { id: '', nickname: '', role: 'guest' as const, isActive: false };
   }
   return user;
 }

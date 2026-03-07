@@ -3,12 +3,14 @@ import { z } from 'zod';
 import { verifyToken } from '@/lib/auth';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureAccountsSchema, toPublicAccount } from '@/lib/auth/accounts';
+import { canAssignRoles, canManageAccounts } from '@/lib/authz';
 
 export const runtime = 'nodejs';
 
 const updateSchema = z.object({
   id: z.union([z.string(), z.number()]),
   isActive: z.boolean(),
+  role: z.enum(['guest', 'member', 'officer', 'head', 'sysadmin']).optional(),
 });
 
 function getAuthToken(request: NextRequest): string | null {
@@ -25,7 +27,7 @@ function ensureAdmin(request: NextRequest) {
     return { error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
   }
 
-  if (decoded.role !== 'officer' && decoded.role !== 'gm') {
+  if (!canManageAccounts(decoded.role)) {
     return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
   }
 
@@ -82,16 +84,22 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'You cannot deactivate your own account' }, { status: 400 });
     }
 
+    if (payload.role && !canAssignRoles(guard.decoded.role)) {
+      return NextResponse.json({ error: 'Only head/sysadmin can assign roles' }, { status: 403 });
+    }
+
     await ensureAccountsSchema();
     const pool = getPool();
     const updated = await pool.query(
       `
       UPDATE portal_account
-      SET is_active = $2, updated_at = NOW()
+      SET is_active = $2,
+          role = COALESCE($3, role),
+          updated_at = NOW()
       WHERE id = $1
       RETURNING id, nickname, role, is_active, password_hash, created_at, updated_at, last_login_at
       `,
-      [accountId, payload.isActive]
+      [accountId, payload.isActive, payload.role ?? null]
     );
 
     const row = updated.rows[0];

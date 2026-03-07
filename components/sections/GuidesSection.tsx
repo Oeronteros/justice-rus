@@ -5,6 +5,7 @@ import { User } from '@/types';
 import { formatDate } from '@/lib/utils';
 import { markdownToHtml } from '@/lib/markdown';
 import { useHeader } from '@/lib/ui/headerContext';
+import { canModerateContent } from '@/lib/authz';
 import WuxiaIcon from '../WuxiaIcons';
 
 interface GuidesSectionProps {
@@ -58,7 +59,7 @@ function extractTitleFromMarkdown(content: string, fallbackFileName: string): st
 }
 
 export default function GuidesSection({ user }: GuidesSectionProps) {
-  const canModerate = user.role === 'officer' || user.role === 'gm';
+  const canModerate = canModerateContent(user.role);
   const { hideHeader, showHeader } = useHeader();
 
   const [guides, setGuides] = useState<GuideSummary[]>([]);

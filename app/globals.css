@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "@milkdown/crepe/theme/common/style.css";
+@import "@milkdown/crepe/theme/classic-dark.css";
 
 :root {
   --wuxia-ink: #0a0f14;
@@ -1305,41 +1307,49 @@ body {
   .dc-md .dc-md-h1,
   .dc-md .dc-md-h2,
   .dc-md .dc-md-h3 {
-    margin-top: 14px;
-    margin-bottom: 10px;
+    margin-top: 18px;
+    margin-bottom: 12px;
     font-weight: 800;
     letter-spacing: 0.02em;
     color: rgba(230, 239, 245, 0.96);
+    line-height: 1.25;
   }
 
   .dc-md .dc-md-h1 {
-    font-size: 1.35rem;
+    font-size: 1.55rem;
   }
 
   .dc-md .dc-md-h2 {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
   }
 
   .dc-md .dc-md-h3 {
-    font-size: 1.05rem;
+    font-size: 1.12rem;
   }
 
   .dc-md .dc-md-p {
-    margin: 10px 0;
+    margin: 12px 0;
     color: rgba(199, 215, 226, 0.92);
-    line-height: 1.7;
+    line-height: 1.82;
   }
 
   .dc-md .dc-md-ul {
-    margin: 10px 0 10px 18px;
+    margin: 12px 0 12px 20px;
     padding: 0;
     list-style: disc;
     color: rgba(199, 215, 226, 0.92);
   }
 
+  .dc-md .dc-md-ol {
+    margin: 12px 0 12px 20px;
+    padding: 0;
+    list-style: decimal;
+    color: rgba(199, 215, 226, 0.92);
+  }
+
   .dc-md .dc-md-li {
-    margin: 6px 0;
-    line-height: 1.6;
+    margin: 7px 0;
+    line-height: 1.72;
   }
 
   .dc-md .dc-md-code {
@@ -1352,8 +1362,16 @@ body {
     color: rgba(230, 239, 245, 0.95);
   }
 
+  .dc-md .dc-md-code-block {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.92rem;
+    color: rgba(230, 239, 245, 0.95);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
   .dc-md .dc-md-pre {
-    margin: 12px 0;
+    margin: 14px 0;
     padding: 14px 16px;
     border-radius: 16px;
     overflow: auto;
@@ -1378,6 +1396,228 @@ body {
   .dc-md .dc-md-link:hover {
     color: rgba(207, 230, 245, 0.95);
     border-bottom-color: rgba(207, 230, 245, 0.6);
+  }
+
+  .dc-md .dc-md-guide-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.18rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid rgba(104, 152, 177, 0.42);
+    background: rgba(20, 34, 46, 0.78);
+    color: rgba(198, 228, 243, 0.96);
+    font-size: 0.92em;
+    text-decoration: none;
+    transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+  }
+
+  .dc-md .dc-md-guide-link:hover {
+    transform: translateY(-1px);
+    border-color: rgba(143, 185, 204, 0.7);
+    background: rgba(27, 46, 61, 0.92);
+  }
+
+  .dc-md .dc-md-guide-link-static {
+    cursor: default;
+  }
+
+  .dc-md .dc-md-blockquote {
+    margin: 16px 0;
+    padding: 14px 18px;
+    border-left: 3px solid rgba(143, 185, 204, 0.58);
+    border-radius: 0 18px 18px 0;
+    background: linear-gradient(135deg, rgba(13, 22, 31, 0.88), rgba(17, 30, 42, 0.72));
+    box-shadow: inset 0 0 0 1px rgba(143, 185, 204, 0.08);
+  }
+
+  .dc-md .dc-md-callout[data-callout='warning'],
+  .dc-md .dc-md-callout[data-callout='danger'],
+  .dc-md .dc-md-callout[data-callout='error'] {
+    border-left-color: rgba(231, 122, 84, 0.72);
+    background: linear-gradient(135deg, rgba(34, 16, 14, 0.92), rgba(49, 22, 20, 0.7));
+  }
+
+  .dc-md .dc-md-callout[data-callout='tip'],
+  .dc-md .dc-md-callout[data-callout='success'],
+  .dc-md .dc-md-callout[data-callout='check'] {
+    border-left-color: rgba(92, 184, 143, 0.72);
+    background: linear-gradient(135deg, rgba(12, 27, 24, 0.92), rgba(18, 40, 34, 0.72));
+  }
+
+  .dc-md .dc-md-image-wrap {
+    display: block;
+    margin: 18px 0;
+  }
+
+  .dc-md .dc-md-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 18px;
+    border: 1px solid rgba(143, 185, 204, 0.22);
+    box-shadow: 0 16px 36px rgba(3, 8, 12, 0.45);
+  }
+
+  .dc-md .dc-md-hr {
+    margin: 22px 0;
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(143, 185, 204, 0.35), transparent);
+  }
+
+  .dc-md .dc-md-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    margin: 18px 0;
+    border-radius: 18px;
+    border: 1px solid rgba(143, 185, 204, 0.18);
+    background: rgba(9, 16, 25, 0.78);
+  }
+
+  .dc-md .dc-md-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 420px;
+  }
+
+  .dc-md .dc-md-th,
+  .dc-md .dc-md-td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid rgba(143, 185, 204, 0.14);
+    vertical-align: top;
+  }
+
+  .dc-md .dc-md-th {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(188, 214, 229, 0.88);
+    background: rgba(19, 32, 44, 0.88);
+  }
+
+  .dc-md .dc-md-td {
+    color: rgba(208, 220, 229, 0.94);
+  }
+
+  .dc-md .dc-md-tr:last-child .dc-md-td {
+    border-bottom: none;
+  }
+
+  .dc-md .contains-task-list {
+    list-style: none;
+    margin-left: 0;
+  }
+
+  .dc-md .task-list-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    list-style: none;
+  }
+
+  .dc-md .dc-md-checkbox {
+    width: 16px;
+    height: 16px;
+    margin-top: 0.25rem;
+    accent-color: #8fb9cc;
+  }
+
+  .guide-milkdown-shell {
+    position: relative;
+    min-height: 420px;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(143, 185, 204, 0.18);
+    background: linear-gradient(180deg, rgba(10, 16, 23, 0.96), rgba(12, 20, 29, 0.9));
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02), 0 20px 40px rgba(3, 8, 12, 0.35);
+  }
+
+  .guide-milkdown-shell-loading {
+    display: grid;
+    place-items: center;
+  }
+
+  .guide-milkdown-loading {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 0.9rem;
+    color: rgba(159, 184, 198, 0.82);
+    background: linear-gradient(135deg, rgba(8, 13, 18, 0.7), rgba(11, 18, 26, 0.4));
+    z-index: 1;
+  }
+
+  .guide-milkdown-host {
+    min-height: 420px;
+  }
+
+  .guide-milkdown-shell .milkdown {
+    min-height: 420px;
+    --crepe-color-background: #0b1219;
+    --crepe-color-on-background: #e5eef6;
+    --crepe-color-surface: #0f1a24;
+    --crepe-color-surface-low: #13212d;
+    --crepe-color-on-surface: #dde8f2;
+    --crepe-color-on-surface-variant: #95aabd;
+    --crepe-color-outline: #385264;
+    --crepe-color-primary: #8fb9cc;
+    --crepe-color-secondary: #163040;
+    --crepe-color-on-secondary: #dcebf4;
+    --crepe-color-inverse: #dceaf4;
+    --crepe-color-on-inverse: #0a1118;
+    --crepe-color-inline-code: #9ed0ec;
+    --crepe-color-error: #ef8b72;
+    --crepe-color-hover: #162634;
+    --crepe-color-selected: #203446;
+    --crepe-color-inline-area: #1e2f3d;
+    --crepe-font-title: 'ZCOOL XiaoWei', serif;
+    --crepe-font-default: 'Manrope', 'Noto Sans', 'Segoe UI', sans-serif;
+    --crepe-font-code: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --crepe-shadow-1: 0 8px 24px rgba(2, 8, 12, 0.35);
+    --crepe-shadow-2: 0 16px 32px rgba(2, 8, 12, 0.45);
+  }
+
+  .guide-milkdown-shell .milkdown .editor {
+    min-height: 420px;
+    background: transparent;
+  }
+
+  .guide-milkdown-shell .milkdown .ProseMirror {
+    min-height: 420px;
+    padding: 24px 24px 28px;
+    color: rgba(229, 238, 246, 0.96);
+  }
+
+  .guide-milkdown-shell .milkdown .ProseMirror:focus {
+    outline: none;
+  }
+
+  .guide-milkdown-shell .milkdown .toolbar,
+  .guide-milkdown-shell .milkdown .milkdown-toolbar {
+    border-bottom: 1px solid rgba(143, 185, 204, 0.12);
+    backdrop-filter: blur(10px);
+    background: rgba(10, 16, 23, 0.86);
+  }
+
+  .guide-milkdown-shell .milkdown .code-fence_selector-wrapper,
+  .guide-milkdown-shell .milkdown .cm-editor,
+  .guide-milkdown-shell .milkdown .link-tooltip,
+  .guide-milkdown-shell .milkdown .table-tooltip {
+    font-family: 'Manrope', 'Noto Sans', 'Segoe UI', sans-serif;
+  }
+
+  .guide-milkdown-shell .milkdown .ProseMirror p,
+  .guide-milkdown-shell .milkdown .ProseMirror li {
+    line-height: 1.8;
+  }
+
+  .guide-milkdown-shell .milkdown .ProseMirror h1,
+  .guide-milkdown-shell .milkdown .ProseMirror h2,
+  .guide-milkdown-shell .milkdown .ProseMirror h3 {
+    letter-spacing: 0.02em;
   }
 
   .wuxia-nav-scroll {

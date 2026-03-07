@@ -218,11 +218,15 @@ async function createMongoDBClient(config: DatabaseConfig): Promise<DatabaseClie
       return docs.map((doc: any) => ({
         discord: doc.discordId || doc.discord || '',
         nickname: doc.nickname || '',
-        rank: doc.rank || 'novice',
+        rank: doc.rank || 'guest',
         class: doc.class || '',
         guild: doc.guild || '',
         joinDate: doc.joinDate || doc.join_date || '',
         kpi: doc.kpi || 0,
+        elo: doc.elo || 0,
+        mmr20: doc.mmr20 || 0,
+        bounty: doc.bounty || 0,
+        marks: doc.marks || 0,
         status: doc.status || 'pending',
       }));
     },
@@ -315,6 +319,10 @@ async function createSQLiteClient(config: DatabaseConfig): Promise<DatabaseClien
           guild,
           join_date as joinDate,
           kpi,
+          0 as elo,
+          0 as mmr20,
+          0 as bounty,
+          0 as marks,
           status
         FROM registrations
         ORDER BY join_date DESC
@@ -328,6 +336,10 @@ async function createSQLiteClient(config: DatabaseConfig): Promise<DatabaseClien
         guild: row.guild,
         joinDate: row.joinDate,
         kpi: parseInt(row.kpi) || 0,
+        elo: parseInt(row.elo) || 0,
+        mmr20: parseInt(row.mmr20) || 0,
+        bounty: parseInt(row.bounty) || 0,
+        marks: parseInt(row.marks) || 0,
         status: row.status,
       }));
     },

@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
 import { useCreateGuide, useGuides } from '@/lib/hooks/useGuides';
+import { buildGuideDraftFromMarkdownFile, isMarkdownFile } from '@/lib/guides/obsidian';
 import { GuideCard } from './GuideCard';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -22,19 +23,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
   const [isImporting, setIsImporting] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const markdownInputRef = useRef<HTMLInputElement | null>(null);
-
-  const extractTitleFromMarkdown = (content: string, fallbackFileName: string): string => {
-    const heading = content
-      .split('\n')
-      .map((line) => line.trim())
-      .find((line) => line.startsWith('# '));
-
-    if (heading) {
-      return heading.replace(/^#\s+/, '').trim().slice(0, 140);
-    }
-
-    return fallbackFileName.replace(/\.(md|markdown)$/i, '').trim().slice(0, 140) || 'Imported guide';
-  };
+  const markdownFolderInputRef = useRef<HTMLInputElement | null>(null);
 
   const processMarkdownFiles = async (files: File[]) => {
     if (files.length === 0) return;
@@ -46,26 +35,28 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
     let skipped = 0;
     let failed = 0;
 
-    for (const file of files) {
-      if (!/\.(md|markdown)$/i.test(file.name)) {
-        skipped += 1;
-        continue;
-      }
+    const markdownFiles = files.filter((file) => isMarkdownFile(file));
+    if (markdownFiles.length === 0) {
+      setIsImporting(false);
+      setNotice('Markdown files not found. Pick .md notes or an exported Obsidian folder.');
+      return;
+    }
 
+    skipped = Math.max(0, files.length - markdownFiles.length);
+
+    for (const file of markdownFiles) {
       try {
-        const raw = await file.text();
-        const content = raw.replace(/\r\n/g, '\n').trim();
-        if (!content) {
+        const draft = await buildGuideDraftFromMarkdownFile(file, files);
+        if (!draft.content) {
           skipped += 1;
           continue;
         }
 
-        const title = extractTitleFromMarkdown(content, file.name);
-
         await createGuide.mutateAsync({
-          title,
-          content: content.slice(0, 50_000),
-          category: 'general',
+          title: draft.title,
+          content: draft.content,
+          category: draft.category,
+          author: draft.author,
         });
 
         imported += 1;
@@ -91,6 +82,9 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
     await processMarkdownFiles(files);
     if (markdownInputRef.current) {
       markdownInputRef.current.value = '';
+    }
+    if (markdownFolderInputRef.current) {
+      markdownFolderInputRef.current.value = '';
     }
   };
 
@@ -151,8 +145,8 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
       <SectionHero
         icon={<WuxiaIcon name="guides" className="w-5 h-5" />}
         title="Гайды гильдии"
-        subtitle="Единая база знаний с поддержкой импорта Markdown из Obsidian и быстрым поиском по авторам/темам."
-        chips={['Markdown Import', 'Voting', 'Comments']}
+        subtitle="Единая база знаний с импортом Obsidian .md, вложениями, wikilinks и быстрым поиском по авторам/темам."
+        chips={['Obsidian Import', 'Milkdown Writing', 'Comments']}
         actions={
           <>
             <input
@@ -164,10 +158,17 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
             <input
               ref={markdownInputRef}
               type="file"
-              accept=".md,.markdown,text/markdown,text/plain"
+              accept=".md,.markdown,text/markdown,text/plain,image/*,.webp,.avif,.gif,.svg,.pdf"
               multiple
               onChange={handleMarkdownInput}
               className="hidden"
+            />
+            <input
+              ref={markdownFolderInputRef}
+              type="file"
+              onChange={handleMarkdownInput}
+              className="hidden"
+              {...({ webkitdirectory: 'true', directory: 'true' } as Record<string, string>)}
             />
             <button
               type="button"
@@ -177,6 +178,15 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
             >
               <WuxiaIcon name="upload" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
               {isImporting ? 'Импорт...' : 'Импорт .md'}
+            </button>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => markdownFolderInputRef.current?.click()}
+              disabled={isImporting}
+            >
+              <WuxiaIcon name="guides" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+              Папка vault
             </button>
             <button
               type="button"
@@ -206,7 +216,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
       >
         <div className="text-sm text-[#bdd5e4]">
           <WuxiaIcon name="upload" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
-          Перетащи файлы `.md` сюда или используй кнопку импорта.
+          Перетащи `.md` вместе с вложениями или выбери целую папку из Obsidian.
         </div>
       </div>
 

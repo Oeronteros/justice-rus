@@ -45,12 +45,11 @@ export function RegistrationFilters({
         className="select-field"
       >
         <option value="all">Все ранги</option>
-        <option value="novice">Новик</option>
+        <option value="guest">Гость</option>
         <option value="member">Брат</option>
-        <option value="veteran">Ветеран</option>
-        <option value="elite">Элита</option>
-        <option value="legend">Легенда</option>
-        <option value="gm">ГМ</option>
+        <option value="officer">Офицер</option>
+        <option value="head">Глава</option>
+        <option value="sysadmin">Сис.Админ</option>
       </select>
     </div>
   );

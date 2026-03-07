@@ -90,10 +90,29 @@ function isSameOrigin(request: NextRequest): boolean {
 }
 
 function legacyPinRole(password: string): UserRole | null {
-  // Member PIN intentionally disabled for migration to account-based auth.
   if (safeEqual(password, PASSWORDS.officer)) return 'officer';
-  if (safeEqual(password, PASSWORDS.gm)) return 'gm';
+  if (safeEqual(password, PASSWORDS.head)) return 'head';
+  if (safeEqual(password, PASSWORDS.sysadmin)) return 'sysadmin';
   return null;
+}
+
+async function resolveClassName(nickname: string | undefined): Promise<string | null> {
+  if (!nickname || !hasDatabaseUrl()) return null;
+
+  const pool = getPool();
+  const columns = await pool.query(
+    `SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'registrations'`
+  );
+  const names = new Set(columns.rows.map((row) => String(row.column_name).toLowerCase()));
+  const nickCol = names.has('nick') ? 'nick' : names.has('nickname') ? 'nickname' : null;
+  const classCol = names.has('class_name') ? 'class_name' : names.has('class') ? 'class' : null;
+  if (!nickCol || !classCol) return null;
+
+  const result = await pool.query(
+    `SELECT ${classCol} AS class_name FROM registrations WHERE LOWER(${nickCol}) = LOWER($1) LIMIT 1`,
+    [nickname]
+  );
+  return result.rows[0]?.class_name || null;
 }
 
 export async function POST(request: NextRequest) {
@@ -166,6 +185,7 @@ export async function POST(request: NextRequest) {
         role: row.role,
         isActive: true,
         authMethod: 'account',
+        className: await resolveClassName(row.nickname),
       };
     } else {
       const role = legacyPinRole(password);
@@ -180,6 +200,7 @@ export async function POST(request: NextRequest) {
         role,
         isActive: true,
         authMethod: 'pin',
+        className: null,
       };
     }
 

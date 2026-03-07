@@ -88,7 +88,7 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
           />
         </div>
 
-        <RegistrationStats registrations={registrations} />
+        <RegistrationStats registrations={registrations} user={user} />
 
         <div className="card p-6 mb-8">
           <RegistrationFilters
@@ -100,7 +100,7 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
             onRankChange={setRankFilter}
           />
 
-          <RegistrationTable registrations={filteredRegistrations} />
+          <RegistrationTable registrations={filteredRegistrations} user={user} onRefresh={refetch} />
         </div>
       </div>
     </section>

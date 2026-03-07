@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { verifyToken } from '@/lib/auth';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
+import { canModerateContent, hasRoleAtLeast } from '@/lib/authz';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -165,7 +166,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (decoded.role !== 'officer' && decoded.role !== 'gm') {
+    if (!hasRoleAtLeast(decoded.role, 'officer')) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -223,8 +224,44 @@ export async function OPTIONS() {
     status: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     },
   });
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const token = getAuthToken(request);
+    const decoded = token ? verifyToken(token) : null;
+    if (!decoded) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (!canModerateContent(decoded.role)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!hasDatabaseUrl()) {
+      return NextResponse.json({ error: 'Database is not configured (missing DATABASE_URL)' }, { status: 503 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = Number(searchParams.get('id'));
+    if (!Number.isFinite(id)) {
+      return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
+    }
+
+    await ensureHelpSchema();
+    const pool = getPool();
+    const deleted = await pool.query(`DELETE FROM help_requests WHERE id = $1 RETURNING id`, [id]);
+    if (!deleted.rows[0]) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting help request:', error);
+    return NextResponse.json({ error: 'Failed to delete help request' }, { status: 500 });
+  }
 }

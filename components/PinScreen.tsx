@@ -101,7 +101,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
         throw new Error(payload.error || 'Не удалось создать аккаунт');
       }
 
-      setNotice(payload.message || 'Аккаунт создан и ожидает активации офицером/GM.');
+      setNotice(payload.message || 'Аккаунт создан и ожидает активации офицером/главой/сис.админом.');
       setMode('login');
       setPassword('');
       setConfirmPassword('');
@@ -115,7 +115,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
   const handleAdminPinLogin = async () => {
     resetMessages();
     if (!adminPin.trim()) {
-      setError('Введи PIN офицера/GM');
+      setError('Введи PIN офицера/главы/сис.админа');
       return;
     }
 
@@ -159,7 +159,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
 
           <h2 className="text-3xl font-bold font-orbitron text-[#e6eff5] mt-5 mb-2">Member Access</h2>
           <p className="text-[#b7c9d6] leading-relaxed">
-            Вход в личный кабинет по нику и паролю. Новые учетные записи создаются неактивными до проверки офицером/GM.
+            Вход в личный кабинет по нику и паролю. Новые учетные записи создаются неактивными до проверки офицером, главой или сис.админом.
           </p>
 
           <div className="mt-6 space-y-3 text-sm text-[#bdd5e4]">
@@ -173,7 +173,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
             </div>
             <div className="inline-flex items-center gap-2">
               <WuxiaIcon name="checkCircle" className="w-4 h-4 text-[#8fb9cc]" />
-              Резервный вход офицера/GM по PIN
+              Резервный вход офицера/главы/сис.админа по PIN
             </div>
           </div>
         </div>
@@ -272,19 +272,19 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
               className="text-sm text-[#8fb9cc] hover:text-[#bcd6e5] transition-colors"
               onClick={() => setShowAdminPin((v) => !v)}
             >
-              {showAdminPin ? 'Скрыть' : 'Показать'} вход офицера/GM по PIN
+              {showAdminPin ? 'Скрыть' : 'Показать'} вход по служебному PIN
             </button>
 
             {showAdminPin && (
               <div className="mt-3 p-4 rounded-xl border border-[#2f6e8d]/35 bg-[#12202b]/55">
-                <div className="text-sm text-[#bcd6e5] mb-2">Резервный вход для офицера/GM</div>
+                <div className="text-sm text-[#bcd6e5] mb-2">Резервный вход для офицера / главы / сис.админа</div>
                 <div className="flex gap-2">
                   <input
                     type="password"
                     className="input-field"
                     value={adminPin}
                     onChange={(e) => setAdminPin(e.target.value)}
-                    placeholder="Officer/GM PIN"
+                    placeholder="Officer / Head / Sysadmin PIN"
                     disabled={loading}
                   />
                   <button type="button" className="btn-secondary px-4" onClick={handleAdminPinLogin} disabled={loading}>
@@ -314,7 +314,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
               <WuxiaIcon name="shield" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
               Secure Guild Access
             </span>
-            <span>Need activation? Ask officer/GM</span>
+            <span>Need activation? Ask officer/head/sysadmin</span>
           </div>
         </div>
       </div>

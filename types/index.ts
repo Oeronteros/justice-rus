@@ -1,6 +1,6 @@
 // Типы данных для приложения
 
-export type UserRole = 'member' | 'officer' | 'gm';
+export type UserRole = 'guest' | 'member' | 'officer' | 'head' | 'sysadmin';
 export type Section =
   | 'registration'
   | 'schedule'
@@ -19,6 +19,7 @@ export interface User {
   isActive?: boolean;
   authMethod?: 'account' | 'pin';
   discordId?: string | null;
+  className?: string | null;
   exp?: number;
 }
 
@@ -39,10 +40,14 @@ export interface Registration {
   guild: string;
   joinDate: string;
   kpi: number;
+   elo: number;
+   mmr20: number;
+   bounty: number;
+   marks: number;
   status: RegistrationStatus;
 }
 
-export type RegistrationRank = 'novice' | 'member' | 'veteran' | 'elite' | 'legend' | 'gm';
+export type RegistrationRank = UserRole;
 export type RegistrationStatus = 'active' | 'inactive' | 'pending' | 'leave';
 
 export interface Schedule {

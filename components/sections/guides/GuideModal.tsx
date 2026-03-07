@@ -2,13 +2,14 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { markdownToHtml } from '@/lib/markdown';
-import { useGuide, useVoteGuide } from '@/lib/hooks/useGuides';
+import { MarkdownRenderer } from '@/components/guides/MarkdownRenderer';
+import { useGuide, useGuides, useVoteGuide } from '@/lib/hooks/useGuides';
 import { GuideComments } from './GuideComments';
 
 interface GuideModalProps {
   guideId: string;
   onClose: () => void;
+  onGuideSelect?: (guideId: string) => void;
   canModerate?: boolean;
   userRole?: string;
 }
@@ -25,11 +26,12 @@ function getVoterKey(): string {
   return generated;
 }
 
-export function GuideModal({ guideId, onClose, canModerate = false, userRole }: GuideModalProps) {
+export function GuideModal({ guideId, onClose, onGuideSelect, canModerate = false, userRole }: GuideModalProps) {
   const [voterKey] = useState(getVoterKey);
   const [mounted, setMounted] = useState(false);
   
   const { data: guideDetail, isLoading, error } = useGuide(guideId, voterKey);
+  const { data: guides = [] } = useGuides();
   const voteGuide = useVoteGuide();
 
   useEffect(() => {
@@ -60,6 +62,14 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
     onClose();
   }, [onClose]);
 
+  const handleDelete = useCallback(async () => {
+    await fetch(`/api/guide/${guideId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    onClose();
+  }, [guideId, onClose]);
+
   if (!mounted) return null;
 
   const modalContent = (
@@ -89,6 +99,15 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
                 ♥ {guideDetail.votes}
               </button>
             )}
+            {canModerate && (
+              <button
+                type="button"
+                className="text-sm px-3 py-1 rounded text-red-400 hover:text-red-300 hover:bg-[#1a2a38]"
+                onClick={handleDelete}
+              >
+                Удалить
+              </button>
+            )}
             <button
               type="button"
               className="text-gray-400 hover:text-white text-xl px-2 py-1 rounded hover:bg-[#1a2a38]"
@@ -115,9 +134,11 @@ export function GuideModal({ guideId, onClose, canModerate = false, userRole }: 
 
           {guideDetail && (
             <>
-              <div className="dc-md">
-                <div dangerouslySetInnerHTML={{ __html: markdownToHtml(guideDetail.guide.content) }} />
-              </div>
+              <MarkdownRenderer
+                content={guideDetail.guide.content}
+                guidesIndex={guides}
+                onGuideLinkClick={onGuideSelect}
+              />
 
               <div className="mt-8 pt-6 border-t border-[#1a2a38]">
                 <GuideComments

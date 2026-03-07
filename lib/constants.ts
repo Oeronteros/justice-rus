@@ -31,9 +31,9 @@ const optionalAnyEnv = (...names: string[]): string | null => {
 // Отладка: выводим значения переменных окружения при запуске (только для отладки)
 
 export const PASSWORDS = {
-  member: optionalAnyEnv('MEMBER_PASSWORD', 'MEMBER_PIN'),
   officer: optionalAnyEnv('OFFICER_PASSWORD', 'OFFICER_PIN'),
-  gm: optionalAnyEnv('GM_PASSWORD', 'GM_PIN'),
+  head: optionalAnyEnv('HEAD_PASSWORD', 'HEAD_PIN', 'GM_PASSWORD', 'GM_PIN'),
+  sysadmin: optionalAnyEnv('SYSADMIN_PASSWORD', 'SYSADMIN_PIN'),
 } as const;
 
 

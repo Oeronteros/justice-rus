@@ -7,6 +7,7 @@ import { GuideModal } from './GuideModal';
 import { GuideEditor } from './GuideEditor';
 import type { User } from '@/types';
 import { useHeader } from '@/lib/ui/headerContext';
+import { canModerateContent } from '@/lib/authz';
 
 interface GuidesSectionProps {
   user: User;
@@ -17,7 +18,7 @@ function GuidesSectionContent({ user }: GuidesSectionProps) {
   const [createOpen, setCreateOpen] = useState(false);
   const { hideHeader, showHeader } = useHeader();
 
-  const canModerate = user.role === 'officer' || user.role === 'gm';
+  const canModerate = canModerateContent(user.role);
 
   const handleGuideClick = (guideId: string) => {
     setOpenGuideId(guideId);
@@ -65,6 +66,7 @@ function GuidesSectionContent({ user }: GuidesSectionProps) {
         <GuideModal
           guideId={openGuideId}
           onClose={handleCloseGuide}
+          onGuideSelect={setOpenGuideId}
           canModerate={canModerate}
           userRole={user.role}
         />

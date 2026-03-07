@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { verifyToken } from '@/lib/auth';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
+import { canModerateContent } from '@/lib/authz';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const guideUpdateSchema = z.object({
   title: z.string().trim().min(1).max(140).optional(),
-  content: z.string().trim().min(1).max(50_000).optional(),
+  content: z.string().trim().min(1).max(500_000).optional(),
   category: z.string().trim().min(1).max(60).optional(),
 });
 
@@ -153,7 +154,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (decoded.role !== 'officer' && decoded.role !== 'gm') {
+    if (!canModerateContent(decoded.role)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -226,8 +227,44 @@ export async function OPTIONS() {
     status: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, PATCH, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, PATCH, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     },
   });
+}
+
+export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  try {
+    const token = getAuthToken(request);
+    const decoded = token ? verifyToken(token) : null;
+    if (!decoded) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (!canModerateContent(decoded.role)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!hasDatabaseUrl()) {
+      return NextResponse.json({ error: 'Database is not configured (missing DATABASE_URL)' }, { status: 503 });
+    }
+
+    await ensureGuideSchema();
+    const pool = getPool();
+    const { id } = await context.params;
+    const guideId = Number(id);
+    if (!Number.isFinite(guideId)) {
+      return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
+    }
+
+    const deleted = await pool.query(`DELETE FROM guide WHERE id = $1 RETURNING id`, [guideId]);
+    if (!deleted.rows[0]) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting guide:', error);
+    return NextResponse.json({ error: 'Failed to delete guide' }, { status: 500 });
+  }
 }

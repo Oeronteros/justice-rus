@@ -9,6 +9,7 @@ import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/types';
 import { SectionHero } from '@/components/shared/SectionHero';
+import { canModerateContent, hasRoleAtLeast } from '@/lib/authz';
 
 interface HelpSectionProps {
   user: User;
@@ -24,7 +25,8 @@ function HelpSectionContent({ user }: HelpSectionProps) {
   const [details, setDetails] = useState('');
   const [category, setCategory] = useState('outer_city_heroic');
 
-  const canModerate = user.role === 'officer' || user.role === 'gm';
+  const canModerate = hasRoleAtLeast(user.role, 'officer');
+  const canDelete = canModerateContent(user.role);
 
   const categories = useMemo(
     () => [
@@ -56,6 +58,14 @@ function HelpSectionContent({ user }: HelpSectionProps) {
   const toggleStatus = async (requestId: string, currentStatus: 'open' | 'closed') => {
     const nextStatus = currentStatus === 'closed' ? 'open' : 'closed';
     await updateStatus.mutateAsync({ id: requestId, status: nextStatus });
+  };
+
+  const deleteRequest = async (requestId: string) => {
+    await fetch(`/api/help?id=${encodeURIComponent(requestId)}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    refetch();
   };
 
   return (
@@ -229,18 +239,30 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                         </div>
 
                         {canModerate && (
-                          <button
-                            type="button"
-                            className="text-sm font-medium text-[#8fb9cc] hover:text-[#bcd6e5] transition-colors"
-                            onClick={() => toggleStatus(req.id, req.status)}
-                            disabled={updateStatus.isPending}
-                          >
-                            <WuxiaIcon
-                              name={req.status === 'closed' ? 'redo' : 'checkCircle'}
-                              className="inline-block w-4 h-4 mr-2 align-text-bottom"
-                            />
-                            {req.status === 'closed' ? 'Открыть снова' : 'Закрыть'}
-                          </button>
+                          <div className="flex items-center gap-3 sm:justify-end">
+                            <button
+                              type="button"
+                              className="text-sm font-medium text-[#8fb9cc] hover:text-[#bcd6e5] transition-colors"
+                              onClick={() => toggleStatus(req.id, req.status)}
+                              disabled={updateStatus.isPending}
+                            >
+                              <WuxiaIcon
+                                name={req.status === 'closed' ? 'redo' : 'checkCircle'}
+                                className="inline-block w-4 h-4 mr-2 align-text-bottom"
+                              />
+                              {req.status === 'closed' ? 'Открыть снова' : 'Закрыть'}
+                            </button>
+                            {canDelete && (
+                              <button
+                                type="button"
+                                className="text-sm font-medium text-red-400 hover:text-red-300 transition-colors"
+                                onClick={() => deleteRequest(req.id)}
+                              >
+                                <WuxiaIcon name="trash" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                                Удалить
+                              </button>
+                            )}
+                          </div>
                         )}
                       </div>
                     </div>

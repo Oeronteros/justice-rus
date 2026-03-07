@@ -1,12 +1,14 @@
 'use client';
 
-import type { Registration } from '@/types';
+import type { Registration, User } from '@/types';
+import { canSeeNumericKpi } from '@/lib/authz';
 
 interface RegistrationStatsProps {
   registrations: Registration[];
+  user: User;
 }
 
-export function RegistrationStats({ registrations }: RegistrationStatsProps) {
+export function RegistrationStats({ registrations, user }: RegistrationStatsProps) {
   const stats = {
     total: registrations.length,
     online: registrations.filter((r) => r.status === 'active').length,
@@ -30,12 +32,14 @@ export function RegistrationStats({ registrations }: RegistrationStatsProps) {
         </div>
         <div className="text-gray-400">В строю</div>
       </div>
-      <div className="card p-6 text-center">
-        <div className="text-3xl font-bold font-orbitron text-yellow-400 mb-2">
-          {stats.avgKPI}
+      {canSeeNumericKpi(user.role) && (
+        <div className="card p-6 text-center">
+          <div className="text-3xl font-bold font-orbitron text-yellow-400 mb-2">
+            {stats.avgKPI}
+          </div>
+          <div className="text-gray-400">Средний KPI</div>
         </div>
-        <div className="text-gray-400">Средний KPI</div>
-      </div>
+      )}
     </div>
   );
 }

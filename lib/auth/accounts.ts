@@ -23,14 +23,23 @@ export async function ensureAccountsSchema() {
       id SERIAL PRIMARY KEY,
       nickname TEXT NOT NULL,
       password_hash TEXT NOT NULL,
-      role TEXT NOT NULL DEFAULT 'member',
+      role TEXT NOT NULL DEFAULT 'guest',
       is_active BOOLEAN NOT NULL DEFAULT FALSE,
       created_at TIMESTAMP NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
       last_login_at TIMESTAMP NULL,
-      CONSTRAINT portal_account_role_chk CHECK (role IN ('member', 'officer', 'gm'))
+      CONSTRAINT portal_account_role_chk CHECK (role IN ('guest', 'member', 'officer', 'head', 'sysadmin'))
     );
   `);
+
+  await pool.query(`ALTER TABLE portal_account DROP CONSTRAINT IF EXISTS portal_account_role_chk;`);
+  await pool.query(`ALTER TABLE portal_account ALTER COLUMN role SET DEFAULT 'guest';`);
+  await pool.query(`UPDATE portal_account SET role = 'head' WHERE role = 'gm';`).catch(() => undefined);
+  await pool.query(`
+    ALTER TABLE portal_account
+    ADD CONSTRAINT portal_account_role_chk
+    CHECK (role IN ('guest', 'member', 'officer', 'head', 'sysadmin'));
+  `).catch(() => undefined);
 
   await pool.query(`
     CREATE UNIQUE INDEX IF NOT EXISTS portal_account_nickname_uq

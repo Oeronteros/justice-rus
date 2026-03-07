@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { useUser } from '@/lib/auth/context';
 import type { Language } from '@/lib/i18n';
+import { hasRoleAtLeast } from '@/lib/authz';
 
 interface Rule {
   id: number;
@@ -18,7 +19,7 @@ interface RulesBlockProps {
 
 export default function RulesBlock({ language }: RulesBlockProps) {
   const user = useUser();
-  const isAdmin = user.role === 'gm' || user.role === 'officer';
+  const isAdmin = hasRoleAtLeast(user.role, 'officer');
   
   const [rules, setRules] = useState<Rule[]>([]);
   const [loading, setLoading] = useState(true);

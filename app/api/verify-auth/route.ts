@@ -1,7 +1,7 @@
 // API Route: /api/verify-auth
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken, getTokenFromRequest } from '@/lib/auth';
-import { VerifyAuthResponse } from '@/types';
+import { User, VerifyAuthResponse } from '@/types';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureAccountsSchema } from '@/lib/auth/accounts';
 
@@ -18,6 +18,31 @@ function clearAuthCookie(response: NextResponse) {
     maxAge: 0,
     priority: 'high',
   });
+}
+
+async function resolveClassName(nickname: string | undefined): Promise<string | null> {
+  if (!nickname || !hasDatabaseUrl()) return null;
+
+  const pool = getPool();
+  const columns = await pool.query(
+    `
+    SELECT column_name
+    FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'registrations'
+    `
+  );
+
+  const names = new Set(columns.rows.map((row) => String(row.column_name).toLowerCase()));
+  const nickCol = names.has('nick') ? 'nick' : names.has('nickname') ? 'nickname' : null;
+  const classCol = names.has('class_name') ? 'class_name' : names.has('class') ? 'class' : null;
+  if (!nickCol || !classCol) return null;
+
+  const result = await pool.query(
+    `SELECT ${classCol} AS class_name FROM registrations WHERE LOWER(${nickCol}) = LOWER($1) LIMIT 1`,
+    [nickname]
+  );
+
+  return result.rows[0]?.class_name || null;
 }
 
 export async function GET(request: NextRequest) {
@@ -47,13 +72,14 @@ export async function GET(request: NextRequest) {
       return response;
     }
 
-    let user = {
+    let user: User = {
       id: decoded.id,
       nickname: decoded.nickname,
       role: decoded.role,
       isActive: decoded.isActive ?? true,
       authMethod: decoded.authMethod ?? 'account',
       discordId: decoded.discordId,
+      className: null,
     };
 
     if (decoded.authMethod !== 'pin') {
@@ -91,7 +117,10 @@ export async function GET(request: NextRequest) {
         isActive: true,
         authMethod: 'account',
         discordId: decoded.discordId,
+        className: await resolveClassName(row.nickname),
       };
+    } else {
+      user.className = await resolveClassName(decoded.nickname);
     }
 
     const response: VerifyAuthResponse = {

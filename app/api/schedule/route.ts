@@ -15,12 +15,16 @@ const bypassHeader: Record<string, string> =
 
 async function queryScheduleFromDb(language: string) {
   const pool = getPool();
+  const tableCheck = await pool.query(
+    `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name IN ('schedule', 'shedule') ORDER BY table_name = 'schedule' DESC LIMIT 1`
+  );
+  const tableName = tableCheck.rows[0]?.table_name || 'schedule';
 
   try {
     const result = await pool.query(
       `
       SELECT day_type, time, title_ru, title_en, group_name
-      FROM schedule
+      FROM ${tableName}
       WHERE active = 1
       ORDER BY group_name ASC, order_index ASC, time ASC
       `
@@ -41,7 +45,7 @@ async function queryScheduleFromDb(language: string) {
     const result = await pool.query(
       `
       SELECT date, registration, type, description
-      FROM schedule
+      FROM ${tableName}
       ORDER BY date ASC, registration ASC
       `
     );

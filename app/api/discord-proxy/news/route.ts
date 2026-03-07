@@ -2,7 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
 
-const DISCORD_BOT_API_URL = process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
+const DISCORD_BOT_API_URL = process.env.BOT_API_URL || process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
+const BOT_API_KEY = process.env.BOT_API_KEY || process.env.DISCORD_BOT_API_KEY;
 const bypassHeader: Record<string, string> =
   DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me')
     ? { 'bypass-tunnel-reminder': '1' }
@@ -33,6 +34,7 @@ export async function GET(request: NextRequest) {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
+        ...(BOT_API_KEY ? { 'X-API-KEY': BOT_API_KEY } : {}),
         ...bypassHeader,
       },
       cache: 'no-store',

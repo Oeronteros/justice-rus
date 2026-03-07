@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { HelpRequest, User } from '@/types';
 import { formatDate } from '@/lib/utils';
+import { hasRoleAtLeast } from '@/lib/authz';
 import WuxiaIcon from '../WuxiaIcons';
 
 interface HelpSectionProps {
@@ -20,7 +21,7 @@ export default function HelpSection({ user }: HelpSectionProps) {
   const [details, setDetails] = useState('');
   const [category, setCategory] = useState('outer_city_heroic');
 
-  const canModerate = user.role === 'officer' || user.role === 'gm';
+  const canModerate = hasRoleAtLeast(user.role, 'officer');
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

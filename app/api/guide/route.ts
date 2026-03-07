@@ -8,9 +8,9 @@ export const dynamic = 'force-dynamic';
 
 const guideCreateSchema = z.object({
   title: z.string().trim().min(1).max(140),
-  content: z.string().trim().min(1).max(50_000),
+  content: z.string().trim().min(1).max(500_000),
   category: z.string().trim().min(1).max(60).optional(),
-  author: z.string().trim().min(1).max(60).optional(),
+  author: z.string().trim().min(1).max(100).optional(),
 });
 
 function getAuthToken(request: NextRequest): string | null {
