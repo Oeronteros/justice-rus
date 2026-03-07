@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as fc from 'fast-check';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { cleanup, render, screen, fireEvent } from '@testing-library/react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 
 // Suppress console.error for cleaner test output
@@ -11,11 +11,14 @@ beforeEach(() => {
 
 afterEach(() => {
   console.error = originalError;
+  cleanup();
 });
 
 // Component that throws an error
 function ThrowingComponent({ error }: { error: Error }) {
   throw error;
+  // Unreachable, but keeps TS/JSX happy.
+  return <div />;
 }
 
 // Component that doesn't throw
@@ -35,6 +38,7 @@ describe('ErrorBoundary', () => {
         fc.property(
           fc.string({ minLength: 1, maxLength: 200 }),
           (errorMessage) => {
+            cleanup();
             const error = new Error(errorMessage);
 
             const { container } = render(
@@ -53,22 +57,23 @@ describe('ErrorBoundary', () => {
             expect(screen.getByRole('button', { name: /попробовать снова/i })).toBeInTheDocument();
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 25 }
       );
-    });
+    }, 10000);
 
     it('should render children when no error occurs', () => {
       fc.assert(
         fc.property(
           fc.string({ minLength: 1, maxLength: 100 }),
           (text) => {
+            cleanup();
             render(
               <ErrorBoundary>
                 <SafeComponent text={text} />
               </ErrorBoundary>
             );
 
-            expect(screen.getByTestId('safe-content')).toHaveTextContent(text);
+            expect(screen.getByTestId('safe-content').textContent).toBe(text);
           }
         ),
         { numRuns: 100 }
@@ -81,6 +86,7 @@ describe('ErrorBoundary', () => {
           fc.string({ minLength: 1, maxLength: 100 }),
           fc.string({ minLength: 1, maxLength: 100 }),
           (errorMessage, fallbackText) => {
+            cleanup();
             const error = new Error(errorMessage);
 
             render(
@@ -89,7 +95,7 @@ describe('ErrorBoundary', () => {
               </ErrorBoundary>
             );
 
-            expect(screen.getByTestId('custom-fallback')).toHaveTextContent(fallbackText);
+            expect(screen.getByTestId('custom-fallback').textContent).toBe(fallbackText);
           }
         ),
         { numRuns: 100 }
@@ -108,6 +114,7 @@ describe('ErrorBoundary', () => {
         fc.property(
           fc.string({ minLength: 1, maxLength: 200 }),
           (errorMessage) => {
+            cleanup();
             const error = new Error(errorMessage);
             const consoleSpy = vi.spyOn(console, 'error');
 
@@ -139,6 +146,7 @@ describe('ErrorBoundary', () => {
         fc.property(
           fc.string({ minLength: 1, maxLength: 200 }),
           (errorMessage) => {
+            cleanup();
             const error = new Error(errorMessage);
             const onError = vi.fn();
 

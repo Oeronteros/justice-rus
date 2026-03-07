@@ -1,5 +1,12 @@
 import { api } from './client';
-import { helpRequestSchema, type HelpRequest, type CreateHelpRequestDto, type UpdateHelpRequestDto } from '@/lib/schemas/help';
+import {
+  helpRequestSchema,
+  type HelpRequest,
+  type CreateHelpRequestDto,
+  type UpdateHelpRequestDto,
+  type UpdateHelpTimeRangeDto,
+  type HelpRsvpDto,
+} from '@/lib/schemas/help';
 import { z } from 'zod';
 
 export const helpApi = {
@@ -13,5 +20,17 @@ export const helpApi = {
 
   updateStatus: async (data: UpdateHelpRequestDto): Promise<HelpRequest> => {
     return api.patch('help', data, helpRequestSchema);
+  },
+
+  updateTimeRange: async (data: UpdateHelpTimeRangeDto): Promise<HelpRequest> => {
+    return api.patch('help', data, helpRequestSchema);
+  },
+
+  rsvp: async (data: HelpRsvpDto): Promise<HelpRequest> => {
+    return api.post('help/responders', data, helpRequestSchema);
+  },
+
+  withdrawRsvp: async (id: string): Promise<HelpRequest> => {
+    return api.delete(`help/responders?id=${encodeURIComponent(id)}`, helpRequestSchema);
   },
 };

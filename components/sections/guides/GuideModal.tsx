@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { MarkdownRenderer } from '@/components/guides/MarkdownRenderer';
 import { useGuide, useGuides, useVoteGuide } from '@/lib/hooks/useGuides';
 import { GuideComments } from './GuideComments';
+import { GuideEditor } from './GuideEditor';
 
 interface GuideModalProps {
   guideId: string;
@@ -12,6 +13,7 @@ interface GuideModalProps {
   onGuideSelect?: (guideId: string) => void;
   canModerate?: boolean;
   userRole?: string;
+  userId?: string;
 }
 
 function getVoterKey(): string {
@@ -26,9 +28,18 @@ function getVoterKey(): string {
   return generated;
 }
 
-export function GuideModal({ guideId, onClose, onGuideSelect, canModerate = false, userRole }: GuideModalProps) {
+export function GuideModal({
+  guideId,
+  onClose,
+  onGuideSelect,
+  canModerate = false,
+  userRole,
+  userId,
+}: GuideModalProps) {
   const [voterKey] = useState(getVoterKey);
   const [mounted, setMounted] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [actionNotice, setActionNotice] = useState<string | null>(null);
   
   const { data: guideDetail, isLoading, error } = useGuide(guideId, voterKey);
   const { data: guides = [] } = useGuides();
@@ -58,6 +69,16 @@ export function GuideModal({ guideId, onClose, onGuideSelect, canModerate = fals
     voteGuide.mutate({ id: guideId, voterKey });
   };
 
+  const canEdit = useMemo(() => {
+    if (canModerate) return true;
+    const owner = guideDetail?.guide.ownerAccountId;
+    if (!owner || !userId) return false;
+    const ownerNum = Number(owner);
+    const userNum = Number(userId);
+    if (!Number.isFinite(ownerNum) || !Number.isFinite(userNum)) return false;
+    return ownerNum === userNum;
+  }, [canModerate, guideDetail?.guide.ownerAccountId, userId]);
+
   const handleClose = useCallback(() => {
     onClose();
   }, [onClose]);
@@ -69,6 +90,97 @@ export function GuideModal({ guideId, onClose, onGuideSelect, canModerate = fals
     });
     onClose();
   }, [guideId, onClose]);
+
+  const buildStableGuideUrl = useCallback(() => {
+    if (typeof window === 'undefined') return `/`;
+    const url = new URL(window.location.origin);
+    url.pathname = '/';
+    url.searchParams.set('guide', String(guideId));
+    return url.toString();
+  }, [guideId]);
+
+  const copyText = useCallback(async (text: string) => {
+    if (typeof window === 'undefined') return;
+
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    textarea.style.top = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+  }, []);
+
+  const handleShare = useCallback(async () => {
+    if (!guideDetail) return;
+    const url = buildStableGuideUrl();
+
+    try {
+      if (typeof navigator !== 'undefined' && 'share' in navigator && typeof (navigator as any).share === 'function') {
+        await (navigator as any).share({
+          title: guideDetail.guide.title,
+          text: `${guideDetail.guide.title} • ${guideDetail.guide.category}`,
+          url,
+        });
+        setActionNotice('Поделились');
+        return;
+      }
+    } catch {
+      // ignore
+    }
+
+    try {
+      await copyText(url);
+      setActionNotice('Ссылка скопирована');
+    } catch {
+      window.prompt('Скопируй ссылку', url);
+    }
+  }, [buildStableGuideUrl, copyText, guideDetail]);
+
+  const handleDownload = useCallback(() => {
+    if (!guideDetail || typeof window === 'undefined') return;
+
+    const g = guideDetail.guide;
+    const frontMatter = [
+      '---',
+      `title: "${String(g.title).replace(/"/g, '\\"')}"`,
+      `category: "${String(g.category).replace(/"/g, '\\"')}"`,
+      `author: "${String(g.author).replace(/"/g, '\\"')}"`,
+      `id: "${String(g.id).replace(/"/g, '\\"')}"`,
+      `updatedAt: "${String(g.updatedAt).replace(/"/g, '\\"')}"`,
+      'source: "Silent Moonfall Portal"',
+      '---',
+      '',
+    ].join('\n');
+
+    const markdown = `${frontMatter}${g.content || ''}`;
+    const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+
+    const safeTitle = String(g.title || 'guide')
+      .toLowerCase()
+      .replace(/[^a-z0-9\-\s_]/gi, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .slice(0, 60);
+    const filename = `${safeTitle || 'guide'}-${g.id}.md`;
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }, [guideDetail]);
 
   if (!mounted) return null;
 
@@ -89,6 +201,11 @@ export function GuideModal({ guideId, onClose, onGuideSelect, canModerate = fals
             </div>
           </div>
           <div className="flex items-center gap-3">
+            {actionNotice && (
+              <span className="text-[11px] uppercase tracking-[0.18em] text-[#6f8799] hidden sm:inline">
+                {actionNotice}
+              </span>
+            )}
             {guideDetail && (
               <button
                 type="button"
@@ -97,6 +214,36 @@ export function GuideModal({ guideId, onClose, onGuideSelect, canModerate = fals
                 disabled={voteGuide.isPending}
               >
                 ♥ {guideDetail.votes}
+              </button>
+            )}
+            {guideDetail && (
+              <button
+                type="button"
+                className="text-sm px-3 py-1 rounded text-gray-500 hover:text-[#8fb9cc] hover:bg-[#1a2a38]"
+                onClick={handleDownload}
+              >
+                Скачать
+              </button>
+            )}
+            {guideDetail && (
+              <button
+                type="button"
+                className="text-sm px-3 py-1 rounded text-gray-500 hover:text-[#8fb9cc] hover:bg-[#1a2a38]"
+                onClick={handleShare}
+              >
+                Поделиться
+              </button>
+            )}
+            {guideDetail && canEdit && (
+              <button
+                type="button"
+                className="text-sm px-3 py-1 rounded text-gray-500 hover:text-[#8fb9cc] hover:bg-[#1a2a38]"
+                onClick={() => {
+                  setActionNotice(null);
+                  setEditOpen(true);
+                }}
+              >
+                Редактировать
               </button>
             )}
             {canModerate && (
@@ -152,6 +299,24 @@ export function GuideModal({ guideId, onClose, onGuideSelect, canModerate = fals
           )}
         </div>
       </div>
+
+      {editOpen && guideDetail && (
+        <GuideEditor
+          mode="edit"
+          guideId={guideId}
+          initialValues={{
+            title: guideDetail.guide.title,
+            content: guideDetail.guide.content,
+            category: guideDetail.guide.category as any,
+            author: guideDetail.guide.author,
+          }}
+          onClose={() => setEditOpen(false)}
+          onSuccess={() => {
+            setEditOpen(false);
+            setActionNotice('Сохранено');
+          }}
+        />
+      )}
     </div>
   );
 

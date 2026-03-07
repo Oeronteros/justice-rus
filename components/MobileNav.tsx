@@ -20,6 +20,7 @@ const navItems: NavItem[] = [
   { section: 'news', href: '/news' },
   { section: 'registration', href: '/members' },
   { section: 'schedule', href: '/schedule' },
+  { section: 'pvp', href: '/pvp' },
   { section: 'guides', href: '/guides' },
   { section: 'help', href: '/help' },
   { section: 'absences', href: '/absences' },

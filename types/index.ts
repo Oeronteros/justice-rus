@@ -4,6 +4,7 @@ export type UserRole = 'guest' | 'member' | 'officer' | 'head' | 'sysadmin';
 export type Section =
   | 'registration'
   | 'schedule'
+  | 'pvp'
   | 'guides'
   | 'help'
   | 'absences'
@@ -40,10 +41,18 @@ export interface Registration {
   guild: string;
   joinDate: string;
   kpi: number;
-   elo: number;
-   mmr20: number;
-   bounty: number;
-   marks: number;
+  elo: number;
+  mmr20: number;
+  bounty: number;
+  marks: number;
+  outerHeroic: number;
+  innerHeroic: number;
+  crimsonSands: number;
+  abyss: number;
+  gvg: number;
+  secretRealm: number;
+  duelWins: number;
+  duelLosses: number;
   status: RegistrationStatus;
 }
 
@@ -55,6 +64,7 @@ export interface Schedule {
   registration: string;
   type: string;
   description: string;
+  group?: string;
 }
 
 export interface News {
@@ -110,7 +120,6 @@ export interface VerifyAuthResponse {
   user: User;
 }
 
-// Re-export types from schemas for convenience
 export type {
   GuideSummary,
   GuideDetail,
@@ -128,4 +137,3 @@ export type {
 export type {
   CreateAbsenceDto,
 } from '@/lib/schemas/absence';
-

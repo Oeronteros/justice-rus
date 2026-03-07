@@ -20,12 +20,19 @@ export const registrationSchema = z.object({
   mmr20: z.number().default(0),
   bounty: z.number().default(0),
   marks: z.number().default(0),
+  outerHeroic: z.number().default(0),
+  innerHeroic: z.number().default(0),
+  crimsonSands: z.number().default(0),
+  abyss: z.number().default(0),
+  gvg: z.number().default(0),
+  secretRealm: z.number().default(0),
+  duelWins: z.number().default(0),
+  duelLosses: z.number().default(0),
   status: z.enum(registrationStatuses),
 });
 
 export const registrationsArraySchema = z.array(registrationSchema);
 
-// Inferred types
 export type Registration = z.infer<typeof registrationSchema>;
 export type RegistrationRank = typeof registrationRanks[number];
 export type RegistrationStatus = typeof registrationStatuses[number];

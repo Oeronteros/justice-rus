@@ -3,9 +3,11 @@ import {
   guideSummarySchema,
   guideDetailSchema,
   guideCommentSchema,
+  guideEntitySchema,
   voteResponseSchema,
   type GuideSummary,
   type GuideDetail,
+  type GuideEntity,
   type GuideComment,
   type CreateGuideDto,
   type CreateCommentDto,
@@ -24,6 +26,10 @@ export const guidesApi = {
 
   create: async (data: CreateGuideDto): Promise<GuideSummary> => {
     return api.post('guide', data, guideSummarySchema);
+  },
+
+  update: async (id: string, data: Pick<CreateGuideDto, 'title' | 'content' | 'category'>): Promise<GuideEntity> => {
+    return api.patch(`guide/${id}`, data, guideEntitySchema);
   },
 
   vote: async (id: string, voterKey: string): Promise<VoteResponse> => {

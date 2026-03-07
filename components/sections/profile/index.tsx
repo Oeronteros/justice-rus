@@ -19,6 +19,18 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
   const [accountsLoading, setAccountsLoading] = useState(false);
   const [accountsError, setAccountsError] = useState<string | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [profileDraft, setProfileDraft] = useState({
+    className: '',
+    mmr20: 0,
+    outerHeroic: 0,
+    innerHeroic: 0,
+    crimsonSands: 0,
+    abyss: 0,
+    gvg: 0,
+    secretRealm: 0,
+  });
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileNotice, setProfileNotice] = useState<string | null>(null);
 
   const roleOptions: UserRole[] = ['guest', 'member', 'officer', 'head', 'sysadmin'];
   const roleLabels: Record<UserRole, string> = {
@@ -33,6 +45,19 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
     () => roster.find((item) => item.nickname.toLowerCase() === (user.nickname || '').toLowerCase()),
     [roster, user.nickname]
   );
+
+  useEffect(() => {
+    setProfileDraft({
+      className: profileRegistration?.class || user.className || '',
+      mmr20: profileRegistration?.mmr20 || 0,
+      outerHeroic: profileRegistration?.outerHeroic || 0,
+      innerHeroic: profileRegistration?.innerHeroic || 0,
+      crimsonSands: profileRegistration?.crimsonSands || 0,
+      abyss: profileRegistration?.abyss || 0,
+      gvg: profileRegistration?.gvg || 0,
+      secretRealm: profileRegistration?.secretRealm || 0,
+    });
+  }, [profileRegistration, user.className]);
 
   const loadAccounts = async () => {
     if (!isAdmin) return;
@@ -109,6 +134,53 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
     }
   };
 
+  const saveProfileStats = async () => {
+    if (!user.nickname) {
+      setProfileNotice('Ник не найден для сохранения профиля');
+      return;
+    }
+
+    try {
+      setProfileSaving(true);
+      setProfileNotice(null);
+      const response = await fetch('/api/discord-proxy/registration', {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nickname: user.nickname,
+          className: profileDraft.className,
+          mmr20: Number(profileDraft.mmr20) || 0,
+          outerHeroic: Number(profileDraft.outerHeroic) || 0,
+          innerHeroic: Number(profileDraft.innerHeroic) || 0,
+          crimsonSands: Number(profileDraft.crimsonSands) || 0,
+          abyss: Number(profileDraft.abyss) || 0,
+          gvg: Number(profileDraft.gvg) || 0,
+          secretRealm: Number(profileDraft.secretRealm) || 0,
+        }),
+      });
+
+      const payload = (await response.json().catch(() => ({}))) as { error?: string };
+      if (!response.ok) {
+        throw new Error(payload.error || 'Не удалось сохранить профиль');
+      }
+
+      setProfileNotice('Профиль обновлён');
+      const refreshedRoster = await fetch('/api/discord-proxy/registration', {
+        credentials: 'include',
+        cache: 'no-store',
+      });
+      const rosterPayload = (await refreshedRoster.json().catch(() => [])) as Registration[];
+      if (refreshedRoster.ok && Array.isArray(rosterPayload)) {
+        setRoster(rosterPayload);
+      }
+    } catch (error) {
+      setProfileNotice(error instanceof Error ? error.message : 'Не удалось сохранить профиль');
+    } finally {
+      setProfileSaving(false);
+    }
+  };
+
   return (
     <section className="py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
@@ -138,6 +210,136 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
               <div className="text-gray-400 mb-1">Статус</div>
               <div className="text-[#e6eff5] font-medium">{user.isActive ? 'active' : 'inactive'}</div>
             </div>
+          </div>
+        </div>
+
+        <div className="card p-6 space-y-6">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-2">Статистика</div>
+              <div className="text-gray-400 text-sm">Данные из Neon: отметки, дуэли, Best MMR и расчётный KPI.</div>
+            </div>
+            <button
+              type="button"
+              className="btn-secondary px-4 py-2 text-sm"
+              onClick={saveProfileStats}
+              disabled={profileSaving}
+            >
+              {profileSaving ? 'Сохраняем...' : 'Сохранить профиль'}
+            </button>
+          </div>
+
+          {profileNotice && (
+            <div className="text-[#bcd6e5] text-sm p-4 bg-[#16202b]/65 rounded-xl border border-[#2f6e8d]/40">
+              <WuxiaIcon name="checkCircle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
+              {profileNotice}
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 text-sm">
+            <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+              <div className="text-gray-400 mb-1">KPI</div>
+              <div className="text-[#e6eff5] font-medium">{profileRegistration?.kpi ?? 0}</div>
+            </div>
+            <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+              <div className="text-gray-400 mb-1">ELO</div>
+              <div className="text-[#e6eff5] font-medium">{profileRegistration?.elo ?? 0}</div>
+            </div>
+            <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+              <div className="text-gray-400 mb-1">Best MMR</div>
+              <div className="text-[#e6eff5] font-medium">{profileRegistration?.mmr20 ?? 0}</div>
+            </div>
+            <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+              <div className="text-gray-400 mb-1">Всего отметок</div>
+              <div className="text-[#e6eff5] font-medium">{profileRegistration?.marks ?? 0}</div>
+            </div>
+            <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+              <div className="text-gray-400 mb-1">Bounty</div>
+              <div className="text-[#e6eff5] font-medium">{profileRegistration?.bounty ?? 0}</div>
+            </div>
+            <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+              <div className="text-gray-400 mb-1">Победы в дуэлях</div>
+              <div className="text-[#e6eff5] font-medium">{profileRegistration?.duelWins ?? 0}</div>
+            </div>
+            <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+              <div className="text-gray-400 mb-1">Поражения в дуэлях</div>
+              <div className="text-[#e6eff5] font-medium">{profileRegistration?.duelLosses ?? 0}</div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+            <label className="space-y-2">
+              <span className="text-gray-400">Класс</span>
+              <input
+                value={profileDraft.className}
+                onChange={(e) => setProfileDraft((prev) => ({ ...prev, className: e.target.value }))}
+                className="input-field w-full"
+                placeholder="Класс"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="text-gray-400">Best MMR</span>
+              <input
+                type="number"
+                value={profileDraft.mmr20}
+                onChange={(e) => setProfileDraft((prev) => ({ ...prev, mmr20: Number(e.target.value) || 0 }))}
+                className="input-field w-full"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="text-gray-400">Outer Heroic</span>
+              <input
+                type="number"
+                value={profileDraft.outerHeroic}
+                onChange={(e) => setProfileDraft((prev) => ({ ...prev, outerHeroic: Number(e.target.value) || 0 }))}
+                className="input-field w-full"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="text-gray-400">Inner Heroic</span>
+              <input
+                type="number"
+                value={profileDraft.innerHeroic}
+                onChange={(e) => setProfileDraft((prev) => ({ ...prev, innerHeroic: Number(e.target.value) || 0 }))}
+                className="input-field w-full"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="text-gray-400">Crimson Sands</span>
+              <input
+                type="number"
+                value={profileDraft.crimsonSands}
+                onChange={(e) => setProfileDraft((prev) => ({ ...prev, crimsonSands: Number(e.target.value) || 0 }))}
+                className="input-field w-full"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="text-gray-400">Abyss</span>
+              <input
+                type="number"
+                value={profileDraft.abyss}
+                onChange={(e) => setProfileDraft((prev) => ({ ...prev, abyss: Number(e.target.value) || 0 }))}
+                className="input-field w-full"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="text-gray-400">GVG</span>
+              <input
+                type="number"
+                value={profileDraft.gvg}
+                onChange={(e) => setProfileDraft((prev) => ({ ...prev, gvg: Number(e.target.value) || 0 }))}
+                className="input-field w-full"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="text-gray-400">Secret Realm</span>
+              <input
+                type="number"
+                value={profileDraft.secretRealm}
+                onChange={(e) => setProfileDraft((prev) => ({ ...prev, secretRealm: Number(e.target.value) || 0 }))}
+                className="input-field w-full"
+              />
+            </label>
           </div>
         </div>
 

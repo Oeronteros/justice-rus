@@ -20,10 +20,11 @@ function getAuthToken(request: NextRequest): string | null {
 
 async function ensureGuideSchema() {
   const pool = getPool();
-
+  
   await pool.query(`
     CREATE TABLE IF NOT EXISTS guide (
       id SERIAL PRIMARY KEY,
+      owner_account_id INTEGER NULL,
       title TEXT NOT NULL,
       content_md TEXT NOT NULL,
       category TEXT NOT NULL DEFAULT 'general',
@@ -32,6 +33,8 @@ async function ensureGuideSchema() {
       updated_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
   `);
+
+  await pool.query(`ALTER TABLE guide ADD COLUMN IF NOT EXISTS owner_account_id INTEGER NULL;`);
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS guide_comment (

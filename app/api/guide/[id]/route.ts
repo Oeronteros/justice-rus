@@ -22,10 +22,11 @@ function getAuthToken(request: NextRequest): string | null {
 
 async function ensureGuideSchema() {
   const pool = getPool();
-
+  
   await pool.query(`
     CREATE TABLE IF NOT EXISTS guide (
       id SERIAL PRIMARY KEY,
+      owner_account_id INTEGER NULL,
       title TEXT NOT NULL,
       content_md TEXT NOT NULL,
       category TEXT NOT NULL DEFAULT 'general',
@@ -34,6 +35,8 @@ async function ensureGuideSchema() {
       updated_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
   `);
+
+  await pool.query(`ALTER TABLE guide ADD COLUMN IF NOT EXISTS owner_account_id INTEGER NULL;`);
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS guide_comment (
@@ -84,7 +87,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
 
     const guideRes = await pool.query(
       `
-      SELECT id, title, content_md, category, author, created_at, updated_at
+      SELECT id, owner_account_id, title, content_md, category, author, created_at, updated_at
       FROM guide
       WHERE id = $1
       `,
@@ -124,6 +127,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
     return NextResponse.json({
       guide: {
         id: String(guideRow.id),
+        ownerAccountId: guideRow.owner_account_id == null ? null : String(guideRow.owner_account_id),
         title: guideRow.title || '',
         content: guideRow.content_md || '',
         category: guideRow.category || 'general',
@@ -154,9 +158,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (!canModerateContent(decoded.role)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
+    const isModerator = canModerateContent(decoded.role);
 
     if (!hasDatabaseUrl()) {
       return NextResponse.json(
@@ -180,12 +182,18 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     }
 
     const existing = await pool.query(
-      `SELECT title, content_md, category FROM guide WHERE id = $1`,
+      `SELECT owner_account_id, title, content_md, category FROM guide WHERE id = $1`,
       [guideId]
     );
     const row = existing.rows[0];
     if (!row) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    const accountId = decoded.id && Number.isFinite(Number(decoded.id)) ? Number(decoded.id) : null;
+    const isOwner = accountId != null && row.owner_account_id != null && Number(row.owner_account_id) === accountId;
+    if (!isModerator && !isOwner) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const nextTitle = payload.title ?? row.title;
@@ -197,7 +205,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
       UPDATE guide
       SET title = $2, content_md = $3, category = $4, updated_at = NOW()
       WHERE id = $1
-      RETURNING id, title, content_md, category, author, created_at, updated_at
+      RETURNING id, owner_account_id, title, content_md, category, author, created_at, updated_at
       `,
       [guideId, nextTitle, nextContent, nextCategory]
     );
@@ -205,6 +213,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     const updatedRow = updated.rows[0];
     return NextResponse.json({
       id: String(updatedRow.id),
+      ownerAccountId: updatedRow.owner_account_id == null ? null : String(updatedRow.owner_account_id),
       title: updatedRow.title || '',
       content: updatedRow.content_md || '',
       category: updatedRow.category || 'general',

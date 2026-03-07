@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { GuidesList } from './GuidesList';
 import { GuideModal } from './GuideModal';
@@ -18,14 +19,35 @@ function GuidesSectionContent({ user }: GuidesSectionProps) {
   const [createOpen, setCreateOpen] = useState(false);
   const { hideHeader, showHeader } = useHeader();
 
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const canModerate = canModerateContent(user.role);
 
-  const handleGuideClick = (guideId: string) => {
+  const replaceGuideParam = (guideId: string | null) => {
+    const params = new URLSearchParams(searchParams?.toString());
+    if (guideId) {
+      params.set('guide', guideId);
+    } else {
+      params.delete('guide');
+    }
+    const next = params.toString();
+    router.replace(next ? `${pathname}?${next}` : pathname, { scroll: false });
+  };
+
+  const openGuide = (guideId: string) => {
     setOpenGuideId(guideId);
+    replaceGuideParam(guideId);
+  };
+
+  const handleGuideClick = (guideId: string) => {
+    openGuide(guideId);
   };
 
   const handleCloseGuide = () => {
     setOpenGuideId(null);
+    replaceGuideParam(null);
   };
 
   const handleCreateClick = () => {
@@ -37,8 +59,19 @@ function GuidesSectionContent({ user }: GuidesSectionProps) {
   };
 
   const handleCreateSuccess = (guideId: string) => {
-    setOpenGuideId(guideId);
+    openGuide(guideId);
   };
+
+  useEffect(() => {
+    const guideFromUrl = searchParams?.get('guide');
+    if (guideFromUrl && guideFromUrl !== openGuideId) {
+      setOpenGuideId(guideFromUrl);
+      return;
+    }
+    if (!guideFromUrl && openGuideId) {
+      setOpenGuideId(null);
+    }
+  }, [openGuideId, searchParams]);
 
   useEffect(() => {
     const modalOpen = Boolean(openGuideId) || createOpen;
@@ -66,9 +99,10 @@ function GuidesSectionContent({ user }: GuidesSectionProps) {
         <GuideModal
           guideId={openGuideId}
           onClose={handleCloseGuide}
-          onGuideSelect={setOpenGuideId}
+          onGuideSelect={openGuide}
           canModerate={canModerate}
           userRole={user.role}
+          userId={user.id}
         />
       )}
 

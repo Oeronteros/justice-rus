@@ -94,7 +94,7 @@ export async function GET(request: NextRequest) {
       const pool = getPool();
       const result = await pool.query(
         `
-        SELECT id, nickname, role, is_active
+        SELECT id, nickname, class_name, role, is_active
         FROM portal_account
         WHERE id = $1
         LIMIT 1
@@ -110,15 +110,15 @@ export async function GET(request: NextRequest) {
         return response;
       }
 
-      user = {
-        id: String(row.id),
-        nickname: row.nickname,
-        role: row.role,
-        isActive: true,
-        authMethod: 'account',
-        discordId: decoded.discordId,
-        className: await resolveClassName(row.nickname),
-      };
+        user = {
+          id: String(row.id),
+          nickname: row.nickname,
+          role: row.role,
+          isActive: true,
+          authMethod: 'account',
+          discordId: decoded.discordId,
+          className: (await resolveClassName(row.nickname)) || row.class_name || null,
+        };
     } else {
       user.className = await resolveClassName(decoded.nickname);
     }

@@ -1,6 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { helpApi } from '@/lib/api/help';
-import type { CreateHelpRequestDto, UpdateHelpRequestDto } from '@/lib/schemas/help';
+import type {
+  CreateHelpRequestDto,
+  UpdateHelpRequestDto,
+  UpdateHelpTimeRangeDto,
+  HelpRsvpDto,
+} from '@/lib/schemas/help';
 
 // Query key factory
 export const helpKeys = {
@@ -32,6 +37,39 @@ export function useUpdateHelpStatus() {
   
   return useMutation({
     mutationFn: (data: UpdateHelpRequestDto) => helpApi.updateStatus(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: helpKeys.lists() });
+    },
+  });
+}
+
+export function useUpdateHelpTimeRange() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: UpdateHelpTimeRangeDto) => helpApi.updateTimeRange(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: helpKeys.lists() });
+    },
+  });
+}
+
+export function useHelpRsvp() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: HelpRsvpDto) => helpApi.rsvp(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: helpKeys.lists() });
+    },
+  });
+}
+
+export function useHelpWithdrawRsvp() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => helpApi.withdrawRsvp(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: helpKeys.lists() });
     },

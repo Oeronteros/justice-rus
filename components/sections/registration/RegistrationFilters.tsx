@@ -35,8 +35,6 @@ export function RegistrationFilters({
         <option value="all">Все статусы</option>
         <option value="active">Активен</option>
         <option value="inactive">Неактивен</option>
-        <option value="pending">Ожидает</option>
-        <option value="leave">Отгул</option>
       </select>
 
       <select

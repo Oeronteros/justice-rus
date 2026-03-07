@@ -6,6 +6,7 @@ export const guideCategories = [
 
 export const guideSummarySchema = z.object({
   id: z.string(),
+  ownerAccountId: z.string().nullable().optional(),
   title: z.string(),
   category: z.string(),
   author: z.string(),
@@ -22,16 +23,19 @@ export const guideCommentSchema = z.object({
   createdAt: z.string(),
 });
 
+export const guideEntitySchema = z.object({
+  id: z.string(),
+  ownerAccountId: z.string().nullable().optional(),
+  title: z.string(),
+  content: z.string(),
+  category: z.string(),
+  author: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
 export const guideDetailSchema = z.object({
-  guide: z.object({
-    id: z.string(),
-    title: z.string(),
-    content: z.string(),
-    category: z.string(),
-    author: z.string(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
-  }),
+  guide: guideEntitySchema,
   votes: z.number(),
   voted: z.boolean(),
   comments: z.array(guideCommentSchema),
@@ -58,6 +62,7 @@ export const voteResponseSchema = z.object({
 export type GuideSummary = z.infer<typeof guideSummarySchema>;
 export type GuideComment = z.infer<typeof guideCommentSchema>;
 export type GuideDetail = z.infer<typeof guideDetailSchema>;
+export type GuideEntity = z.infer<typeof guideEntitySchema>;
 export type CreateGuideDto = z.infer<typeof createGuideSchema>;
 export type CreateCommentDto = z.infer<typeof createCommentSchema>;
 export type VoteResponse = z.infer<typeof voteResponseSchema>;

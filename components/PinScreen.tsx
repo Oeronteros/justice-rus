@@ -13,6 +13,7 @@ type Mode = 'login' | 'register';
 export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
   const [mode, setMode] = useState<Mode>('login');
   const [nickname, setNickname] = useState('');
+  const [className, setClassName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [adminPin, setAdminPin] = useState('');
@@ -72,6 +73,11 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
       return;
     }
 
+    if (!className.trim()) {
+      setError('Выбери или укажи класс');
+      return;
+    }
+
     if (password.length < 8) {
       setError('Пароль должен быть не короче 8 символов');
       return;
@@ -92,6 +98,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
         },
         body: JSON.stringify({
           nickname: nickname.trim(),
+          className: className.trim(),
           password,
         }),
       });
@@ -103,6 +110,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
 
       setNotice(payload.message || 'Аккаунт создан и ожидает активации офицером/главой/сис.админом.');
       setMode('login');
+      setClassName('');
       setPassword('');
       setConfirmPassword('');
     } catch (err) {
@@ -241,14 +249,34 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
             </div>
 
             {mode === 'register' && (
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="input-field w-full"
-                placeholder="Повтори пароль"
-                disabled={loading}
-              />
+              <>
+                <input
+                  value={className}
+                  onChange={(e) => setClassName(e.target.value)}
+                  className="input-field w-full"
+                  placeholder="Класс"
+                  list="guild-class-options"
+                  disabled={loading}
+                />
+                <datalist id="guild-class-options">
+                  <option value="Warrior" />
+                  <option value="Tank" />
+                  <option value="Assassin" />
+                  <option value="Archer" />
+                  <option value="Mage" />
+                  <option value="Priest" />
+                  <option value="Support" />
+                  <option value="Bard" />
+                </datalist>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="input-field w-full"
+                  placeholder="Повтори пароль"
+                  disabled={loading}
+                />
+              </>
             )}
 
             <button type="submit" disabled={loading} className="btn-primary w-full py-4 text-lg font-bold">

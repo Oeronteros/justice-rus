@@ -5,6 +5,7 @@ import { getPool } from '@/lib/neon';
 export type AccountRecord = {
   id: number;
   nickname: string;
+  class_name?: string | null;
   role: UserRole;
   is_active: boolean;
   password_hash: string;
@@ -22,6 +23,7 @@ export async function ensureAccountsSchema() {
     CREATE TABLE IF NOT EXISTS portal_account (
       id SERIAL PRIMARY KEY,
       nickname TEXT NOT NULL,
+      class_name TEXT NULL,
       password_hash TEXT NOT NULL,
       role TEXT NOT NULL DEFAULT 'guest',
       is_active BOOLEAN NOT NULL DEFAULT FALSE,
@@ -33,6 +35,7 @@ export async function ensureAccountsSchema() {
   `);
 
   await pool.query(`ALTER TABLE portal_account DROP CONSTRAINT IF EXISTS portal_account_role_chk;`);
+  await pool.query(`ALTER TABLE portal_account ADD COLUMN IF NOT EXISTS class_name TEXT NULL;`).catch(() => undefined);
   await pool.query(`ALTER TABLE portal_account ALTER COLUMN role SET DEFAULT 'guest';`);
   await pool.query(`UPDATE portal_account SET role = 'head' WHERE role = 'gm';`).catch(() => undefined);
   await pool.query(`

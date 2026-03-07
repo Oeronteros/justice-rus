@@ -13,6 +13,14 @@ export const registrationsApi = {
       mmr20: item.mmr20 || 0,
       bounty: item.bounty || 0,
       marks: item.marks || 0,
+      outerHeroic: item.outerHeroic || 0,
+      innerHeroic: item.innerHeroic || 0,
+      crimsonSands: item.crimsonSands || 0,
+      abyss: item.abyss || 0,
+      gvg: item.gvg || 0,
+      secretRealm: item.secretRealm || 0,
+      duelWins: item.duelWins || 0,
+      duelLosses: item.duelLosses || 0,
     }));
   },
 };

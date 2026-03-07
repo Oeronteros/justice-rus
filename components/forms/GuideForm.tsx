@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { MarkdownRenderer } from '@/components/guides/MarkdownRenderer';
 import {
@@ -23,6 +23,10 @@ interface GuideFormProps {
   onSubmit: (data: CreateGuideDto) => Promise<void>;
   onCancel: () => void;
   isSubmitting?: boolean;
+  initialValues?: Partial<CreateGuideDto>;
+  disableAuthor?: boolean;
+  submitLabel?: string;
+  resetAfterSubmit?: boolean;
 }
 
 type EditorMode = 'write' | 'split' | 'preview';
@@ -126,12 +130,33 @@ function joinClasses(...values: Array<string | false | null | undefined>): strin
   return values.filter(Boolean).join(' ');
 }
 
-export function GuideForm({ onSubmit, onCancel, isSubmitting = false }: GuideFormProps) {
+export function GuideForm({
+  onSubmit,
+  onCancel,
+  isSubmitting = false,
+  initialValues,
+  disableAuthor = false,
+  submitLabel,
+  resetAfterSubmit = true,
+}: GuideFormProps) {
   const [editorMode, setEditorMode] = useState<EditorMode>('split');
   const [notice, setNotice] = useState<string | null>(null);
   const editorRef = useRef<MilkdownMarkdownEditorHandle | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const markdownInputRef = useRef<HTMLInputElement | null>(null);
+
+  const mergedDefaults = useMemo((): CreateGuideDto => {
+    return {
+      ...DEFAULT_VALUES,
+      ...(initialValues || {}),
+      title: initialValues?.title ?? DEFAULT_VALUES.title,
+      content: initialValues?.content ?? DEFAULT_VALUES.content,
+      category: (initialValues?.category ?? DEFAULT_VALUES.category) as CreateGuideDto['category'],
+      author: initialValues?.author ?? DEFAULT_VALUES.author,
+    };
+  }, [initialValues?.author, initialValues?.category, initialValues?.content, initialValues?.title]);
+
+  const hasInitialValues = Boolean(initialValues);
 
   const {
     register,
@@ -142,7 +167,7 @@ export function GuideForm({ onSubmit, onCancel, isSubmitting = false }: GuideFor
     reset,
   } = useForm<CreateGuideDto>({
     resolver: zodResolver(createGuideSchema),
-    defaultValues: DEFAULT_VALUES,
+    defaultValues: mergedDefaults,
   });
 
   const content = watch('content') || '';
@@ -150,6 +175,13 @@ export function GuideForm({ onSubmit, onCancel, isSubmitting = false }: GuideFor
   useEffect(() => {
     register('content');
   }, [register]);
+
+  useEffect(() => {
+    if (!hasInitialValues) return;
+    reset(mergedDefaults);
+    editorRef.current?.setMarkdown(mergedDefaults.content || '');
+    setNotice(null);
+  }, [hasInitialValues, mergedDefaults, reset]);
 
   const handleEditorChange = (markdown: string) => {
     setValue('content', markdown, {
@@ -165,9 +197,11 @@ export function GuideForm({ onSubmit, onCancel, isSubmitting = false }: GuideFor
       author: data.author?.trim() || undefined,
       content: data.content.trim(),
     });
-    reset(DEFAULT_VALUES);
-    editorRef.current?.setMarkdown('');
-    setNotice(null);
+    if (resetAfterSubmit) {
+      reset(DEFAULT_VALUES);
+      editorRef.current?.setMarkdown('');
+      setNotice(null);
+    }
   };
 
   const insertMarkdown = (snippet: string, inline = false) => {
@@ -266,7 +300,8 @@ export function GuideForm({ onSubmit, onCancel, isSubmitting = false }: GuideFor
         <input
           {...register('author')}
           placeholder="Автор / никнейм"
-          className="input-field w-full"
+          className={joinClasses('input-field w-full', disableAuthor && 'opacity-60 cursor-not-allowed')}
+          disabled={disableAuthor}
         />
       </div>
 
@@ -452,7 +487,7 @@ export function GuideForm({ onSubmit, onCancel, isSubmitting = false }: GuideFor
           ) : (
             <span className="inline-flex items-center justify-center">
               <WuxiaIcon name="seal" className="w-4 h-4 mr-3" />
-              Опубликовать
+              {submitLabel || 'Опубликовать'}
             </span>
           )}
         </button>

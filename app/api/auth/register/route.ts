@@ -7,6 +7,7 @@ export const runtime = 'nodejs';
 
 const registerSchema = z.object({
   nickname: z.string().trim().min(3).max(32),
+  className: z.string().trim().min(1).max(100),
   password: z.string().min(8).max(128),
 });
 
@@ -36,6 +37,7 @@ export async function POST(request: NextRequest) {
 
     const payload = registerSchema.parse(await request.json());
     const nickname = normalizeNickname(payload.nickname);
+    const className = payload.className.trim();
     const passwordHash = hashPassword(payload.password);
 
     await ensureAccountsSchema();
@@ -52,11 +54,11 @@ export async function POST(request: NextRequest) {
 
     const created = await pool.query(
       `
-      INSERT INTO portal_account (nickname, password_hash, role, is_active)
-      VALUES ($1, $2, 'guest', FALSE)
-      RETURNING id, nickname, role, is_active, created_at
+      INSERT INTO portal_account (nickname, class_name, password_hash, role, is_active)
+      VALUES ($1, $2, $3, 'guest', FALSE)
+      RETURNING id, nickname, class_name, role, is_active, created_at
       `,
-      [nickname, passwordHash]
+      [nickname, className, passwordHash]
     );
 
     const row = created.rows[0];
@@ -68,6 +70,7 @@ export async function POST(request: NextRequest) {
         user: {
           id: String(row.id),
           nickname: row.nickname,
+          className: row.class_name || className,
           role: row.role,
           isActive: Boolean(row.is_active),
           createdAt: (row.created_at || new Date()).toISOString(),

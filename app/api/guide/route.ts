@@ -22,10 +22,11 @@ function getAuthToken(request: NextRequest): string | null {
 
 async function ensureGuideSchema() {
   const pool = getPool();
-
+  
   await pool.query(`
     CREATE TABLE IF NOT EXISTS guide (
       id SERIAL PRIMARY KEY,
+      owner_account_id INTEGER NULL,
       title TEXT NOT NULL,
       content_md TEXT NOT NULL,
       category TEXT NOT NULL DEFAULT 'general',
@@ -34,6 +35,8 @@ async function ensureGuideSchema() {
       updated_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
   `);
+
+  await pool.query(`ALTER TABLE guide ADD COLUMN IF NOT EXISTS owner_account_id INTEGER NULL;`);
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS guide_comment (
@@ -56,6 +59,7 @@ async function ensureGuideSchema() {
 
   await pool.query(`CREATE INDEX IF NOT EXISTS guide_updated_at_idx ON guide(updated_at DESC);`);
   await pool.query(`CREATE INDEX IF NOT EXISTS guide_category_idx ON guide(category);`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS guide_owner_account_id_idx ON guide(owner_account_id);`);
   await pool.query(`CREATE INDEX IF NOT EXISTS guide_comment_guide_idx ON guide_comment(guide_id);`);
   await pool.query(`CREATE INDEX IF NOT EXISTS guide_vote_guide_idx ON guide_vote(guide_id);`);
 }
@@ -195,19 +199,22 @@ export async function POST(request: NextRequest) {
     const author = payload.author || decoded.nickname || decoded.discordId || decoded.role;
     const category = payload.category || 'general';
 
+    const ownerAccountId = decoded.id && Number.isFinite(Number(decoded.id)) ? Number(decoded.id) : null;
+
     const inserted = await pool.query(
       `
-      INSERT INTO guide (title, content_md, category, author, updated_at)
-      VALUES ($1, $2, $3, $4, NOW())
-      RETURNING id, title, category, author, created_at, updated_at
+      INSERT INTO guide (owner_account_id, title, content_md, category, author, updated_at)
+      VALUES ($1, $2, $3, $4, $5, NOW())
+      RETURNING id, owner_account_id, title, category, author, created_at, updated_at
       `,
-      [payload.title, payload.content, category, author]
+      [ownerAccountId, payload.title, payload.content, category, author]
     );
 
     const row = inserted.rows[0];
     return NextResponse.json(
       {
         id: String(row.id),
+        ownerAccountId: row.owner_account_id == null ? null : String(row.owner_account_id),
         title: row.title,
         category: row.category,
         author: row.author,

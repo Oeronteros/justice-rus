@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
       const pool = getPool();
       const result = await pool.query(
         `
-        SELECT id, nickname, role, is_active, password_hash
+        SELECT id, nickname, class_name, role, is_active, password_hash
         FROM portal_account
         WHERE LOWER(nickname) = LOWER($1)
         LIMIT 1
@@ -179,14 +179,14 @@ export async function POST(request: NextRequest) {
         [row.id]
       );
 
-      user = {
-        id: String(row.id),
-        nickname: row.nickname,
-        role: row.role,
-        isActive: true,
-        authMethod: 'account',
-        className: await resolveClassName(row.nickname),
-      };
+        user = {
+          id: String(row.id),
+          nickname: row.nickname,
+          role: row.role,
+          isActive: true,
+          authMethod: 'account',
+          className: (await resolveClassName(row.nickname)) || row.class_name || null,
+        };
     } else {
       const role = legacyPinRole(password);
       if (!role) {

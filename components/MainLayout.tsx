@@ -18,6 +18,7 @@ const pathToSection: Record<string, Section> = {
   '/': 'about',
   '/members': 'registration',
   '/schedule': 'schedule',
+  '/pvp': 'pvp',
   '/news': 'news',
   '/guides': 'guides',
   '/help': 'help',

@@ -19,29 +19,30 @@ async function queryScheduleFromDb(language: string) {
     `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name IN ('schedule', 'shedule') ORDER BY table_name = 'schedule' DESC LIMIT 1`
   );
   const tableName = tableCheck.rows[0]?.table_name || 'schedule';
-
   try {
     const result = await pool.query(
       `
-      SELECT day_type, time, title_ru, title_en, group_name
+      SELECT day_type, time, title_ru, title_en, title_zh, order_index
       FROM ${tableName}
       WHERE active = 1
-      ORDER BY group_name ASC, order_index ASC, time ASC
+      ORDER BY day_type ASC, order_index ASC, time ASC
       `
     );
-
     const today = new Date().toISOString();
     return result.rows.map((row) => ({
       date: today,
       registration:
-        language === 'ru'
-          ? row.title_ru || row.title_en || ''
-          : row.title_en || row.title_ru || '',
+        language === 'zh'
+          ? row.title_zh || row.title_en || row.title_ru || ''
+          : language === 'ru'
+          ? row.title_ru || row.title_en || row.title_zh || ''
+          : row.title_en || row.title_ru || row.title_zh || '',
       type: row.day_type || '',
       description: row.time ? String(row.time) : '',
-      group: row.group_name || '',
+      group: row.day_type || '',
     }));
-  } catch {
+  } catch (err) {
+    console.error('Error querying schedule table, falling back:', err);
     const result = await pool.query(
       `
       SELECT date, registration, type, description
@@ -49,7 +50,6 @@ async function queryScheduleFromDb(language: string) {
       ORDER BY date ASC, registration ASC
       `
     );
-
     return result.rows.map((row) => ({
       date: row.date ? String(row.date) : new Date().toISOString(),
       registration: row.registration || '',
@@ -68,7 +68,6 @@ export async function GET(request: NextRequest) {
     if (hasDatabaseUrl()) {
       try {
         const data = await queryScheduleFromDb(language);
-
         return NextResponse.json(data);
       } catch (dbError) {
         console.error('Database error fetching schedule:', dbError);
@@ -93,22 +92,58 @@ export async function GET(request: NextRequest) {
       cache: 'no-store',
     });
 
-    const data = await res.json().catch(() => ({}));
+    const botData = await res.json().catch(() => ({}));
 
     if (!res.ok) {
       return NextResponse.json(
         {
           error: 'Failed to fetch schedule from bot',
-          message: (data as any)?.error || (data as any)?.message || `HTTP ${res.status}`,
+          message: (botData as any)?.error || (botData as any)?.message || `HTTP ${res.status}`,
         },
         { status: res.status }
       );
     }
 
-    return NextResponse.json(data);
+    // If it's already an array, return as is (backward compatibility)
+    if (Array.isArray(botData)) {
+      return NextResponse.json(botData);
+    }
+
+    // Map DiscordBot2 /api/schedule/today response to frontend array shape
+    const flattened: any[] = [];
+    const today = botData.date || new Date().toISOString();
+
+    const languageSafeTitle = (a: any) => {
+      if (language === 'zh') return a.title_zh || a.title_en || a.title_ru || a.title || '';
+      if (language === 'ru') return a.title_ru || a.title_en || a.title_zh || a.title || '';
+      return a.title_en || a.title_ru || a.title_zh || a.title || '';
+    };
+
+    const mapActivity = (activity: any, defaultGroup: string) => ({
+      date: today,
+      registration: languageSafeTitle(activity),
+      type: activity.day_type || defaultGroup,
+      description: activity.time || '',
+      group: activity.day_type || defaultGroup,
+    });
+
+    const categories = [
+      { key: 'daily_activities', ru: 'Ежедневные', en: 'Daily', zh: '每日' },
+      { key: 'weekly_activities', ru: 'Еженедельные', en: 'Weekly', zh: '每周' },
+      { key: 'day_activities', ru: 'Сегодня', en: 'Today', zh: '今日' },
+    ];
+
+    for (const cat of categories) {
+      const activities = (botData as any)[cat.key];
+      if (Array.isArray(activities)) {
+        const groupLabel = language === 'zh' ? cat.zh : language === 'ru' ? cat.ru : cat.en;
+        flattened.push(...activities.map((a: any) => mapActivity(a, groupLabel)));
+      }
+    }
+
+    return NextResponse.json(flattened);
   } catch (error) {
-    console.error('Error proxying schedule request to bot:', error);
-    // Возвращаем пустой массив вместо ошибки чтобы UI не ломался
+    console.error('Unhandled error in schedule route:', error);
     return NextResponse.json([]);
   }
 }

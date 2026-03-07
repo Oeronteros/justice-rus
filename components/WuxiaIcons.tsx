@@ -339,6 +339,7 @@ export default function WuxiaIcon({ name, className = '' }: IconProps) {
           <path d="M10 11v6M14 11v6" />
         </svg>
       );
+    case 'pvp':
     case 'sword':
       return (
         <svg viewBox="0 0 24 24" className={className} {...baseProps}>

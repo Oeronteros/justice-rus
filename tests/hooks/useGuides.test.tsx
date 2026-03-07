@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as fc from 'fast-check';
-import { renderHook, waitFor } from '@testing-library/react';
+import { cleanup, renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useGuides, useCreateGuide, guideKeys } from '@/lib/hooks/useGuides';
 import { guidesApi } from '@/lib/api/guides';
@@ -13,15 +13,17 @@ vi.mock('@/lib/api/guides', () => ({
     list: vi.fn(),
     get: vi.fn(),
     create: vi.fn(),
+    update: vi.fn(),
     vote: vi.fn(),
     addComment: vi.fn(),
   },
 }));
 
-const mockGuidesApi = guidesApi as {
+const mockGuidesApi = guidesApi as unknown as {
   list: ReturnType<typeof vi.fn>;
   get: ReturnType<typeof vi.fn>;
   create: ReturnType<typeof vi.fn>;
+  update: ReturnType<typeof vi.fn>;
   vote: ReturnType<typeof vi.fn>;
   addComment: ReturnType<typeof vi.fn>;
 };
@@ -57,6 +59,10 @@ describe('useGuides hooks', () => {
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    cleanup();
+  });
+
   /**
    * Property 1: Query Cache Deduplication
    * For any query key requested by N components simultaneously, THE Query_Cache SHALL make exactly 1 network request.
@@ -69,6 +75,7 @@ describe('useGuides hooks', () => {
           fc.array(guideSummaryArb, { minLength: 0, maxLength: 10 }),
           fc.integer({ min: 2, max: 5 }),
           async (guides, numHooks) => {
+            mockGuidesApi.list.mockReset();
             mockGuidesApi.list.mockResolvedValue(guides);
 
             const queryClient = new QueryClient({
@@ -103,6 +110,7 @@ describe('useGuides hooks', () => {
             });
 
             // Cleanup
+            hooks.forEach(({ unmount }) => unmount());
             queryClient.clear();
           }
         ),
@@ -123,6 +131,8 @@ describe('useGuides hooks', () => {
           fc.array(guideSummaryArb, { minLength: 1, maxLength: 5 }),
           guideSummaryArb,
           async (initialGuides, newGuide) => {
+            mockGuidesApi.list.mockReset();
+            mockGuidesApi.create.mockReset();
             let callCount = 0;
             mockGuidesApi.list.mockImplementation(() => {
               callCount++;
@@ -135,18 +145,19 @@ describe('useGuides hooks', () => {
                 queries: { retry: false, gcTime: Infinity, staleTime: Infinity },
               },
             });
+            const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
             const wrapper = ({ children }: { children: ReactNode }) => (
               <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
             );
 
             // First, load the guides
-            const { result: guidesResult } = renderHook(() => useGuides(), { wrapper });
+            const { result: guidesResult, unmount: unmountGuides } = renderHook(() => useGuides(), { wrapper });
             await waitFor(() => expect(guidesResult.current.isSuccess).toBe(true));
             expect(mockGuidesApi.list).toHaveBeenCalledTimes(1);
 
             // Now create a guide
-            const { result: createResult } = renderHook(() => useCreateGuide(), { wrapper });
+            const { result: createResult, unmount: unmountCreate } = renderHook(() => useCreateGuide(), { wrapper });
             
             await createResult.current.mutateAsync({
               title: newGuide.title,
@@ -155,12 +166,13 @@ describe('useGuides hooks', () => {
               author: newGuide.author,
             });
 
-            // The mutation should have invalidated the query
-            // Check that the query was invalidated (stale)
-            const queryState = queryClient.getQueryState(guideKeys.lists());
-            expect(queryState?.isInvalidated).toBe(true);
+            // The mutation should invalidate the guides list query.
+            expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: guideKeys.lists() });
 
             // Cleanup
+            unmountGuides();
+            unmountCreate();
+            invalidateSpy.mockRestore();
             queryClient.clear();
           }
         ),

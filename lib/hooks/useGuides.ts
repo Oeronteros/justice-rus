@@ -36,6 +36,19 @@ export function useCreateGuide() {
   });
 }
 
+export function useUpdateGuide() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Pick<CreateGuideDto, 'title' | 'content' | 'category'> }) =>
+      guidesApi.update(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: guideKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: guideKeys.lists() });
+    },
+  });
+}
+
 export function useVoteGuide() {
   const queryClient = useQueryClient();
   
