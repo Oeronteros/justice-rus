@@ -7,6 +7,7 @@ export const newsSchema = z.object({
   author: z.string(),
   date: z.string(),
   pinned: z.boolean().optional(),
+  messageUrl: z.string().optional(),
 });
 
 export const newsArraySchema = z.array(newsSchema);

@@ -13,6 +13,65 @@ interface NewsSectionProps {
   user: User;
 }
 
+const ROLE_MENTION_RE = /<@&\d+>/g;
+const USER_MENTION_RE = /<@!?\d+>/g;
+const CHANNEL_MENTION_RE = /<#\d+>/g;
+
+function normalizeDiscordText(value: string): string {
+  return value
+    .replace(ROLE_MENTION_RE, '@role')
+    .replace(USER_MENTION_RE, '@member')
+    .replace(CHANNEL_MENTION_RE, '#channel')
+    .replace(/\r\n?/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+function isTechnicalTitle(value: string): boolean {
+  const normalized = value.trim().toLowerCase();
+  return (
+    !normalized ||
+    normalized === 'untitled' ||
+    normalized === '@role' ||
+    normalized === '@member' ||
+    /^<[@#].*>$/.test(value.trim())
+  );
+}
+
+function resolveDisplayTitle(rawTitle: string, normalizedContent: string): string {
+  const normalizedTitle = normalizeDiscordText(rawTitle).replace(/^#+\s*/, '').trim();
+  if (!isTechnicalTitle(normalizedTitle) && normalizedTitle.length >= 4) {
+    return normalizedTitle;
+  }
+
+  const lines = normalizedContent
+    .split('\n')
+    .map((line) => line.replace(/^#+\s*/, '').trim())
+    .filter(Boolean);
+
+  const fallbackLine = lines.find((line) => !isTechnicalTitle(line) && line.length >= 4);
+  return fallbackLine || 'Guild Announcement';
+}
+
+function buildPreview(normalizedContent: string, displayTitle: string): string {
+  const lines = normalizedContent
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const withoutTitle = lines[0] === displayTitle ? lines.slice(1) : lines;
+  const body = withoutTitle.join('\n').trim();
+  if (!body) {
+    return 'Подробности обновления опубликованы в Discord-канале гильдии.';
+  }
+
+  if (body.length <= 540) {
+    return body;
+  }
+
+  return `${body.slice(0, 537).trimEnd()}...`;
+}
+
 function NewsSectionContent({ user }: NewsSectionProps) {
   const { data: news = [], isLoading, error, refetch } = useNews();
 
@@ -64,47 +123,61 @@ function NewsSectionContent({ user }: NewsSectionProps) {
               description="No news or announcements have been posted yet"
             />
           ) : (
-            news.map((item) => (
-              <div
-                key={item.id}
-                className="card p-8 hover:transform hover:-translate-y-1 transition-all duration-300"
-              >
-                {item.pinned && (
-                  <div className="flex items-center mb-4 text-yellow-400">
-                    <WuxiaIcon name="thumbtack" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
-                    <span className="text-sm font-bold uppercase tracking-wider">Pinned</span>
-                  </div>
-                )}
+            news.map((item) => {
+                const normalizedContent = normalizeDiscordText(item.content);
+                const displayTitle = resolveDisplayTitle(item.title, normalizedContent);
+                const preview = buildPreview(normalizedContent, displayTitle);
 
-                <h3 className="text-2xl font-bold font-orbitron mb-4 text-red-400">
-                  {item.title}
-                </h3>
-
-                <div
-                  className="text-gray-300 mb-6 text-lg leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: item.content }}
-                />
-
-                <div className="flex flex-wrap justify-between items-center pt-6 border-t border-gray-700/50">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2">
-                      <WuxiaIcon name="user" className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-400">{item.author}</span>
+                return (
+                  <article
+                    key={item.id}
+                    className="card p-7 md:p-8 hover:-translate-y-1 transition-all duration-300"
+                  >
+                    <div className="flex items-center justify-between gap-3 mb-4">
+                      <div className="flex items-center gap-2 text-xs sm:text-sm">
+                        {item.pinned ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-500/10 text-yellow-300 border border-yellow-400/30">
+                            <WuxiaIcon name="thumbtack" className="w-3.5 h-3.5" />
+                            Pinned
+                          </span>
+                        ) : null}
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-300 border border-blue-400/20">
+                          <WuxiaIcon name="news" className="w-3.5 h-3.5" />
+                          Guild Update
+                        </span>
+                      </div>
+                      <span className="text-xs text-gray-400 whitespace-nowrap">{formatDate(item.date)}</span>
                     </div>
 
-                    <div className="flex items-center space-x-2">
-                      <WuxiaIcon name="calendar" className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-400">{formatDate(item.date)}</span>
-                    </div>
-                  </div>
+                    <h3 className="text-xl sm:text-2xl font-bold font-orbitron mb-3 text-cyan-200 tracking-wide">
+                      {displayTitle}
+                    </h3>
 
-                  <button className="text-sm font-medium text-red-400 hover:text-red-300 transition-colors">
-                    <WuxiaIcon name="comment" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
-                    Comment
-                  </button>
-                </div>
-              </div>
-            ))
+                    <p className="text-gray-200/95 mb-6 text-base sm:text-lg leading-relaxed whitespace-pre-line break-words">
+                      {preview}
+                    </p>
+
+                    <div className="flex flex-wrap justify-between items-center gap-3 pt-5 border-t border-cyan-400/15">
+                      <div className="flex items-center space-x-2 text-gray-300">
+                        <WuxiaIcon name="user" className="w-4 h-4 text-gray-400" />
+                        <span>{item.author}</span>
+                      </div>
+
+                      {item.messageUrl ? (
+                        <a
+                          href={item.messageUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300 hover:text-cyan-200 transition-colors"
+                        >
+                          <WuxiaIcon name="link" className="w-4 h-4" />
+                          Open in Discord
+                        </a>
+                      ) : null}
+                    </div>
+                  </article>
+                );
+              })
           )}
         </div>
       </div>

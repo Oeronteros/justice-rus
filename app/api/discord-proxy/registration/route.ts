@@ -58,6 +58,17 @@ type PortalOnlyRow = {
   role: string;
   is_active: boolean;
   created_at: Date | string;
+  duel_rating?: number;
+  duel_wins?: number;
+  duel_losses?: number;
+  best_mmr?: number;
+  bounty_score?: number;
+  outer_heroic?: number;
+  inner_heroic?: number;
+  crimson_sands?: number;
+  abyss_score?: number;
+  gvg_score?: number;
+  secret_realm_score?: number;
 };
 
 function getAuthToken(request: NextRequest): string | null {
@@ -112,6 +123,10 @@ function isoDate(value: unknown): string {
     return value;
   }
   return new Date().toISOString();
+}
+
+function portalStatsDiscordId(accountId: number | string): string {
+  return `portal:${accountId}`;
 }
 
 function buildComputedRows(rows: RegistrationRow[]) {
@@ -232,17 +247,111 @@ async function ensureRegistrationStatsSchema() {
   await ensureDuelRatingsSchema();
 }
 
+async function getPortalOnlyRows(
+  activityColumns: Set<string>,
+  duelColumns: Set<string>
+): Promise<RegistrationRow[]> {
+  const pool = getPool();
+  const outerHeroicCol = pick(activityColumns, 'outer_city_heroic');
+  const innerHeroicCol = pick(activityColumns, 'inner_city');
+  const crimsonSandsCol = pick(activityColumns, 'chronicles');
+  const abyssCol = pick(activityColumns, 'abyss');
+  const bountyCol = pick(activityColumns, 'bounty');
+  const gvgCol = pick(activityColumns, 'gvg');
+  const mmrCol = pick(activityColumns, 'mvp_20', 'mmr20', 'best_mmr_pvp', 'pvp_mmr20');
+  const secretRealmCol = pick(activityColumns, 'secret_realm');
+  const duelRatingCol = pick(duelColumns, 'rating');
+  const duelWinsCol = pick(duelColumns, 'wins');
+  const duelLossesCol = pick(duelColumns, 'losses');
+
+  const portalActivityJoin = activityColumns.size > 0
+    ? `
+      LEFT JOIN LATERAL (
+        SELECT
+          ${outerHeroicCol ? `${outerHeroicCol} AS outer_heroic,` : '0 AS outer_heroic,'}
+          ${innerHeroicCol ? `${innerHeroicCol} AS inner_heroic,` : '0 AS inner_heroic,'}
+          ${crimsonSandsCol ? `${crimsonSandsCol} AS crimson_sands,` : '0 AS crimson_sands,'}
+          ${abyssCol ? `${abyssCol} AS abyss_score,` : '0 AS abyss_score,'}
+          ${bountyCol ? `${bountyCol} AS bounty_score,` : '0 AS bounty_score,'}
+          ${gvgCol ? `${gvgCol} AS gvg_score,` : '0 AS gvg_score,'}
+          ${mmrCol ? `${mmrCol} AS best_mmr,` : '0 AS best_mmr,'}
+          ${secretRealmCol ? `${secretRealmCol} AS secret_realm_score` : '0 AS secret_realm_score'}
+        FROM activity_kpi
+        WHERE discord_id = CONCAT('portal:', pa.id::text)
+        ORDER BY activity_date DESC NULLS LAST, updated_at DESC NULLS LAST
+        LIMIT 1
+      ) pak ON TRUE
+    `
+    : '';
+
+  const portalDuelJoin = duelColumns.size > 0
+    ? `
+      LEFT JOIN duel_ratings pdr ON pdr.discord_id = CONCAT('portal:', pa.id::text)
+    `
+    : '';
+
+  const result = await pool.query(
+    `
+      SELECT
+        pa.id,
+        pa.nickname,
+        pa.class_name,
+        pa.role,
+        pa.is_active,
+        pa.created_at,
+        ${portalActivityJoin ? 'COALESCE(pak.outer_heroic, 0) AS outer_heroic,' : '0 AS outer_heroic,'}
+        ${portalActivityJoin ? 'COALESCE(pak.inner_heroic, 0) AS inner_heroic,' : '0 AS inner_heroic,'}
+        ${portalActivityJoin ? 'COALESCE(pak.crimson_sands, 0) AS crimson_sands,' : '0 AS crimson_sands,'}
+        ${portalActivityJoin ? 'COALESCE(pak.abyss_score, 0) AS abyss_score,' : '0 AS abyss_score,'}
+        ${portalActivityJoin ? 'COALESCE(pak.bounty_score, 0) AS bounty_score,' : '0 AS bounty_score,'}
+        ${portalActivityJoin ? 'COALESCE(pak.gvg_score, 0) AS gvg_score,' : '0 AS gvg_score,'}
+        ${portalActivityJoin ? 'COALESCE(pak.best_mmr, 0) AS best_mmr,' : '0 AS best_mmr,'}
+        ${portalActivityJoin ? 'COALESCE(pak.secret_realm_score, 0) AS secret_realm_score,' : '0 AS secret_realm_score,'}
+        ${duelRatingCol ? `COALESCE(pdr.${duelRatingCol}, 0) AS duel_rating,` : '0 AS duel_rating,'}
+        ${duelWinsCol ? `COALESCE(pdr.${duelWinsCol}, 0) AS duel_wins,` : '0 AS duel_wins,'}
+        ${duelLossesCol ? `COALESCE(pdr.${duelLossesCol}, 0) AS duel_losses` : '0 AS duel_losses'}
+      FROM portal_account pa
+      ${portalActivityJoin}
+      ${portalDuelJoin}
+      ORDER BY pa.created_at DESC
+    `
+  ).catch(() => ({ rows: [] as PortalOnlyRow[] }));
+
+  return result.rows.map((row) => ({
+    discord: portalStatsDiscordId(row.id),
+    nickname: String(row.nickname || ''),
+    rank: String(row.role || 'guest'),
+    class: String(row.class_name || ''),
+    guild: '',
+    joinDate: isoDate(row.created_at),
+    elo: numericValue(row.duel_rating),
+    mmr20: numericValue(row.best_mmr),
+    bounty: numericValue(row.bounty_score),
+    marks: 0,
+    outerHeroic: numericValue(row.outer_heroic),
+    innerHeroic: numericValue(row.inner_heroic),
+    crimsonSands: numericValue(row.crimson_sands),
+    abyss: numericValue(row.abyss_score),
+    gvg: numericValue(row.gvg_score),
+    secretRealm: numericValue(row.secret_realm_score),
+    duelWins: numericValue(row.duel_wins),
+    duelLosses: numericValue(row.duel_losses),
+    status: row.is_active ? 'active' : 'inactive',
+  } satisfies RegistrationRow));
+}
+
 async function getRegistrationsFromDb() {
   const pool = getPool();
   await ensureRegistrationStatsSchema();
 
   const registrationColumns = await getTableColumns('registrations');
-  if (registrationColumns.size === 0) {
-    return [];
-  }
-
   const activityColumns = await getTableColumns('activity_kpi');
   const duelColumns = await getTableColumns('duel_ratings');
+  const portalOnlyRows = await getPortalOnlyRows(activityColumns, duelColumns);
+
+  if (registrationColumns.size === 0) {
+    return buildComputedRows(portalOnlyRows);
+  }
 
   const discordCol = pick(registrationColumns, 'discord_login', 'discord', 'discord_id');
   const nickCol = pick(registrationColumns, 'nick', 'nickname');
@@ -251,7 +360,7 @@ async function getRegistrationsFromDb() {
   const joinCol = pick(registrationColumns, 'created_at', 'join_date', 'joined_at');
 
   if (!nickCol) {
-    throw new Error('registrations table missing nickname column');
+    return buildComputedRows(portalOnlyRows);
   }
 
   const outerHeroicCol = pick(activityColumns, 'outer_city_heroic');
@@ -281,7 +390,7 @@ async function getRegistrationsFromDb() {
           ${secretRealmCol ? `${secretRealmCol} AS secret_realm_score` : '0 AS secret_realm_score'}
         FROM activity_kpi
         WHERE discord_id = r.${discordCol}
-        ORDER BY activity_date DESC NULLS LAST, updated_at DESC NULLS LAST, id DESC NULLS LAST
+        ORDER BY activity_date DESC NULLS LAST, updated_at DESC NULLS LAST
         LIMIT 1
       ) ak ON TRUE
     `
@@ -320,16 +429,7 @@ async function getRegistrationsFromDb() {
     ORDER BY r.${joinCol || nickCol} DESC
   `;
 
-  const [result, portalAccounts] = await Promise.all([
-    pool.query(query),
-    pool.query(
-      `
-      SELECT id, nickname, class_name, role, is_active, created_at
-      FROM portal_account
-      ORDER BY created_at DESC
-      `
-    ).catch(() => ({ rows: [] as PortalOnlyRow[] })),
-  ]);
+  const result = await pool.query(query);
 
   const baseRows: RegistrationRow[] = result.rows.map((row) => ({
     discord: String(row.discord || ''),
@@ -354,31 +454,11 @@ async function getRegistrationsFromDb() {
   }));
 
   const seenNicknames = new Set(baseRows.map((row) => row.nickname.toLowerCase()));
-  const portalOnlyRows = portalAccounts.rows
-    .filter((row) => !seenNicknames.has(String(row.nickname || '').toLowerCase()))
-    .map((row) => ({
-      discord: `portal:${row.id}`,
-      nickname: String(row.nickname || ''),
-      rank: String(row.role || 'guest'),
-      class: String(row.class_name || ''),
-      guild: '',
-      joinDate: isoDate(row.created_at),
-      elo: 0,
-      mmr20: 0,
-      bounty: 0,
-      marks: 0,
-      outerHeroic: 0,
-      innerHeroic: 0,
-      crimsonSands: 0,
-      abyss: 0,
-      gvg: 0,
-      secretRealm: 0,
-      duelWins: 0,
-      duelLosses: 0,
-      status: row.is_active ? 'active' : 'inactive',
-    } satisfies RegistrationRow));
+  const orphanPortalRows = portalOnlyRows.filter(
+    (row) => !seenNicknames.has(row.nickname.toLowerCase())
+  );
 
-  return buildComputedRows([...baseRows, ...portalOnlyRows]);
+  return buildComputedRows([...baseRows, ...orphanPortalRows]);
 }
 
 async function resolveRegistrationTarget(nickname: string) {
@@ -419,6 +499,22 @@ async function updatePortalAccountClass(nickname: string, className: string) {
     `UPDATE portal_account SET class_name = $2, updated_at = NOW() WHERE LOWER(nickname) = LOWER($1)`,
     [nickname, className]
   );
+}
+
+async function resolvePortalAccount(nickname: string): Promise<PortalOnlyRow | null> {
+  const pool = getPool();
+  await ensureAccountsSchema();
+  const result = await pool.query(
+    `
+      SELECT id, nickname, class_name, role, is_active, created_at
+      FROM portal_account
+      WHERE LOWER(nickname) = LOWER($1)
+      LIMIT 1
+    `,
+    [nickname]
+  );
+
+  return (result.rows[0] as PortalOnlyRow | undefined) || null;
 }
 
 async function ensureActivityRow(discordId: string, nickname: string) {
@@ -514,50 +610,57 @@ export async function PATCH(request: NextRequest) {
 
     const pool = getPool();
     const target = await resolveRegistrationTarget(payload.nickname);
-    if (!target.row) {
-      if (payload.className !== undefined) {
-        await updatePortalAccountClass(payload.nickname, payload.className);
-      }
-
-      const unsupportedPortalOnlyFields = [
-        payload.outerHeroic,
-        payload.innerHeroic,
-        payload.crimsonSands,
-        payload.abyss,
-        payload.gvg,
-        payload.secretRealm,
-        payload.mmr20,
-        payload.elo,
-        payload.bounty,
-      ].some((value) => value !== undefined && value !== 0);
-
-      if (unsupportedPortalOnlyFields) {
-        return NextResponse.json(
-          { error: 'Portal account exists, but Neon registration row is not linked yet for PvP/activity stats' },
-          { status: 409 }
-        );
-      }
-
-      return NextResponse.json({ success: true, portalOnly: true });
+    const portalAccount = target.row ? null : await resolvePortalAccount(payload.nickname);
+    if (!target.row && !portalAccount) {
+      return NextResponse.json({ error: 'Registration target was not found' }, { status: 404 });
     }
 
-    if (payload.className !== undefined && target.classCol) {
+    if (payload.className !== undefined) {
       await updatePortalAccountClass(payload.nickname, payload.className);
+    }
+
+    if (payload.className !== undefined && target.row && target.classCol) {
       await pool.query(
         `UPDATE registrations SET ${target.classCol} = $2 WHERE LOWER(${target.nickCol}) = LOWER($1)`,
         [payload.nickname, payload.className]
       );
     }
 
+    const statsDiscordId = target.row
+      ? String(target.row.discord_id || '')
+      : portalAccount
+        ? portalStatsDiscordId(portalAccount.id)
+        : '';
+    const wantsLinkedStatsUpdate = [
+      payload.outerHeroic,
+      payload.innerHeroic,
+      payload.crimsonSands,
+      payload.abyss,
+      payload.gvg,
+      payload.secretRealm,
+      payload.mmr20,
+      payload.elo,
+      payload.bounty,
+    ].some((value) => value !== undefined);
+
+    if (!statsDiscordId && wantsLinkedStatsUpdate) {
+      return NextResponse.json(
+        {
+          error: target.row
+            ? 'Registration row is missing Discord identifier for PvP/activity stats'
+            : 'Portal account exists, but stats identity could not be resolved',
+        },
+        { status: 409 }
+      );
+    }
+
     const activityColumns = await getTableColumns('activity_kpi');
     const duelColumns = await getTableColumns('duel_ratings');
 
-    if (activityColumns.size > 0 && target.discordCol) {
-      const discordId = String(target.row.discord_id || '');
-      if (discordId) {
-        const today = await ensureActivityRow(discordId, payload.nickname);
+    if (activityColumns.size > 0 && statsDiscordId) {
+      const today = await ensureActivityRow(statsDiscordId, payload.nickname);
         const updates: string[] = [];
-        const values: unknown[] = [discordId, today, payload.nickname];
+        const values: unknown[] = [statsDiscordId, today, payload.nickname];
 
         const assignActivity = (columnCandidates: string[], value: number | undefined) => {
           if (value === undefined) {
@@ -590,12 +693,9 @@ export async function PATCH(request: NextRequest) {
             values
           );
         }
-      }
     }
 
-    if (payload.elo !== undefined && isOfficer && duelColumns.size > 0 && target.discordCol) {
-      const discordId = String(target.row.discord_id || '');
-      if (discordId) {
+    if (payload.elo !== undefined && isOfficer && duelColumns.size > 0 && statsDiscordId) {
         const ratingCol = pick(duelColumns, 'rating');
         const winsCol = pick(duelColumns, 'wins');
         const lossesCol = pick(duelColumns, 'losses');
@@ -608,13 +708,12 @@ export async function PATCH(request: NextRequest) {
               ON CONFLICT (discord_id) DO UPDATE
               SET ${ratingCol} = EXCLUDED.${ratingCol}, updated_at = NOW()
             `,
-            [discordId, payload.elo]
+            [statsDiscordId, payload.elo]
           );
         }
-      }
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, portalOnly: !target.row });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });

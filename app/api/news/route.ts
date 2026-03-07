@@ -17,6 +17,7 @@ function normalizeNews(data: any[]) {
     author: String(item.author ?? item.author_name ?? item.username ?? item.created_by ?? item.event_type ?? 'DiscordBot2'),
     date: String(item.date ?? item.created_at ?? item.published_at ?? item.start_time ?? new Date().toISOString()),
     pinned: Boolean(item.pinned),
+    messageUrl: item.message_url || item.messageUrl ? String(item.message_url ?? item.messageUrl) : undefined,
   }));
 }
 
