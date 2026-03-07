@@ -182,6 +182,24 @@ export function GuideModal({
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }, [guideDetail]);
 
+  const handleTranslate = useCallback(() => {
+    if (!guideDetail || typeof window === 'undefined') return;
+
+    const storedLang = localStorage.getItem('guild_portal_lang');
+    const targetLang = storedLang === 'en' || storedLang === 'zh' || storedLang === 'ru' ? storedLang : 'ru';
+    const googleTarget = targetLang === 'zh' ? 'zh-CN' : targetLang;
+    const text = guideDetail.guide.content?.trim();
+
+    if (!text) {
+      setActionNotice('Нет текста для перевода');
+      return;
+    }
+
+    const translateUrl = `https://translate.google.com/?sl=auto&tl=${encodeURIComponent(googleTarget)}&text=${encodeURIComponent(text)}&op=translate`;
+    window.open(translateUrl, '_blank', 'noopener,noreferrer');
+    setActionNotice('Открыли перевод');
+  }, [guideDetail]);
+
   if (!mounted) return null;
 
   const modalContent = (
@@ -232,6 +250,15 @@ export function GuideModal({
                 onClick={handleShare}
               >
                 Поделиться
+              </button>
+            )}
+            {guideDetail && (
+              <button
+                type="button"
+                className="text-sm px-3 py-1 rounded text-gray-500 hover:text-[#8fb9cc] hover:bg-[#1a2a38]"
+                onClick={handleTranslate}
+              >
+                Перевести
               </button>
             )}
             {guideDetail && canEdit && (

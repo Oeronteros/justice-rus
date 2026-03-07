@@ -75,26 +75,35 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
     const nextSecretRealm = prompt('Secret Realm', String(registration.secretRealm || 0));
     if (nextSecretRealm === null) return;
 
-    await fetch('/api/discord-proxy/registration', {
-      method: 'PATCH',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nickname: registration.nickname,
-        className: nextClass.trim(),
-        elo: Number(nextElo) || 0,
-        mmr20: Number(nextMmr) || 0,
-        bounty: Number(nextBounty) || 0,
-        outerHeroic: Number(nextOuter) || 0,
-        innerHeroic: Number(nextInner) || 0,
-        crimsonSands: Number(nextCrimson) || 0,
-        abyss: Number(nextAbyss) || 0,
-        gvg: Number(nextGvg) || 0,
-        secretRealm: Number(nextSecretRealm) || 0,
-      }),
-    });
+    try {
+      const response = await fetch('/api/discord-proxy/registration', {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nickname: registration.nickname,
+          className: nextClass.trim(),
+          elo: Number(nextElo) || 0,
+          mmr20: Number(nextMmr) || 0,
+          bounty: Number(nextBounty) || 0,
+          outerHeroic: Number(nextOuter) || 0,
+          innerHeroic: Number(nextInner) || 0,
+          crimsonSands: Number(nextCrimson) || 0,
+          abyss: Number(nextAbyss) || 0,
+          gvg: Number(nextGvg) || 0,
+          secretRealm: Number(nextSecretRealm) || 0,
+        }),
+      });
 
-    onRefresh?.();
+      const payload = (await response.json().catch(() => ({}))) as { error?: string; message?: string };
+      if (!response.ok) {
+        throw new Error(payload.error || payload.message || 'Не удалось обновить запись');
+      }
+
+      onRefresh?.();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Не удалось обновить запись');
+    }
   };
 
   if (registrations.length === 0) {

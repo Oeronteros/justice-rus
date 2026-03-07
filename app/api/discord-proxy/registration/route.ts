@@ -175,7 +175,7 @@ async function ensurePortalActivityColumns() {
           ctid,
           ROW_NUMBER() OVER (
             PARTITION BY discord_id, activity_date
-            ORDER BY updated_at DESC NULLS LAST, id DESC NULLS LAST
+            ORDER BY updated_at DESC NULLS LAST, ctid DESC
           ) AS duplicate_rank
         FROM activity_kpi
         WHERE discord_id IS NOT NULL AND activity_date IS NOT NULL
@@ -215,7 +215,7 @@ async function ensureDuelRatingsSchema() {
           ctid,
           ROW_NUMBER() OVER (
             PARTITION BY discord_id
-            ORDER BY updated_at DESC NULLS LAST, id DESC NULLS LAST
+            ORDER BY updated_at DESC NULLS LAST, ctid DESC
           ) AS duplicate_rank
         FROM duel_ratings
         WHERE discord_id IS NOT NULL
@@ -621,10 +621,11 @@ export async function PATCH(request: NextRequest) {
     }
 
     console.error('Error updating registration stats:', error);
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
       {
-        error: 'Failed to update registration stats',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: message || 'Failed to update registration stats',
+        code: 'REGISTRATION_STATS_UPDATE_FAILED',
       },
       { status: 500 }
     );

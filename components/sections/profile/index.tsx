@@ -169,9 +169,9 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
         }),
       });
 
-      const payload = (await response.json().catch(() => ({}))) as { error?: string };
+      const payload = (await response.json().catch(() => ({}))) as { error?: string; message?: string };
       if (!response.ok) {
-        throw new Error(payload.error || 'Не удалось сохранить профиль');
+        throw new Error(payload.error || payload.message || 'Не удалось сохранить профиль');
       }
 
       setProfileNotice('Профиль обновлён');
