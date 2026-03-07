@@ -18,6 +18,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
   const { data: guides = [], isLoading, error, refetch } = useGuides();
   const createGuide = useCreateGuide();
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedAuthor, setSelectedAuthor] = useState('all');
   const [search, setSearch] = useState('');
   const [notice, setNotice] = useState<string | null>(null);
   const [isImporting, setIsImporting] = useState(false);
@@ -100,17 +101,34 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
     [guides]
   );
 
+  const categoryStats = useMemo(
+    () => categories.map((category) => ({ category, count: guides.filter((guide) => guide.category === category).length })),
+    [categories, guides]
+  );
+
+  const authorStats = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const guide of guides) {
+      counts.set(guide.author, (counts.get(guide.author) || 0) + 1);
+    }
+    return [...counts.entries()]
+      .map(([author, count]) => ({ author, count }))
+      .sort((left, right) => right.count - left.count || left.author.localeCompare(right.author, 'ru'))
+      .slice(0, 8);
+  }, [guides]);
+
   const filteredGuides = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
     return guides.filter((guide) => {
       const matchesCategory = selectedCategory === 'all' || guide.category === selectedCategory;
+      const matchesAuthor = selectedAuthor === 'all' || guide.author === selectedAuthor;
       const matchesSearch =
         !normalizedSearch ||
         guide.title.toLowerCase().includes(normalizedSearch) ||
         guide.author.toLowerCase().includes(normalizedSearch);
-      return matchesCategory && matchesSearch;
+      return matchesCategory && matchesAuthor && matchesSearch;
     });
-  }, [guides, search, selectedCategory]);
+  }, [guides, search, selectedAuthor, selectedCategory]);
 
   if (isLoading) {
     return (
@@ -227,27 +245,53 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-          <span className="text-sm text-gray-400">Категория:</span>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="select-field max-w-xs"
+      <div className="space-y-4 mb-8">
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            className={`px-3 py-2 rounded-full text-sm transition ${selectedCategory === 'all' ? 'bg-[#204154] text-[#e6eff5] border border-[#4d7a90]/60' : 'bg-[#101a23]/80 text-[#9ec5d8] border border-[#223544]/60'}`}
+            onClick={() => setSelectedCategory('all')}
           >
-            <option value="all">Все</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
+            Все категории · {guides.length}
+          </button>
+          {categoryStats.map(({ category, count }) => (
+            <button
+              key={category}
+              type="button"
+              className={`px-3 py-2 rounded-full text-sm transition ${selectedCategory === category ? 'bg-[#204154] text-[#e6eff5] border border-[#4d7a90]/60' : 'bg-[#101a23]/80 text-[#9ec5d8] border border-[#223544]/60'}`}
+              onClick={() => setSelectedCategory(category)}
+            >
+              {category} · {count}
+            </button>
+          ))}
         </div>
 
-        <div className="text-sm text-gray-500 text-center sm:text-right">
-          Всего: <span className="text-gray-300 font-medium">{guides.length}</span>
+        <div className="flex flex-wrap gap-2 items-center">
+          <button
+            type="button"
+            className={`px-3 py-2 rounded-full text-sm transition ${selectedAuthor === 'all' ? 'bg-[#173041]/80 text-[#e6eff5] border border-[#4d7a90]/50' : 'bg-[#101a23]/80 text-[#9ec5d8] border border-[#223544]/60'}`}
+            onClick={() => setSelectedAuthor('all')}
+          >
+            Все авторы
+          </button>
+          {authorStats.map(({ author, count }) => (
+            <button
+              key={author}
+              type="button"
+              className={`px-3 py-2 rounded-full text-sm transition ${selectedAuthor === author ? 'bg-[#173041]/80 text-[#e6eff5] border border-[#4d7a90]/50' : 'bg-[#101a23]/80 text-[#9ec5d8] border border-[#223544]/60'}`}
+              onClick={() => setSelectedAuthor(author)}
+            >
+              {author} · {count}
+            </button>
+          ))}
+        </div>
+
+        <div className="text-sm text-gray-500 text-center sm:text-left">
+          Показано: <span className="text-gray-300 font-medium">{filteredGuides.length}</span> из <span className="text-gray-300 font-medium">{guides.length}</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         {filteredGuides.length === 0 ? (
           <div className="col-span-full">
             <EmptyState

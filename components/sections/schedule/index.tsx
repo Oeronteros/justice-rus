@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
-import { useSchedule } from '@/lib/hooks/useSchedule';
+import { useSchedule, useUpdateSchedule } from '@/lib/hooks/useSchedule';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/types';
 import type { Language } from '@/lib/i18n';
 import { SectionHero } from '@/components/shared/SectionHero';
+import { hasRoleAtLeast } from '@/lib/authz';
+import type { Schedule as ScheduleItem } from '@/lib/schemas/schedule';
 
 interface ScheduleSectionProps {
   user: User;
@@ -71,10 +73,75 @@ function getGroupColor(groupName: string): string {
   return groupColors[groupName] || '#8fb9cc';
 }
 
+type ScheduleEditDraft = {
+  dayType: string;
+  time: string;
+  titleRu: string;
+  titleEn: string;
+  titleZh: string;
+  orderIndex: string;
+  active: boolean;
+};
+
+function toEditDraft(item: ScheduleItem): ScheduleEditDraft {
+  return {
+    dayType: item.dayType || item.type || '',
+    time: item.time || item.description || '',
+    titleRu: item.titleRu || item.registration || '',
+    titleEn: item.titleEn || item.registration || '',
+    titleZh: item.titleZh || '',
+    orderIndex: String(item.orderIndex ?? 0),
+    active: item.active ?? true,
+  };
+}
+
 function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
   const { data: schedules = [], isLoading, error, refetch } = useSchedule(language);
+  const updateSchedule = useUpdateSchedule();
   const [now, setNow] = useState(() => new Date());
   const [filter, setFilter] = useState<string>('all');
+  const [editingSchedule, setEditingSchedule] = useState<ScheduleItem | null>(null);
+  const [editDraft, setEditDraft] = useState<ScheduleEditDraft | null>(null);
+  const [scheduleNotice, setScheduleNotice] = useState<string | null>(null);
+  const canEditSchedule = hasRoleAtLeast(user.role, 'officer');
+
+  const openEditor = (item: ScheduleItem) => {
+    if (!item.id) return;
+    setEditingSchedule(item);
+    setEditDraft(toEditDraft(item));
+    setScheduleNotice(null);
+  };
+
+  const closeEditor = () => {
+    if (updateSchedule.isPending) return;
+    setEditingSchedule(null);
+    setEditDraft(null);
+  };
+
+  const saveScheduleEdit = async () => {
+    if (!editingSchedule?.id || !editDraft) {
+      return;
+    }
+
+    try {
+      setScheduleNotice(null);
+      await updateSchedule.mutateAsync({
+        id: editingSchedule.id,
+        dayType: editDraft.dayType.trim(),
+        time: editDraft.time.trim(),
+        titleRu: editDraft.titleRu.trim(),
+        titleEn: editDraft.titleEn.trim(),
+        titleZh: editDraft.titleZh.trim() || undefined,
+        orderIndex: Math.max(0, Number(editDraft.orderIndex) || 0),
+        active: editDraft.active,
+      });
+      setScheduleNotice(language === 'ru' ? 'Расписание обновлено' : language === 'zh' ? '日程已更新' : 'Schedule updated');
+      closeEditor();
+      void refetch();
+    } catch (saveError) {
+      setScheduleNotice(saveError instanceof Error ? saveError.message : language === 'ru' ? 'Не удалось обновить расписание' : 'Failed to update schedule');
+    }
+  };
 
   // Обновляем время каждую минуту
   useEffect(() => {
@@ -193,6 +260,13 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
           }
         />
 
+        {scheduleNotice && (
+          <div className="mt-4 mb-6 rounded-2xl border border-[#2f6e8d]/40 bg-[#16202b]/65 p-4 text-sm text-[#c7dce8]">
+            <WuxiaIcon name="checkCircle" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+            {scheduleNotice}
+          </div>
+        )}
+
         {/* Текущее/следующее событие */}
         {(currentEvent || nextEvent) && (
           <div className="mb-6">
@@ -305,6 +379,17 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                               </span>
                             )}
                           </div>
+
+                          {canEditSchedule && item.id && (
+                            <button
+                              type="button"
+                              className="dc-icon-btn p-2 rounded-lg text-[#8fb9cc]"
+                              onClick={() => openEditor(item)}
+                              title={language === 'ru' ? 'Редактировать слот' : language === 'zh' ? '编辑活动' : 'Edit slot'}
+                            >
+                              <WuxiaIcon name="edit" className="w-4 h-4" />
+                            </button>
+                          )}
                           
                           {/* Статус */}
                           {isPast && (
@@ -334,6 +419,94 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                 </span>
               </>
             )}
+          </div>
+        )}
+
+        {canEditSchedule && editingSchedule && editDraft && (
+          <div className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center px-4 py-8" onClick={closeEditor}>
+            <div className="card w-full max-w-3xl p-6 md:p-8 max-h-[90vh] overflow-auto" onClick={(event) => event.stopPropagation()}>
+              <div className="flex items-start justify-between gap-4 mb-6">
+                <div>
+                  <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5]">
+                    {language === 'ru' ? 'Редактировать слот' : language === 'zh' ? '编辑活动' : 'Edit schedule slot'}
+                  </h3>
+                  <p className="text-sm text-gray-400 mt-2">{editingSchedule.registration}</p>
+                </div>
+                <button type="button" className="dc-icon-btn p-2.5 rounded-xl" onClick={closeEditor} disabled={updateSchedule.isPending}>
+                  <WuxiaIcon name="x" className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <label className="space-y-2 text-sm">
+                  <span className="text-gray-400">Day type</span>
+                  <input
+                    value={editDraft.dayType}
+                    onChange={(event) => setEditDraft((current) => current ? { ...current, dayType: event.target.value } : current)}
+                    className="input-field w-full"
+                  />
+                </label>
+                <label className="space-y-2 text-sm">
+                  <span className="text-gray-400">Time</span>
+                  <input
+                    value={editDraft.time}
+                    onChange={(event) => setEditDraft((current) => current ? { ...current, time: event.target.value } : current)}
+                    className="input-field w-full"
+                    placeholder="19:30 - 20:30"
+                  />
+                </label>
+                <label className="space-y-2 text-sm">
+                  <span className="text-gray-400">Title RU</span>
+                  <input
+                    value={editDraft.titleRu}
+                    onChange={(event) => setEditDraft((current) => current ? { ...current, titleRu: event.target.value } : current)}
+                    className="input-field w-full"
+                  />
+                </label>
+                <label className="space-y-2 text-sm">
+                  <span className="text-gray-400">Title EN</span>
+                  <input
+                    value={editDraft.titleEn}
+                    onChange={(event) => setEditDraft((current) => current ? { ...current, titleEn: event.target.value } : current)}
+                    className="input-field w-full"
+                  />
+                </label>
+                <label className="space-y-2 text-sm">
+                  <span className="text-gray-400">Title ZH</span>
+                  <input
+                    value={editDraft.titleZh}
+                    onChange={(event) => setEditDraft((current) => current ? { ...current, titleZh: event.target.value } : current)}
+                    className="input-field w-full"
+                  />
+                </label>
+                <label className="space-y-2 text-sm">
+                  <span className="text-gray-400">Order</span>
+                  <input
+                    type="number"
+                    value={editDraft.orderIndex}
+                    onChange={(event) => setEditDraft((current) => current ? { ...current, orderIndex: event.target.value } : current)}
+                    className="input-field w-full"
+                  />
+                </label>
+                <label className="flex items-center gap-3 text-sm md:col-span-2 rounded-2xl border border-[#223544]/60 bg-[#0c151d]/80 p-4">
+                  <input
+                    type="checkbox"
+                    checked={editDraft.active}
+                    onChange={(event) => setEditDraft((current) => current ? { ...current, active: event.target.checked } : current)}
+                  />
+                  <span className="text-gray-300">Активно в расписании</span>
+                </label>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
+                <button type="button" className="btn-secondary px-5 py-3" onClick={closeEditor} disabled={updateSchedule.isPending}>
+                  Отмена
+                </button>
+                <button type="button" className="btn-primary px-5 py-3" onClick={() => void saveScheduleEdit()} disabled={updateSchedule.isPending}>
+                  {updateSchedule.isPending ? 'Сохраняем...' : 'Сохранить'}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
