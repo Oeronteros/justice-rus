@@ -39,4 +39,8 @@ export const guidesApi = {
   addComment: async (id: string, data: CreateCommentDto): Promise<GuideComment> => {
     return api.post(`guide/${id}/comment`, data, guideCommentSchema);
   },
+
+  remove: async (id: string): Promise<{ success: boolean }> => {
+    return api.delete(`guide/${id}`, z.object({ success: z.boolean() }));
+  },
 };

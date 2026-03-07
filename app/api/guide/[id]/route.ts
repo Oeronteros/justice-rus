@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { verifyToken } from '@/lib/auth';
+import { getAuthToken } from '@/lib/auth/request';
+import { ensureGuideSchema } from '@/lib/guides/schema';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { canModerateContent } from '@/lib/authz';
 
@@ -12,51 +14,6 @@ const guideUpdateSchema = z.object({
   content: z.string().trim().min(1).max(500_000).optional(),
   category: z.string().trim().min(1).max(60).optional(),
 });
-
-function getAuthToken(request: NextRequest): string | null {
-  const headerToken = request.headers.get('authorization');
-  const cookieToken = request.cookies.get('auth_token')?.value;
-  const token = cookieToken || (headerToken && headerToken.startsWith('Bearer ') ? headerToken.slice(7) : null);
-  return token || null;
-}
-
-async function ensureGuideSchema() {
-  const pool = getPool();
-  
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS guide (
-      id SERIAL PRIMARY KEY,
-      owner_account_id INTEGER NULL,
-      title TEXT NOT NULL,
-      content_md TEXT NOT NULL,
-      category TEXT NOT NULL DEFAULT 'general',
-      author TEXT NOT NULL DEFAULT 'unknown',
-      created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-      updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-    );
-  `);
-
-  await pool.query(`ALTER TABLE guide ADD COLUMN IF NOT EXISTS owner_account_id INTEGER NULL;`);
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS guide_comment (
-      id SERIAL PRIMARY KEY,
-      guide_id INTEGER NOT NULL REFERENCES guide(id) ON DELETE CASCADE,
-      author TEXT NOT NULL DEFAULT 'unknown',
-      comment TEXT NOT NULL,
-      created_at TIMESTAMP NOT NULL DEFAULT NOW()
-    );
-  `);
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS guide_vote (
-      guide_id INTEGER NOT NULL REFERENCES guide(id) ON DELETE CASCADE,
-      voter_key TEXT NOT NULL,
-      created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-      PRIMARY KEY (guide_id, voter_key)
-    );
-  `);
-}
 
 export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {

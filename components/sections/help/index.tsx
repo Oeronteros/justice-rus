@@ -11,7 +11,9 @@ import {
   useUpdateHelpTimeRange,
   useHelpRsvp,
   useHelpWithdrawRsvp,
+  useDeleteHelpRequest,
 } from '@/lib/hooks/useHelp';
+import { handleApiError } from '@/lib/api/client';
 import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/types';
@@ -30,6 +32,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
   const updateTimeRange = useUpdateHelpTimeRange();
   const rsvp = useHelpRsvp();
   const withdrawRsvp = useHelpWithdrawRsvp();
+  const deleteHelpRequest = useDeleteHelpRequest();
 
   const [title, setTitle] = useState('');
   const [details, setDetails] = useState('');
@@ -142,11 +145,11 @@ function HelpSectionContent({ user }: HelpSectionProps) {
   };
 
   const deleteRequest = async (requestId: string) => {
-    await fetch(`/api/help?id=${encodeURIComponent(requestId)}`, {
-      method: 'DELETE',
-      credentials: 'include',
-    });
-    refetch();
+    try {
+      await deleteHelpRequest.mutateAsync(requestId);
+    } catch (error) {
+      alert(handleApiError(error));
+    }
   };
 
   return (
@@ -473,6 +476,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                                   type="button"
                                   className="text-sm font-medium text-red-400 hover:text-red-300 transition-colors"
                                   onClick={() => deleteRequest(req.id)}
+                                  disabled={deleteHelpRequest.isPending}
                                 >
                                   <WuxiaIcon name="trash" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
                                   Удалить

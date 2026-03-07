@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { User } from '@/types';
+import { authApi } from '@/lib/api/auth';
 import WuxiaIcon from './WuxiaIcons';
 import { useKnownClasses } from '@/lib/hooks/useKnownClasses';
 
@@ -41,24 +42,12 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/auth', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nickname: nickname.trim(),
-          password,
-        }),
+      const payload = await authApi.login({
+        nickname: nickname.trim(),
+        password,
       });
 
-      const payload = (await response.json().catch(() => ({}))) as { error?: string; user?: User };
-      if (!response.ok || !payload.user) {
-        throw new Error(payload.error || 'Не удалось войти');
-      }
-
-      onAuthSuccess(payload.user);
+      onAuthSuccess(payload.user as User);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Не удалось войти');
     } finally {
@@ -92,23 +81,11 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nickname: nickname.trim(),
-          className: className.trim(),
-          password,
-        }),
+      const payload = await authApi.register({
+        nickname: nickname.trim(),
+        className: className.trim(),
+        password,
       });
-
-      const payload = (await response.json().catch(() => ({}))) as { error?: string; message?: string };
-      if (!response.ok) {
-        throw new Error(payload.error || 'Не удалось создать аккаунт');
-      }
 
       setNotice(payload.message || 'Аккаунт создан и ожидает активации офицером/главой/сис.админом.');
       setMode('login');
@@ -131,21 +108,9 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/auth', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ password: adminPin.trim() }),
-      });
+      const payload = await authApi.login({ password: adminPin.trim() });
 
-      const payload = (await response.json().catch(() => ({}))) as { error?: string; user?: User };
-      if (!response.ok || !payload.user) {
-        throw new Error(payload.error || 'PIN не принят');
-      }
-
-      onAuthSuccess(payload.user);
+      onAuthSuccess(payload.user as User);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'PIN не принят');
     } finally {

@@ -33,4 +33,11 @@ export const helpApi = {
   withdrawRsvp: async (id: string): Promise<HelpRequest> => {
     return api.delete(`help/responders?id=${encodeURIComponent(id)}`, helpRequestSchema);
   },
+
+  remove: async (id: string): Promise<{ success: boolean }> => {
+    return api.delete(
+      `help?id=${encodeURIComponent(id)}`,
+      z.object({ success: z.boolean() })
+    );
+  },
 };

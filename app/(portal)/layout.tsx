@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import MainLayout from '@/components/MainLayout';
 import PinScreen from '@/components/PinScreen';
+import { authApi } from '@/lib/api/auth';
 import { AuthProvider } from '@/lib/auth/context';
 import { User } from '@/types';
 
@@ -21,16 +22,8 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
     }
 
     try {
-      const response = await fetch('/api/verify-auth', {
-        credentials: 'include',
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data.user);
-      } else {
-        setUser(null);
-      }
+      const data = await authApi.verify();
+      setUser(data.user as User);
     } catch (error) {
       console.error('Auth check failed:', error);
       setUser(null);
@@ -45,10 +38,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
+      await authApi.logout();
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {

@@ -28,14 +28,18 @@ const mockGuidesApi = guidesApi as unknown as {
   addComment: ReturnType<typeof vi.fn>;
 };
 
+const isoDateArb = fc
+  .date({ min: new Date('2000-01-01T00:00:00.000Z'), max: new Date('2100-12-31T23:59:59.999Z') })
+  .map((date) => date.toISOString());
+
 // Generator for valid GuideSummary
 const guideSummaryArb = fc.record({
   id: fc.uuid(),
   title: fc.string({ minLength: 1, maxLength: 200 }),
   category: fc.constantFrom('general', 'pve', 'pvp', 'build', 'farm', 'craft', 'training'),
   author: fc.string({ minLength: 1, maxLength: 100 }),
-  createdAt: fc.date().map(d => d.toISOString()),
-  updatedAt: fc.date().map(d => d.toISOString()),
+  createdAt: isoDateArb,
+  updatedAt: isoDateArb,
   votes: fc.nat({ max: 1000 }),
   commentsCount: fc.nat({ max: 100 }),
 });

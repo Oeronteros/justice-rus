@@ -1,5 +1,7 @@
 'use client';
 
+import { handleApiError } from '@/lib/api/client';
+import { useUpdateRegistrationStats } from '@/lib/hooks';
 import { getKPIClass, getKpiIndicator, getRankClass, getStatusClass } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { Registration, User } from '@/types';
@@ -88,6 +90,7 @@ function KpiValue({ registration, user }: { registration: Registration; user: Us
 
 export function RegistrationTable({ registrations, user, onRefresh, columnLabels }: RegistrationTableProps) {
   const canSeeFullStats = hasRoleAtLeast(user.role, 'officer');
+  const updateRegistrationStats = useUpdateRegistrationStats();
 
   const editStats = async (registration: Registration) => {
     const nextClass = prompt('Класс', registration.class || '');
@@ -114,11 +117,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
     if (nextSecretRealm === null) return;
 
     try {
-      const response = await fetch('/api/discord-proxy/registration', {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      await updateRegistrationStats.mutateAsync({
           nickname: registration.nickname,
           className: nextClass.trim(),
           guild: nextGuild.trim(),
@@ -131,17 +130,11 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
           abyss: Number(nextAbyss) || 0,
           gvg: Number(nextGvg) || 0,
           secretRealm: Number(nextSecretRealm) || 0,
-        }),
       });
-
-      const payload = (await response.json().catch(() => ({}))) as { error?: string; message?: string };
-      if (!response.ok) {
-        throw new Error(payload.error || payload.message || 'Не удалось обновить запись');
-      }
 
       onRefresh?.();
     } catch (error) {
-      alert(error instanceof Error ? error.message : 'Не удалось обновить запись');
+      alert(handleApiError(error));
     }
   };
 

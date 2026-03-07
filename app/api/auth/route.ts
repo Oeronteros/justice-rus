@@ -1,6 +1,7 @@
 // API Route: /api/auth
 import { NextRequest, NextResponse } from 'next/server';
 import { generateToken, getClientIp, safeEqual } from '@/lib/auth';
+import { isSameOrigin } from '@/lib/auth/request';
 import { AUTH_TOKEN_MAX_AGE_SECONDS, PASSWORDS } from '@/lib/constants';
 import { AuthResponse, UserRole } from '@/types';
 import { z } from 'zod';
@@ -73,20 +74,6 @@ function registerFailure(ip: string, now: number) {
 
 function clearFailures(ip: string) {
   loginAttempts.delete(ip);
-}
-
-function isSameOrigin(request: NextRequest): boolean {
-  const origin = request.headers.get('origin');
-  if (!origin) return true;
-
-  const host = request.headers.get('host');
-  if (!host) return false;
-
-  try {
-    return new URL(origin).host === host;
-  } catch {
-    return false;
-  }
 }
 
 function legacyPinRole(password: string): UserRole | null {

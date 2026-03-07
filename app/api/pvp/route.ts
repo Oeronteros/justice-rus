@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import type { PoolClient } from 'pg';
 import { z } from 'zod';
 import { verifyToken } from '@/lib/auth';
+import { getAuthToken } from '@/lib/auth/request';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { pvpReportSchema } from '@/lib/schemas/pvp';
 
@@ -49,12 +50,6 @@ function normalizedMatchSelect(whereClause?: string, orderClause?: string, limit
     ${orderClause || ''}
     ${limitClause || ''}
   `;
-}
-
-function getAuthToken(request: NextRequest): string | null {
-  const headerToken = request.headers.get('authorization');
-  const cookieToken = request.cookies.get('auth_token')?.value;
-  return cookieToken || (headerToken && headerToken.startsWith('Bearer ') ? headerToken.slice(7) : null) || null;
 }
 
 function actorIdFromUser(user: ReturnType<typeof verifyToken>): string | null {

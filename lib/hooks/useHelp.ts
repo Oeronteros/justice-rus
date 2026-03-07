@@ -75,3 +75,14 @@ export function useHelpWithdrawRsvp() {
     },
   });
 }
+
+export function useDeleteHelpRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => helpApi.remove(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: helpKeys.lists() });
+    },
+  });
+}

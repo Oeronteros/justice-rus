@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { verifyToken } from '@/lib/auth';
+import { getAuthToken } from '@/lib/auth/request';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
-import { ensureHelpSchema, getAuthToken, resolveRosterClassName } from '../_shared';
+import { ensureHelpSchema, resolveRosterClassName } from '../_shared';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

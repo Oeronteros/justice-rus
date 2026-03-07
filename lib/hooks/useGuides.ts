@@ -74,3 +74,15 @@ export function useAddComment() {
     },
   });
 }
+
+export function useDeleteGuide() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => guidesApi.remove(id),
+    onSuccess: (_, id) => {
+      queryClient.removeQueries({ queryKey: guideKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: guideKeys.lists() });
+    },
+  });
+}

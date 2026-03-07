@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { verifyToken } from '@/lib/auth';
+import { getAuthToken } from '@/lib/auth/request';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureAccountsSchema, toPublicAccount } from '@/lib/auth/accounts';
 import { canAssignRoles, canManageAccounts } from '@/lib/authz';
@@ -12,13 +13,6 @@ const updateSchema = z.object({
   isActive: z.boolean(),
   role: z.enum(['guest', 'member', 'officer', 'head', 'sysadmin']).optional(),
 });
-
-function getAuthToken(request: NextRequest): string | null {
-  const headerToken = request.headers.get('authorization');
-  const cookieToken = request.cookies.get('auth_token')?.value;
-  const token = cookieToken || (headerToken && headerToken.startsWith('Bearer ') ? headerToken.slice(7) : null);
-  return token || null;
-}
 
 function ensureAdmin(request: NextRequest) {
   const token = getAuthToken(request);

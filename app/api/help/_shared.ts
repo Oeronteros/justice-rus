@@ -1,12 +1,6 @@
 import { NextRequest } from 'next/server';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
-
-export function getAuthToken(request: NextRequest): string | null {
-  const headerToken = request.headers.get('authorization');
-  const cookieToken = request.cookies.get('auth_token')?.value;
-  const token = cookieToken || (headerToken && headerToken.startsWith('Bearer ') ? headerToken.slice(7) : null);
-  return token || null;
-}
+import { getAuthToken } from '@/lib/auth/request';
 
 export async function resolveRosterClassName(nickname: string | undefined): Promise<string | null> {
   if (!nickname || !hasDatabaseUrl()) return null;

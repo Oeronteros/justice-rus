@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import type { PortalAccount, Registration, User, UserRole } from '@/types';
+import type { PortalAccount, User, UserRole } from '@/types';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { canAssignRoles, canManageAccounts } from '@/lib/authz';
+import { useAccounts, useUpdateAccount } from '@/lib/hooks/useAccounts';
 import { useKnownClasses } from '@/lib/hooks/useKnownClasses';
+import { useRegistrations, useUpdateRegistrationStats } from '@/lib/hooks/useRegistrations';
 import { getKPIClass } from '@/lib/utils';
 
 interface ProfileSectionProps {
@@ -27,11 +29,11 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
   const isAdmin = canManageAccounts(user.role);
   const canChangeRoles = canAssignRoles(user.role);
   const { data: knownClasses = [] } = useKnownClasses();
+  const { data: accounts = [], isLoading: accountsLoading, error: accountsQueryError, refetch: refetchAccounts } = useAccounts(isAdmin);
+  const { data: roster = [] } = useRegistrations();
+  const updateAccountMutation = useUpdateAccount();
+  const updateRegistrationStatsMutation = useUpdateRegistrationStats();
 
-  const [accounts, setAccounts] = useState<PortalAccount[]>([]);
-  const [roster, setRoster] = useState<Registration[]>([]);
-  const [accountsLoading, setAccountsLoading] = useState(false);
-  const [accountsError, setAccountsError] = useState<string | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [profileDraft, setProfileDraft] = useState({
     className: '',
@@ -43,7 +45,6 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
     gvg: 0,
     secretRealm: 0,
   });
-  const [profileSaving, setProfileSaving] = useState(false);
   const [profileNotice, setProfileNotice] = useState<string | null>(null);
 
   const roleOptions: UserRole[] = ['guest', 'member', 'officer', 'head', 'sysadmin'];
@@ -79,6 +80,18 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
     return 'border-red-500/35 bg-red-500/12 text-red-300';
   }, [profileKpiClass]);
 
+  const accountsError = useMemo(() => {
+    if (updateAccountMutation.error instanceof Error) {
+      return updateAccountMutation.error.message;
+    }
+
+    if (accountsQueryError instanceof Error) {
+      return accountsQueryError.message;
+    }
+
+    return null;
+  }, [accountsQueryError, updateAccountMutation.error]);
+
   useEffect(() => {
     setProfileDraft({
       className: profileRegistration?.class || user.className || '',
@@ -92,76 +105,19 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
     });
   }, [profileRegistration, user.className]);
 
-  const loadAccounts = async () => {
+  const loadAccounts = () => {
     if (!isAdmin) return;
-
-    try {
-      setAccountsLoading(true);
-      setAccountsError(null);
-
-      const response = await fetch('/api/admin/accounts', {
-        credentials: 'include',
-        cache: 'no-store',
-      });
-
-      const payload = (await response.json().catch(() => [])) as PortalAccount[] | { error?: string };
-      if (!response.ok || !Array.isArray(payload)) {
-        throw new Error((payload as any)?.error || 'Failed to load accounts');
-      }
-
-      setAccounts(payload);
-    } catch (error) {
-      setAccountsError(error instanceof Error ? error.message : 'Failed to load accounts');
-    } finally {
-      setAccountsLoading(false);
-    }
+    void refetchAccounts();
   };
-
-  useEffect(() => {
-    loadAccounts();
-  }, [isAdmin]);
-
-  useEffect(() => {
-    const loadRoster = async () => {
-      try {
-        const response = await fetch('/api/discord-proxy/registration', {
-          credentials: 'include',
-          cache: 'no-store',
-        });
-        const payload = (await response.json().catch(() => [])) as Registration[];
-        if (response.ok && Array.isArray(payload)) {
-          setRoster(payload);
-        }
-      } catch {
-        // ignore profile enrichment errors
-      }
-    };
-
-    loadRoster();
-  }, []);
 
   const updateAccount = async (account: PortalAccount, next: { isActive?: boolean; role?: UserRole }) => {
     try {
       setTogglingId(account.id);
-      const response = await fetch('/api/admin/accounts', {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      await updateAccountMutation.mutateAsync({
           id: account.id,
           isActive: next.isActive ?? account.isActive,
           role: next.role,
-        }),
       });
-
-      const payload = (await response.json().catch(() => ({}))) as PortalAccount | { error?: string };
-      if (!response.ok || !('id' in payload)) {
-        throw new Error((payload as any)?.error || 'Failed to update account');
-      }
-
-      setAccounts((prev) => prev.map((item) => (item.id === payload.id ? (payload as PortalAccount) : item)));
-    } catch (error) {
-      setAccountsError(error instanceof Error ? error.message : 'Failed to update account');
     } finally {
       setTogglingId(null);
     }
@@ -174,43 +130,22 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
     }
 
     try {
-      setProfileSaving(true);
       setProfileNotice(null);
-      const response = await fetch('/api/discord-proxy/registration', {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nickname: user.nickname,
-          className: profileDraft.className,
-          mmr20: Number(profileDraft.mmr20) || 0,
-          outerHeroic: Number(profileDraft.outerHeroic) || 0,
-          innerHeroic: Number(profileDraft.innerHeroic) || 0,
-          crimsonSands: Number(profileDraft.crimsonSands) || 0,
-          abyss: Number(profileDraft.abyss) || 0,
-          gvg: Number(profileDraft.gvg) || 0,
-          secretRealm: Number(profileDraft.secretRealm) || 0,
-        }),
+      await updateRegistrationStatsMutation.mutateAsync({
+        nickname: user.nickname,
+        className: profileDraft.className,
+        mmr20: Number(profileDraft.mmr20) || 0,
+        outerHeroic: Number(profileDraft.outerHeroic) || 0,
+        innerHeroic: Number(profileDraft.innerHeroic) || 0,
+        crimsonSands: Number(profileDraft.crimsonSands) || 0,
+        abyss: Number(profileDraft.abyss) || 0,
+        gvg: Number(profileDraft.gvg) || 0,
+        secretRealm: Number(profileDraft.secretRealm) || 0,
       });
-
-      const payload = (await response.json().catch(() => ({}))) as { error?: string; message?: string };
-      if (!response.ok) {
-        throw new Error(payload.error || payload.message || 'Не удалось сохранить профиль');
-      }
 
       setProfileNotice('Профиль обновлён');
-      const refreshedRoster = await fetch('/api/discord-proxy/registration', {
-        credentials: 'include',
-        cache: 'no-store',
-      });
-      const rosterPayload = (await refreshedRoster.json().catch(() => [])) as Registration[];
-      if (refreshedRoster.ok && Array.isArray(rosterPayload)) {
-        setRoster(rosterPayload);
-      }
     } catch (error) {
       setProfileNotice(error instanceof Error ? error.message : 'Не удалось сохранить профиль');
-    } finally {
-      setProfileSaving(false);
     }
   };
 
@@ -256,9 +191,9 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
               type="button"
               className="btn-secondary px-4 py-2 text-sm"
               onClick={saveProfileStats}
-              disabled={profileSaving}
+              disabled={updateRegistrationStatsMutation.isPending}
             >
-              {profileSaving ? 'Сохраняем...' : 'Сохранить профиль'}
+              {updateRegistrationStatsMutation.isPending ? 'Сохраняем...' : 'Сохранить профиль'}
             </button>
           </div>
 

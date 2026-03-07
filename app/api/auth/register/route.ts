@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { isSameOrigin } from '@/lib/auth/request';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureAccountsSchema, hashPassword, normalizeNickname } from '@/lib/auth/accounts';
 import { isKnownClassName } from '@/lib/classes';
@@ -11,20 +12,6 @@ const registerSchema = z.object({
   className: z.string().trim().min(1).max(100),
   password: z.string().min(8).max(128),
 });
-
-function isSameOrigin(request: NextRequest): boolean {
-  const origin = request.headers.get('origin');
-  if (!origin) return true;
-
-  const host = request.headers.get('host');
-  if (!host) return false;
-
-  try {
-    return new URL(origin).host === host;
-  } catch {
-    return false;
-  }
-}
 
 export async function POST(request: NextRequest) {
   try {

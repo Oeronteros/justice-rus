@@ -1,6 +1,7 @@
 // API Route: /api/discord-proxy/absences
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
+import { getAuthToken } from '@/lib/auth/request';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { createAbsenceSchema } from '@/lib/schemas/absence';
 import { z } from 'zod';
@@ -12,13 +13,6 @@ const bypassHeader: Record<string, string> =
   DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me')
     ? { 'bypass-tunnel-reminder': '1' }
     : {};
-
-function getAuthToken(request: NextRequest): string | null {
-  const headerToken = request.headers.get('authorization');
-  const cookieToken = request.cookies.get('auth_token')?.value;
-  const token = cookieToken || (headerToken && headerToken.startsWith('Bearer ') ? headerToken.slice(7) : null);
-  return token || null;
-}
 
 function normalizeStatus(status: string | null | undefined): 'pending' | 'approved' | 'rejected' {
   if (status === 'approved') return 'approved';

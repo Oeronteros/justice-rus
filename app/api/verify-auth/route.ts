@@ -1,24 +1,12 @@
 // API Route: /api/verify-auth
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken, getTokenFromRequest } from '@/lib/auth';
+import { verifyToken } from '@/lib/auth';
+import { clearAuthCookie, getAuthToken } from '@/lib/auth/request';
 import { User, VerifyAuthResponse } from '@/types';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureAccountsSchema } from '@/lib/auth/accounts';
 
 export const runtime = 'nodejs';
-
-function clearAuthCookie(response: NextResponse) {
-  response.cookies.set({
-    name: 'auth_token',
-    value: '',
-    httpOnly: true,
-    sameSite: 'strict',
-    secure: process.env.NODE_ENV === 'production',
-    path: '/',
-    maxAge: 0,
-    priority: 'high',
-  });
-}
 
 async function resolveClassName(nickname: string | undefined): Promise<string | null> {
   if (!nickname || !hasDatabaseUrl()) return null;
@@ -47,9 +35,7 @@ async function resolveClassName(nickname: string | undefined): Promise<string | 
 
 export async function GET(request: NextRequest) {
   try {
-    const cookieToken = request.cookies.get('auth_token')?.value;
-    const headerToken = getTokenFromRequest(request);
-    const token = cookieToken || headerToken;
+    const token = getAuthToken(request);
     
     if (!token) {
       const response = NextResponse.json(

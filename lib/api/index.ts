@@ -1,6 +1,8 @@
 // Re-export all API modules
 export { api, ApiError, handleApiError } from './client';
 export { guidesApi } from './guides';
+export { authApi } from './auth';
+export { accountsApi } from './accounts';
 export { registrationsApi } from './registrations';
 export { scheduleApi } from './schedule';
 export { newsApi } from './news';

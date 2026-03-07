@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { MarkdownRenderer } from '@/components/guides/MarkdownRenderer';
-import { useGuide, useGuides, useVoteGuide } from '@/lib/hooks/useGuides';
+import { handleApiError } from '@/lib/api/client';
+import { useDeleteGuide, useGuide, useGuides, useVoteGuide } from '@/lib/hooks/useGuides';
 import { GuideComments } from './GuideComments';
 import { GuideEditor } from './GuideEditor';
 
@@ -44,6 +45,7 @@ export function GuideModal({
   const { data: guideDetail, isLoading, error } = useGuide(guideId, voterKey);
   const { data: guides = [] } = useGuides();
   const voteGuide = useVoteGuide();
+  const deleteGuide = useDeleteGuide();
 
   useEffect(() => {
     setMounted(true);
@@ -84,12 +86,13 @@ export function GuideModal({
   }, [onClose]);
 
   const handleDelete = useCallback(async () => {
-    await fetch(`/api/guide/${guideId}`, {
-      method: 'DELETE',
-      credentials: 'include',
-    });
-    onClose();
-  }, [guideId, onClose]);
+    try {
+      await deleteGuide.mutateAsync(guideId);
+      onClose();
+    } catch (deleteError) {
+      setActionNotice(handleApiError(deleteError));
+    }
+  }, [deleteGuide, guideId, onClose]);
 
   const buildStableGuideUrl = useCallback(() => {
     if (typeof window === 'undefined') return `/`;
@@ -278,6 +281,7 @@ export function GuideModal({
                 type="button"
                 className="text-sm px-3 py-1 rounded text-red-400 hover:text-red-300 hover:bg-[#1a2a38]"
                 onClick={handleDelete}
+                disabled={deleteGuide.isPending}
               >
                 Удалить
               </button>
