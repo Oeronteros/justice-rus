@@ -10,7 +10,7 @@ export const runtime = 'nodejs';
 const registerSchema = z.object({
   nickname: z.string().trim().min(3).max(32),
   className: z.string().trim().min(1).max(100),
-  discordHandle: z.string().trim().max(120).optional().or(z.literal('')),
+  discordHandle: z.string().trim().max(120).optional(),
   password: z.string().min(8).max(128),
 });
 

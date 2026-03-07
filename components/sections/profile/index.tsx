@@ -19,6 +19,7 @@ interface ProfileSectionProps {
 type ActivityKey = 'outerHeroic' | 'innerHeroic' | 'crimsonSands' | 'abyss' | 'gvg' | 'secretRealm';
 
 interface ProfileDraftState {
+  discordHandle: string;
   className: string;
   guild: string;
   mmr20: number;
@@ -50,10 +51,14 @@ const ProfileOverview = memo(function ProfileOverview({ profileRegistration, use
   return (
     <div className="card p-6">
       <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-2">Профиль</div>
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm">
+      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4 text-sm">
         <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
           <div className="text-gray-400 mb-1">Ник</div>
           <div className="text-[#e6eff5] font-medium">{user.nickname || '—'}</div>
+        </div>
+        <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+          <div className="text-gray-400 mb-1">Discord</div>
+          <div className="text-[#e6eff5] font-medium">{profileRegistration?.discordHandle || user.discordHandle || '—'}</div>
         </div>
         <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
           <div className="text-gray-400 mb-1">Класс</div>
@@ -299,6 +304,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
 
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [profileDraft, setProfileDraft] = useState<ProfileDraftState>({
+    discordHandle: '',
     className: '',
     guild: '',
     mmr20: 0,
@@ -359,6 +365,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
 
   useEffect(() => {
     setProfileDraft({
+      discordHandle: profileRegistration?.discordHandle || user.discordHandle || '',
       className: profileRegistration?.class || user.className || '',
       guild: profileRegistration?.guild || '',
       mmr20: profileRegistration?.mmr20 || 0,
@@ -369,7 +376,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
       gvg: profileRegistration?.gvg || 0,
       secretRealm: profileRegistration?.secretRealm || 0,
     });
-  }, [profileRegistration, user.className]);
+  }, [profileRegistration, user.className, user.discordHandle]);
 
   const loadAccounts = useCallback(() => {
     if (!isAdmin) return;
@@ -406,8 +413,13 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
       nickname: user.nickname,
     };
 
+    const nextDiscordHandle = profileDraft.discordHandle.trim();
     const nextClassName = profileDraft.className.trim();
     const nextGuild = profileDraft.guild.trim();
+
+    if (nextDiscordHandle !== (profileRegistration?.discordHandle || user.discordHandle || '')) {
+      payload.discordHandle = nextDiscordHandle;
+    }
 
     if (nextClassName && nextClassName !== (profileRegistration?.class || user.className || '')) {
       payload.className = nextClassName;
@@ -523,6 +535,16 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <label className="space-y-2">
+              <span className="text-gray-400">Discord</span>
+              <input
+                type="text"
+                value={profileDraft.discordHandle}
+                onChange={(e) => setProfileDraft((prev) => ({ ...prev, discordHandle: e.target.value }))}
+                className="input-field w-full"
+                placeholder="@example"
+              />
+            </label>
             <label className="space-y-2">
               <span className="text-gray-400">Класс</span>
               <select
