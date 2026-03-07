@@ -4,6 +4,7 @@ type AvatarSeed = {
   nickname: string;
   discordId: string | null;
   discordHandle: string | null;
+  avatarUrl?: string | null;
 };
 
 type AvatarRow = {
@@ -61,6 +62,7 @@ export async function syncPortalMemberAvatarSeeds(seeds: AvatarSeed[]): Promise<
       nicknameKey: normalizeNicknameKey(seed.nickname),
       discordId: isPortalIdentity(seed.discordId) ? null : cleanValue(seed.discordId),
       discordHandle: cleanValue(seed.discordHandle),
+      avatarUrl: cleanValue(seed.avatarUrl),
     }))
     .filter((seed) => seed.nickname && seed.nicknameKey);
 
@@ -79,34 +81,37 @@ export async function syncPortalMemberAvatarSeeds(seeds: AvatarSeed[]): Promise<
       continue;
     }
 
-    deduped.set(seed.nicknameKey, {
-      ...existing,
-      nickname: seed.nickname || existing.nickname,
-      discordId: seed.discordId || existing.discordId,
-      discordHandle: seed.discordHandle || existing.discordHandle,
-    });
+      deduped.set(seed.nicknameKey, {
+        ...existing,
+        nickname: seed.nickname || existing.nickname,
+        discordId: seed.discordId || existing.discordId,
+        discordHandle: seed.discordHandle || existing.discordHandle,
+        avatarUrl: seed.avatarUrl || existing.avatarUrl,
+      });
   }
 
   const rows = [...deduped.values()];
   const values: unknown[] = [];
   const tuples = rows.map((row, index) => {
-    const base = index * 4;
-    values.push(row.nickname, row.nicknameKey, row.discordId, row.discordHandle);
-    return `($${base + 1}, $${base + 2}, $${base + 3}, $${base + 4})`;
+    const base = index * 5;
+    values.push(row.nickname, row.nicknameKey, row.discordId, row.discordHandle, row.avatarUrl);
+    return `($${base + 1}, $${base + 2}, $${base + 3}, $${base + 4}, $${base + 5})`;
   });
 
   const result = await pool.query<AvatarRow>(
     `
-      INSERT INTO portal_member_avatar (nickname, nickname_key, discord_id, discord_handle)
+      INSERT INTO portal_member_avatar (nickname, nickname_key, discord_id, discord_handle, avatar_url)
       VALUES ${tuples.join(', ')}
       ON CONFLICT (nickname_key) DO UPDATE
       SET nickname = EXCLUDED.nickname,
           discord_id = COALESCE(EXCLUDED.discord_id, portal_member_avatar.discord_id),
           discord_handle = COALESCE(EXCLUDED.discord_handle, portal_member_avatar.discord_handle),
+          avatar_url = COALESCE(portal_member_avatar.avatar_url, EXCLUDED.avatar_url),
           updated_at = CASE
             WHEN portal_member_avatar.nickname IS DISTINCT FROM EXCLUDED.nickname
               OR (EXCLUDED.discord_id IS NOT NULL AND portal_member_avatar.discord_id IS DISTINCT FROM EXCLUDED.discord_id)
               OR (EXCLUDED.discord_handle IS NOT NULL AND portal_member_avatar.discord_handle IS DISTINCT FROM EXCLUDED.discord_handle)
+              OR (portal_member_avatar.avatar_url IS NULL AND EXCLUDED.avatar_url IS NOT NULL)
             THEN NOW()
             ELSE portal_member_avatar.updated_at
           END

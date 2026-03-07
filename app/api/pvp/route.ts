@@ -497,16 +497,12 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'You already have an active PvP match' }, { status: 409 });
       }
 
+      await client.query(`DELETE FROM duel_queue WHERE discord_id = $1 OR player_id = $1`, [actor.id]);
+
       await client.query(
         `
         INSERT INTO duel_queue (discord_id, player_id, nickname, class_name, queued_at, created_at)
         VALUES ($1, $1, $2, $3, NOW(), NOW())
-        ON CONFLICT (discord_id) DO UPDATE
-        SET player_id = EXCLUDED.player_id,
-            nickname = EXCLUDED.nickname,
-            class_name = EXCLUDED.class_name,
-            queued_at = NOW(),
-            created_at = COALESCE(duel_queue.created_at, NOW())
         `,
         [actor.id, actor.nickname, actor.className]
       );
@@ -623,11 +619,14 @@ export async function PATCH(request: NextRequest) {
     const winnerId = payload.result === 'win' ? actorId : opponentId;
 
     await pool.query(
+      `DELETE FROM duel_confirmations WHERE match_id = $1 AND (discord_id = $2 OR player_id = $2)`,
+      [Number(payload.matchId), actorId]
+    );
+
+    await pool.query(
       `
       INSERT INTO duel_confirmations (match_id, discord_id, confirmed_winner_id, confirmed_at, player_id, reported_winner_id, created_at, updated_at)
       VALUES ($1, $2, $3, NOW(), $2, $3, NOW(), NOW())
-      ON CONFLICT (match_id, discord_id)
-      DO UPDATE SET confirmed_winner_id = EXCLUDED.confirmed_winner_id, confirmed_at = NOW(), player_id = EXCLUDED.player_id, reported_winner_id = EXCLUDED.reported_winner_id, updated_at = NOW()
       `,
       [Number(payload.matchId), actorId, winnerId]
     );

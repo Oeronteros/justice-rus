@@ -1,6 +1,10 @@
 import { getPool } from '@/lib/neon';
 import type { Registration } from '@/lib/schemas/registration';
 import {
+  getRegistrationAvatarUrl,
+  syncPortalMemberAvatarSeeds,
+} from './avatar';
+import {
   buildComputedRows,
   type PortalOnlyRow,
   type RegistrationRow,
@@ -10,6 +14,24 @@ import {
   portalStatsDiscordId,
 } from './shared';
 import { ensureRegistrationStatsSchema, getTableColumns } from './schema';
+
+async function withAvatars(rows: RegistrationRow[]): Promise<Registration[]> {
+  const avatarMap = await syncPortalMemberAvatarSeeds(
+    rows.map((row) => ({
+      nickname: row.nickname,
+      discordId: row.discord,
+      discordHandle: row.discordHandle || null,
+      avatarUrl: row.avatarUrl || null,
+    }))
+  );
+
+  return buildComputedRows(
+    rows.map((row) => ({
+      ...row,
+      avatarUrl: getRegistrationAvatarUrl(row.nickname, avatarMap),
+    }))
+  );
+}
 
 async function getPortalOnlyRows(
   activityColumns: Set<string>,
@@ -61,6 +83,7 @@ async function getPortalOnlyRows(
         pa.nickname,
         pa.class_name,
         pa.guild_name,
+        pa.discord_handle,
         pa.role,
         pa.is_active,
         pa.created_at,
@@ -84,6 +107,7 @@ async function getPortalOnlyRows(
 
   return result.rows.map((row) => ({
     discord: portalStatsDiscordId(row.id),
+    discordHandle: String(row.discord_handle || '') || null,
     avatarUrl: null,
     nickname: String(row.nickname || ''),
     rank: String(row.role || 'guest') as Registration['rank'],
@@ -116,7 +140,7 @@ export async function getRegistrationsFromDb(): Promise<Registration[]> {
   const portalOnlyRows = await getPortalOnlyRows(activityColumns, duelColumns);
 
   if (registrationColumns.size === 0) {
-    return buildComputedRows(portalOnlyRows);
+    return withAvatars(portalOnlyRows);
   }
 
   const discordCol = pick(registrationColumns, 'discord_login', 'discord', 'discord_id');
@@ -174,6 +198,7 @@ export async function getRegistrationsFromDb(): Promise<Registration[]> {
       ${discordCol ? `COALESCE(r.${discordCol}, '') AS discord,` : `'' AS discord,`}
       ${avatarCol ? `NULLIF(r.${avatarCol}, '') AS avatar_url,` : `NULL AS avatar_url,`}
       r.${nickCol} AS nickname,
+      NULLIF(a.discord_handle, '') AS discord_handle,
       ${classCol ? `COALESCE(NULLIF(r.${classCol}, ''), a.class_name, '') AS class_name,` : `COALESCE(a.class_name, '') AS class_name,`}
       ${guildCol ? `COALESCE(NULLIF(r.${guildCol}, ''), a.guild_name, '') AS guild_name,` : `COALESCE(a.guild_name, '') AS guild_name,`}
       ${joinCol ? `r.${joinCol} AS join_date,` : `NOW() AS join_date,`}
@@ -201,6 +226,7 @@ export async function getRegistrationsFromDb(): Promise<Registration[]> {
 
   const baseRows: RegistrationRow[] = result.rows.map((row) => ({
     discord: String(row.discord || ''),
+    discordHandle: typeof row.discord_handle === 'string' && row.discord_handle.trim() ? String(row.discord_handle) : null,
     avatarUrl: typeof row.avatar_url === 'string' && row.avatar_url.trim() ? String(row.avatar_url) : null,
     nickname: String(row.nickname || ''),
     rank: String(row.role || 'guest') as Registration['rank'],
@@ -227,5 +253,5 @@ export async function getRegistrationsFromDb(): Promise<Registration[]> {
     (row) => !seenNicknames.has(row.nickname.toLowerCase())
   );
 
-  return buildComputedRows([...baseRows, ...orphanPortalRows]);
+  return withAvatars([...baseRows, ...orphanPortalRows]);
 }

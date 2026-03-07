@@ -54,7 +54,10 @@ async function resolveRegistrationTarget(nickname: string): Promise<Registration
   };
 }
 
-async function updatePortalAccountProfile(nickname: string, next: { className?: string; guild?: string }) {
+async function updatePortalAccountProfile(
+  nickname: string,
+  next: { className?: string; guild?: string; discordHandle?: string }
+) {
   const pool = getPool();
   await ensureAccountsSchema();
   const updates: string[] = [];
@@ -68,6 +71,11 @@ async function updatePortalAccountProfile(nickname: string, next: { className?: 
   if (next.guild !== undefined) {
     values.push(next.guild);
     updates.push(`guild_name = $${values.length}`);
+  }
+
+  if (next.discordHandle !== undefined) {
+    values.push(next.discordHandle);
+    updates.push(`discord_handle = $${values.length}`);
   }
 
   if (updates.length === 0) {
@@ -152,10 +160,11 @@ export async function updateRegistrationStats(
     );
   }
 
-  if (payload.className !== undefined || payload.guild !== undefined) {
+  if (payload.className !== undefined || payload.guild !== undefined || payload.discordHandle !== undefined) {
     await updatePortalAccountProfile(payload.nickname, {
       className: payload.className,
       guild: payload.guild,
+      discordHandle: payload.discordHandle,
     });
   }
 

@@ -7,6 +7,7 @@ export type PortalOnlyRow = {
   nickname: string;
   class_name: string | null;
   guild_name?: string | null;
+  discord_handle?: string | null;
   role: string;
   is_active: boolean;
   created_at: Date | string;

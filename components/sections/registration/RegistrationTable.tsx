@@ -44,6 +44,7 @@ type EditableNumericKey =
   | 'secretRealm';
 
 type EditableRegistrationDraft = {
+  discordHandle: string;
   className: string;
   guild: string;
   elo: string;
@@ -71,6 +72,7 @@ const editableNumericFields: Array<{ key: EditableNumericKey; label: string }> =
 
 function toEditDraft(registration: Registration): EditableRegistrationDraft {
   return {
+    discordHandle: registration.discordHandle || '',
     className: registration.class || '',
     guild: registration.guild || '',
     elo: String(registration.elo || 0),
@@ -83,6 +85,20 @@ function toEditDraft(registration: Registration): EditableRegistrationDraft {
     gvg: String(registration.gvg || 0),
     secretRealm: String(registration.secretRealm || 0),
   };
+}
+
+function getDisplayDiscord(registration: Registration): string | null {
+  const discordHandle = registration.discordHandle?.trim();
+  if (discordHandle) {
+    return discordHandle;
+  }
+
+  const discordIdentity = registration.discord?.trim();
+  if (!discordIdentity || discordIdentity.toLowerCase().startsWith('portal:')) {
+    return null;
+  }
+
+  return discordIdentity;
 }
 
 function normalizeNumberInput(value: string): number {
@@ -103,7 +119,7 @@ function appendChangedNumber(
 }
 
 function getAvatarInitials(registration: Registration) {
-  const base = registration.nickname || registration.discord || 'SM';
+  const base = registration.nickname || getDisplayDiscord(registration) || 'SM';
   return base
     .trim()
     .split(/\s+/)
@@ -114,6 +130,7 @@ function getAvatarInitials(registration: Registration) {
 
 function RegistrationIdentity({ registration, compact = false }: { registration: Registration; compact?: boolean }) {
   const initials = getAvatarInitials(registration);
+  const displayDiscord = getDisplayDiscord(registration);
   const sizeClass = compact ? 'h-11 w-11 text-xs' : 'h-9 w-9 text-[11px]';
 
   return (
@@ -121,7 +138,7 @@ function RegistrationIdentity({ registration, compact = false }: { registration:
       {registration.avatarUrl ? (
         <img
           src={registration.avatarUrl}
-          alt={registration.nickname || registration.discord || 'Avatar'}
+          alt={registration.nickname || displayDiscord || 'Avatar'}
           className={`${sizeClass} rounded-full border border-[#385264] object-cover bg-[#0c151d] shrink-0`}
         />
       ) : (
@@ -131,7 +148,7 @@ function RegistrationIdentity({ registration, compact = false }: { registration:
       )}
 
       <div className="min-w-0">
-        <div className="font-medium truncate">{registration.discord || 'Без Discord ID'}</div>
+        <div className="font-medium truncate">{displayDiscord || 'Discord не указан'}</div>
         <div className="text-xs text-gray-400 truncate">{registration.nickname}</div>
       </div>
     </div>
