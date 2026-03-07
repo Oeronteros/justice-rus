@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureAccountsSchema, hashPassword, normalizeNickname } from '@/lib/auth/accounts';
+import { isKnownClassName } from '@/lib/classes';
 
 export const runtime = 'nodejs';
 
@@ -38,6 +39,9 @@ export async function POST(request: NextRequest) {
     const payload = registerSchema.parse(await request.json());
     const nickname = normalizeNickname(payload.nickname);
     const className = payload.className.trim();
+    if (!(await isKnownClassName(className))) {
+      return NextResponse.json({ error: 'Unknown class selected' }, { status: 400 });
+    }
     const passwordHash = hashPassword(payload.password);
 
     await ensureAccountsSchema();
