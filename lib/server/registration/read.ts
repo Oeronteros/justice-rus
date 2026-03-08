@@ -72,7 +72,19 @@ async function getPortalOnlyRows(
 
   const portalDuelJoin = duelColumns.size > 0
     ? `
-      LEFT JOIN duel_ratings pdr ON pdr.discord_id = CONCAT('portal:', pa.id::text)
+      LEFT JOIN LATERAL (
+        SELECT
+          rating,
+          wins,
+          losses
+        FROM duel_ratings
+        WHERE discord_id = CONCAT('portal:', pa.id::text)
+          OR LOWER(username) = LOWER(pa.nickname)
+        ORDER BY
+          CASE WHEN discord_id = CONCAT('portal:', pa.id::text) THEN 0 ELSE 1 END,
+          updated_at DESC NULLS LAST
+        LIMIT 1
+      ) pdr ON TRUE
     `
     : '';
 
@@ -188,9 +200,20 @@ export async function getRegistrationsFromDb(): Promise<Registration[]> {
     `
     : '';
 
-  const duelJoin = discordCol && duelColumns.size > 0
+  const duelJoin = duelColumns.size > 0
     ? `
-      LEFT JOIN duel_ratings dr ON dr.discord_id = r.${discordCol}
+      LEFT JOIN LATERAL (
+        SELECT
+          rating,
+          wins,
+          losses
+        FROM duel_ratings
+        WHERE ${discordCol ? `discord_id = r.${discordCol} OR ` : ''}LOWER(username) = LOWER(r.${nickCol})
+        ORDER BY
+          ${discordCol ? `CASE WHEN discord_id = r.${discordCol} THEN 0 ELSE 1 END,` : ''}
+          updated_at DESC NULLS LAST
+        LIMIT 1
+      ) dr ON TRUE
     `
     : '';
 
