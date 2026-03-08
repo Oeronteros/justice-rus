@@ -3,6 +3,7 @@ import { verifyToken } from '@/lib/auth';
 import { getAuthToken } from '@/lib/auth/request';
 import { hasRoleAtLeast } from '@/lib/authz';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
+import { runServerTaskOnce } from '@/lib/server/db-cache';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,17 +14,19 @@ type RuleInput = {
 
 async function ensureRulesTable() {
   const pool = getPool();
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS rules (
-      id SERIAL PRIMARY KEY,
-      text_ru TEXT NOT NULL DEFAULT '',
-      text_en TEXT NOT NULL DEFAULT '',
-      order_index INTEGER NOT NULL DEFAULT 0,
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-    );
-  `);
-  await pool.query(`CREATE INDEX IF NOT EXISTS idx_rules_order ON rules(order_index);`);
+  await runServerTaskOnce('schema:rules', async () => {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS rules (
+        id SERIAL PRIMARY KEY,
+        text_ru TEXT NOT NULL DEFAULT '',
+        text_en TEXT NOT NULL DEFAULT '',
+        order_index INTEGER NOT NULL DEFAULT 0,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      );
+    `);
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_rules_order ON rules(order_index);`);
+  });
   return pool;
 }
 

@@ -1,4 +1,5 @@
 import { getPool } from '@/lib/neon';
+import { runServerTaskOnce } from '@/lib/server/db-cache';
 
 type AvatarSeed = {
   nickname: string;
@@ -26,33 +27,35 @@ function isPortalIdentity(value: string | null | undefined): boolean {
 }
 
 export async function ensurePortalMemberAvatarSchema() {
-  const pool = getPool();
+  await runServerTaskOnce('schema:portal_member_avatar', async () => {
+    const pool = getPool();
 
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS portal_member_avatar (
-      id SERIAL PRIMARY KEY,
-      nickname TEXT NOT NULL,
-      nickname_key TEXT NOT NULL UNIQUE,
-      discord_id TEXT NULL,
-      discord_handle TEXT NULL,
-      avatar_url TEXT NULL,
-      source TEXT NULL,
-      requested_at TIMESTAMP NOT NULL DEFAULT NOW(),
-      updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-    );
-  `);
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS portal_member_avatar (
+        id SERIAL PRIMARY KEY,
+        nickname TEXT NOT NULL,
+        nickname_key TEXT NOT NULL UNIQUE,
+        discord_id TEXT NULL,
+        discord_handle TEXT NULL,
+        avatar_url TEXT NULL,
+        source TEXT NULL,
+        requested_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+    `);
 
-  await pool.query(`ALTER TABLE portal_member_avatar ADD COLUMN IF NOT EXISTS nickname TEXT NOT NULL DEFAULT '';`).catch(() => undefined);
-  await pool.query(`ALTER TABLE portal_member_avatar ADD COLUMN IF NOT EXISTS nickname_key TEXT;`).catch(() => undefined);
-  await pool.query(`ALTER TABLE portal_member_avatar ADD COLUMN IF NOT EXISTS discord_id TEXT NULL;`).catch(() => undefined);
-  await pool.query(`ALTER TABLE portal_member_avatar ADD COLUMN IF NOT EXISTS discord_handle TEXT NULL;`).catch(() => undefined);
-  await pool.query(`ALTER TABLE portal_member_avatar ADD COLUMN IF NOT EXISTS avatar_url TEXT NULL;`).catch(() => undefined);
-  await pool.query(`ALTER TABLE portal_member_avatar ADD COLUMN IF NOT EXISTS source TEXT NULL;`).catch(() => undefined);
-  await pool.query(`ALTER TABLE portal_member_avatar ADD COLUMN IF NOT EXISTS requested_at TIMESTAMP NOT NULL DEFAULT NOW();`).catch(() => undefined);
-  await pool.query(`ALTER TABLE portal_member_avatar ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP NOT NULL DEFAULT NOW();`).catch(() => undefined);
-  await pool.query(`UPDATE portal_member_avatar SET nickname_key = LOWER(TRIM(nickname)) WHERE nickname_key IS NULL OR nickname_key = '';`).catch(() => undefined);
-  await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS portal_member_avatar_nickname_key_uq ON portal_member_avatar (nickname_key);`);
-  await pool.query(`CREATE INDEX IF NOT EXISTS portal_member_avatar_discord_id_idx ON portal_member_avatar (discord_id);`);
+    await pool.query(`ALTER TABLE portal_member_avatar ADD COLUMN IF NOT EXISTS nickname TEXT NOT NULL DEFAULT '';`).catch(() => undefined);
+    await pool.query(`ALTER TABLE portal_member_avatar ADD COLUMN IF NOT EXISTS nickname_key TEXT;`).catch(() => undefined);
+    await pool.query(`ALTER TABLE portal_member_avatar ADD COLUMN IF NOT EXISTS discord_id TEXT NULL;`).catch(() => undefined);
+    await pool.query(`ALTER TABLE portal_member_avatar ADD COLUMN IF NOT EXISTS discord_handle TEXT NULL;`).catch(() => undefined);
+    await pool.query(`ALTER TABLE portal_member_avatar ADD COLUMN IF NOT EXISTS avatar_url TEXT NULL;`).catch(() => undefined);
+    await pool.query(`ALTER TABLE portal_member_avatar ADD COLUMN IF NOT EXISTS source TEXT NULL;`).catch(() => undefined);
+    await pool.query(`ALTER TABLE portal_member_avatar ADD COLUMN IF NOT EXISTS requested_at TIMESTAMP NOT NULL DEFAULT NOW();`).catch(() => undefined);
+    await pool.query(`ALTER TABLE portal_member_avatar ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP NOT NULL DEFAULT NOW();`).catch(() => undefined);
+    await pool.query(`UPDATE portal_member_avatar SET nickname_key = LOWER(TRIM(nickname)) WHERE nickname_key IS NULL OR nickname_key = '';`).catch(() => undefined);
+    await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS portal_member_avatar_nickname_key_uq ON portal_member_avatar (nickname_key);`);
+    await pool.query(`CREATE INDEX IF NOT EXISTS portal_member_avatar_discord_id_idx ON portal_member_avatar (discord_id);`);
+  });
 }
 
 export async function syncPortalMemberAvatarSeeds(seeds: AvatarSeed[]): Promise<Map<string, string | null>> {

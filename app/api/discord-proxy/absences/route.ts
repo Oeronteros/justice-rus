@@ -6,6 +6,7 @@ import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { createAbsenceSchema, updateAbsenceStatusSchema } from '@/lib/schemas/absence';
 import { canManageAccounts } from '@/lib/authz';
 import { z } from 'zod';
+import { runServerTaskOnce } from '@/lib/server/db-cache';
 
 export const runtime = 'nodejs';
 
@@ -64,8 +65,10 @@ async function getAbsencesFromDb() {
 }
 
 async function ensureAbsenceStatusColumn() {
-  const pool = getPool();
-  await pool.query(`ALTER TABLE absences ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'pending';`).catch(() => undefined);
+  await runServerTaskOnce('schema:absences-status', async () => {
+    const pool = getPool();
+    await pool.query(`ALTER TABLE absences ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'pending';`).catch(() => undefined);
+  });
 }
 
 export async function GET(request: NextRequest) {
