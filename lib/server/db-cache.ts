@@ -2,6 +2,7 @@ import { getPool } from '@/lib/neon';
 
 const resolvedValues = new Map<string, unknown>();
 const pendingValues = new Map<string, Promise<unknown>>();
+const expiringValues = new Map<string, { expiresAt: number; value: unknown }>();
 
 async function getOrCreate<T>(key: string, factory: () => Promise<T>): Promise<T> {
   if (resolvedValues.has(key)) {
@@ -71,4 +72,32 @@ export async function getPreferredTableName(
 
     return String(result.rows[0]?.table_name || preferredTable);
   });
+}
+
+export async function getExpiringValue<T>(key: string, ttlMs: number, factory: () => Promise<T>): Promise<T> {
+  const now = Date.now();
+  const cached = expiringValues.get(key);
+  if (cached && cached.expiresAt > now) {
+    return cached.value as T;
+  }
+
+  const pendingKey = `expiring:${key}`;
+  const pending = pendingValues.get(pendingKey);
+  if (pending) {
+    return pending as Promise<T>;
+  }
+
+  const next = factory()
+    .then((value) => {
+      expiringValues.set(key, { value, expiresAt: Date.now() + ttlMs });
+      pendingValues.delete(pendingKey);
+      return value;
+    })
+    .catch((error) => {
+      pendingValues.delete(pendingKey);
+      throw error;
+    });
+
+  pendingValues.set(pendingKey, next);
+  return next;
 }

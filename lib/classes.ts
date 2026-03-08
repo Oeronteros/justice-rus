@@ -23,9 +23,9 @@ const classVisuals: Record<KnownClassName, ClassVisual> = {
     ringClassName: 'ring-[#ffd79a]/35',
   },
   Bloodstorm: {
-    accentClassName: 'text-[#ff7f78]',
-    surfaceClassName: 'from-[#2a1215] via-[#3a171b] to-[#5f1f28]',
-    ringClassName: 'ring-[#ff918b]/35',
+    accentClassName: 'text-[#d6fbff]',
+    surfaceClassName: 'from-[#0a2528] via-[#103d42] to-[#1d6b73]',
+    ringClassName: 'ring-[#d1fcff]/35',
   },
   Numina: {
     accentClassName: 'text-[#b68cff]',
@@ -38,9 +38,9 @@ const classVisuals: Record<KnownClassName, ClassVisual> = {
     ringClassName: 'ring-[#6f96ff]/35',
   },
   'Dragon Roar': {
-    accentClassName: 'text-[#d6fbff]',
-    surfaceClassName: 'from-[#0a2528] via-[#103d42] to-[#1d6b73]',
-    ringClassName: 'ring-[#d1fcff]/35',
+    accentClassName: 'text-[#ff7f78]',
+    surfaceClassName: 'from-[#2a1215] via-[#3a171b] to-[#5f1f28]',
+    ringClassName: 'ring-[#ff918b]/35',
   },
   Sylph: {
     accentClassName: 'text-[#ffb8bc]',

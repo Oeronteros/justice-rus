@@ -2,9 +2,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
 import { getAuthToken } from '@/lib/auth/request';
+import { getExpiringValue } from '@/lib/server/db-cache';
 
 const DISCORD_BOT_API_URL = process.env.BOT_API_URL || process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const BOT_API_KEY = process.env.BOT_API_KEY || process.env.DISCORD_BOT_API_KEY;
+const BOT_NEWS_CACHE_TTL_MS = 30_000;
 const bypassHeader: Record<string, string> =
   DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me')
     ? { 'bypass-tunnel-reminder': '1' }
@@ -37,43 +39,46 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const attempts = [
-      {
-        url: `${DISCORD_BOT_API_URL}/api/news`,
-        extract: (payload: any) => (Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : []),
-      },
-      {
-        url: `${DISCORD_BOT_API_URL}/api/events?page=1&page_size=20`,
-        extract: (payload: any) => (Array.isArray(payload?.items) ? payload.items : Array.isArray(payload?.data) ? payload.data : []),
-      },
-    ];
+    const loadNews = async () => {
+      const attempts = [
+        {
+          url: `${DISCORD_BOT_API_URL}/api/news`,
+          extract: (payload: any) => (Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : []),
+        },
+        {
+          url: `${DISCORD_BOT_API_URL}/api/events?page=1&page_size=20`,
+          extract: (payload: any) => (Array.isArray(payload?.items) ? payload.items : Array.isArray(payload?.data) ? payload.data : []),
+        },
+      ];
 
-    const errors: string[] = [];
-    for (const attempt of attempts) {
-      const response = await fetch(attempt.url, {
-        headers: buildBotHeaders(token),
-        cache: 'no-store',
-      });
+      const errors: string[] = [];
+      for (const attempt of attempts) {
+        const response = await fetch(attempt.url, {
+          headers: buildBotHeaders(token),
+          cache: 'no-store',
+        });
 
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        errors.push((payload as any).error || (payload as any).message || `${attempt.url} -> HTTP ${response.status}`);
-        continue;
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          errors.push((payload as any).error || (payload as any).message || `${attempt.url} -> HTTP ${response.status}`);
+          continue;
+        }
+
+        const raw = attempt.extract(payload);
+        if (raw.length > 0) {
+          return normalizeNews(raw);
+        }
       }
 
-      const raw = attempt.extract(payload);
-      if (raw.length > 0) {
-        return NextResponse.json(normalizeNews(raw));
-      }
-    }
+      throw new Error(errors.join(' | ') || 'No supported news endpoints returned data');
+    };
 
-    return NextResponse.json(
-      {
-        error: 'Failed to fetch news from Discord bot',
-        message: errors.join(' | ') || 'No supported news endpoints returned data',
-      },
-      { status: 502 }
-    );
+    const news = BOT_API_KEY
+      ? await getExpiringValue('bot-news:proxy', BOT_NEWS_CACHE_TTL_MS, loadNews)
+      : await loadNews();
+
+    return NextResponse.json(news);
+
   } catch (error) {
     console.error('Error proxying news request to Discord bot:', error);
     return NextResponse.json(
@@ -81,7 +86,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to connect to Discord bot',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 502 }
     );
   }
 }

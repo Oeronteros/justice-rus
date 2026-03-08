@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
 import { getAuthToken } from '@/lib/auth/request';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
+import { getExpiringValue } from '@/lib/server/db-cache';
 
 const DISCORD_BOT_API_URL = process.env.BOT_API_URL || process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const BOT_API_KEY = process.env.BOT_API_KEY || process.env.DISCORD_BOT_API_KEY;
+const BOT_NEWS_CACHE_TTL_MS = 30_000;
 const bypassHeader: Record<string, string> =
   DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me')
     ? { 'bypass-tunnel-reminder': '1' }
@@ -31,6 +33,7 @@ function buildBotHeaders(token: string) {
 }
 
 async function fetchNewsFromBot(token: string) {
+  const loadNews = async () => {
   const attempts = [
     {
       url: `${DISCORD_BOT_API_URL}/api/news`,
@@ -65,6 +68,13 @@ async function fetchNewsFromBot(token: string) {
     ? 'Проверь BOT_API_URL / DISCORD_BOT_API_URL и доступность DiscordBot2.'
     : 'Добавь BOT_API_KEY или DISCORD_BOT_API_KEY для чтения защищенных эндпоинтов DiscordBot2.';
   throw new Error(`${errors.join(' | ') || 'No bot news endpoints returned data'}. ${hint}`);
+  };
+
+  if (BOT_API_KEY) {
+    return getExpiringValue('bot-news:api', BOT_NEWS_CACHE_TTL_MS, loadNews);
+  }
+
+  return loadNews();
 }
 
 export async function GET(request: NextRequest) {
