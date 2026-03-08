@@ -1,20 +1,11 @@
-'use client';
-
-import dynamic from 'next/dynamic';
-
-const BackgroundEffects = dynamic(() => import('./BackgroundEffects'), {
-  ssr: false,
-});
-
-const PointerEffectsClient = dynamic(() => import('./PointerEffectsClient'), {
-  ssr: false,
-});
+import BackgroundEffects from './BackgroundEffects';
+import PointerEffectsMount from './PointerEffectsMount';
 
 export default function PortalVisualEffects() {
   return (
     <>
       <BackgroundEffects />
-      <PointerEffectsClient />
+      <PointerEffectsMount />
     </>
   );
 }

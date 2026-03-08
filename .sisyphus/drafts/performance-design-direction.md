@@ -3,9 +3,11 @@
 ## Requirements (confirmed)
 - User is open to newer technologies if they materially improve site performance.
 - User is also open to design changes.
+- User wants a combined direction covering both performance and redesign together.
 
 ## Technical Decisions
-- None yet.
+- Prioritize a combined performance + redesign strategy rather than optimizing only one dimension.
+- Preserve the current visual atmosphere; avoid noticeable simplification of the design language.
 
 ## Research Findings
 - Stack appears to be `Next.js 16.1.6` with App Router, `React 19.2.3`, Tailwind 4, and Vitest (`package.json`).
@@ -18,7 +20,6 @@
 ## Open Questions
 - Which pages feel slow right now: home, portal pages, guides, profile, or all pages?
 - Is the main goal faster first load, smoother animations/scrolling, better mobile performance, or all three?
-- Is the user open to reducing some decorative effects if they are the main cause of jank?
 
 ## Scope Boundaries
 - INCLUDE: performance opportunities, possible architecture directions, possible design simplification.

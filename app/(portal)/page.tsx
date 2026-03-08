@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { useLanguage } from '@/lib/i18n/context';
@@ -99,14 +100,17 @@ export default function AboutPage() {
           <div className="wuxia-ornament orb-a wuxia-parallax wuxia-parallax-deep"></div>
           <div className="wuxia-ornament orb-b wuxia-parallax wuxia-parallax-light"></div>
           <div className="wuxia-ornament ribbon wuxia-parallax wuxia-parallax-mid"></div>
-          <div className="wuxia-hero-grid">
-            <div className="space-y-4 wuxia-parallax wuxia-parallax-text">
+          <div className="wuxia-hero-grid gap-8 xl:gap-10">
+            <div className="space-y-5 wuxia-parallax wuxia-parallax-text">
               <span className="wuxia-tag">
                 <WuxiaIcon name="seal" className="w-4 h-4" />
                 {portalCopy[language].heroTag}
               </span>
-              <h2 className="text-3xl sm:text-4xl font-orbitron dc-text">{portalCopy[language].heroTitle}</h2>
-              <p className="dc-muted max-w-2xl">{portalCopy[language].heroSubtitle}</p>
+              <div className="space-y-3">
+                <p className="text-xs uppercase tracking-[0.34em] text-[#8fb9cc]">Silent Moonfall Command Deck</p>
+                <h2 className="text-3xl sm:text-4xl xl:text-5xl font-orbitron dc-text max-w-3xl leading-tight">{portalCopy[language].heroTitle}</h2>
+              </div>
+              <p className="dc-muted max-w-2xl text-[15px] leading-7">{portalCopy[language].heroSubtitle}</p>
 
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Link href="/schedule" className="btn-primary">
@@ -140,9 +144,13 @@ export default function AboutPage() {
 
             <div className="wuxia-crest wuxia-parallax wuxia-parallax-mid">
               <div className="wuxia-crest-frame">
-                <img
+                <Image
                   src="/emblem.svg"
                   alt="Silent Moonfall Emblem"
+                  width={144}
+                  height={144}
+                  priority
+                  sizes="144px"
                   className="w-36 h-36 opacity-90 wuxia-emblem drop-shadow-[0_18px_35px_rgba(0,0,0,0.55)]"
                 />
               </div>
@@ -183,9 +191,10 @@ export default function AboutPage() {
               <Link
                 key={card.href}
                 href={card.href}
-                className="card p-5 group"
+                className="card p-5 group relative overflow-hidden"
                 style={{ animationDelay: `${index * 80}ms` }}
               >
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#8fb9cc]/60 to-transparent opacity-70"></div>
                 <div className="text-xs uppercase tracking-widest text-[#9cc3d7] mb-2">
                   {sectionLabels[language][card.section]}
                 </div>

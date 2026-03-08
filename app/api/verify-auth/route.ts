@@ -1,30 +1,10 @@
 // API Route: /api/verify-auth
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
 import { clearAuthCookie, getAuthToken } from '@/lib/auth/request';
-import { User, VerifyAuthResponse } from '@/types';
-import { getPool, hasDatabaseUrl } from '@/lib/neon';
-import { ensureAccountsSchema } from '@/lib/auth/accounts';
-import { getCachedTableColumns } from '@/lib/server/db-cache';
+import { VerifyAuthResponse } from '@/types';
+import { resolveSessionFromToken } from '@/lib/server/auth-session';
 
 export const runtime = 'nodejs';
-
-async function resolveClassName(nickname: string | undefined): Promise<string | null> {
-  if (!nickname || !hasDatabaseUrl()) return null;
-
-  const pool = getPool();
-  const names = await getCachedTableColumns('registrations');
-  const nickCol = names.has('nick') ? 'nick' : names.has('nickname') ? 'nickname' : null;
-  const classCol = names.has('class_name') ? 'class_name' : names.has('class') ? 'class' : null;
-  if (!nickCol || !classCol) return null;
-
-  const result = await pool.query(
-    `SELECT ${classCol} AS class_name FROM registrations WHERE LOWER(${nickCol}) = LOWER($1) LIMIT 1`,
-    [nickname]
-  );
-
-  return result.rows[0]?.class_name || null;
-}
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,74 +19,27 @@ export async function GET(request: NextRequest) {
       return response;
     }
 
-    const decoded = verifyToken(token);
-
-    if (!decoded) {
+    const session = await resolveSessionFromToken(token);
+    if (!session.valid) {
+      const errorByReason: Record<string, string> = {
+        'invalid-token': 'Invalid or expired token',
+        'account-state-unavailable': 'Account state unavailable',
+        'inactive-account': 'Account is inactive',
+      };
       const response = NextResponse.json(
-        { error: 'Invalid or expired token' },
+        { error: errorByReason[session.reason] || 'Invalid or expired token' },
         { status: 401 }
       );
-      clearAuthCookie(response);
+      if (session.reason !== 'missing-token') {
+        clearAuthCookie(response);
+      }
       response.headers.set('Cache-Control', 'no-store');
       return response;
     }
 
-    let user: User = {
-      id: decoded.id,
-      nickname: decoded.nickname,
-      role: decoded.role,
-      isActive: decoded.isActive ?? true,
-      authMethod: decoded.authMethod ?? 'account',
-      discordId: decoded.discordId,
-      discordHandle: decoded.discordHandle,
-      className: null,
-    };
-
-    if (decoded.authMethod !== 'pin') {
-      if (!decoded.id || !hasDatabaseUrl()) {
-        const response = NextResponse.json({ error: 'Account state unavailable' }, { status: 401 });
-        clearAuthCookie(response);
-        response.headers.set('Cache-Control', 'no-store');
-        return response;
-      }
-
-      await ensureAccountsSchema();
-      const pool = getPool();
-      const result = await pool.query(
-        `
-        SELECT id, nickname, class_name, discord_handle, role, is_active
-        FROM portal_account
-        WHERE id = $1
-        LIMIT 1
-        `,
-        [decoded.id]
-      );
-
-      const row = result.rows[0];
-      if (!row || !row.is_active) {
-        const response = NextResponse.json({ error: 'Account is inactive' }, { status: 401 });
-        clearAuthCookie(response);
-        response.headers.set('Cache-Control', 'no-store');
-        return response;
-      }
-
-        user = {
-          id: String(row.id),
-          nickname: row.nickname,
-          role: row.role,
-          isActive: true,
-          authMethod: 'account',
-          discordId: decoded.discordId,
-          discordHandle: row.discord_handle || null,
-          className: (await resolveClassName(row.nickname)) || row.class_name || null,
-        };
-    } else {
-      user.className = await resolveClassName(decoded.nickname);
-    }
-
     const response: VerifyAuthResponse = {
       valid: true,
-      user,
+      user: session.user,
     };
 
     const json = NextResponse.json(response);

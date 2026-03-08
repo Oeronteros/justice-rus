@@ -1,8 +1,4 @@
-'use client';
-
-import { memo } from 'react';
-
-function BackgroundEffects() {
+export default function BackgroundEffects() {
   return (
     <div className="fixed inset-0 z-0 overflow-hidden">
       <div className="absolute inset-0 wuxia-backdrop"></div>
@@ -20,5 +16,3 @@ function BackgroundEffects() {
     </div>
   );
 }
-
-export default memo(BackgroundEffects);
