@@ -1,8 +1,10 @@
 import { cookies } from 'next/headers';
+import { connection } from 'next/server';
 import PortalShell from '@/components/PortalShell';
 import { resolveSessionFromToken } from '@/lib/server/auth-session';
 
 export default async function PortalLayout({ children }: { children: React.ReactNode }) {
+  await connection();
   const cookieStore = await cookies();
   const token = cookieStore.get('auth_token')?.value;
   const session = await resolveSessionFromToken(token);

@@ -6,9 +6,6 @@ import { extractWikiReferences, normalizeGuideTitle } from '@/lib/guides/obsidia
 import { ensureGuideSchema, seedGuidesIfEmpty } from '@/lib/guides/schema';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
-
 const guideCreateSchema = z.object({
   title: z.string().trim().min(1).max(140),
   content: z.string().trim().min(1).max(500_000),

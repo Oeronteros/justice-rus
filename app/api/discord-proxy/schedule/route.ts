@@ -6,8 +6,6 @@ import { getAuthToken } from '@/lib/auth/request';
 import { hasDatabaseUrl } from '@/lib/neon';
 import { getScheduleReadModel } from '@/lib/server/read-models/schedule';
 
-export const runtime = 'nodejs';
-
 const DISCORD_BOT_API_URL = process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const bypassHeader: Record<string, string> = (DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me'))
   ? { 'bypass-tunnel-reminder': '1' }

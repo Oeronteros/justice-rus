@@ -12,9 +12,6 @@ import {
   refreshScheduleReadModelAfterWrite,
 } from '@/lib/server/read-models/schedule';
 
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
-
 const BOT_API_URL =
   process.env.BOT_API_URL || process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const BOT_API_KEY = process.env.BOT_API_KEY || process.env.DISCORD_BOT_API_KEY;

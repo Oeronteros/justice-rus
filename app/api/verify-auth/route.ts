@@ -4,8 +4,6 @@ import { clearAuthCookie, getAuthToken } from '@/lib/auth/request';
 import { VerifyAuthResponse } from '@/types';
 import { resolveSessionFromToken } from '@/lib/server/auth-session';
 
-export const runtime = 'nodejs';
-
 export async function GET(request: NextRequest) {
   try {
     const token = getAuthToken(request);

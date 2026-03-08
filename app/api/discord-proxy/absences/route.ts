@@ -8,8 +8,6 @@ import { canManageAccounts } from '@/lib/authz';
 import { z } from 'zod';
 import { runServerTaskOnce } from '@/lib/server/db-cache';
 
-export const runtime = 'nodejs';
-
 const DISCORD_BOT_API_URL = process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const bypassHeader: Record<string, string> =
   DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me')

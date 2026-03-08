@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
+import InputPerformanceMode from "@/components/InputPerformanceMode";
 import { QueryProvider } from "@/lib/providers/QueryProvider";
 import { I18nProvider } from "@/lib/i18n/context";
 
@@ -35,9 +37,12 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body className="theme-wuxia">
+        <InputPerformanceMode />
         <QueryProvider>
           <I18nProvider>
-            <div className="relative z-10">{children}</div>
+            <Suspense fallback={<div className="relative z-10 min-h-screen" />}>
+              <div className="relative z-10">{children}</div>
+            </Suspense>
           </I18nProvider>
         </QueryProvider>
         <Analytics />

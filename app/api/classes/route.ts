@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getKnownClasses } from '@/lib/classes';
 
-export const runtime = 'nodejs';
-
 export async function GET() {
   try {
     const classes = await getKnownClasses();

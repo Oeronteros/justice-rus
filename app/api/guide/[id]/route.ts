@@ -7,9 +7,6 @@ import { normalizeGuideTitle } from '@/lib/guides/obsidian';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { canModerateContent } from '@/lib/authz';
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
-
 const guideUpdateSchema = z.object({
   title: z.string().trim().min(1).max(140).optional(),
   content: z.string().trim().min(1).max(500_000).optional(),

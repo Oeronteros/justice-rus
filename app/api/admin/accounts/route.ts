@@ -6,8 +6,6 @@ import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureAccountsSchema, toPublicAccount } from '@/lib/auth/accounts';
 import { canAssignRoles, canManageAccounts } from '@/lib/authz';
 
-export const runtime = 'nodejs';
-
 const updateSchema = z.object({
   id: z.union([z.string(), z.number()]),
   isActive: z.boolean(),

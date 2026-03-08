@@ -5,9 +5,6 @@ import { getAuthToken } from '@/lib/auth/request';
 import { ensureGuideSchema } from '@/lib/guides/schema';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
-
 const voteSchema = z.object({
   voterKey: z.string().trim().min(8).max(120).optional(),
 });

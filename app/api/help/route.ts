@@ -6,9 +6,6 @@ import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { canModerateContent, hasRoleAtLeast } from '@/lib/authz';
 import { ensureHelpSchema } from './_shared';
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
-
 const helpCreateSchema = z.object({
   title: z.string().trim().min(1).max(140),
   details: z.string().trim().min(1).max(5000),

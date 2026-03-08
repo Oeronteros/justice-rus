@@ -5,8 +5,6 @@ import { hasRoleAtLeast } from '@/lib/authz';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { runServerTaskOnce } from '@/lib/server/db-cache';
 
-export const dynamic = 'force-dynamic';
-
 type RuleInput = {
   text_ru?: unknown;
   text_en?: unknown;

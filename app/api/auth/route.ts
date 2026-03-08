@@ -9,8 +9,6 @@ import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureAccountsSchema, normalizeNickname, verifyPassword } from '@/lib/auth/accounts';
 import { getCachedTableColumns } from '@/lib/server/db-cache';
 
-export const runtime = 'nodejs';
-
 const AUTH_WINDOW_MS = 15 * 60 * 1000;
 const AUTH_MAX_ATTEMPTS = 8;
 const AUTH_BLOCK_MS = 20 * 60 * 1000;

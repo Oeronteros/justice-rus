@@ -10,3 +10,4 @@
 - Extracting session resolution into `lib/server/auth-session.ts` lets both `app/(portal)/layout.tsx` and `/api/verify-auth` share JWT decode + account-state checks without auth drift.
 - Keeping `PortalShell` client-side with an `initialUser` prop preserves the existing `AuthProvider`/`useUser()` contract while removing the initial client verify gate.
 - `components/BackgroundEffects.tsx` is pure decorative markup, so rendering it as a server component removes unnecessary client bundle work while keeping the same atmosphere.
+- The repo can adopt `cacheComponents` once legacy App Router route-segment exports like `runtime = 'nodejs'` and `dynamic = 'force-dynamic'` are removed from `app/api/**` route handlers.

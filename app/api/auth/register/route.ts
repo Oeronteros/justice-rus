@@ -5,8 +5,6 @@ import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureAccountsSchema, hashPassword, normalizeNickname } from '@/lib/auth/accounts';
 import { isKnownClassName } from '@/lib/classes';
 
-export const runtime = 'nodejs';
-
 const registerSchema = z.object({
   nickname: z.string().trim().min(3).max(32),
   className: z.string().trim().min(1).max(100),

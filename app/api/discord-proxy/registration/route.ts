@@ -10,8 +10,6 @@ import { getRegistrationsFromDb } from '@/lib/server/registration/read';
 import { getRegistrationReadModel, refreshRegistrationReadModelAfterWrite } from '@/lib/server/registration/sync';
 import { RegistrationUpdateError, updateRegistrationStats } from '@/lib/server/registration/write';
 
-export const runtime = 'nodejs';
-
 const DISCORD_BOT_API_URL = process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const bypassHeader: Record<string, string> =
   DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me')

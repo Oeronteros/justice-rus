@@ -8,9 +8,6 @@ import { pvpReportSchema } from '@/lib/schemas/pvp';
 import { calculateRating, deriveConfirmationStatus, resolveMatchWinner } from '@/lib/server/pvp/logic';
 import { getCachedTableColumns, runServerTaskOnce } from '@/lib/server/db-cache';
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
-
 type Actor = {
   id: string;
   nickname: string;

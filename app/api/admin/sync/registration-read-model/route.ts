@@ -7,8 +7,6 @@ import { getReadModelState } from '@/lib/server/read-models/shared';
 import { REGISTRATION_READ_MODEL_KEY } from '@/lib/server/registration/read-model';
 import { syncRegistrationReadModel } from '@/lib/server/registration/sync';
 
-export const runtime = 'nodejs';
-
 function requireManager(request: NextRequest) {
   const token = getAuthToken(request);
   const decoded = token ? verifyToken(token) : null;

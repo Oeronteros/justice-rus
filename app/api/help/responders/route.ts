@@ -5,9 +5,6 @@ import { getAuthToken } from '@/lib/auth/request';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureHelpSchema, resolveRosterClassName } from '../_shared';
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
-
 const rsvpSchema = z.object({
   id: z.union([z.string(), z.number()]),
 });

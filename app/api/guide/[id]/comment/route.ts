@@ -5,9 +5,6 @@ import { getAuthToken } from '@/lib/auth/request';
 import { ensureGuideSchema } from '@/lib/guides/schema';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
-
 const commentSchema = z.object({
   author: z.string().trim().min(1).max(60).optional(),
   comment: z.string().trim().min(1).max(3000),
