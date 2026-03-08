@@ -6,10 +6,15 @@ export const knownClassesKeys = {
   lists: () => [...knownClassesKeys.all, 'list'] as const,
 };
 
-export function useKnownClasses() {
+interface UseKnownClassesOptions {
+  enabled?: boolean;
+}
+
+export function useKnownClasses({ enabled = true }: UseKnownClassesOptions = {}) {
   return useQuery({
     queryKey: knownClassesKeys.lists(),
     queryFn: classesApi.list,
     staleTime: 5 * 60 * 1000,
+    enabled,
   });
 }

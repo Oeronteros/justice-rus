@@ -1736,6 +1736,73 @@ body {
     flex: 0 0 auto;
   }
 
+  .guide-backlink-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+    padding: 16px 18px;
+    border-radius: 20px;
+    border: 1px solid rgba(143, 185, 204, 0.16);
+    background: linear-gradient(135deg, rgba(13, 22, 31, 0.88), rgba(16, 29, 40, 0.72));
+    text-align: left;
+    transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+  }
+
+  .guide-backlink-card:hover {
+    border-color: rgba(143, 185, 204, 0.34);
+    background: linear-gradient(135deg, rgba(16, 28, 39, 0.94), rgba(20, 35, 48, 0.84));
+    transform: translateY(-1px);
+  }
+
+  .guide-backlink-category {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    background: rgba(20, 38, 54, 0.6);
+    color: rgba(143, 185, 204, 0.95);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+  }
+
+  .guide-backlink-title {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.45;
+    color: rgba(230, 239, 245, 0.96);
+  }
+
+  .guide-backlink-meta {
+    font-size: 0.82rem;
+    color: rgba(154, 176, 190, 0.84);
+  }
+
+  .guide-editor-focus-card {
+    max-width: none;
+    width: min(100vw, 1600px);
+    height: calc(100dvh - 20px);
+    max-height: calc(100dvh - 20px);
+  }
+
+  .guide-form-focus-wrap {
+    min-height: calc(100dvh - 180px);
+  }
+
+  .guide-form-focus-grid {
+    min-height: calc(100dvh - 280px);
+  }
+
+  .guide-milkdown-shell-focus,
+  .guide-milkdown-shell-focus .guide-milkdown-host,
+  .guide-milkdown-shell-focus .milkdown,
+  .guide-milkdown-shell-focus .milkdown .editor,
+  .guide-milkdown-shell-focus .milkdown .ProseMirror {
+    min-height: calc(100dvh - 360px);
+  }
+
   .wuxia-nav-scroll {
     display: flex;
     flex-wrap: nowrap;

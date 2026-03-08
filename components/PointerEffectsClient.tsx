@@ -6,6 +6,7 @@ function PointerEffectsClient() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!window.matchMedia('(pointer: fine)').matches) return;
 
     const root = document.documentElement;
     const maxTilt = 6;
@@ -57,4 +58,3 @@ function PointerEffectsClient() {
 }
 
 export default memo(PointerEffectsClient);
-

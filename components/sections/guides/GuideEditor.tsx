@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { GuideForm } from '@/components/forms/GuideForm';
 import { useCreateGuide, useUpdateGuide } from '@/lib/hooks/useGuides';
 import WuxiaIcon from '@/components/WuxiaIcons';
@@ -18,6 +18,7 @@ export function GuideEditor({ onClose, onSuccess, mode = 'create', guideId, init
   const createGuide = useCreateGuide();
   const updateGuide = useUpdateGuide();
   const isEdit = mode === 'edit';
+  const [isFocusMode, setIsFocusMode] = useState(false);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--tilt-x', '0deg');
@@ -66,7 +67,7 @@ export function GuideEditor({ onClose, onSuccess, mode = 'create', guideId, init
       className="fixed inset-0 z-[100001] bg-black/75 backdrop-blur-md flex items-center justify-center px-4 py-10"
       style={{ perspective: 'none', transform: 'none' }}
     >
-      <div className="card w-full max-w-7xl p-6 md:p-8 relative max-h-[92vh] overflow-auto">
+      <div className={`card w-full relative overflow-auto ${isFocusMode ? 'guide-editor-focus-card p-4 md:p-6' : 'max-w-7xl p-6 md:p-8 max-h-[92vh]'}`}>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <div>
             <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5]">
@@ -78,13 +79,23 @@ export function GuideEditor({ onClose, onSuccess, mode = 'create', guideId, init
                 : 'Пиши как в Obsidian: Milkdown editor, живой reader и импорт .md с вложениями.'}
             </p>
           </div>
-          <button
-            type="button"
-            className="dc-icon-btn p-2.5 rounded-xl self-start md:self-auto"
-            onClick={onClose}
-          >
-            <WuxiaIcon name="x" className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2 self-start md:self-auto">
+            <button
+              type="button"
+              className="btn-secondary px-4 py-2.5"
+              onClick={() => setIsFocusMode((value) => !value)}
+            >
+              <WuxiaIcon name="eye" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+              {isFocusMode ? 'Обычный режим' : 'Фокус-режим'}
+            </button>
+            <button
+              type="button"
+              className="dc-icon-btn p-2.5 rounded-xl"
+              onClick={onClose}
+            >
+              <WuxiaIcon name="x" className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         <GuideForm
@@ -95,6 +106,7 @@ export function GuideEditor({ onClose, onSuccess, mode = 'create', guideId, init
           disableAuthor={isEdit}
           submitLabel={isEdit ? 'Сохранить' : undefined}
           resetAfterSubmit={!isEdit}
+          focusMode={isFocusMode}
         />
 
         {submitError && (

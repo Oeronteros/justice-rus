@@ -89,6 +89,16 @@ export function GuideModal({
     [guideDetail?.guide.content]
   );
 
+  const backlinks = useMemo(() => {
+    const currentSlug = guideDetail?.guide.slug;
+    if (!currentSlug) return [];
+
+    return guides.filter((guide) => {
+      if (guide.id === guideId) return false;
+      return (guide.linkTargets || []).includes(currentSlug);
+    });
+  }, [guideDetail?.guide.slug, guideId, guides]);
+
   const handleClose = useCallback(() => {
     onClose();
   }, [onClose]);
@@ -105,10 +115,13 @@ export function GuideModal({
   const buildStableGuideUrl = useCallback(() => {
     if (typeof window === 'undefined') return `/`;
     const url = new URL(window.location.origin);
-    url.pathname = '/';
+    url.pathname = '/guides';
     url.searchParams.set('guide', String(guideId));
+    if (guideDetail?.guide.slug) {
+      url.searchParams.set('slug', guideDetail.guide.slug);
+    }
     return url.toString();
-  }, [guideId]);
+  }, [guideDetail?.guide.slug, guideId]);
 
   const copyText = useCallback(async (text: string) => {
     if (typeof window === 'undefined') return;
@@ -360,6 +373,29 @@ export function GuideModal({
                     onGuideLinkClick={onGuideSelect}
                     onHeadingLinkClick={handleScrollToHeading}
                   />
+
+                  {backlinks.length > 0 && (
+                    <div className="mt-10 rounded-3xl border border-[#1f3344] bg-[#0b141d]/82 p-5 shadow-[0_18px_34px_rgba(4,8,12,0.35)]">
+                      <div className="flex items-center gap-2 text-sm font-medium text-[#dceaf4] mb-4">
+                        <WuxiaIcon name="link" className="w-4 h-4 text-[#8fb9cc]" />
+                        Упоминается в гайдах
+                      </div>
+                      <div className="grid gap-3 md:grid-cols-2">
+                        {backlinks.map((guide) => (
+                          <button
+                            key={guide.id}
+                            type="button"
+                            className="guide-backlink-card"
+                            onClick={() => onGuideSelect?.(guide.id)}
+                          >
+                            <span className="guide-backlink-category">{guide.category}</span>
+                            <span className="guide-backlink-title">{guide.title}</span>
+                            <span className="guide-backlink-meta">by {guide.author}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 

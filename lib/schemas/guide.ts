@@ -15,7 +15,7 @@ export const guideSummarySchema = z.object({
   updatedAt: z.string(),
   votes: z.number(),
   commentsCount: z.number(),
-  linkTargets: z.array(z.string()).optional().default([]),
+  linkTargets: z.array(z.string()),
 });
 
 export const guideCommentSchema = z.object({

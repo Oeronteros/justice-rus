@@ -27,6 +27,7 @@ interface GuideFormProps {
   disableAuthor?: boolean;
   submitLabel?: string;
   resetAfterSubmit?: boolean;
+  focusMode?: boolean;
 }
 
 type EditorMode = 'write' | 'split' | 'preview';
@@ -138,6 +139,7 @@ export function GuideForm({
   disableAuthor = false,
   submitLabel,
   resetAfterSubmit = true,
+  focusMode = false,
 }: GuideFormProps) {
   const [editorMode, setEditorMode] = useState<EditorMode>('split');
   const [notice, setNotice] = useState<string | null>(null);
@@ -278,8 +280,9 @@ export function GuideForm({
     }
   };
 
-  const showEditor = editorMode !== 'preview';
-  const showPreview = editorMode !== 'write';
+  const resolvedEditorMode: EditorMode = focusMode ? 'write' : editorMode;
+  const showEditor = resolvedEditorMode !== 'preview';
+  const showPreview = resolvedEditorMode !== 'write';
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
@@ -320,6 +323,7 @@ export function GuideForm({
         </div>
 
         <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+          {!focusMode && (
           <div className="inline-flex rounded-2xl p-1 bg-[#0b141d]/70 border border-[#223140]/70 w-fit">
             {[
               ['write', 'Editor'],
@@ -341,6 +345,7 @@ export function GuideForm({
               </button>
             ))}
           </div>
+          )}
 
           <div className="flex flex-wrap items-center gap-2">
             <input
@@ -369,7 +374,8 @@ export function GuideForm({
         </div>
       </div>
 
-      <div className="rounded-3xl border border-[#223140]/70 bg-[#091019]/70 p-4 md:p-5 space-y-4">
+      <div className={`rounded-3xl border border-[#223140]/70 bg-[#091019]/70 p-4 md:p-5 space-y-4 ${focusMode ? 'guide-form-focus-wrap' : ''}`}>
+        {!focusMode && (
         <div className="flex flex-wrap items-center gap-2">
           {GUIDE_TEMPLATES.map((template) => (
             <button
@@ -410,14 +416,15 @@ export function GuideForm({
             Wikilink
           </button>
         </div>
+        )}
 
-        <div className={joinClasses('grid gap-5', editorMode === 'split' && 'xl:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]')}>
+        <div className={joinClasses('grid gap-5', resolvedEditorMode === 'split' && 'xl:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]', focusMode && 'guide-form-focus-grid')}>
           {showEditor && (
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3 px-1">
                 <div>
                   <p className="text-sm font-medium text-[#e6eff5]">Milkdown editor</p>
-                  <p className="text-xs text-[#8ea6b8]">Live writing for complex raid, PvP, and farming guides.</p>
+                  <p className="text-xs text-[#8ea6b8]">{focusMode ? 'Fullscreen drafting with all markdown shortcuts active.' : 'Live writing for complex raid, PvP, and farming guides.'}</p>
                 </div>
                 <div className="text-[11px] uppercase tracking-[0.2em] text-[#6f8799]">Markdown first</div>
               </div>
@@ -427,6 +434,7 @@ export function GuideForm({
                 value={content}
                 onChange={handleEditorChange}
                 placeholder="Пиши здесь... Поддерживаются таблицы, чек-листы, callouts и [[wikilinks]]."
+                className={focusMode ? 'guide-milkdown-shell-focus' : undefined}
               />
 
               {errors.content && (

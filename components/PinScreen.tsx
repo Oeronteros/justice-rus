@@ -13,8 +13,8 @@ interface PinScreenProps {
 type Mode = 'login' | 'register';
 
 export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
-  const { data: knownClasses = [] } = useKnownClasses();
   const [mode, setMode] = useState<Mode>('login');
+  const { data: knownClasses = [] } = useKnownClasses({ enabled: mode === 'register' });
   const [nickname, setNickname] = useState('');
   const [className, setClassName] = useState('');
   const [discordHandle, setDiscordHandle] = useState('');

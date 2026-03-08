@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import PointerEffectsClient from "@/components/PointerEffectsClient";
-import BackgroundEffects from "@/components/BackgroundEffects";
 import { QueryProvider } from "@/lib/providers/QueryProvider";
 import { I18nProvider } from "@/lib/i18n/context";
 
@@ -38,8 +36,6 @@ export default function RootLayout({
       <body className="theme-wuxia">
         <QueryProvider>
           <I18nProvider>
-            <PointerEffectsClient />
-            <BackgroundEffects />
             <div className="relative z-10">{children}</div>
           </I18nProvider>
         </QueryProvider>
