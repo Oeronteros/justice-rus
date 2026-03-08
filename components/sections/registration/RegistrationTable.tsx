@@ -491,6 +491,11 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
                   className="input-field w-full"
                   placeholder="Класс"
                 />
+                {editDraft.className ? (
+                  <div className="rounded-2xl border border-[#2f6e8d]/35 bg-[#12202b]/55 px-4 py-3">
+                    <ClassBadge className={editDraft.className} badgeClassName="w-full" textClassName="text-[#e6eff5] font-medium" />
+                  </div>
+                ) : null}
               </label>
               <label className="space-y-2 text-sm">
                 <span className="text-gray-400">Клан</span>

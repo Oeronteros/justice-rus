@@ -16,6 +16,7 @@ import {
 import { handleApiError } from '@/lib/api/client';
 import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
+import { ClassBadge } from '@/components/ClassIcon';
 import type { User } from '@/types';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { canModerateContent, hasRoleAtLeast } from '@/lib/authz';
@@ -404,11 +405,16 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                                 {req.responders.map((r) => (
                                   <span
                                     key={`${req.id}:${r.userId}`}
-                                    className="px-2.5 py-1 bg-[#101922]/70 border border-[#223544]/60 text-[#d2e5ef] rounded-full text-xs"
+                                    className="inline-flex items-center gap-2 px-2.5 py-1 bg-[#101922]/70 border border-[#223544]/60 text-[#d2e5ef] rounded-full text-xs"
                                     title={r.respondedAt}
                                   >
-                                    {r.nickname}
-                                    {r.className ? ` · ${r.className}` : ''}
+                                    <span>{r.nickname}</span>
+                                    {r.className ? (
+                                      <>
+                                        <span className="text-[#6f8799]">·</span>
+                                        <ClassBadge className={r.className} textClassName="text-[#d2e5ef] text-xs" iconSizeClassName="h-6 w-6" />
+                                      </>
+                                    ) : null}
                                   </span>
                                 ))}
                               </div>

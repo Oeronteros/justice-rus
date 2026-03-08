@@ -19,11 +19,21 @@ const CHANNEL_MENTION_RE = /<#\d+>/g;
 const URL_RE = /https?:\/\/[^\s)]+/gi;
 
 function decodeUriComponentSafe(value: string): string {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
+  let decoded = value;
+
+  for (let i = 0; i < 3; i += 1) {
+    try {
+      const next = decodeURIComponent(decoded);
+      if (next === decoded) {
+        break;
+      }
+      decoded = next;
+    } catch {
+      break;
+    }
   }
+
+  return decoded;
 }
 
 function toReadableLabel(value: string): string {
@@ -41,19 +51,24 @@ function toReadableLabel(value: string): string {
 
 function formatKnownNewsUrl(value: string): string | null {
   try {
-    const url = new URL(value);
-    if (url.pathname !== '/guides') {
-      return null;
+    const cleanedValue = value.replace(/[),.;!?]+$/, '');
+    const url = new URL(cleanedValue);
+    const guidePath = url.pathname.replace(/\/+$/, '');
+
+    if (!guidePath.startsWith('/guides')) {
+      return decodeUriComponentSafe(value);
     }
 
     const slug = url.searchParams.get('slug');
     if (!slug) {
-      return null;
+      const parts = guidePath.split('/').filter(Boolean);
+      const pathSlug = parts[1];
+      return pathSlug ? toReadableLabel(pathSlug) : 'Guides';
     }
 
     return toReadableLabel(slug);
   } catch {
-    return null;
+    return /^https?:\/\//i.test(value) ? decodeUriComponentSafe(value) : null;
   }
 }
 

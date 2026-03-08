@@ -5,6 +5,7 @@ import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { SectionHero } from '@/components/shared/SectionHero';
+import { ClassBadge } from '@/components/ClassIcon';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { useJoinPvpQueue, useLeavePvpQueue, usePvpState, useReportPvpResult } from '@/lib/hooks/usePvp';
 import type { PvpMatch } from '@/lib/schemas/pvp';
@@ -128,12 +129,16 @@ function MatchCard({
         <div className="rounded-2xl border border-green-700/40 bg-green-950/35 p-4">
           <div className="text-gray-400 mb-1">Ты</div>
           <div className="text-[#e6eff5] font-semibold">{you.nickname}</div>
-          <div className="text-green-300 text-xs mt-2">{you.className || 'Класс не указан'}</div>
+          <div className="mt-2">
+            <ClassBadge className={you.className} emptyLabel="Класс не указан" textClassName="text-green-300 text-xs" iconSizeClassName="h-7 w-7" />
+          </div>
         </div>
         <div className="rounded-2xl border border-green-700/40 bg-green-950/35 p-4">
           <div className="text-gray-400 mb-1">Соперник</div>
           <div className="text-[#e6eff5] font-semibold">{opponent.nickname}</div>
-          <div className="text-green-300 text-xs mt-2">{opponent.className || 'Класс не указан'}</div>
+          <div className="mt-2">
+            <ClassBadge className={opponent.className} emptyLabel="Класс не указан" textClassName="text-green-300 text-xs" iconSizeClassName="h-7 w-7" />
+          </div>
         </div>
       </div>
 
@@ -323,7 +328,9 @@ function PvpSectionContent({ user }: PvpSectionProps) {
                     <div key={`${entry.playerId}-${entry.joinedAt}`} className="rounded-2xl border border-green-700/40 bg-green-950/35 p-4 flex items-center justify-between gap-4">
                       <div>
                         <div className="text-[#e6eff5] font-medium">#{index + 1} {entry.nickname}</div>
-                        <div className="text-xs text-green-300 mt-1">{entry.className || 'Класс не указан'}</div>
+                        <div className="mt-1">
+                          <ClassBadge className={entry.className} emptyLabel="Класс не указан" textClassName="text-xs text-green-300" iconSizeClassName="h-7 w-7" />
+                        </div>
                       </div>
                       <div className="text-xs text-gray-400 whitespace-nowrap">{formatDateTime(entry.joinedAt)}</div>
                     </div>
