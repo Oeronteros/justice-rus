@@ -15,6 +15,11 @@ import {
 } from './shared';
 import { ensureRegistrationStatsSchema, getTableColumns } from './schema';
 
+function pvpRatingValue(value: unknown): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 1000;
+}
+
 async function withAvatars(rows: RegistrationRow[]): Promise<Registration[]> {
   const avatarMap = await syncPortalMemberAvatarSeeds(
     rows.map((row) => ({
@@ -126,7 +131,7 @@ async function getPortalOnlyRows(
     class: String(row.class_name || ''),
     guild: String(row.guild_name || ''),
     joinDate: isoDate(row.created_at),
-    elo: numericValue(row.duel_rating),
+    elo: pvpRatingValue(row.duel_rating),
     mmr20: numericValue(row.best_mmr),
     bounty: numericValue(row.bounty_score),
     marks: 0,
@@ -257,7 +262,7 @@ export async function getRegistrationsFromDb(): Promise<Registration[]> {
     class: String(row.class_name || ''),
     guild: String(row.guild_name || ''),
     joinDate: isoDate(row.join_date),
-    elo: numericValue(row.duel_rating),
+    elo: pvpRatingValue(row.duel_rating),
     mmr20: numericValue(row.best_mmr),
     bounty: numericValue(row.bounty_score),
     marks: 0,

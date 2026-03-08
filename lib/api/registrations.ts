@@ -33,7 +33,7 @@ export const registrationsApi = {
     const data = await api.get('discord-proxy/registration', registrationsArraySchema);
     return data.map((item) => ({
       ...item,
-      elo: item.elo || 0,
+      elo: (item.elo ?? 0) > 0 ? (item.elo ?? 0) : 1000,
       mmr20: item.mmr20 || 0,
       bounty: item.bounty || 0,
       marks: item.marks || 0,

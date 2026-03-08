@@ -2,6 +2,7 @@
 // Прокси для получения расписания через Discord бота
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
+import { getAuthToken } from '@/lib/auth/request';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 
 export const runtime = 'nodejs';
@@ -57,9 +58,7 @@ async function queryScheduleFromDb() {
 
 export async function GET(request: NextRequest) {
   try {
-    const headerToken = request.headers.get('authorization');
-    const cookieToken = request.cookies.get('auth_token')?.value;
-    const token = cookieToken || (headerToken && headerToken.startsWith('Bearer ') ? headerToken.slice(7) : null);
+    const token = getAuthToken(request);
 
     if (!token || !verifyToken(token)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
