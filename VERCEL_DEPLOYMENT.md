@@ -84,8 +84,8 @@ DISCORD_BOT_API_URL=https://your-localtunnel-url.loca.lt
 ```
 justice-ru/
 ├── app/                     # Next.js App Router
-│   ├── layout.tsx           # Root layout
-│   └── page.tsx             # Главная страница
+│   ├── (portal)/page.tsx    # Главная страница портала
+│   └── layout.tsx           # Root layout
 ├── components/              # React компоненты
 ├── lib/                      # Утилиты и константы
 ├── types/                    # TypeScript типы
@@ -117,7 +117,7 @@ justice-ru/
 ## 🐛 Решение проблем
 
 ### 404 на корневом пути `/`
-1. Проверьте, что `app/page.tsx` существует
+1. Проверьте, что корневой маршрут существует (в текущей структуре это `app/(portal)/page.tsx`)
 2. Пересоберите: `npm run build`
 3. На Vercel: очистите кэш и пересоберите (Settings → Deployments → Redeploy)
 
