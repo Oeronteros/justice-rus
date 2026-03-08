@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { verifyToken } from '@/lib/auth';
 import { getAuthToken } from '@/lib/auth/request';
 import { ensureGuideSchema } from '@/lib/guides/schema';
+import { normalizeGuideTitle } from '@/lib/guides/obsidian';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { canModerateContent } from '@/lib/authz';
 
@@ -84,6 +85,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
     return NextResponse.json({
       guide: {
         id: String(guideRow.id),
+        slug: normalizeGuideTitle(guideRow.title || ''),
         ownerAccountId: guideRow.owner_account_id == null ? null : String(guideRow.owner_account_id),
         title: guideRow.title || '',
         content: guideRow.content_md || '',
@@ -170,6 +172,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     const updatedRow = updated.rows[0];
     return NextResponse.json({
       id: String(updatedRow.id),
+      slug: normalizeGuideTitle(updatedRow.title || ''),
       ownerAccountId: updatedRow.owner_account_id == null ? null : String(updatedRow.owner_account_id),
       title: updatedRow.title || '',
       content: updatedRow.content_md || '',

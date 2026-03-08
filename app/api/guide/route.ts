@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { verifyToken } from '@/lib/auth';
 import { getAuthToken } from '@/lib/auth/request';
+import { extractWikiReferences, normalizeGuideTitle } from '@/lib/guides/obsidian';
 import { ensureGuideSchema, seedGuidesIfEmpty } from '@/lib/guides/schema';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 
@@ -37,6 +38,7 @@ export async function GET(request: NextRequest) {
       SELECT
         g.id,
         g.title,
+        g.content_md,
         g.category,
         g.author,
         g.created_at,
@@ -60,6 +62,7 @@ export async function GET(request: NextRequest) {
 
     const data = result.rows.map((row) => ({
       id: String(row.id),
+      slug: normalizeGuideTitle(row.title || ''),
       title: row.title || '',
       category: row.category || 'general',
       author: row.author || 'unknown',
@@ -67,6 +70,7 @@ export async function GET(request: NextRequest) {
       updatedAt: (row.updated_at || row.created_at || new Date()).toISOString(),
       votes: row.votes || 0,
       commentsCount: row.comments || 0,
+      linkTargets: extractWikiReferences(row.content_md || '').map((reference) => reference.slug),
     }));
 
     return NextResponse.json(data);
@@ -114,6 +118,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         id: String(row.id),
+        slug: normalizeGuideTitle(row.title || ''),
         ownerAccountId: row.owner_account_id == null ? null : String(row.owner_account_id),
         title: row.title,
         category: row.category,

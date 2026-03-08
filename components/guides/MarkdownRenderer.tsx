@@ -8,6 +8,14 @@ import { normalizeGuideTitle, prepareMarkdownForRender } from '@/lib/guides/obsi
 export interface GuideLinkEntry {
   id: string;
   title: string;
+  slug?: string;
+  linkTargets?: string[];
+}
+
+export interface MarkdownHeading {
+  id: string;
+  level: number;
+  text: string;
 }
 
 interface MarkdownRendererProps {
@@ -15,6 +23,7 @@ interface MarkdownRendererProps {
   className?: string;
   guidesIndex?: GuideLinkEntry[];
   onGuideLinkClick?: (guideId: string) => void;
+  onHeadingLinkClick?: (headingId: string) => void;
 }
 
 function joinClasses(...values: Array<string | false | null | undefined>): string {
@@ -45,10 +54,49 @@ function normalizeHref(href: string): string {
   return trimmed;
 }
 
+function stripMarkdownTokens(value: string): string {
+  return value
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/~~([^~]+)~~/g, '$1')
+    .replace(/!?\[([^\]]*)\]\(([^)]+)\)/g, '$1')
+    .replace(/\[\[([^\]|]+)\|?([^\]]*)\]\]/g, (_match, target, label) => String(label || target || ''))
+    .trim();
+}
+
+export function extractMarkdownHeadings(content: string): MarkdownHeading[] {
+  const markdown = prepareMarkdownForRender(content || '');
+  const lines = markdown.split('\n');
+  const headings: MarkdownHeading[] = [];
+  const seen = new Map<string, number>();
+
+  for (const line of lines) {
+    const match = line.match(/^(#{1,6})\s+(.*)$/);
+    if (!match) continue;
+
+    const level = match[1].length;
+    const text = stripMarkdownTokens(match[2]);
+    if (!text) continue;
+
+    const baseId = normalizeGuideTitle(text) || `section-${headings.length + 1}`;
+    const currentCount = seen.get(baseId) || 0;
+    seen.set(baseId, currentCount + 1);
+
+    headings.push({
+      id: currentCount === 0 ? baseId : `${baseId}-${currentCount + 1}`,
+      level,
+      text,
+    });
+  }
+
+  return headings;
+}
+
 function resolveGuideId(href: string | undefined, guidesIndex: GuideLinkEntry[] | undefined): string | null {
   if (!href || !guidesIndex || !href.startsWith('guide://')) return null;
   const slug = normalizeGuideTitle(decodeURIComponent(href.slice('guide://'.length)));
-  const match = guidesIndex.find((guide) => normalizeGuideTitle(guide.title) === slug);
+  const match = guidesIndex.find((guide) => (guide.slug ? normalizeGuideTitle(guide.slug) : normalizeGuideTitle(guide.title)) === slug);
   return match?.id || null;
 }
 
@@ -57,8 +105,47 @@ export function MarkdownRenderer({
   className,
   guidesIndex,
   onGuideLinkClick,
+  onHeadingLinkClick,
 }: MarkdownRendererProps) {
   const markdown = prepareMarkdownForRender(content || '');
+  const headings = extractMarkdownHeadings(content);
+  let headingIndex = 0;
+
+  const renderHeading = (fallbackLevel: 1 | 2 | 3 | 4 | 5 | 6, children: ReactNode) => {
+    const heading = headings[headingIndex];
+    headingIndex += 1;
+    const headingText = heading?.text || collectText(children).trim();
+    const headingId = heading?.id || normalizeGuideTitle(headingText) || `section-${headingIndex}`;
+    const Tag = `h${fallbackLevel}` as const;
+
+    return (
+      <Tag
+        id={headingId}
+        className={`dc-md-h${Math.min(fallbackLevel, 3)}`}
+        data-guide-anchor={headingId}
+      >
+        <span>{children}</span>
+        {(onHeadingLinkClick || headingId) && (
+          <button
+            type="button"
+            className="dc-md-anchor"
+            onClick={() => {
+              if (onHeadingLinkClick) {
+                onHeadingLinkClick(headingId);
+                return;
+              }
+
+              const element = document.getElementById(headingId);
+              element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+            aria-label={`Go to section ${headingText}`}
+          >
+            #
+          </button>
+        )}
+      </Tag>
+    );
+  };
 
   return (
     <div className={joinClasses('dc-md', className)}>
@@ -66,9 +153,12 @@ export function MarkdownRenderer({
         remarkPlugins={[remarkGfm]}
         urlTransform={(url) => normalizeHref(String(url || ''))}
         components={{
-          h1: ({ children }) => <h1 className="dc-md-h1">{children}</h1>,
-          h2: ({ children }) => <h2 className="dc-md-h2">{children}</h2>,
-          h3: ({ children }) => <h3 className="dc-md-h3">{children}</h3>,
+          h1: ({ children }) => renderHeading(1, children),
+          h2: ({ children }) => renderHeading(2, children),
+          h3: ({ children }) => renderHeading(3, children),
+          h4: ({ children }) => renderHeading(4, children),
+          h5: ({ children }) => renderHeading(5, children),
+          h6: ({ children }) => renderHeading(6, children),
           p: ({ children }) => <p className="dc-md-p">{children}</p>,
           ul: ({ children, className: listClassName }) => (
             <ul className={joinClasses('dc-md-ul', listClassName)}>{children}</ul>

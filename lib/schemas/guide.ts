@@ -6,6 +6,7 @@ export const guideCategories = [
 
 export const guideSummarySchema = z.object({
   id: z.string(),
+  slug: z.string(),
   ownerAccountId: z.string().nullable().optional(),
   title: z.string(),
   category: z.string(),
@@ -14,6 +15,7 @@ export const guideSummarySchema = z.object({
   updatedAt: z.string(),
   votes: z.number(),
   commentsCount: z.number(),
+  linkTargets: z.array(z.string()).optional().default([]),
 });
 
 export const guideCommentSchema = z.object({
@@ -25,6 +27,7 @@ export const guideCommentSchema = z.object({
 
 export const guideEntitySchema = z.object({
   id: z.string(),
+  slug: z.string(),
   ownerAccountId: z.string().nullable().optional(),
   title: z.string(),
   content: z.string(),

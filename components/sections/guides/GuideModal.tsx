@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { MarkdownRenderer } from '@/components/guides/MarkdownRenderer';
+import { extractMarkdownHeadings, MarkdownRenderer } from '@/components/guides/MarkdownRenderer';
 import { handleApiError } from '@/lib/api/client';
 import { useDeleteGuide, useGuide, useGuides, useVoteGuide } from '@/lib/hooks/useGuides';
+import type { GuideCategory } from '@/lib/schemas/guide';
+import WuxiaIcon from '@/components/WuxiaIcons';
 import { GuideComments } from './GuideComments';
 import { GuideEditor } from './GuideEditor';
 
@@ -41,6 +43,7 @@ export function GuideModal({
   const [mounted, setMounted] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
   
   const { data: guideDetail, isLoading, error } = useGuide(guideId, voterKey);
   const { data: guides = [] } = useGuides();
@@ -80,6 +83,11 @@ export function GuideModal({
     if (!Number.isFinite(ownerNum) || !Number.isFinite(userNum)) return false;
     return ownerNum === userNum;
   }, [canModerate, guideDetail?.guide.ownerAccountId, userId]);
+
+  const outline = useMemo(
+    () => extractMarkdownHeadings(guideDetail?.guide.content || ''),
+    [guideDetail?.guide.content]
+  );
 
   const handleClose = useCallback(() => {
     onClose();
@@ -203,6 +211,14 @@ export function GuideModal({
     setActionNotice('Открыли перевод');
   }, [guideDetail]);
 
+  const handleScrollToHeading = useCallback((headingId: string) => {
+    const container = contentRef.current;
+    const target = container?.querySelector<HTMLElement>(`[data-guide-anchor="${headingId}"]`);
+    if (!target) return;
+
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
+
   if (!mounted) return null;
 
   const modalContent = (
@@ -298,8 +314,8 @@ export function GuideModal({
       </div>
 
       {/* Контент */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-3xl mx-auto px-4 py-6">
+      <div ref={contentRef} className="flex-1 overflow-y-auto">
+        <div className="max-w-6xl mx-auto px-4 py-6">
           {isLoading && (
             <div className="text-gray-500">Загрузка гайда...</div>
           )}
@@ -312,11 +328,40 @@ export function GuideModal({
 
           {guideDetail && (
             <>
-              <MarkdownRenderer
-                content={guideDetail.guide.content}
-                guidesIndex={guides}
-                onGuideLinkClick={onGuideSelect}
-              />
+              <div className="grid gap-8 xl:grid-cols-[260px_minmax(0,1fr)]">
+                {outline.length > 0 && (
+                  <aside className="xl:sticky xl:top-6 xl:self-start rounded-3xl border border-[#1f3344] bg-[#0b141d]/82 p-4 shadow-[0_18px_34px_rgba(4,8,12,0.35)]">
+                    <div className="flex items-center gap-2 text-sm font-medium text-[#dceaf4] mb-3">
+                      <WuxiaIcon name="list" className="w-4 h-4 text-[#8fb9cc]" />
+                      Навигация
+                    </div>
+                    <div className="space-y-1.5 max-h-[70vh] overflow-auto pr-1">
+                      {outline.map((heading) => (
+                        <button
+                          key={heading.id}
+                          type="button"
+                          className="guide-outline-link"
+                          data-level={heading.level}
+                          onClick={() => handleScrollToHeading(heading.id)}
+                          title={heading.text}
+                        >
+                          <span className="guide-outline-link-dot" />
+                          <span>{heading.text}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </aside>
+                )}
+
+                <div>
+                  <MarkdownRenderer
+                    content={guideDetail.guide.content}
+                    guidesIndex={guides}
+                    onGuideLinkClick={onGuideSelect}
+                    onHeadingLinkClick={handleScrollToHeading}
+                  />
+                </div>
+              </div>
 
               <div className="mt-8 pt-6 border-t border-[#1a2a38]">
                 <GuideComments
@@ -338,7 +383,7 @@ export function GuideModal({
           initialValues={{
             title: guideDetail.guide.title,
             content: guideDetail.guide.content,
-            category: guideDetail.guide.category as any,
+            category: guideDetail.guide.category as GuideCategory,
             author: guideDetail.guide.author,
           }}
           onClose={() => setEditOpen(false)}

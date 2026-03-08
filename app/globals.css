@@ -1364,6 +1364,10 @@ body {
     letter-spacing: 0.02em;
     color: rgba(230, 239, 245, 0.96);
     line-height: 1.25;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    scroll-margin-top: 20px;
   }
 
   .dc-md .dc-md-h1 {
@@ -1447,6 +1451,22 @@ body {
   .dc-md .dc-md-link:hover {
     color: rgba(207, 230, 245, 0.95);
     border-bottom-color: rgba(207, 230, 245, 0.6);
+  }
+
+  .dc-md .dc-md-anchor {
+    flex: 0 0 auto;
+    border: none;
+    background: transparent;
+    color: rgba(143, 185, 204, 0.68);
+    font-size: 0.85rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.18s ease, transform 0.18s ease;
+  }
+
+  .dc-md .dc-md-anchor:hover {
+    color: rgba(207, 230, 245, 0.95);
+    transform: translateY(-1px);
   }
 
   .dc-md .dc-md-guide-link {
@@ -1669,6 +1689,51 @@ body {
   .guide-milkdown-shell .milkdown .ProseMirror h2,
   .guide-milkdown-shell .milkdown .ProseMirror h3 {
     letter-spacing: 0.02em;
+  }
+
+  .guide-outline-link {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    background: transparent;
+    padding: 9px 10px;
+    text-align: left;
+    color: rgba(189, 213, 228, 0.84);
+    transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  }
+
+  .guide-outline-link:hover {
+    border-color: rgba(143, 185, 204, 0.22);
+    background: rgba(16, 28, 39, 0.82);
+    color: rgba(226, 237, 245, 0.96);
+    transform: translateY(-1px);
+  }
+
+  .guide-outline-link[data-level='2'] {
+    padding-left: 18px;
+  }
+
+  .guide-outline-link[data-level='3'] {
+    padding-left: 26px;
+  }
+
+  .guide-outline-link[data-level='4'],
+  .guide-outline-link[data-level='5'],
+  .guide-outline-link[data-level='6'] {
+    padding-left: 34px;
+  }
+
+  .guide-outline-link-dot {
+    width: 7px;
+    height: 7px;
+    margin-top: 0.45rem;
+    border-radius: 999px;
+    background: rgba(143, 185, 204, 0.72);
+    box-shadow: 0 0 0 4px rgba(143, 185, 204, 0.08);
+    flex: 0 0 auto;
   }
 
   .wuxia-nav-scroll {

@@ -7,6 +7,12 @@ export interface GuideDraft {
   author?: string;
 }
 
+export interface WikiReference {
+  target: string;
+  slug: string;
+  label: string;
+}
+
 type FrontmatterValue = string | string[];
 
 const CATEGORY_SET = new Set<string>(guideCategories);
@@ -331,6 +337,30 @@ function normalizeObsidianLinks(markdown: string): string {
     const safeLabel = label || baseName(target).replace(/\.(md|markdown)$/i, '') || target;
     return `[${safeLabel}](guide://${encodeURIComponent(guideSlug)})`;
   });
+}
+
+export function extractWikiReferences(markdown: string): WikiReference[] {
+  const { content } = parseGuideFrontmatter(markdown || '');
+  const matches = [...content.matchAll(/(?<!!)\[\[([^\]]+)\]\]/g)];
+  const seen = new Set<string>();
+  const refs: WikiReference[] = [];
+
+  for (const match of matches) {
+    const { target, label } = parseWikiReference(String(match[1] || ''));
+    if (!target || isAttachmentPath(target)) continue;
+
+    const slug = normalizeGuideTitle(target);
+    if (!slug || seen.has(slug)) continue;
+    seen.add(slug);
+
+    refs.push({
+      target,
+      slug,
+      label: label || baseName(target).replace(/\.(md|markdown)$/i, '') || target,
+    });
+  }
+
+  return refs;
 }
 
 export function prepareMarkdownForRender(markdown: string): string {
