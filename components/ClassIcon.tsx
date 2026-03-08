@@ -27,23 +27,24 @@ function ClassGlyph({ className }: { className: string }) {
     case 'Bloodstorm':
       return (
         <svg viewBox="0 0 64 64" className="h-full w-full" fill="none" aria-hidden="true">
-          <path d="M31 9L39 17L35 20L37 45L32 55L27 45L29 20L25 17L31 9Z" fill="currentColor" />
-          <path d="M32 20L32 54" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.45" />
-          <path d="M22 30L31 24" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.72" />
-          <path d="M42 34L33 28" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.72" />
-          <path d="M16 48C21 50 26 51 32 51C39 51 45 49 50 45" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.3" />
+          <path d="M29 9L36 9L40 16L34 21L36 47L32 56L28 47L30 21L24 16L29 9Z" fill="currentColor" />
+          <path d="M32 20L32 55" stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" opacity="0.4" />
+          <path d="M16 43C22 50 30 53 40 53C46 53 50 51 54 47" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.34" />
+          <path d="M15 30C18 24 23 19 29 16" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.24" />
+          <path d="M24 28L32 23L40 28" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" opacity="0.78" />
         </svg>
       );
     case 'Numina':
       return (
         <svg viewBox="0 0 64 64" className="h-full w-full" fill="none" aria-hidden="true">
-          <path d="M28 10C28 8 29 7 32 7C35 7 36 8 36 10C36 13 34 15 32 15C30 15 28 13 28 10Z" fill="currentColor" opacity="0.9" />
-          <path d="M32 15V22" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.85" />
-          <path d="M23 22C25 18 28 16 32 16C36 16 39 18 41 22" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.8" />
-          <path d="M24 27C24 23 27 20 32 20C37 20 40 23 40 27V31C40 38 36 44 32 49C28 44 24 38 24 31V27Z" fill="currentColor" />
-          <path d="M18 28C18 26 19 24 22 24" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.6" />
-          <path d="M46 28C46 26 45 24 42 24" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.6" />
-          <path d="M22 49C25 45 28 43 32 43C36 43 39 45 42 49" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.7" />
+          <path d="M30 8C30 6 31 5 32 5C33 5 34 6 34 8V14H30V8Z" fill="currentColor" opacity="0.9" />
+          <path d="M32 14V19" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.9" />
+          <path d="M25 21C26 18 29 16 32 16C35 16 38 18 39 21" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.82" />
+          <path d="M24 24C24 21 27 19 32 19C37 19 40 21 40 24V29C40 37 37 43 32 48C27 43 24 37 24 29V24Z" fill="currentColor" />
+          <path d="M20 25C20 23 21 21 24 21" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.55" />
+          <path d="M44 25C44 23 43 21 40 21" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.55" />
+          <path d="M20 33C20 44 26 50 32 55" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.45" />
+          <path d="M44 33C44 44 38 50 32 55" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.45" />
           <path d="M27 55H37" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.85" />
         </svg>
       );

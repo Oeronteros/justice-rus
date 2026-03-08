@@ -145,8 +145,33 @@ function buildPreview(normalizedContent: string, displayTitle: string): string {
   return `${body.slice(0, 537).trimEnd()}...`;
 }
 
+function buildFeaturedPreview(normalizedContent: string, displayTitle: string): string {
+  const preview = buildPreview(normalizedContent, displayTitle);
+  if (preview.length <= 760) {
+    return preview;
+  }
+
+  return `${preview.slice(0, 757).trimEnd()}...`;
+}
+
+function splitFeaturedNews<T extends { id: string; pinned?: boolean }>(items: T[]): {
+  featured: T | null;
+  list: T[];
+} {
+  if (items.length === 0) {
+    return { featured: null, list: [] };
+  }
+
+  const featured = items.find((item) => item.pinned) ?? items[0];
+  return {
+    featured,
+    list: items.filter((item) => item.id !== featured.id),
+  };
+}
+
 function NewsSectionContent({ user }: NewsSectionProps) {
   const { data: news = [], isLoading, error, refetch } = useNews();
+  const { featured, list } = splitFeaturedNews(news);
 
   if (isLoading) {
     return (
@@ -154,7 +179,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
         title="News"
         subtitle="Loading latest guild news and updates..."
         icon={<WuxiaIcon name="news" className="w-6 h-6 text-red-400" />}
-        skeletonCount={3}
+        skeletonCount={6}
       />
     );
   }
@@ -193,25 +218,29 @@ function NewsSectionContent({ user }: NewsSectionProps) {
             <EmptyState
               icon={<WuxiaIcon name="news" className="w-10 h-10 text-gray-500" />}
               title="No News Available"
-              description="No news or announcements have been posted yet"
+              description="Пока нет опубликованных анонсов. Проверьте Discord или обновите ленту."
+              action={
+                <button onClick={() => refetch()} className="btn-secondary">
+                  <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
+                  Refresh Feed
+                </button>
+              }
             />
           ) : (
-            news.map((item) => {
-                const normalizedContent = normalizeDiscordText(item.content);
-                const displayTitle = resolveDisplayTitle(item.title, normalizedContent);
-                const preview = buildPreview(normalizedContent, displayTitle);
+            <>
+              {featured ? (
+                (() => {
+                  const normalizedContent = normalizeDiscordText(featured.content);
+                  const displayTitle = resolveDisplayTitle(featured.title, normalizedContent);
+                  const preview = buildFeaturedPreview(normalizedContent, displayTitle);
 
-                return (
-                  <article
-                    key={item.id}
-                    className="card p-7 md:p-8 hover:-translate-y-1 transition-all duration-300"
-                  >
-                    <div className="flex items-center justify-between gap-3 mb-4">
-                      <div className="flex items-center gap-2 text-xs sm:text-sm">
-                        {item.pinned ? (
+                  return (
+                    <article className="card news-hero p-7 md:p-8">
+                      <div className="flex items-center gap-2 text-xs sm:text-sm mb-4">
+                        {featured.pinned ? (
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-500/10 text-yellow-300 border border-yellow-400/30">
                             <WuxiaIcon name="thumbtack" className="w-3.5 h-3.5" />
-                            Pinned
+                            Featured
                           </span>
                         ) : null}
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-300 border border-blue-400/20">
@@ -219,38 +248,88 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                           Guild Update
                         </span>
                       </div>
-                      <span className="text-xs text-gray-400 whitespace-nowrap">{formatDate(item.date)}</span>
-                    </div>
 
-                    <h3 className="text-xl sm:text-2xl font-bold font-orbitron mb-3 text-cyan-200 tracking-wide">
-                      {displayTitle}
-                    </h3>
+                      <h3 className="text-2xl sm:text-3xl font-bold font-orbitron mb-2 text-cyan-100 tracking-wide">
+                        {displayTitle}
+                      </h3>
+                      <p className="news-meta mb-4">{formatDate(featured.date)}</p>
 
-                    <p className="text-gray-200/95 mb-6 text-base sm:text-lg leading-relaxed whitespace-pre-line break-words">
-                      {preview}
-                    </p>
+                      <p className="text-gray-200/95 mb-6 text-base sm:text-lg leading-relaxed whitespace-pre-line break-words">
+                        {preview}
+                      </p>
 
-                    <div className="flex flex-wrap justify-between items-center gap-3 pt-5 border-t border-cyan-400/15">
-                      <div className="flex items-center space-x-2 text-gray-300">
-                        <WuxiaIcon name="user" className="w-4 h-4 text-gray-400" />
-                        <span>{item.author}</span>
+                      <div className="news-card-footer mt-auto pt-5 border-t border-cyan-400/15">
+                        <div className="flex items-center gap-2 text-gray-300 text-sm sm:text-base">
+                          <WuxiaIcon name="user" className="w-4 h-4 text-gray-400" />
+                          <span>{featured.author || 'Guild Staff'}</span>
+                        </div>
+
+                        {featured.messageUrl ? (
+                          <a
+                            href={featured.messageUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="news-discord-link"
+                          >
+                            <WuxiaIcon name="link" className="w-4 h-4" />
+                            Open in Discord
+                          </a>
+                        ) : null}
                       </div>
+                    </article>
+                  );
+                })()
+              ) : null}
 
-                      {item.messageUrl ? (
-                        <a
-                          href={item.messageUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300 hover:text-cyan-200 transition-colors"
-                        >
-                          <WuxiaIcon name="link" className="w-4 h-4" />
-                          Open in Discord
-                        </a>
-                      ) : null}
-                    </div>
-                  </article>
-                );
-              })
+              {list.length > 0 ? (
+                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 items-stretch">
+                  {list.map((item) => {
+                    const normalizedContent = normalizeDiscordText(item.content);
+                    const displayTitle = resolveDisplayTitle(item.title, normalizedContent);
+                    const preview = buildPreview(normalizedContent, displayTitle);
+
+                    return (
+                      <article key={item.id} className="card news-card p-6 md:p-7">
+                        <div className="flex items-center gap-2 text-xs sm:text-sm mb-3">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-300 border border-blue-400/20">
+                            <WuxiaIcon name="news" className="w-3.5 h-3.5" />
+                            Guild Update
+                          </span>
+                        </div>
+
+                        <h3 className="text-lg sm:text-xl font-bold font-orbitron mb-2 text-cyan-200 tracking-wide">
+                          {displayTitle}
+                        </h3>
+                        <p className="news-meta mb-4">{formatDate(item.date)}</p>
+
+                        <p className="news-card-preview text-gray-200/95 mb-6 text-sm sm:text-base leading-relaxed whitespace-pre-line break-words">
+                          {preview}
+                        </p>
+
+                        <div className="news-card-footer mt-auto pt-4 border-t border-cyan-400/15">
+                          <div className="flex items-center gap-2 text-gray-300 text-sm">
+                            <WuxiaIcon name="user" className="w-4 h-4 text-gray-400" />
+                            <span>{item.author || 'Guild Staff'}</span>
+                          </div>
+
+                          {item.messageUrl ? (
+                            <a
+                              href={item.messageUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="news-discord-link"
+                            >
+                              <WuxiaIcon name="link" className="w-4 h-4" />
+                              Open in Discord
+                            </a>
+                          ) : null}
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </>
           )}
         </div>
       </div>
