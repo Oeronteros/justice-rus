@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { QueryProvider } from "@/lib/providers/QueryProvider";
 import { I18nProvider } from "@/lib/i18n/context";
@@ -39,6 +40,7 @@ export default function RootLayout({
             <div className="relative z-10">{children}</div>
           </I18nProvider>
         </QueryProvider>
+        <Analytics />
       </body>
     </html>
   );

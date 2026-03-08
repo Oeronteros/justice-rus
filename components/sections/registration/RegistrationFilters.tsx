@@ -7,6 +7,8 @@ interface RegistrationFiltersProps {
   onStatusChange: (value: string) => void;
   rankFilter: string;
   onRankChange: (value: string) => void;
+  sortBy: string;
+  onSortChange: (value: string) => void;
 }
 
 export function RegistrationFilters({
@@ -16,6 +18,8 @@ export function RegistrationFilters({
   onStatusChange,
   rankFilter,
   onRankChange,
+  sortBy,
+  onSortChange,
 }: RegistrationFiltersProps) {
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -48,6 +52,19 @@ export function RegistrationFilters({
         <option value="officer">Офицер</option>
         <option value="head">Глава</option>
         <option value="sysadmin">Сис.Админ</option>
+      </select>
+
+      <select
+        value={sortBy}
+        onChange={(e) => onSortChange(e.target.value)}
+        className="select-field"
+        aria-label="Сортировка участников"
+      >
+        <option value="nickname-asc">Имя: А-Я</option>
+        <option value="nickname-desc">Имя: Я-А</option>
+        <option value="rank-desc">По рангу</option>
+        <option value="kpi-desc">По KPI</option>
+        <option value="status-asc">По статусу</option>
       </select>
     </div>
   );

@@ -11,6 +11,7 @@ import { RegistrationTable } from './RegistrationTable';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/types';
 import { SectionHero } from '@/components/shared/SectionHero';
+import { sortRegistrations, type RegistrationSortOption } from './sortRegistrations';
 import {
   defaultRegistrationColumnLabels,
   registrationColumnOrder,
@@ -27,6 +28,7 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [rankFilter, setRankFilter] = useState('all');
+  const [sortBy, setSortBy] = useState<RegistrationSortOption>('nickname-asc');
   const [labelsOpen, setLabelsOpen] = useState(false);
   const [columnLabels, setColumnLabels] = useState<RegistrationColumnLabels>(defaultRegistrationColumnLabels);
 
@@ -70,8 +72,8 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
       );
     }
 
-    return filtered;
-  }, [registrations, searchTerm, statusFilter, rankFilter]);
+    return sortRegistrations(filtered, sortBy);
+  }, [registrations, searchTerm, statusFilter, rankFilter, sortBy]);
 
   if (isLoading) {
     return (
@@ -123,6 +125,8 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
             onStatusChange={setStatusFilter}
             rankFilter={rankFilter}
             onRankChange={setRankFilter}
+            sortBy={sortBy}
+            onSortChange={(value) => setSortBy(value as RegistrationSortOption)}
           />
 
           <div className="mb-6 rounded-2xl border border-[#2a3c4c]/60 bg-[#101a23]/60 p-4">
