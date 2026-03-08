@@ -181,11 +181,11 @@ async function loadScheduleFromDatabase(): Promise<Schedule[]> {
       `
         SELECT
           ${columns.has('id') ? 'id,' : 'NULL::text AS id,'}
-          ${columns.has('day_type') ? 'day_type,' : `COALESCE(type, '') AS day_type,`}
-          ${columns.has('time') ? 'time,' : `COALESCE(description, '') AS time,`}
-          ${columns.has('title_ru') ? 'title_ru,' : `COALESCE(registration, '') AS title_ru,`}
-          ${columns.has('title_en') ? 'title_en,' : `COALESCE(registration, '') AS title_en,`}
-          ${columns.has('title_zh') ? 'title_zh,' : `'' AS title_zh,`}
+          ${columns.has('day_type') ? 'day_type,' : "COALESCE(type, '') AS day_type,"}
+          ${columns.has('time') ? 'time,' : "COALESCE(description, '') AS time,"}
+          ${columns.has('title_ru') ? 'title_ru,' : "COALESCE(registration, '') AS title_ru,"}
+          ${columns.has('title_en') ? 'title_en,' : "COALESCE(registration, '') AS title_en,"}
+          ${columns.has('title_zh') ? 'title_zh,' : "'' AS title_zh,"}
           ${groupNameSelect}
           ${columns.has('order_index') ? 'order_index,' : '0 AS order_index,'}
           ${columns.has('active') ? 'active' : 'TRUE AS active'}
