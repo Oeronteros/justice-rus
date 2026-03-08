@@ -16,6 +16,60 @@ interface NewsSectionProps {
 const ROLE_MENTION_RE = /<@&\d+>/g;
 const USER_MENTION_RE = /<@!?\d+>/g;
 const CHANNEL_MENTION_RE = /<#\d+>/g;
+const URL_RE = /https?:\/\/[^\s)]+/gi;
+
+function decodeUriComponentSafe(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+function toReadableLabel(value: string): string {
+  const normalized = decodeUriComponentSafe(value)
+    .replace(/[\-_]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!normalized) {
+    return '';
+  }
+
+  return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+}
+
+function formatKnownNewsUrl(value: string): string | null {
+  try {
+    const url = new URL(value);
+    if (url.pathname !== '/guides') {
+      return null;
+    }
+
+    const slug = url.searchParams.get('slug');
+    if (!slug) {
+      return null;
+    }
+
+    return toReadableLabel(slug);
+  } catch {
+    return null;
+  }
+}
+
+function normalizeNewsLine(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return '';
+  }
+
+  const directUrlLabel = formatKnownNewsUrl(trimmed);
+  if (directUrlLabel) {
+    return directUrlLabel;
+  }
+
+  return trimmed.replace(URL_RE, (url) => formatKnownNewsUrl(url) ?? url);
+}
 
 function normalizeDiscordText(value: string): string {
   return value
@@ -24,6 +78,9 @@ function normalizeDiscordText(value: string): string {
     .replace(CHANNEL_MENTION_RE, '#channel')
     .replace(/\r\n?/g, '\n')
     .replace(/\n{3,}/g, '\n\n')
+    .split('\n')
+    .map((line) => normalizeNewsLine(line))
+    .join('\n')
     .trim();
 }
 
@@ -34,7 +91,8 @@ function isTechnicalTitle(value: string): boolean {
     normalized === 'untitled' ||
     normalized === '@role' ||
     normalized === '@member' ||
-    /^<[@#].*>$/.test(value.trim())
+    /^<[@#].*>$/.test(value.trim()) ||
+    /^https?:\/\//.test(normalized)
   );
 }
 

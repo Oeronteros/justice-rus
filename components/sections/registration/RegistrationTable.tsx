@@ -5,6 +5,7 @@ import { handleApiError } from '@/lib/api/client';
 import { useUpdateRegistrationStats } from '@/lib/hooks';
 import { getKPIClass, getKpiIndicator, getRankClass, getStatusClass } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
+import { ClassBadge } from '@/components/ClassIcon';
 import type { Registration, User } from '@/types';
 import { canSeeNumericKpi, hasRoleAtLeast } from '@/lib/authz';
 import type { UpdateRegistrationStatsPayload } from '@/lib/api/registrations';
@@ -325,7 +326,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className="rounded-xl bg-[#0c151d]/80 border border-[#223544]/60 p-3">
                   <div className="text-gray-400 mb-1">{columnLabels.class}</div>
-                  <div className="text-[#e6eff5]">{registration.class || '—'}</div>
+                  <ClassBadge className={registration.class} textClassName="text-[#e6eff5]" iconSizeClassName="h-8 w-8" />
                 </div>
                 <div className="rounded-xl bg-[#0c151d]/80 border border-[#223544]/60 p-3">
                   <div className="text-gray-400 mb-1">{columnLabels.guild}</div>
@@ -419,7 +420,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
                       {rankLabels[registration.rank] || registration.rank}
                     </span>
                   </td>
-                  <td>{registration.class || '—'}</td>
+                  <td><ClassBadge className={registration.class} textClassName="text-[#e6eff5]" iconSizeClassName="h-8 w-8" /></td>
                   <td>{registration.guild || '—'}</td>
                   <td>{registration.elo || 0}</td>
                   <td>{registration.mmr20 || 0}</td>

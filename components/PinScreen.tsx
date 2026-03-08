@@ -5,6 +5,7 @@ import { User } from '@/types';
 import { authApi } from '@/lib/api/auth';
 import WuxiaIcon from './WuxiaIcons';
 import { useKnownClasses } from '@/lib/hooks/useKnownClasses';
+import { ClassBadge } from '@/components/ClassIcon';
 
 interface PinScreenProps {
   onAuthSuccess: (user: User) => void;
@@ -231,6 +232,11 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                     <option key={knownClass} value={knownClass}>{knownClass}</option>
                   ))}
                 </select>
+                {className ? (
+                  <div className="rounded-2xl border border-[#2f6e8d]/35 bg-[#12202b]/55 px-4 py-3">
+                    <ClassBadge className={className} badgeClassName="w-full" textClassName="text-[#e6eff5] font-medium" />
+                  </div>
+                ) : null}
                 <input
                   value={discordHandle}
                   onChange={(e) => setDiscordHandle(e.target.value)}

@@ -3,6 +3,7 @@
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import type { PortalAccount, Registration, User, UserRole } from '@/types';
 import WuxiaIcon from '@/components/WuxiaIcons';
+import { ClassBadge } from '@/components/ClassIcon';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { canAssignRoles, canManageAccounts, roleOrder } from '@/lib/authz';
 import { roleExplainerRows, roleLabels } from '@/lib/roles';
@@ -62,7 +63,11 @@ const ProfileOverview = memo(function ProfileOverview({ profileRegistration, use
         </div>
         <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
           <div className="text-gray-400 mb-1">Класс</div>
-          <div className="text-[#e6eff5] font-medium">{profileRegistration?.class || user.className || '—'}</div>
+          <ClassBadge
+            className={profileRegistration?.class || user.className}
+            textClassName="text-[#e6eff5] font-medium"
+            iconSizeClassName="h-8 w-8"
+          />
         </div>
         <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
           <div className="text-gray-400 mb-1">Клан</div>
@@ -266,7 +271,13 @@ const AccountsPanel = memo(function AccountsPanel({
                       {account.isActive ? 'active' : 'inactive'}
                     </span>
                   </td>
-                  <td>{rosterByNickname.get(account.nickname.toLowerCase())?.class || '—'}</td>
+                  <td>
+                    <ClassBadge
+                      className={rosterByNickname.get(account.nickname.toLowerCase())?.class}
+                      textClassName="text-[#e6eff5]"
+                      iconSizeClassName="h-8 w-8"
+                    />
+                  </td>
                   <td>{new Date(account.createdAt).toLocaleDateString()}</td>
                   <td>{account.lastLoginAt ? new Date(account.lastLoginAt).toLocaleString() : '—'}</td>
                   <td>
@@ -557,6 +568,11 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
                   <option key={className} value={className}>{className}</option>
                 ))}
               </select>
+              {profileDraft.className ? (
+                <div className="rounded-2xl border border-[#2f6e8d]/35 bg-[#12202b]/55 px-4 py-3">
+                  <ClassBadge className={profileDraft.className} badgeClassName="w-full" textClassName="text-[#e6eff5] font-medium" />
+                </div>
+              ) : null}
             </label>
             <label className="space-y-2">
               <span className="text-gray-400">Клан</span>
