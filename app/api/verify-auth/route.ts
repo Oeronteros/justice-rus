@@ -5,6 +5,7 @@ import { clearAuthCookie, getAuthToken } from '@/lib/auth/request';
 import { User, VerifyAuthResponse } from '@/types';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureAccountsSchema } from '@/lib/auth/accounts';
+import { getCachedTableColumns } from '@/lib/server/db-cache';
 
 export const runtime = 'nodejs';
 
@@ -12,15 +13,7 @@ async function resolveClassName(nickname: string | undefined): Promise<string | 
   if (!nickname || !hasDatabaseUrl()) return null;
 
   const pool = getPool();
-  const columns = await pool.query(
-    `
-    SELECT column_name
-    FROM information_schema.columns
-    WHERE table_schema = 'public' AND table_name = 'registrations'
-    `
-  );
-
-  const names = new Set(columns.rows.map((row) => String(row.column_name).toLowerCase()));
+  const names = await getCachedTableColumns('registrations');
   const nickCol = names.has('nick') ? 'nick' : names.has('nickname') ? 'nickname' : null;
   const classCol = names.has('class_name') ? 'class_name' : names.has('class') ? 'class' : null;
   if (!nickCol || !classCol) return null;

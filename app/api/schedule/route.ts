@@ -5,6 +5,7 @@ import { verifyToken } from '@/lib/auth';
 import { getAuthToken } from '@/lib/auth/request';
 import { canManageAccounts } from '@/lib/authz';
 import { createScheduleSchema, updateScheduleSchema } from '@/lib/schemas/schedule';
+import { getCachedTableColumns, getPreferredTableName } from '@/lib/server/db-cache';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -19,20 +20,11 @@ const bypassHeader: Record<string, string> =
     : {};
 
 async function getScheduleTableName() {
-  const pool = getPool();
-  const tableCheck = await pool.query(
-    `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name IN ('schedule', 'shedule') ORDER BY table_name = 'schedule' DESC LIMIT 1`
-  );
-  return tableCheck.rows[0]?.table_name || 'schedule';
+  return getPreferredTableName('schedule', ['shedule']);
 }
 
 async function getScheduleColumns(tableName: string) {
-  const pool = getPool();
-  const result = await pool.query(
-    `SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name = $1`,
-    [tableName]
-  );
-  return new Set(result.rows.map((row) => String(row.column_name).toLowerCase()));
+  return getCachedTableColumns(tableName);
 }
 
 function getLanguageScheduleTitle(row: Record<string, unknown>, language: string) {

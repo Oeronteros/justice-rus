@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
 import { getAuthToken } from '@/lib/auth/request';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
+import { getPreferredTableName } from '@/lib/server/db-cache';
 
 export const runtime = 'nodejs';
 
@@ -14,10 +15,7 @@ const bypassHeader: Record<string, string> = (DISCORD_BOT_API_URL.includes('.loc
 
 async function queryScheduleFromDb() {
   const pool = getPool();
-  const tableCheck = await pool.query(
-    `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name IN ('schedule', 'shedule') ORDER BY table_name = 'schedule' DESC LIMIT 1`
-  );
-  const tableName = tableCheck.rows[0]?.table_name || 'schedule';
+  const tableName = await getPreferredTableName('schedule', ['shedule']);
 
   try {
     const result = await pool.query(
