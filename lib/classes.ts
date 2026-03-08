@@ -33,9 +33,9 @@ const classVisuals: Record<KnownClassName, ClassVisual> = {
     ringClassName: 'ring-[#c4a4ff]/35',
   },
   Celestune: {
-    accentClassName: 'text-[#4b79ff]',
-    surfaceClassName: 'from-[#0d1c4a] via-[#10296b] to-[#1b49b4]',
-    ringClassName: 'ring-[#6f96ff]/35',
+    accentClassName: 'text-[#77ffd6]',
+    surfaceClassName: 'from-[#08211e] via-[#0d3934] to-[#126255]',
+    ringClassName: 'ring-[#98ffe0]/35',
   },
   'Dragon Roar': {
     accentClassName: 'text-[#ff7f78]',
@@ -43,14 +43,14 @@ const classVisuals: Record<KnownClassName, ClassVisual> = {
     ringClassName: 'ring-[#ff918b]/35',
   },
   Sylph: {
+    accentClassName: 'text-[#4b79ff]',
+    surfaceClassName: 'from-[#0d1c4a] via-[#10296b] to-[#1b49b4]',
+    ringClassName: 'ring-[#6f96ff]/35',
+  },
+  Nightwalker: {
     accentClassName: 'text-[#ffb8bc]',
     surfaceClassName: 'from-[#231520] via-[#402134] to-[#6f3154]',
     ringClassName: 'ring-[#ffc9cc]/35',
-  },
-  Nightwalker: {
-    accentClassName: 'text-[#b979ff]',
-    surfaceClassName: 'from-[#21112f] via-[#3c1a59] to-[#6a2da6]',
-    ringClassName: 'ring-[#cb98ff]/35',
   },
 };
 

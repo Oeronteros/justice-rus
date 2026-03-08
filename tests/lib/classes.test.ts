@@ -49,7 +49,17 @@ describe('lib/classes', () => {
       surfaceClassName: 'from-[#1d1332] via-[#312054] to-[#56308e]',
       ringClassName: 'ring-[#c4a4ff]/35',
     });
+    expect(getClassVisual('Celestune')).toEqual({
+      accentClassName: 'text-[#77ffd6]',
+      surfaceClassName: 'from-[#08211e] via-[#0d3934] to-[#126255]',
+      ringClassName: 'ring-[#98ffe0]/35',
+    });
     expect(getClassVisual('Sylph')).toEqual({
+      accentClassName: 'text-[#4b79ff]',
+      surfaceClassName: 'from-[#0d1c4a] via-[#10296b] to-[#1b49b4]',
+      ringClassName: 'ring-[#6f96ff]/35',
+    });
+    expect(getClassVisual('Nightwalker')).toEqual({
       accentClassName: 'text-[#ffb8bc]',
       surfaceClassName: 'from-[#231520] via-[#402134] to-[#6f3154]',
       ringClassName: 'ring-[#ffc9cc]/35',
