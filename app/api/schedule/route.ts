@@ -6,6 +6,11 @@ import { getAuthToken } from '@/lib/auth/request';
 import { canManageAccounts } from '@/lib/authz';
 import { createScheduleSchema, updateScheduleSchema } from '@/lib/schemas/schedule';
 import { getCachedTableColumns, getPreferredTableName } from '@/lib/server/db-cache';
+import {
+  fetchScheduleDirect,
+  getScheduleReadModel,
+  refreshScheduleReadModelAfterWrite,
+} from '@/lib/server/read-models/schedule';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -107,81 +112,22 @@ export async function GET(request: NextRequest) {
 
     if (hasDatabaseUrl()) {
       try {
-        const data = await queryScheduleFromDb(language);
-        return NextResponse.json(data);
-      } catch (dbError) {
-        console.error('Database error fetching schedule:', dbError);
-        // Продолжаем к bot API если БД недоступна
+        const data = await getScheduleReadModel(language);
+        if (data.length > 0) {
+          return NextResponse.json(data);
+        }
+      } catch (readModelError) {
+        console.error('Schedule read model failed, falling back to direct source:', readModelError);
       }
     }
 
     if (!BOT_API_KEY) {
-      // Возвращаем пустой массив вместо ошибки если нет ключа
       console.warn('No BOT_API_KEY configured, returning empty schedule');
       return NextResponse.json([]);
     }
 
-    const url = new URL('/api/schedule/today', BOT_API_URL);
-    url.searchParams.set('language', language);
-
-    const res = await fetch(url, {
-      headers: {
-        'X-API-KEY': BOT_API_KEY,
-        ...bypassHeader,
-      },
-      cache: 'no-store',
-    });
-
-    const botData = await res.json().catch(() => ({}));
-
-    if (!res.ok) {
-      return NextResponse.json(
-        {
-          error: 'Failed to fetch schedule from bot',
-          message: (botData as any)?.error || (botData as any)?.message || `HTTP ${res.status}`,
-        },
-        { status: res.status }
-      );
-    }
-
-    // If it's already an array, return as is (backward compatibility)
-    if (Array.isArray(botData)) {
-      return NextResponse.json(botData);
-    }
-
-    // Map DiscordBot2 /api/schedule/today response to frontend array shape
-    const flattened: any[] = [];
-    const today = botData.date || new Date().toISOString();
-
-    const languageSafeTitle = (a: any) => {
-      if (language === 'zh') return a.title_zh || a.title_en || a.title_ru || a.title || '';
-      if (language === 'ru') return a.title_ru || a.title_en || a.title_zh || a.title || '';
-      return a.title_en || a.title_ru || a.title_zh || a.title || '';
-    };
-
-    const mapActivity = (activity: any, defaultGroup: string) => ({
-      date: today,
-      registration: languageSafeTitle(activity),
-      type: activity.day_type || defaultGroup,
-      description: activity.time || '',
-      group: activity.day_type || defaultGroup,
-    });
-
-    const categories = [
-      { key: 'daily_activities', ru: 'Ежедневные', en: 'Daily', zh: '每日' },
-      { key: 'weekly_activities', ru: 'Еженедельные', en: 'Weekly', zh: '每周' },
-      { key: 'day_activities', ru: 'Сегодня', en: 'Today', zh: '今日' },
-    ];
-
-    for (const cat of categories) {
-      const activities = (botData as any)[cat.key];
-      if (Array.isArray(activities)) {
-        const groupLabel = language === 'zh' ? cat.zh : language === 'ru' ? cat.ru : cat.en;
-        flattened.push(...activities.map((a: any) => mapActivity(a, groupLabel)));
-      }
-    }
-
-    return NextResponse.json(flattened);
+    const data = await fetchScheduleDirect(language);
+    return NextResponse.json(data);
   } catch (error) {
     console.error('Unhandled error in schedule route:', error);
     return NextResponse.json([]);
@@ -245,6 +191,8 @@ export async function POST(request: NextRequest) {
     if (!row) {
       return NextResponse.json({ error: 'Failed to create schedule entry' }, { status: 500 });
     }
+
+    await refreshScheduleReadModelAfterWrite();
 
     return NextResponse.json(toScheduleItem(row, 'ru'), { status: 201 });
   } catch (error) {
@@ -322,6 +270,8 @@ export async function PATCH(request: NextRequest) {
     if (!row) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
     }
+
+    await refreshScheduleReadModelAfterWrite();
 
     return NextResponse.json(toScheduleItem(row, 'ru'));
   } catch (error) {

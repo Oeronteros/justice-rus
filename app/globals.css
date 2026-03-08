@@ -2223,6 +2223,12 @@ body {
   -webkit-line-clamp: 5;
 }
 
+.news-card-preview.is-expanded {
+  overflow: visible;
+  display: block;
+  -webkit-line-clamp: unset;
+}
+
 .news-card-footer {
   display: flex;
   flex-wrap: wrap;
@@ -2249,6 +2255,31 @@ body {
   border-color: rgba(180, 221, 239, 0.55);
   background: rgba(15, 27, 37, 0.92);
   transform: translateY(-1px);
+}
+
+.news-expand-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(168, 219, 241, 0.94);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: color 0.16s ease, transform 0.16s ease;
+}
+
+.news-expand-button:hover {
+  color: rgba(206, 237, 250, 1);
+  transform: translateY(-1px);
+}
+
+.news-expand-button:focus-visible {
+  outline: 2px solid rgba(139, 185, 204, 0.55);
+  outline-offset: 4px;
 }
 
 /* Лёгкое свечение для интерактивных элементов */

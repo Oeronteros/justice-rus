@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -138,20 +139,11 @@ function buildPreview(normalizedContent: string, displayTitle: string): string {
     return 'Подробности обновления опубликованы в Discord-канале гильдии.';
   }
 
-  if (body.length <= 540) {
-    return body;
-  }
-
-  return `${body.slice(0, 537).trimEnd()}...`;
+  return body;
 }
 
 function buildFeaturedPreview(normalizedContent: string, displayTitle: string): string {
-  const preview = buildPreview(normalizedContent, displayTitle);
-  if (preview.length <= 760) {
-    return preview;
-  }
-
-  return `${preview.slice(0, 757).trimEnd()}...`;
+  return buildPreview(normalizedContent, displayTitle);
 }
 
 function splitFeaturedNews<T extends { id: string; pinned?: boolean }>(items: T[]): {
@@ -172,6 +164,14 @@ function splitFeaturedNews<T extends { id: string; pinned?: boolean }>(items: T[
 function NewsSectionContent({ user }: NewsSectionProps) {
   const { data: news = [], isLoading, error, refetch } = useNews();
   const { featured, list } = splitFeaturedNews(news);
+  const [expandedNewsIds, setExpandedNewsIds] = useState<string[]>([]);
+  const [isFeaturedExpanded, setIsFeaturedExpanded] = useState(false);
+
+  const toggleExpandedNews = (id: string) => {
+    setExpandedNewsIds((current) =>
+      current.includes(id) ? current.filter((itemId) => itemId !== id) : [...current, id]
+    );
+  };
 
   if (isLoading) {
     return (
@@ -233,6 +233,8 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                   const normalizedContent = normalizeDiscordText(featured.content);
                   const displayTitle = resolveDisplayTitle(featured.title, normalizedContent);
                   const preview = buildFeaturedPreview(normalizedContent, displayTitle);
+                  const canExpandFeatured = preview.length > 760;
+                  const featuredPreview = canExpandFeatured && !isFeaturedExpanded ? `${preview.slice(0, 757).trimEnd()}...` : preview;
 
                   return (
                     <article className="card news-hero p-7 md:p-8">
@@ -255,8 +257,18 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                       <p className="news-meta mb-4">{formatDate(featured.date)}</p>
 
                       <p className="text-gray-200/95 mb-6 text-base sm:text-lg leading-relaxed whitespace-pre-line break-words">
-                        {preview}
+                        {featuredPreview}
                       </p>
+
+                      {canExpandFeatured ? (
+                        <button
+                          type="button"
+                          className="news-expand-button mb-6"
+                          onClick={() => setIsFeaturedExpanded((current) => !current)}
+                        >
+                          {isFeaturedExpanded ? 'Show less' : 'Read full news'}
+                        </button>
+                      ) : null}
 
                       <div className="news-card-footer mt-auto pt-5 border-t border-cyan-400/15">
                         <div className="flex items-center gap-2 text-gray-300 text-sm sm:text-base">
@@ -287,6 +299,8 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                     const normalizedContent = normalizeDiscordText(item.content);
                     const displayTitle = resolveDisplayTitle(item.title, normalizedContent);
                     const preview = buildPreview(normalizedContent, displayTitle);
+                    const isExpanded = expandedNewsIds.includes(item.id);
+                    const canExpand = preview.length > 320;
 
                     return (
                       <article key={item.id} className="card news-card p-6 md:p-7">
@@ -302,9 +316,19 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                         </h3>
                         <p className="news-meta mb-4">{formatDate(item.date)}</p>
 
-                        <p className="news-card-preview text-gray-200/95 mb-6 text-sm sm:text-base leading-relaxed whitespace-pre-line break-words">
+                        <p className={`news-card-preview text-gray-200/95 mb-4 text-sm sm:text-base leading-relaxed whitespace-pre-line break-words${isExpanded ? ' is-expanded' : ''}`}>
                           {preview}
                         </p>
+
+                        {canExpand ? (
+                          <button
+                            type="button"
+                            className="news-expand-button mb-6"
+                            onClick={() => toggleExpandedNews(item.id)}
+                          >
+                            {isExpanded ? 'Show less' : 'Read full news'}
+                          </button>
+                        ) : null}
 
                         <div className="news-card-footer mt-auto pt-4 border-t border-cyan-400/15">
                           <div className="flex items-center gap-2 text-gray-300 text-sm">

@@ -3,8 +3,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
 import { getAuthToken } from '@/lib/auth/request';
-import { getPool, hasDatabaseUrl } from '@/lib/neon';
-import { getPreferredTableName } from '@/lib/server/db-cache';
+import { hasDatabaseUrl } from '@/lib/neon';
+import { getScheduleReadModel } from '@/lib/server/read-models/schedule';
 
 export const runtime = 'nodejs';
 
@@ -12,47 +12,6 @@ const DISCORD_BOT_API_URL = process.env.DISCORD_BOT_API_URL || 'http://localhost
 const bypassHeader: Record<string, string> = (DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me'))
   ? { 'bypass-tunnel-reminder': '1' }
   : {};
-
-async function queryScheduleFromDb() {
-  const pool = getPool();
-  const tableName = await getPreferredTableName('schedule', ['shedule']);
-
-  try {
-    const result = await pool.query(
-      `
-      SELECT day_type, time, title_ru, title_en, group_name
-      FROM ${tableName}
-      WHERE active = 1
-      ORDER BY order_index ASC, time ASC
-      `
-    );
-
-    const today = new Date().toISOString();
-    return result.rows.map((row) => ({
-      date: today,
-      registration: row.title_ru || row.title_en || '',
-      type: row.day_type || '',
-      description: row.time ? String(row.time) : '',
-      group: row.group_name || '',
-    }));
-  } catch {
-    const legacy = await pool.query(
-      `
-      SELECT date, registration, type, description
-      FROM ${tableName}
-      ORDER BY date ASC, registration ASC
-      `
-    );
-
-    return legacy.rows.map((row) => ({
-      date: row.date ? String(row.date) : new Date().toISOString(),
-      registration: row.registration || '',
-      type: row.type || '',
-      description: row.description || '',
-      group: '',
-    }));
-  }
-}
 
 export async function GET(request: NextRequest) {
   try {
@@ -63,9 +22,10 @@ export async function GET(request: NextRequest) {
     }
 
     if (hasDatabaseUrl()) {
-      const data = await queryScheduleFromDb();
-
-      return NextResponse.json(data);
+      const data = await getScheduleReadModel('ru');
+      if (data.length > 0) {
+        return NextResponse.json(data);
+      }
     }
 
     const response = await fetch(`${DISCORD_BOT_API_URL}/api/schedule`, {

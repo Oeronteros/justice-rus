@@ -7,6 +7,7 @@ import { hasDatabaseUrl } from '@/lib/neon';
 import { isKnownClassName } from '@/lib/classes';
 import { updateRegistrationStatsSchema } from '@/lib/server/registration/contracts';
 import { getRegistrationsFromDb } from '@/lib/server/registration/read';
+import { getRegistrationReadModel, refreshRegistrationReadModelAfterWrite } from '@/lib/server/registration/sync';
 import { RegistrationUpdateError, updateRegistrationStats } from '@/lib/server/registration/write';
 
 export const runtime = 'nodejs';
@@ -25,6 +26,15 @@ export async function GET(request: NextRequest) {
     }
 
     if (hasDatabaseUrl()) {
+      try {
+        const data = await getRegistrationReadModel();
+        if (data.length > 0) {
+          return NextResponse.json(data);
+        }
+      } catch (readModelError) {
+        console.error('Registration read model failed, falling back to live query:', readModelError);
+      }
+
       const data = await getRegistrationsFromDb();
       return NextResponse.json(data);
     }
@@ -76,6 +86,7 @@ export async function PATCH(request: NextRequest) {
 
     const payload = updateRegistrationStatsSchema.parse(await request.json());
     const result = await updateRegistrationStats(payload, decoded, isKnownClassName);
+    await refreshRegistrationReadModelAfterWrite();
 
     return NextResponse.json({ success: true, portalOnly: result.portalOnly });
   } catch (error) {

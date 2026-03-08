@@ -33,6 +33,27 @@ export async function runServerTaskOnce(key: string, task: () => Promise<void>):
   await getOrCreate(`task:${key}`, task);
 }
 
+export async function runCoalescedTask<T>(key: string, task: () => Promise<T>): Promise<T> {
+  const pendingKey = `coalesced:${key}`;
+  const pending = pendingValues.get(pendingKey);
+  if (pending) {
+    return pending as Promise<T>;
+  }
+
+  const next = task()
+    .then((value) => {
+      pendingValues.delete(pendingKey);
+      return value;
+    })
+    .catch((error) => {
+      pendingValues.delete(pendingKey);
+      throw error;
+    });
+
+  pendingValues.set(pendingKey, next);
+  return next;
+}
+
 export async function getCachedTableColumns(tableName: string): Promise<Set<string>> {
   const columns = await getOrCreate(`columns:${tableName}`, async () => {
     const pool = getPool();
