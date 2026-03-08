@@ -26,6 +26,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
   const [showAdminPin, setShowAdminPin] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [approvalModalMessage, setApprovalModalMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   const resetMessages = () => {
@@ -90,7 +91,10 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
         password,
       });
 
-      setNotice(payload.message || 'Аккаунт создан и ожидает активации офицером/главой/сис.админом.');
+      setNotice('');
+      setApprovalModalMessage(
+        payload.message || 'Ваша учетная запись создана и ожидает одобрения офицера. После подтверждения вы сможете войти в кабинет.'
+      );
       setMode('login');
       setClassName('');
       setDiscordHandle('');
@@ -321,6 +325,49 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
             <span>Need activation? Ask officer/head/sysadmin</span>
           </div>
         </div>
+
+        {approvalModalMessage && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#071018]/82 px-6 py-8 backdrop-blur-sm">
+            <div className="w-full max-w-md rounded-[28px] border border-[#3d7c9d]/40 bg-gradient-to-br from-[#122433] via-[#0d1924] to-[#0a1219] p-6 shadow-2xl shadow-[#041018]/60">
+              <div className="flex items-start gap-4">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#5e9fbe]/35 bg-[#153245]/80 text-[#9fd3ea]">
+                  <WuxiaIcon name="checkCircle" className="h-7 w-7" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs uppercase tracking-[0.28em] text-[#7db2ca]">Регистрация завершена</div>
+                  <h4 className="mt-2 text-2xl font-bold font-orbitron text-[#edf7fd]">Нужна проверка офицера</h4>
+                  <p className="mt-3 text-sm leading-6 text-[#c2d8e5]">
+                    Ваша учетная запись создана. Дождитесь одобрения офицера, прежде чем вход в кабинет станет доступен.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5 rounded-2xl border border-[#2b5368]/45 bg-[#10202c]/70 px-4 py-3 text-sm leading-6 text-[#d7e8f1]">
+                {approvalModalMessage}
+              </div>
+
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  className="btn-primary flex-1 px-4 py-3 text-sm font-semibold"
+                  onClick={() => setApprovalModalMessage('')}
+                >
+                  Понятно
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary flex-1 px-4 py-3 text-sm font-semibold"
+                  onClick={() => {
+                    setMode('login');
+                    setApprovalModalMessage('');
+                  }}
+                >
+                  К входу
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
