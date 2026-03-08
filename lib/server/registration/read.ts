@@ -277,10 +277,12 @@ export async function getRegistrationsFromDb(): Promise<Registration[]> {
     status: row.account_status === 'inactive' ? 'inactive' : 'active',
   }));
 
-  const seenNicknames = new Set(baseRows.map((row) => row.nickname.toLowerCase()));
-  const orphanPortalRows = portalOnlyRows.filter(
+  const activeBaseRows = baseRows.filter((row) => row.status !== 'inactive');
+  const activePortalOnlyRows = portalOnlyRows.filter((row) => row.status !== 'inactive');
+  const seenNicknames = new Set(activeBaseRows.map((row) => row.nickname.toLowerCase()));
+  const orphanPortalRows = activePortalOnlyRows.filter(
     (row) => !seenNicknames.has(row.nickname.toLowerCase())
   );
 
-  return withAvatars([...baseRows, ...orphanPortalRows]);
+  return withAvatars([...activeBaseRows, ...orphanPortalRows]);
 }
