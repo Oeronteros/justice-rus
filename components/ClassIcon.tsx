@@ -51,16 +51,16 @@ function ClassGlyph({ className }: { className: string }) {
     case 'Celestune':
       return (
         <svg viewBox="0 0 64 64" className="h-full w-full" fill="none" aria-hidden="true">
-          <path d="M17 42C21 28 30 18 42 14C43 22 39 28 33 33C39 34 44 38 47 46C33 49 22 48 17 42Z" fill="currentColor" />
-          <path d="M13 48C18 42 24 39 31 39C27 46 21 51 13 48Z" fill="currentColor" opacity="0.62" />
+          <path d="M21 51C22 37 25 23 36 13C36 24 40 31 50 39C43 47 34 51 21 51Z" fill="currentColor" />
+          <path d="M13 46C18 36 23 26 26 14C32 21 31 31 24 41C21 45 17 47 13 46Z" fill="currentColor" opacity="0.78" />
+          <path d="M31 52C38 45 45 38 53 33C51 45 43 52 31 52Z" fill="currentColor" opacity="0.45" />
         </svg>
       );
     case 'Dragon Roar':
       return (
         <svg viewBox="0 0 64 64" className="h-full w-full" fill="none" aria-hidden="true">
-          <path d="M28 10L36 10L39 18L35 22L37 49L32 56L27 49L29 22L25 18L28 10Z" fill="currentColor" />
-          <path d="M13 37C18 48 28 54 40 54C46 54 51 52 55 49" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.8" />
-          <path d="M17 18C13 22 11 28 11 34C11 37 11 40 12 42" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.35" />
+          <path d="M52 12C45 10 38 12 33 18C28 23 26 30 25 37C22 31 16 29 11 31C15 40 21 46 30 50C42 55 51 48 54 36C56 27 55 18 52 12Z" fill="currentColor" />
+          <path d="M18 13C30 10 41 15 47 25C40 21 32 22 27 28C23 33 21 40 20 47C13 40 10 28 18 13Z" fill="currentColor" opacity="0.28" />
         </svg>
       );
     case 'Sylph':
@@ -75,8 +75,9 @@ function ClassGlyph({ className }: { className: string }) {
     case 'Nightwalker':
       return (
         <svg viewBox="0 0 64 64" className="h-full w-full" fill="none" aria-hidden="true">
-          <path d="M17 42C21 28 30 18 42 14C43 22 39 28 33 33C39 34 44 38 47 46C33 49 22 48 17 42Z" fill="currentColor" />
-          <path d="M13 48C18 42 24 39 31 39C27 46 21 51 13 48Z" fill="currentColor" opacity="0.62" />
+          <path d="M18 28C22 18 30 13 42 12C40 20 36 26 31 31C37 32 42 36 46 45C35 48 25 47 18 42C16 38 16 33 18 28Z" fill="currentColor" />
+          <path d="M13 49C18 43 23 40 29 40C26 46 21 51 13 49Z" fill="currentColor" opacity="0.62" />
+          <path d="M43 16C46 13 49 12 52 13C50 17 47 20 44 21" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.55" />
         </svg>
       );
     default:
