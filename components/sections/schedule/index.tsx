@@ -67,6 +67,11 @@ type ParsedScheduleItem = ScheduleItem & {
   parsedTime: { start: number; end: number } | null;
 };
 
+const recurringGroupAliases = {
+  daily: ['daily', 'ежедневные', '每日'],
+  weekly: ['weekly', 'еженедельные', '每周'],
+};
+
 const weekdays: WeekdayConfig[] = [
   {
     key: 'monday',
@@ -125,6 +130,16 @@ function getScheduleDayIndex(item: ScheduleItem): number | null {
   );
 
   return matchIndex >= 0 ? matchIndex : null;
+}
+
+function isRecurringScheduleItem(item: ScheduleItem, kind: keyof typeof recurringGroupAliases): boolean {
+  const values = [item.group, item.type, item.dayType]
+    .filter((value): value is string => Boolean(value))
+    .map((value) => normalizeDayValue(value));
+
+  return values.some((value) =>
+    recurringGroupAliases[kind].some((alias) => value === normalizeDayValue(alias))
+  );
 }
 
 function getDisplayTitle(item: ScheduleItem, language: Language): string {
@@ -263,7 +278,15 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
   const todayIndex = getWeekdayIndex(now);
   const selectedDay = weekdays[selectedDayIndex];
   const isSelectedToday = selectedDayIndex === todayIndex;
-  const selectedSchedules = schedules.filter((item) => getScheduleDayIndex(item) === selectedDayIndex);
+  const selectedSchedules = schedules.filter((item) => {
+    const dayIndex = getScheduleDayIndex(item);
+
+    if (dayIndex === selectedDayIndex) {
+      return true;
+    }
+
+    return isRecurringScheduleItem(item, 'daily') || isRecurringScheduleItem(item, 'weekly');
+  });
 
   // Группируем по группам
   const groupedByGroup = selectedSchedules.reduce((acc, item) => {
