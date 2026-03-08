@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { LoadingState } from '@/components/shared/LoadingState';
@@ -25,6 +25,66 @@ function formatDateTime(value: string | null) {
     hour: '2-digit',
     minute: '2-digit',
   });
+}
+
+function formatDuration(totalSeconds: number) {
+  const safeSeconds = Math.max(0, totalSeconds);
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
+  const hours = Math.floor(minutes / 60);
+
+  if (hours > 0) {
+    return `${String(hours).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
+
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function getQueueElapsed(joinedAt: string | null | undefined, now: number) {
+  if (!joinedAt) return 0;
+  const startedAt = new Date(joinedAt).getTime();
+  if (!Number.isFinite(startedAt)) return 0;
+  return Math.max(0, Math.floor((now - startedAt) / 1000));
+}
+
+function QueueSearchBanner({ joinedAt, queueSize }: { joinedAt: string; queueSize: number }) {
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, []);
+
+  const elapsed = getQueueElapsed(joinedAt, now);
+
+  return (
+    <div className="matchmaking-banner">
+      <div className="matchmaking-banner__fx" aria-hidden="true">
+        <span className="matchmaking-banner__pulse" />
+        <span className="matchmaking-banner__pulse matchmaking-banner__pulse--delay" />
+        <span className="matchmaking-banner__scan" />
+      </div>
+
+      <div className="matchmaking-banner__content">
+        <div className="matchmaking-banner__status">
+          <span className="matchmaking-banner__dot" />
+          Поиск матча
+        </div>
+
+        <div className="matchmaking-banner__timer">{formatDuration(elapsed)}</div>
+
+        <div className="matchmaking-banner__meta">
+          <span>Плашка подбора активна</span>
+          <span>Игроков в очереди: {queueSize}</span>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function MatchCard({
@@ -166,6 +226,8 @@ function PvpSectionContent({ user }: PvpSectionProps) {
   }
 
   const canJoinQueue = !data.userInQueue && !data.activeMatch;
+  const viewerId = user.discordId || user.id || user.nickname || '';
+  const currentQueueEntry = data.queue.find((entry) => entry.playerId === viewerId || entry.nickname === user.nickname);
 
   return (
     <section className="py-12">
@@ -196,6 +258,10 @@ function PvpSectionContent({ user }: PvpSectionProps) {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
           <div className="lg:col-span-2 space-y-6">
             <div className="card p-6 space-y-5">
+              {data.userInQueue && currentQueueEntry?.joinedAt && !data.activeMatch && (
+                <QueueSearchBanner joinedAt={currentQueueEntry.joinedAt} queueSize={data.queue.length} />
+              )}
+
               <div>
                 <div className="text-sm uppercase tracking-widest text-green-300 mb-2">Твой статус</div>
                 <div className="text-2xl font-bold font-orbitron text-[#e6eff5]">

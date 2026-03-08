@@ -1,10 +1,11 @@
-// Re-export all API modules
-export { api, ApiError, handleApiError } from './client';
-export { guidesApi } from './guides';
-export { authApi } from './auth';
-export { accountsApi } from './accounts';
-export { registrationsApi } from './registrations';
-export { scheduleApi } from './schedule';
-export { newsApi } from './news';
-export { absencesApi } from './absences';
-export { helpApi } from './help';
+export * from './absences';
+export * from './accounts';
+export * from './auth';
+export * from './classes';
+export * from './client';
+export * from './guides';
+export * from './help';
+export * from './news';
+export * from './pvp';
+export * from './registrations';
+export * from './schedule';

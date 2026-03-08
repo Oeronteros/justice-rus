@@ -57,6 +57,86 @@ function formatCountdown(minutes: number, language: Language): string {
   return `in ${mins}m`;
 }
 
+type WeekdayConfig = {
+  key: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+  labels: Record<Language, string>;
+  aliases: string[];
+};
+
+type ParsedScheduleItem = ScheduleItem & {
+  parsedTime: { start: number; end: number } | null;
+};
+
+const weekdays: WeekdayConfig[] = [
+  {
+    key: 'monday',
+    labels: { ru: 'Понедельник', en: 'Monday', zh: '星期一' },
+    aliases: ['понедельник', 'пн', 'monday', 'mon', '星期一', '周一', '1'],
+  },
+  {
+    key: 'tuesday',
+    labels: { ru: 'Вторник', en: 'Tuesday', zh: '星期二' },
+    aliases: ['вторник', 'вт', 'tuesday', 'tue', 'tues', '星期二', '周二', '2'],
+  },
+  {
+    key: 'wednesday',
+    labels: { ru: 'Среда', en: 'Wednesday', zh: '星期三' },
+    aliases: ['среда', 'ср', 'wednesday', 'wed', '星期三', '周三', '3'],
+  },
+  {
+    key: 'thursday',
+    labels: { ru: 'Четверг', en: 'Thursday', zh: '星期四' },
+    aliases: ['четверг', 'чт', 'thursday', 'thu', 'thur', 'thurs', '星期四', '周四', '4'],
+  },
+  {
+    key: 'friday',
+    labels: { ru: 'Пятница', en: 'Friday', zh: '星期五' },
+    aliases: ['пятница', 'пт', 'friday', 'fri', '星期五', '周五', '5'],
+  },
+  {
+    key: 'saturday',
+    labels: { ru: 'Суббота', en: 'Saturday', zh: '星期六' },
+    aliases: ['суббота', 'сб', 'saturday', 'sat', '星期六', '周六', '6'],
+  },
+  {
+    key: 'sunday',
+    labels: { ru: 'Воскресенье', en: 'Sunday', zh: '星期日' },
+    aliases: ['воскресенье', 'вс', 'sunday', 'sun', '星期日', '星期天', '周日', '周天', '7', '0'],
+  },
+];
+
+function normalizeDayValue(value: string): string {
+  return value.trim().toLowerCase().replace(/\u0451/g, '\u0435');
+}
+
+function getWeekdayIndex(date: Date): number {
+  return (date.getDay() + 6) % 7;
+}
+
+function getScheduleDayIndex(item: ScheduleItem): number | null {
+  const normalized = normalizeDayValue(item.dayType || item.type || item.group || '');
+
+  if (!normalized) {
+    return null;
+  }
+
+  const matchIndex = weekdays.findIndex((weekday) =>
+    weekday.aliases.some((alias) => normalized === normalizeDayValue(alias))
+  );
+
+  return matchIndex >= 0 ? matchIndex : null;
+}
+
+function getDisplayTitle(item: ScheduleItem, language: Language): string {
+  if (language === 'zh') return item.titleZh || item.titleEn || item.titleRu || item.registration || '';
+  if (language === 'en') return item.titleEn || item.titleRu || item.titleZh || item.registration || '';
+  return item.titleRu || item.titleEn || item.titleZh || item.registration || '';
+}
+
+function getDisplayTime(item: ScheduleItem): string {
+  return item.time || item.description || '\u2014';
+}
+
 // Цвета для групп
 const groupColors: Record<string, string> = {
   'Общее': '#8fb9cc',
@@ -112,7 +192,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
   const updateSchedule = useUpdateSchedule();
   const createSchedule = useCreateSchedule();
   const [now, setNow] = useState(() => new Date());
-  const [filter, setFilter] = useState<string>('all');
+  const [selectedDayIndex, setSelectedDayIndex] = useState(() => getWeekdayIndex(new Date()));
   const [editingSchedule, setEditingSchedule] = useState<ScheduleItem | null>(null);
   const [editDraft, setEditDraft] = useState<ScheduleEditDraft | null>(null);
   const [scheduleNotice, setScheduleNotice] = useState<string | null>(null);
@@ -180,16 +260,13 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
 
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
-  const today = new Date();
-  const locale = language === 'ru' ? 'ru-RU' : language === 'zh' ? 'zh-CN' : 'en-US';
-  const dayName = today.toLocaleDateString(locale, { weekday: 'long' });
-  const dateStr = today.toLocaleDateString(locale, {
-    day: 'numeric',
-    month: 'long',
-  });
+  const todayIndex = getWeekdayIndex(now);
+  const selectedDay = weekdays[selectedDayIndex];
+  const isSelectedToday = selectedDayIndex === todayIndex;
+  const selectedSchedules = schedules.filter((item) => getScheduleDayIndex(item) === selectedDayIndex);
 
   // Группируем по группам
-  const groupedByGroup = schedules.reduce((acc, item) => {
+  const groupedByGroup = selectedSchedules.reduce((acc, item) => {
     const groupName = item.group || (language === 'ru' ? 'Общее' : language === 'zh' ? '综合' : 'General');
     if (!acc[groupName]) acc[groupName] = [];
     acc[groupName].push(item);
@@ -202,21 +279,20 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
     return a.localeCompare(b);
   });
 
-  // Фильтруем группы
-  const filteredGroups = filter === 'all' 
-    ? sortedGroups 
-    : sortedGroups.filter(g => g === filter);
-
   // Находим следующее событие
-  const nextEvent = schedules
-    .map(item => ({ ...item, time: parseTime(item.description) }))
-    .filter(item => item.time && item.time.start > currentMinutes)
-    .sort((a, b) => (a.time?.start || 0) - (b.time?.start || 0))[0];
+  const nextEvent = isSelectedToday
+    ? selectedSchedules
+      .map<ParsedScheduleItem>((item) => ({ ...item, parsedTime: parseTime(getDisplayTime(item)) }))
+      .filter((item) => item.parsedTime && item.parsedTime.start > currentMinutes)
+      .sort((a, b) => (a.parsedTime?.start || 0) - (b.parsedTime?.start || 0))[0]
+    : undefined;
 
   // Находим текущее событие
-  const currentEvent = schedules
-    .map(item => ({ ...item, time: parseTime(item.description) }))
-    .find(item => item.time && item.time.start <= currentMinutes && item.time.end > currentMinutes);
+  const currentEvent = isSelectedToday
+    ? selectedSchedules
+      .map<ParsedScheduleItem>((item) => ({ ...item, parsedTime: parseTime(getDisplayTime(item)) }))
+      .find((item) => item.parsedTime && item.parsedTime.start <= currentMinutes && item.parsedTime.end > currentMinutes)
+    : undefined;
 
   if (isLoading) {
     return (
@@ -259,14 +335,37 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
       <div className="max-w-4xl mx-auto px-4">
         <SectionHero
           icon={<WuxiaIcon name="schedule" className="w-5 h-5" />}
-          title={language === 'ru' ? `Расписание — ${dayName}` : language === 'zh' ? `日程 - ${dayName}` : `Schedule - ${dayName}`}
-          subtitle={dateStr}
+          title={language === 'ru' ? `Расписание — ${selectedDay.labels.ru}` : language === 'zh' ? `日程 - ${selectedDay.labels.zh}` : `Schedule - ${selectedDay.labels.en}`}
+          subtitle={language === 'ru' ? 'Один день за раз' : language === 'zh' ? '一次只看一天' : 'One day at a time'}
           chips={[
-            language === 'ru' ? `Групп: ${sortedGroups.length}` : language === 'zh' ? `分组: ${sortedGroups.length}` : `Groups: ${sortedGroups.length}`,
-            language === 'ru' ? `Событий: ${schedules.length}` : language === 'zh' ? `事件: ${schedules.length}` : `Events: ${schedules.length}`,
+            language === 'ru' ? `День: ${selectedDayIndex + 1}/7` : language === 'zh' ? `日期: ${selectedDayIndex + 1}/7` : `Day: ${selectedDayIndex + 1}/7`,
+            language === 'ru' ? `Событий: ${selectedSchedules.length}` : language === 'zh' ? `事件: ${selectedSchedules.length}` : `Events: ${selectedSchedules.length}`,
           ]}
           actions={
             <>
+              <div className="flex items-center gap-2 rounded-xl border border-[#223544]/60 bg-[#0c151d]/80 px-2 py-1">
+                <button
+                  type="button"
+                  className="dc-icon-btn h-10 w-10 rounded-lg text-[#8fb9cc]"
+                  onClick={() => setSelectedDayIndex((current) => (current + weekdays.length - 1) % weekdays.length)}
+                  title={language === 'ru' ? 'Предыдущий день' : language === 'zh' ? '上一天' : 'Previous day'}
+                  aria-label={language === 'ru' ? 'Предыдущий день' : language === 'zh' ? '上一天' : 'Previous day'}
+                >
+                  <span aria-hidden="true" className="text-lg leading-none">&lt;</span>
+                </button>
+                <div className="min-w-[9rem] px-2 text-center text-sm font-semibold text-[#e6eff5]">
+                  {selectedDay.labels[language]}
+                </div>
+                <button
+                  type="button"
+                  className="dc-icon-btn h-10 w-10 rounded-lg text-[#8fb9cc]"
+                  onClick={() => setSelectedDayIndex((current) => (current + 1) % weekdays.length)}
+                  title={language === 'ru' ? 'Следующий день' : language === 'zh' ? '下一天' : 'Next day'}
+                  aria-label={language === 'ru' ? 'Следующий день' : language === 'zh' ? '下一天' : 'Next day'}
+                >
+                  <span aria-hidden="true" className="text-lg leading-none">&gt;</span>
+                </button>
+              </div>
               {canEditSchedule && (
                 <button
                   type="button"
@@ -277,17 +376,6 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                   {language === 'ru' ? 'Добавить событие' : language === 'zh' ? '添加活动' : 'Add event'}
                 </button>
               )}
-              <select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="select-field text-sm"
-              >
-              <option value="all">{language === 'ru' ? 'Все группы' : language === 'zh' ? '全部分组' : 'All groups'}</option>
-                {sortedGroups.map(group => (
-                  <option key={group} value={group}>{group}</option>
-                ))}
-              </select>
-
               <button
                 onClick={() => refetch()}
                 className="dc-icon-btn p-2.5 rounded-xl"
@@ -315,12 +403,12 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                   {language === 'ru' ? 'Сейчас идёт' : language === 'zh' ? '进行中' : 'Happening now'}
                 </div>
-                <div className="text-white font-semibold text-lg">{currentEvent.registration}</div>
+                <div className="text-white font-semibold text-lg">{getDisplayTitle(currentEvent, language)}</div>
                 <div className="text-gray-400 text-sm mt-1">
-                  {currentEvent.description} • {currentEvent.group || (language === 'ru' ? 'Общее' : language === 'zh' ? '综合' : 'General')}
+                  {getDisplayTime(currentEvent)} • {currentEvent.group || (language === 'ru' ? 'Общее' : language === 'zh' ? '综合' : 'General')}
                 </div>
               </div>
-            ) : nextEvent && nextEvent.time ? (
+            ) : nextEvent && nextEvent.parsedTime ? (
               <div className="bg-gradient-to-r from-[#1a2a3a] to-[#1a1a2a] border border-[#8fb9cc]/30 rounded-xl p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -328,14 +416,14 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                       <WuxiaIcon name="schedule" className="w-4 h-4" />
                       {language === 'ru' ? 'Следующее событие' : language === 'zh' ? '下一场活动' : 'Next event'}
                     </div>
-                    <div className="text-white font-semibold text-lg">{nextEvent.registration}</div>
+                    <div className="text-white font-semibold text-lg">{getDisplayTitle(nextEvent, language)}</div>
                     <div className="text-gray-400 text-sm mt-1">
-                      {nextEvent.description} • {nextEvent.group || (language === 'ru' ? 'Общее' : language === 'zh' ? '综合' : 'General')}
+                      {getDisplayTime(nextEvent)} • {nextEvent.group || (language === 'ru' ? 'Общее' : language === 'zh' ? '综合' : 'General')}
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold text-[#8fb9cc]">
-                      {formatCountdown(nextEvent.time.start - currentMinutes, language)}
+                      {formatCountdown(nextEvent.parsedTime.start - currentMinutes, language)}
                     </div>
                   </div>
                 </div>
@@ -344,11 +432,11 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
           </div>
         )}
 
-        {schedules.length === 0 ? (
+        {selectedSchedules.length === 0 ? (
           <div className="bg-[#1a1a1a] rounded-xl border border-gray-800 p-12 text-center">
             <WuxiaIcon name="schedule" className="w-12 h-12 text-gray-600 mx-auto mb-4" />
             <p className="text-gray-400 text-lg">
-              {language === 'ru' ? 'Нет событий на сегодня' : language === 'zh' ? '今天没有活动' : 'No events today'}
+              {language === 'ru' ? `Нет событий на ${selectedDay.labels.ru.toLowerCase()}` : language === 'zh' ? `${selectedDay.labels.zh}没有活动` : `No events for ${selectedDay.labels.en}`}
             </p>
             <p className="text-gray-500 text-sm mt-2">
               {language === 'ru' ? 'Отдыхай, воин!' : language === 'zh' ? '好好休息，勇士！' : 'Rest well, warrior!'}
@@ -356,7 +444,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
-            {filteredGroups.map((groupName) => {
+            {sortedGroups.map((groupName) => {
               const items = groupedByGroup[groupName];
               const color = getGroupColor(groupName);
               
@@ -381,10 +469,11 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                   {/* События */}
                   <div className="divide-y divide-gray-800/50">
                     {items.map((item, idx) => {
-                      const time = parseTime(item.description);
+                      const timeLabel = getDisplayTime(item);
+                      const time = parseTime(timeLabel);
                       const isNow = time && time.start <= currentMinutes && time.end > currentMinutes;
                       const isPast = time && time.end <= currentMinutes;
-                      const isNext = nextEvent && item.registration === nextEvent.registration && item.description === nextEvent.description;
+                      const isNext = nextEvent && item.id === nextEvent.id;
                       
                       return (
                         <div
@@ -403,13 +492,13 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                           <div className={`font-mono text-sm w-16 flex-shrink-0 ${
                             isNow ? 'text-green-400' : isNext ? 'text-[#8fb9cc]' : 'text-gray-500'
                           }`}>
-                            {item.description || '—'}
+                            {timeLabel}
                           </div>
                           
                           {/* Название */}
                           <div className="flex-1 min-w-0">
                             <div className={`${isPast ? 'text-gray-500' : 'text-gray-200'} ${isNow ? 'font-medium' : ''}`}>
-                              {item.registration}
+                              {getDisplayTitle(item, language)}
                             </div>
                             {isNow && (
                               <span className="inline-flex items-center gap-1 text-xs text-green-400 mt-1">
@@ -445,16 +534,16 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
         )}
 
         {/* Статистика */}
-        {schedules.length > 0 && (
+        {selectedSchedules.length > 0 && (
           <div className="mt-6 flex items-center justify-center gap-6 text-sm text-gray-500">
-            <span>{sortedGroups.length} {language === 'ru' ? 'групп' : language === 'zh' ? '分组' : 'groups'}</span>
+            <span>{selectedDay.labels[language]}</span>
             <span>•</span>
-            <span>{schedules.length} {language === 'ru' ? 'событий' : language === 'zh' ? '活动' : 'events'}</span>
-            {nextEvent && nextEvent.time && (
+            <span>{selectedSchedules.length} {language === 'ru' ? 'событий' : language === 'zh' ? '活动' : 'events'}</span>
+            {nextEvent && nextEvent.parsedTime && (
               <>
                 <span>•</span>
                 <span className="text-[#8fb9cc]">
-                  {language === 'ru' ? 'След.' : language === 'zh' ? '下一个' : 'Next'}: {formatCountdown(nextEvent.time.start - currentMinutes, language)}
+                  {language === 'ru' ? 'След.' : language === 'zh' ? '下一个' : 'Next'}: {formatCountdown(nextEvent.parsedTime.start - currentMinutes, language)}
                 </span>
               </>
             )}

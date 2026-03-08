@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getTokenFromRequest, verifyToken } from '@/lib/auth';
+import { verifyToken } from '@/lib/auth';
+import { getAuthToken } from '@/lib/auth/request';
 import { hasRoleAtLeast } from '@/lib/authz';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 
@@ -38,7 +39,7 @@ function sanitizeRule(rule: RuleInput) {
 }
 
 function requireOfficerWrite(request: NextRequest) {
-  const token = getTokenFromRequest(request) || request.cookies.get('auth_token')?.value || null;
+  const token = getAuthToken(request);
   const decoded = token ? verifyToken(token) : null;
 
   if (!decoded) {

@@ -74,14 +74,6 @@ export function verifyToken(token: string): User | null {
   }
 }
 
-export function getTokenFromRequest(request: Request): string | null {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return null;
-  }
-  return authHeader.split(' ')[1];
-}
-
 export function safeEqual(input: string, expected: string | null | undefined): boolean {
   if (!expected) {
     return false;
