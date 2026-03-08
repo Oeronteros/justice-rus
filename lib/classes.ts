@@ -23,9 +23,9 @@ const classVisuals: Record<KnownClassName, ClassVisual> = {
     ringClassName: 'ring-[#ffd79a]/35',
   },
   Bloodstorm: {
-    accentClassName: 'text-[#d6fbff]',
-    surfaceClassName: 'from-[#0a2528] via-[#103d42] to-[#1d6b73]',
-    ringClassName: 'ring-[#d1fcff]/35',
+    accentClassName: 'text-[#ff7f78]',
+    surfaceClassName: 'from-[#2a1215] via-[#3a171b] to-[#5f1f28]',
+    ringClassName: 'ring-[#ff918b]/35',
   },
   Numina: {
     accentClassName: 'text-[#b68cff]',
@@ -33,24 +33,24 @@ const classVisuals: Record<KnownClassName, ClassVisual> = {
     ringClassName: 'ring-[#c4a4ff]/35',
   },
   Celestune: {
-    accentClassName: 'text-[#77ffd6]',
-    surfaceClassName: 'from-[#08211e] via-[#0d3934] to-[#126255]',
-    ringClassName: 'ring-[#98ffe0]/35',
-  },
-  'Dragon Roar': {
-    accentClassName: 'text-[#ff7f78]',
-    surfaceClassName: 'from-[#2a1215] via-[#3a171b] to-[#5f1f28]',
-    ringClassName: 'ring-[#ff918b]/35',
-  },
-  Sylph: {
     accentClassName: 'text-[#4b79ff]',
     surfaceClassName: 'from-[#0d1c4a] via-[#10296b] to-[#1b49b4]',
     ringClassName: 'ring-[#6f96ff]/35',
   },
-  Nightwalker: {
+  'Dragon Roar': {
+    accentClassName: 'text-[#77ffd6]',
+    surfaceClassName: 'from-[#08211e] via-[#0d3934] to-[#126255]',
+    ringClassName: 'ring-[#98ffe0]/35',
+  },
+  Sylph: {
     accentClassName: 'text-[#ffb8bc]',
     surfaceClassName: 'from-[#231520] via-[#402134] to-[#6f3154]',
     ringClassName: 'ring-[#ffc9cc]/35',
+  },
+  Nightwalker: {
+    accentClassName: 'text-[#d6fbff]',
+    surfaceClassName: 'from-[#0a2528] via-[#103d42] to-[#1d6b73]',
+    ringClassName: 'ring-[#d1fcff]/35',
   },
 };
 

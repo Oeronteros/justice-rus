@@ -51,6 +51,14 @@ function ClassGlyph({ className }: { className: string }) {
     case 'Celestune':
       return (
         <svg viewBox="0 0 64 64" className="h-full w-full" fill="none" aria-hidden="true">
+          <path d="M21 51C22 37 25 23 36 13C36 24 40 31 50 39C43 47 34 51 21 51Z" fill="currentColor" />
+          <path d="M13 46C18 36 23 26 26 14C32 21 31 31 24 41C21 45 17 47 13 46Z" fill="currentColor" opacity="0.78" />
+          <path d="M31 52C38 45 45 38 53 33C51 45 43 52 31 52Z" fill="currentColor" opacity="0.45" />
+        </svg>
+      );
+    case 'Dragon Roar':
+      return (
+        <svg viewBox="0 0 64 64" className="h-full w-full" fill="none" aria-hidden="true">
           <circle cx="32" cy="12" r="6" stroke="currentColor" strokeWidth="3.5" opacity="0.9" />
           <path d="M32 18V50" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
           <path d="M20 26L32 20L44 26" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -61,28 +69,23 @@ function ClassGlyph({ className }: { className: string }) {
           <path d="M51 17L47 17" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.6" />
         </svg>
       );
-    case 'Dragon Roar':
-      return (
-        <svg viewBox="0 0 64 64" className="h-full w-full" fill="none" aria-hidden="true">
-          <path d="M52 12C45 10 38 12 33 18C28 23 26 30 25 37C22 31 16 29 11 31C15 40 21 46 30 50C42 55 51 48 54 36C56 27 55 18 52 12Z" fill="currentColor" />
-          <path d="M18 13C30 10 41 15 47 25C40 21 32 22 27 28C23 33 21 40 20 47C13 40 10 28 18 13Z" fill="currentColor" opacity="0.28" />
-        </svg>
-      );
     case 'Sylph':
-      return (
-        <svg viewBox="0 0 64 64" className="h-full w-full" fill="none" aria-hidden="true">
-          <path d="M21 51C22 37 25 23 36 13C36 24 40 31 50 39C43 47 34 51 21 51Z" fill="currentColor" />
-          <path d="M13 46C18 36 23 26 26 14C32 21 31 31 24 41C21 45 17 47 13 46Z" fill="currentColor" opacity="0.78" />
-          <path d="M31 52C38 45 45 38 53 33C51 45 43 52 31 52Z" fill="currentColor" opacity="0.45" />
-        </svg>
-      );
-    case 'Nightwalker':
       return (
         <svg viewBox="0 0 64 64" className="h-full w-full" fill="none" aria-hidden="true">
           <circle cx="31" cy="33" r="22" stroke="currentColor" strokeWidth="3.5" opacity="0.34" />
           <path d="M46 18C40 17 34 20 30 25C26 30 25 37 26 45C20 41 16 35 16 28C16 19 24 13 34 13C39 13 43 14 46 18Z" fill="currentColor" />
           <circle cx="18" cy="25" r="3" fill="currentColor" opacity="0.75" />
           <circle cx="47" cy="45" r="3" fill="currentColor" opacity="0.75" />
+        </svg>
+      );
+    case 'Nightwalker':
+      return (
+        <svg viewBox="0 0 64 64" className="h-full w-full" fill="none" aria-hidden="true">
+          <path d="M29 9L36 9L40 16L34 21L36 47L32 56L28 47L30 21L24 16L29 9Z" fill="currentColor" />
+          <path d="M32 20L32 55" stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" opacity="0.4" />
+          <path d="M16 43C22 50 30 53 40 53C46 53 50 51 54 47" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.34" />
+          <path d="M15 30C18 24 23 19 29 16" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.24" />
+          <path d="M24 28L32 23L40 28" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" opacity="0.78" />
         </svg>
       );
     default:
