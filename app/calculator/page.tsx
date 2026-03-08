@@ -1,9 +1,12 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { useLanguage } from '@/lib/i18n/context';
 import { SectionHero } from '@/components/shared/SectionHero';
+import { authApi } from '@/lib/api/auth';
+import { hasRoleAtLeast } from '@/lib/authz';
+import type { User } from '@/types';
 
 type BuildInput = {
   name: string;
@@ -40,10 +43,39 @@ const parseNum = (value: string, fallback = 0) => {
 
 export default function CalculatorPage() {
   const { language } = useLanguage();
+  const [userRole, setUserRole] = useState<User['role']>('guest');
+  const [isAuthResolved, setIsAuthResolved] = useState(false);
   const [builds, setBuilds] = useState<BuildInput[]>([
     createBuild('Build A'),
     createBuild('Build B'),
   ]);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadUserRole = async () => {
+      try {
+        const response = await authApi.verify();
+        if (active) {
+          setUserRole(response.user.role);
+        }
+      } catch {
+        if (active) {
+          setUserRole('guest');
+        }
+      } finally {
+        if (active) {
+          setIsAuthResolved(true);
+        }
+      }
+    };
+
+    void loadUserRole();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const copy = useMemo(() => {
     if (language === 'ru') {
@@ -70,6 +102,7 @@ export default function CalculatorPage() {
         dps: 'DPS',
         totalDamage: 'Общий урон',
         formula: 'Формула: средний удар = (база + плоский бонус) × (1 + бонус%) × (1 + шанс крита × (множитель - 1)); DPS = средний удар × скорость атак.',
+        accessRestricted: 'Этот функционал доступен узкому кругу лиц.',
       };
     }
 
@@ -97,6 +130,7 @@ export default function CalculatorPage() {
         dps: 'DPS',
         totalDamage: '总伤害',
         formula: '公式：平均单次 = (基础 + 固定加成) × (1 + 伤害加成%) × (1 + 暴击率 × (暴击倍率 - 1)); DPS = 平均单次 × 攻速。',
+        accessRestricted: '该功能仅对少数人员开放。',
       };
     }
 
@@ -123,14 +157,27 @@ export default function CalculatorPage() {
       dps: 'DPS',
       totalDamage: 'Total damage',
       formula: 'Formula: avg hit = (base + flat bonus) x (1 + bonus%) x (1 + crit chance x (crit mult - 1)); DPS = avg hit x attack speed.',
+      accessRestricted: 'This functionality is available to a narrow circle of users.',
     };
   }, [language]);
 
+  const canUseCalculator = isAuthResolved && hasRoleAtLeast(userRole, 'officer');
+  const controlDisabled = !canUseCalculator;
+  const inputClassName = controlDisabled ? 'input-field opacity-60 cursor-not-allowed' : 'input-field';
+  const nameInputClassName = controlDisabled
+    ? 'bg-transparent text-2xl font-bold font-orbitron text-[#8fb9cc] focus:outline-none opacity-60 cursor-not-allowed'
+    : 'bg-transparent text-2xl font-bold font-orbitron text-[#8fb9cc] focus:outline-none';
+  const secondaryButtonClassName = controlDisabled
+    ? 'btn-secondary px-4 py-3 text-sm font-semibold opacity-60 cursor-not-allowed'
+    : 'btn-secondary px-4 py-3 text-sm font-semibold';
+
   const updateBuild = (index: number, key: keyof BuildInput, value: string) => {
+    if (controlDisabled) return;
     setBuilds(prev => prev.map((build, i) => (i == index ? { ...build, [key]: value } : build)));
   };
 
   const addBuild = () => {
+    if (controlDisabled) return;
     setBuilds(prev => {
       if (prev.length >= 4) return prev;
       return [...prev, createBuild(`Build ${String.fromCharCode(65 + prev.length)}`)];
@@ -138,6 +185,7 @@ export default function CalculatorPage() {
   };
 
   const removeBuild = (index: number) => {
+    if (controlDisabled) return;
     setBuilds(prev => prev.filter((_, i) => i != index));
   };
 
@@ -204,9 +252,17 @@ export default function CalculatorPage() {
               </div>
             </div>
 
+            {controlDisabled && isAuthResolved ? (
+              <div className="rounded-2xl border border-red-900/40 bg-red-900/20 p-4 text-sm text-red-200">
+                {copy.accessRestricted}
+              </div>
+            ) : null}
+
             <button
               onClick={addBuild}
-              className="btn-secondary px-4 py-3 text-sm font-semibold"
+              disabled={controlDisabled}
+              aria-disabled={controlDisabled}
+              className={secondaryButtonClassName}
             >
               <WuxiaIcon name="plus" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
               {copy.addBuild}
@@ -228,8 +284,9 @@ export default function CalculatorPage() {
                   <div>
                     <input
                       value={build.name}
+                      disabled={controlDisabled}
                       onChange={(e) => updateBuild(index, 'name', e.target.value)}
-                      className="bg-transparent text-2xl font-bold font-orbitron text-[#8fb9cc] focus:outline-none"
+                      className={nameInputClassName}
                     />
                     {results[index].dps > 0 && results[index].dps === topDps ? (
                       <div className="mt-1 text-xs uppercase tracking-[0.24em] text-emerald-300">Top DPS</div>
@@ -239,7 +296,9 @@ export default function CalculatorPage() {
                 {builds.length > 1 && (
                     <button
                       onClick={() => removeBuild(index)}
-                      className="text-gray-400 hover:text-[#8fb9cc] transition"
+                      disabled={controlDisabled}
+                      aria-disabled={controlDisabled}
+                      className={controlDisabled ? 'text-gray-500 transition cursor-not-allowed opacity-60' : 'text-gray-400 hover:text-[#8fb9cc] transition'}
                       title={copy.removeBuild}
                     >
                       <WuxiaIcon name="trash" className="w-5 h-5" />
@@ -254,7 +313,8 @@ export default function CalculatorPage() {
                     type="number"
                     value={build.baseDamage}
                     onChange={(e) => updateBuild(index, 'baseDamage', e.target.value)}
-                    className="input-field"
+                    disabled={controlDisabled}
+                    className={inputClassName}
                     placeholder="e.g. 1200"
                   />
                 </div>
@@ -265,7 +325,8 @@ export default function CalculatorPage() {
                     type="number"
                     value={build.flatDamage}
                     onChange={(e) => updateBuild(index, 'flatDamage', e.target.value)}
-                    className="input-field"
+                    disabled={controlDisabled}
+                    className={inputClassName}
                     placeholder="e.g. 250"
                   />
                 </div>
@@ -276,7 +337,8 @@ export default function CalculatorPage() {
                     type="number"
                     value={build.attacksPerSecond}
                     onChange={(e) => updateBuild(index, 'attacksPerSecond', e.target.value)}
-                    className="input-field"
+                    disabled={controlDisabled}
+                    className={inputClassName}
                     placeholder="e.g. 1.6"
                   />
                 </div>
@@ -287,7 +349,8 @@ export default function CalculatorPage() {
                     type="number"
                     value={build.critChance}
                     onChange={(e) => updateBuild(index, 'critChance', e.target.value)}
-                    className="input-field"
+                    disabled={controlDisabled}
+                    className={inputClassName}
                     placeholder="e.g. 35"
                   />
                 </div>
@@ -298,7 +361,8 @@ export default function CalculatorPage() {
                     type="number"
                     value={build.critMultiplier}
                     onChange={(e) => updateBuild(index, 'critMultiplier', e.target.value)}
-                    className="input-field"
+                    disabled={controlDisabled}
+                    className={inputClassName}
                     placeholder="e.g. 2.0"
                   />
                 </div>
@@ -309,7 +373,8 @@ export default function CalculatorPage() {
                     type="number"
                     value={build.bonusDamage}
                     onChange={(e) => updateBuild(index, 'bonusDamage', e.target.value)}
-                    className="input-field"
+                    disabled={controlDisabled}
+                    className={inputClassName}
                     placeholder="e.g. 15"
                   />
                 </div>
@@ -320,7 +385,8 @@ export default function CalculatorPage() {
                     type="number"
                     value={build.duration}
                     onChange={(e) => updateBuild(index, 'duration', e.target.value)}
-                    className="input-field"
+                    disabled={controlDisabled}
+                    className={inputClassName}
                     placeholder="e.g. 90"
                   />
                 </div>
