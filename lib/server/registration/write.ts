@@ -134,7 +134,7 @@ export async function updateRegistrationStats(
     throw new RegistrationUpdateError('Registration target was not found', 404);
   }
 
-  const statsDiscordId = target.row
+  let statsDiscordId = target.row
     ? String(target.row.discord_id || '')
     : portalAccount
       ? portalStatsDiscordId(portalAccount.id)
@@ -166,6 +166,30 @@ export async function updateRegistrationStats(
       guild: payload.guild,
       discordHandle: payload.discordHandle,
     });
+  }
+
+  if (payload.discordHandle !== undefined && target.row && target.discordCol) {
+    const nextDiscordIdentity = payload.discordHandle.trim();
+    const previousDiscordIdentity = String(target.row.discord_id || '').trim();
+
+    if (nextDiscordIdentity && nextDiscordIdentity !== previousDiscordIdentity) {
+      await pool.query(
+        `UPDATE registrations SET ${target.discordCol} = $2 WHERE LOWER(${target.nickCol}) = LOWER($1)`,
+        [payload.nickname, nextDiscordIdentity]
+      );
+
+      const activityColumns = await getTableColumns('activity_kpi');
+      if (activityColumns.has('discord_id')) {
+        await pool.query(
+          `UPDATE activity_kpi SET discord_id = $1, username = $3, updated_at = NOW() WHERE discord_id = $2`,
+          [nextDiscordIdentity, previousDiscordIdentity, payload.nickname]
+        ).catch(() => undefined);
+      }
+
+      if (statsDiscordId === previousDiscordIdentity) {
+        statsDiscordId = nextDiscordIdentity;
+      }
+    }
   }
 
   if (payload.className !== undefined && target.row && target.classCol) {

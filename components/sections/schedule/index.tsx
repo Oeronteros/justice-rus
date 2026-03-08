@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
-import { useSchedule, useUpdateSchedule } from '@/lib/hooks/useSchedule';
+import { useCreateSchedule, useSchedule, useUpdateSchedule } from '@/lib/hooks/useSchedule';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/types';
 import type { Language } from '@/lib/i18n';
@@ -95,9 +95,22 @@ function toEditDraft(item: ScheduleItem): ScheduleEditDraft {
   };
 }
 
+function createDefaultDraft(): ScheduleEditDraft {
+  return {
+    dayType: '',
+    time: '',
+    titleRu: '',
+    titleEn: '',
+    titleZh: '',
+    orderIndex: '0',
+    active: true,
+  };
+}
+
 function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
   const { data: schedules = [], isLoading, error, refetch } = useSchedule(language);
   const updateSchedule = useUpdateSchedule();
+  const createSchedule = useCreateSchedule();
   const [now, setNow] = useState(() => new Date());
   const [filter, setFilter] = useState<string>('all');
   const [editingSchedule, setEditingSchedule] = useState<ScheduleItem | null>(null);
@@ -112,21 +125,26 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
     setScheduleNotice(null);
   };
 
+  const openCreator = () => {
+    setEditingSchedule(null);
+    setEditDraft(createDefaultDraft());
+    setScheduleNotice(null);
+  };
+
   const closeEditor = () => {
-    if (updateSchedule.isPending) return;
+    if (updateSchedule.isPending || createSchedule.isPending) return;
     setEditingSchedule(null);
     setEditDraft(null);
   };
 
   const saveScheduleEdit = async () => {
-    if (!editingSchedule?.id || !editDraft) {
+    if (!editDraft) {
       return;
     }
 
     try {
       setScheduleNotice(null);
-      await updateSchedule.mutateAsync({
-        id: editingSchedule.id,
+      const basePayload = {
         dayType: editDraft.dayType.trim(),
         time: editDraft.time.trim(),
         titleRu: editDraft.titleRu.trim(),
@@ -134,8 +152,19 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
         titleZh: editDraft.titleZh.trim() || undefined,
         orderIndex: Math.max(0, Number(editDraft.orderIndex) || 0),
         active: editDraft.active,
-      });
-      setScheduleNotice(language === 'ru' ? 'Расписание обновлено' : language === 'zh' ? '日程已更新' : 'Schedule updated');
+      };
+
+      if (editingSchedule?.id) {
+        await updateSchedule.mutateAsync({
+          id: editingSchedule.id,
+          ...basePayload,
+        });
+        setScheduleNotice(language === 'ru' ? 'Расписание обновлено' : language === 'zh' ? '日程已更新' : 'Schedule updated');
+      } else {
+        await createSchedule.mutateAsync(basePayload);
+        setScheduleNotice(language === 'ru' ? 'Событие добавлено' : language === 'zh' ? '活动已添加' : 'Event added');
+      }
+
       closeEditor();
       void refetch();
     } catch (saveError) {
@@ -238,6 +267,16 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
           ]}
           actions={
             <>
+              {canEditSchedule && (
+                <button
+                  type="button"
+                  onClick={openCreator}
+                  className="btn-secondary"
+                >
+                  <WuxiaIcon name="plus" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                  {language === 'ru' ? 'Добавить событие' : language === 'zh' ? '添加活动' : 'Add event'}
+                </button>
+              )}
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
@@ -422,17 +461,24 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
           </div>
         )}
 
-        {canEditSchedule && editingSchedule && editDraft && (
+        {canEditSchedule && editDraft && (
           <div className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center px-4 py-8" onClick={closeEditor}>
             <div className="card w-full max-w-3xl p-6 md:p-8 max-h-[90vh] overflow-auto" onClick={(event) => event.stopPropagation()}>
               <div className="flex items-start justify-between gap-4 mb-6">
                 <div>
                   <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5]">
-                    {language === 'ru' ? 'Редактировать слот' : language === 'zh' ? '编辑活动' : 'Edit schedule slot'}
+                    {editingSchedule
+                      ? (language === 'ru' ? 'Редактировать слот' : language === 'zh' ? '编辑活动' : 'Edit schedule slot')
+                      : (language === 'ru' ? 'Добавить событие' : language === 'zh' ? '添加活动' : 'Add event')}
                   </h3>
-                  <p className="text-sm text-gray-400 mt-2">{editingSchedule.registration}</p>
+                  {editingSchedule && <p className="text-sm text-gray-400 mt-2">{editingSchedule.registration}</p>}
                 </div>
-                <button type="button" className="dc-icon-btn p-2.5 rounded-xl" onClick={closeEditor} disabled={updateSchedule.isPending}>
+                <button
+                  type="button"
+                  className="dc-icon-btn p-2.5 rounded-xl"
+                  onClick={closeEditor}
+                  disabled={updateSchedule.isPending || createSchedule.isPending}
+                >
                   <WuxiaIcon name="x" className="w-5 h-5" />
                 </button>
               </div>
@@ -499,11 +545,25 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
-                <button type="button" className="btn-secondary px-5 py-3" onClick={closeEditor} disabled={updateSchedule.isPending}>
+                <button
+                  type="button"
+                  className="btn-secondary px-5 py-3"
+                  onClick={closeEditor}
+                  disabled={updateSchedule.isPending || createSchedule.isPending}
+                >
                   Отмена
                 </button>
-                <button type="button" className="btn-primary px-5 py-3" onClick={() => void saveScheduleEdit()} disabled={updateSchedule.isPending}>
-                  {updateSchedule.isPending ? 'Сохраняем...' : 'Сохранить'}
+                <button
+                  type="button"
+                  className="btn-primary px-5 py-3"
+                  onClick={() => void saveScheduleEdit()}
+                  disabled={updateSchedule.isPending || createSchedule.isPending}
+                >
+                  {updateSchedule.isPending || createSchedule.isPending
+                    ? 'Сохраняем...'
+                    : editingSchedule
+                      ? 'Сохранить'
+                      : 'Добавить'}
                 </button>
               </div>
             </div>

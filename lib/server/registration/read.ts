@@ -162,6 +162,7 @@ export async function getRegistrationsFromDb(): Promise<Registration[]> {
   const gvgCol = pick(activityColumns, 'gvg');
   const mmrCol = pick(activityColumns, 'mvp_20', 'mmr20', 'best_mmr_pvp', 'pvp_mmr20');
   const secretRealmCol = pick(activityColumns, 'secret_realm');
+  const activityUsernameCol = pick(activityColumns, 'username', 'user_name', 'nickname');
 
   const duelRatingCol = pick(duelColumns, 'rating');
   const duelWinsCol = pick(duelColumns, 'wins');
@@ -180,7 +181,7 @@ export async function getRegistrationsFromDb(): Promise<Registration[]> {
           ${mmrCol ? `${mmrCol} AS best_mmr,` : '0 AS best_mmr,'}
           ${secretRealmCol ? `${secretRealmCol} AS secret_realm_score` : '0 AS secret_realm_score'}
         FROM activity_kpi
-        WHERE discord_id = r.${discordCol}
+        WHERE discord_id = r.${discordCol}${activityUsernameCol ? ` OR LOWER(${activityUsernameCol}) = LOWER(r.${nickCol})` : ''}
         ORDER BY activity_date DESC NULLS LAST, updated_at DESC NULLS LAST
         LIMIT 1
       ) ak ON TRUE

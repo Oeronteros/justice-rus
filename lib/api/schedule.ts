@@ -1,7 +1,9 @@
 import { api } from './client';
 import {
+  createScheduleSchema,
   scheduleSchema,
   schedulesArraySchema,
+  type CreateScheduleDto,
   type Schedule,
   type UpdateScheduleDto,
   updateScheduleSchema,
@@ -29,6 +31,25 @@ export const scheduleApi = {
 
   update: async (payload: UpdateScheduleDto): Promise<Schedule> => {
     const item = await api.patch('schedule', updateScheduleSchema.parse(payload), scheduleSchema);
+    return {
+      date: item.date || '',
+      registration: item.registration || '',
+      type: item.type || '',
+      description: item.description || '',
+      group: item.group || '',
+      id: item.id,
+      dayType: item.dayType,
+      time: item.time,
+      titleRu: item.titleRu,
+      titleEn: item.titleEn,
+      titleZh: item.titleZh,
+      orderIndex: item.orderIndex,
+      active: item.active,
+    };
+  },
+
+  create: async (payload: CreateScheduleDto): Promise<Schedule> => {
+    const item = await api.post('schedule', createScheduleSchema.parse(payload), scheduleSchema);
     return {
       date: item.date || '',
       registration: item.registration || '',

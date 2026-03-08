@@ -4,7 +4,7 @@ import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { verifyToken } from '@/lib/auth';
 import { getAuthToken } from '@/lib/auth/request';
 import { canManageAccounts } from '@/lib/authz';
-import { updateScheduleSchema } from '@/lib/schemas/schedule';
+import { createScheduleSchema, updateScheduleSchema } from '@/lib/schemas/schedule';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -196,6 +196,75 @@ export async function GET(request: NextRequest) {
   }
 }
 
+export async function POST(request: NextRequest) {
+  try {
+    const token = getAuthToken(request);
+    const decoded = token ? verifyToken(token) : null;
+    if (!decoded) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (!canManageAccounts(decoded.role)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!hasDatabaseUrl()) {
+      return NextResponse.json({ error: 'Database is not configured' }, { status: 503 });
+    }
+
+    const payload = createScheduleSchema.parse(await request.json());
+    const pool = getPool();
+    const tableName = await getScheduleTableName();
+    const columns = await getScheduleColumns(tableName);
+
+    if (!columns.has('day_type') || !columns.has('title_ru') || !columns.has('title_en')) {
+      return NextResponse.json({ error: 'Schedule table does not support creating entries' }, { status: 409 });
+    }
+
+    const insertColumns = ['day_type', 'time', 'title_ru', 'title_en'];
+    const values: unknown[] = [payload.dayType, payload.time, payload.titleRu, payload.titleEn];
+
+    if (columns.has('title_zh')) {
+      insertColumns.push('title_zh');
+      values.push(payload.titleZh || '');
+    }
+
+    if (columns.has('order_index')) {
+      insertColumns.push('order_index');
+      values.push(payload.orderIndex);
+    }
+
+    if (columns.has('active')) {
+      insertColumns.push('active');
+      values.push(payload.active ? 1 : 0);
+    }
+
+    const placeholders = values.map((_, index) => `$${index + 1}`).join(', ');
+    const created = await pool.query(
+      `
+      INSERT INTO ${tableName} (${insertColumns.join(', ')})
+      VALUES (${placeholders})
+      RETURNING id, day_type, time, title_ru, title_en, ${columns.has('title_zh') ? 'title_zh,' : `'' AS title_zh,`} ${columns.has('order_index') ? 'order_index,' : '0 AS order_index,'} ${columns.has('active') ? 'active' : '1 AS active'}
+      `,
+      values
+    );
+
+    const row = created.rows[0];
+    if (!row) {
+      return NextResponse.json({ error: 'Failed to create schedule entry' }, { status: 500 });
+    }
+
+    return NextResponse.json(toScheduleItem(row, 'ru'), { status: 201 });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
+    }
+
+    console.error('Error creating schedule entry:', error);
+    return NextResponse.json({ error: 'Failed to create schedule entry' }, { status: 500 });
+  }
+}
+
 export async function PATCH(request: NextRequest) {
   try {
     const token = getAuthToken(request);
@@ -278,7 +347,7 @@ export async function OPTIONS() {
     status: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, PATCH, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, X-API-KEY, Authorization',
     },
   });

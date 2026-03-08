@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { scheduleApi } from '@/lib/api/schedule';
-import type { UpdateScheduleDto } from '@/lib/schemas/schedule';
+import type { CreateScheduleDto, UpdateScheduleDto } from '@/lib/schemas/schedule';
 
 // Query key factory
 export const scheduleKeys = {
@@ -22,6 +22,17 @@ export function useUpdateSchedule() {
 
   return useMutation({
     mutationFn: (payload: UpdateScheduleDto) => scheduleApi.update(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: scheduleKeys.all });
+    },
+  });
+}
+
+export function useCreateSchedule() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreateScheduleDto) => scheduleApi.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: scheduleKeys.all });
     },

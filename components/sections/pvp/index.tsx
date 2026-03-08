@@ -48,11 +48,11 @@ function MatchCard({
     <div className="card p-6 space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <div>
-          <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-2">Текущий матч</div>
+          <div className="text-sm uppercase tracking-widest text-green-300 mb-2">Текущий матч</div>
           <div className="text-2xl font-bold font-orbitron text-[#e6eff5]">{you.nickname} vs {opponent.nickname}</div>
           <div className="text-sm text-gray-400 mt-2">Создан: {formatDateTime(match.createdAt)}</div>
         </div>
-        <div className="inline-flex items-center gap-2 rounded-full border border-[#2f6e8d]/40 bg-[#12202c]/70 px-3 py-2 text-xs uppercase tracking-[0.18em] text-[#8fb9cc]">
+        <div className="inline-flex items-center gap-2 rounded-full border border-green-700/45 bg-green-900/30 px-3 py-2 text-xs uppercase tracking-[0.18em] text-green-300">
           <WuxiaIcon name="sword" className="w-4 h-4" />
           {match.confirmationStatus === 'confirmed'
             ? 'Подтверждено'
@@ -65,15 +65,15 @@ function MatchCard({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-        <div className="rounded-2xl border border-[#213445]/70 bg-[#0f1821]/75 p-4">
+        <div className="rounded-2xl border border-green-700/40 bg-green-950/35 p-4">
           <div className="text-gray-400 mb-1">Ты</div>
           <div className="text-[#e6eff5] font-semibold">{you.nickname}</div>
-          <div className="text-[#8fb9cc] text-xs mt-2">{you.className || 'Класс не указан'}</div>
+          <div className="text-green-300 text-xs mt-2">{you.className || 'Класс не указан'}</div>
         </div>
-        <div className="rounded-2xl border border-[#213445]/70 bg-[#0f1821]/75 p-4">
+        <div className="rounded-2xl border border-green-700/40 bg-green-950/35 p-4">
           <div className="text-gray-400 mb-1">Соперник</div>
           <div className="text-[#e6eff5] font-semibold">{opponent.nickname}</div>
-          <div className="text-[#8fb9cc] text-xs mt-2">{opponent.className || 'Класс не указан'}</div>
+          <div className="text-green-300 text-xs mt-2">{opponent.className || 'Класс не указан'}</div>
         </div>
       </div>
 
@@ -96,7 +96,7 @@ function MatchCard({
       </div>
 
       {match.status === 'pending' && hasReported && (
-        <div className="rounded-2xl border border-[#2f6e8d]/40 bg-[#101a23]/70 px-4 py-3 text-xs text-[#8fb9cc]">
+        <div className="rounded-2xl border border-green-700/45 bg-green-950/35 px-4 py-3 text-xs text-green-300">
           Твой отчет уже отправлен. При необходимости его можно обновить до подтверждения матча.
         </div>
       )}
@@ -147,7 +147,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
       <LoadingState
         title="PvP-комната"
         subtitle="Ищем соперников и обновляем таблицу дуэлей..."
-        icon={<WuxiaIcon name="sword" className="w-6 h-6 text-[#8fb9cc]" />}
+        icon={<WuxiaIcon name="sword" className="w-6 h-6 text-green-300" />}
         skeletonCount={3}
       />
     );
@@ -182,7 +182,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
             className={`rounded-2xl border px-4 py-3 text-sm ${
               actionNotice.tone === 'error'
                 ? 'border-red-900/50 bg-red-900/20 text-red-200'
-                : 'border-[#2f6e8d]/45 bg-[#12202c]/75 text-[#bcd6e5]'
+                : 'border-green-700/45 bg-green-900/25 text-green-200'
             }`}
           >
             <WuxiaIcon
@@ -197,7 +197,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
           <div className="lg:col-span-2 space-y-6">
             <div className="card p-6 space-y-5">
               <div>
-                <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-2">Твой статус</div>
+                <div className="text-sm uppercase tracking-widest text-green-300 mb-2">Твой статус</div>
                 <div className="text-2xl font-bold font-orbitron text-[#e6eff5]">
                   {data.activeMatch ? 'Матч найден' : data.userInQueue ? 'В очереди' : 'Готов к подбору'}
                 </div>
@@ -207,11 +207,11 @@ function PvpSectionContent({ user }: PvpSectionProps) {
               </div>
 
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="rounded-2xl border border-[#213445]/70 bg-[#0f1821]/75 p-4">
+                <div className="rounded-2xl border border-green-700/40 bg-green-950/35 p-4">
                   <div className="text-gray-400 mb-1">Рейтинг</div>
                   <div className="text-[#e6eff5] font-semibold">{data.userRating?.rating ?? 1000}</div>
                 </div>
-                <div className="rounded-2xl border border-[#213445]/70 bg-[#0f1821]/75 p-4">
+                <div className="rounded-2xl border border-green-700/40 bg-green-950/35 p-4">
                   <div className="text-gray-400 mb-1">W / L</div>
                   <div className="text-[#e6eff5] font-semibold">{data.userRating?.wins ?? 0} / {data.userRating?.losses ?? 0}</div>
                 </div>
@@ -242,22 +242,22 @@ function PvpSectionContent({ user }: PvpSectionProps) {
                 </div>
               )}
 
-              <div className="rounded-2xl border border-dashed border-[#2f6e8d]/40 bg-[#0f1821]/65 p-4 text-sm text-gray-400">
+              <div className="rounded-2xl border border-dashed border-green-700/45 bg-green-950/30 p-4 text-sm text-gray-300">
                 Если второй игрок уже ждет, матч появится сразу. Если оба игрока отправят одинаковый результат, ELO обновится автоматически.
               </div>
             </div>
 
             <div className="card p-6">
-              <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-4">Очередь</div>
+              <div className="text-sm uppercase tracking-widest text-green-300 mb-4">Очередь</div>
               <div className="space-y-3">
                 {data.queue.length === 0 ? (
                   <div className="text-sm text-gray-400">Очередь пуста — можно стартовать первым.</div>
                 ) : (
                   data.queue.map((entry, index) => (
-                    <div key={`${entry.playerId}-${entry.joinedAt}`} className="rounded-2xl border border-[#213445]/70 bg-[#0f1821]/75 p-4 flex items-center justify-between gap-4">
+                    <div key={`${entry.playerId}-${entry.joinedAt}`} className="rounded-2xl border border-green-700/40 bg-green-950/35 p-4 flex items-center justify-between gap-4">
                       <div>
                         <div className="text-[#e6eff5] font-medium">#{index + 1} {entry.nickname}</div>
-                        <div className="text-xs text-[#8fb9cc] mt-1">{entry.className || 'Класс не указан'}</div>
+                        <div className="text-xs text-green-300 mt-1">{entry.className || 'Класс не указан'}</div>
                       </div>
                       <div className="text-xs text-gray-400 whitespace-nowrap">{formatDateTime(entry.joinedAt)}</div>
                     </div>
@@ -285,18 +285,18 @@ function PvpSectionContent({ user }: PvpSectionProps) {
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
               <div className="card p-6">
-                <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-4">Топ рейтинга</div>
+                <div className="text-sm uppercase tracking-widest text-green-300 mb-4">Топ рейтинга</div>
                 <div className="space-y-3">
                   {data.leaderboard.length === 0 ? (
                     <div className="text-sm text-gray-400">Рейтинг еще не заполнен.</div>
                   ) : (
                     data.leaderboard.map((entry, index) => (
-                      <div key={entry.playerId} className="rounded-2xl border border-[#213445]/70 bg-[#0f1821]/75 p-4 flex items-center justify-between gap-4">
+                      <div key={entry.playerId} className="rounded-2xl border border-green-700/40 bg-green-950/35 p-4 flex items-center justify-between gap-4">
                         <div>
                           <div className="text-[#e6eff5] font-medium">#{index + 1} {entry.nickname}</div>
                           <div className="text-xs text-gray-400 mt-1">W {entry.wins} / L {entry.losses}</div>
                         </div>
-                        <div className="text-lg font-semibold text-[#8fb9cc]">{entry.rating}</div>
+                        <div className="text-lg font-semibold text-green-300">{entry.rating}</div>
                       </div>
                     ))
                   )}
@@ -304,18 +304,18 @@ function PvpSectionContent({ user }: PvpSectionProps) {
               </div>
 
               <div className="card p-6">
-                <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-4">Последние подтвержденные матчи</div>
+                <div className="text-sm uppercase tracking-widest text-green-300 mb-4">Последние подтвержденные матчи</div>
                 <div className="space-y-3">
                   {data.recentMatches.length === 0 ? (
                     <div className="text-sm text-gray-400">Пока нет завершенных дуэлей.</div>
                   ) : (
                     data.recentMatches.map((match) => (
-                      <div key={match.id} className="rounded-2xl border border-[#213445]/70 bg-[#0f1821]/75 p-4">
+                      <div key={match.id} className="rounded-2xl border border-green-700/40 bg-green-950/35 p-4">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                           <div className="text-[#e6eff5] font-medium">{match.playerOne.nickname} vs {match.playerTwo.nickname}</div>
                           <div className="text-xs text-gray-400">{formatDateTime(match.confirmedAt || match.updatedAt)}</div>
                         </div>
-                        <div className="text-xs text-[#8fb9cc] mt-2">
+                        <div className="text-xs text-green-300 mt-2">
                           Победитель: {match.winnerId === match.playerOne.id ? match.playerOne.nickname : match.winnerId === match.playerTwo.id ? match.playerTwo.nickname : '—'}
                         </div>
                       </div>
