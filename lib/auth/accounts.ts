@@ -1,5 +1,5 @@
 import { randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
-import { UserRole } from '@/types';
+import type { UserRole } from '@/lib/schemas/auth';
 import { getPool } from '@/lib/neon';
 import { runServerTaskOnce } from '@/lib/server/db-cache';
 

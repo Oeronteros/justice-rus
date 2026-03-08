@@ -12,12 +12,12 @@ import {
   useHelpRsvp,
   useHelpWithdrawRsvp,
   useDeleteHelpRequest,
-} from '@/lib/hooks/useHelp';
+} from '@/lib/help/hooks';
 import { handleApiError } from '@/lib/api/client';
 import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { ClassBadge } from '@/components/ClassIcon';
-import type { User } from '@/types';
+import type { User } from '@/lib/schemas/auth';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { canModerateContent, hasRoleAtLeast } from '@/lib/authz';
 

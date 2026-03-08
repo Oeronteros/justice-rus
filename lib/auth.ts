@@ -1,7 +1,7 @@
 // Утилиты аутентификации
 
 import jwt from 'jsonwebtoken';
-import { User, UserRole } from '@/types';
+import type { User, UserRole } from '@/lib/schemas/auth';
 import { JWT_EXPIRES_IN, JWT_SECRET } from './constants';
 import { timingSafeEqual } from 'node:crypto';
 

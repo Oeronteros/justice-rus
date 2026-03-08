@@ -44,3 +44,7 @@ export type AuthUser = z.infer<typeof authUserSchema>;
 export type AuthResponseDto = z.infer<typeof authResponseSchema>;
 export type RegisterResponseDto = z.infer<typeof registerResponseSchema>;
 export type VerifyAuthResponseDto = z.infer<typeof verifyAuthResponseSchema>;
+export type UserRole = z.infer<typeof userRoleSchema>;
+export type User = AuthUser;
+export type AuthResponse = AuthResponseDto;
+export type VerifyAuthResponse = VerifyAuthResponseDto;

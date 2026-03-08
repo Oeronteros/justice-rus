@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { GuideForm } from '@/components/forms/GuideForm';
-import { useCreateGuide, useUpdateGuide } from '@/lib/hooks/useGuides';
+import { useCreateGuide, useUpdateGuide } from '@/lib/guides/hooks';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { CreateGuideDto } from '@/lib/schemas/guide';
 

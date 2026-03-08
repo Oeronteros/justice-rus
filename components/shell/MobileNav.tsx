@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Section } from '@/types';
 import { Language, sectionLabels } from '@/lib/i18n';
-import WuxiaIcon from './WuxiaIcons';
+import WuxiaIcon from '../WuxiaIcons';
 
 interface MobileNavProps {
   currentSection: Section;

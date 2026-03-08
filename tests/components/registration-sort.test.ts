@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { sortRegistrations } from '@/components/sections/registration/sortRegistrations';
-import type { Registration } from '@/types';
+import type { Registration } from '@/lib/schemas/registration';
 
 const baseRegistration = {
   discord: 'discord',

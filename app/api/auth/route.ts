@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateToken, getClientIp, safeEqual } from '@/lib/auth';
 import { isSameOrigin } from '@/lib/auth/request';
 import { AUTH_TOKEN_MAX_AGE_SECONDS, PASSWORDS } from '@/lib/constants';
-import { AuthResponse, UserRole } from '@/types';
+import type { AuthResponse, UserRole } from '@/lib/schemas/auth';
 import { z } from 'zod';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureAccountsSchema, normalizeNickname, verifyPassword } from '@/lib/auth/accounts';

@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import ProfileSection from '@/components/sections/profile';
-import type { Registration, User } from '@/types';
+import type { User } from '@/lib/schemas/auth';
+import type { Registration } from '@/lib/schemas/registration';
 
 const mutateProfileStats = vi.fn();
 const mockedRoster: Registration[] = [
@@ -30,7 +31,7 @@ const mockedRoster: Registration[] = [
   },
 ];
 
-vi.mock('@/lib/hooks/useAccounts', () => ({
+vi.mock('@/lib/auth/hooks', () => ({
   useAccounts: () => ({
     data: [],
     isLoading: false,
@@ -42,15 +43,12 @@ vi.mock('@/lib/hooks/useAccounts', () => ({
     isPending: false,
     error: null,
   }),
-}));
-
-vi.mock('@/lib/hooks/useKnownClasses', () => ({
   useKnownClasses: () => ({
     data: ['Numina', 'Sylph'],
   }),
 }));
 
-vi.mock('@/lib/hooks/useRegistrations', () => ({
+vi.mock('@/lib/registration/hooks', () => ({
   useRegistrations: () => ({
     data: mockedRoster,
   }),

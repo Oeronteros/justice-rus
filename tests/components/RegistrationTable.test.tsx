@@ -2,11 +2,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { RegistrationTable } from '@/components/sections/registration/RegistrationTable';
 import { defaultRegistrationColumnLabels } from '@/components/sections/registration/columnLabels';
-import type { Registration, User } from '@/types';
+import type { User } from '@/lib/schemas/auth';
+import type { Registration } from '@/lib/schemas/registration';
 
 const mutateAsync = vi.fn();
 
-vi.mock('@/lib/hooks', () => ({
+vi.mock('@/lib/registration/hooks', () => ({
   useUpdateRegistrationStats: () => ({
     mutateAsync,
     isPending: false,

@@ -4,12 +4,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
-import { useRegistrations } from '@/lib/hooks/useRegistrations';
+import { useRegistrations } from '@/lib/registration/hooks';
 import { RegistrationStats } from './RegistrationStats';
 import { RegistrationFilters } from './RegistrationFilters';
 import { RegistrationTable } from './RegistrationTable';
 import WuxiaIcon from '@/components/WuxiaIcons';
-import type { User } from '@/types';
+import type { User } from '@/lib/schemas/auth';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { sortRegistrations, type RegistrationSortOption } from './sortRegistrations';
 import {

@@ -2,7 +2,7 @@
 
 import { formatDate } from '@/lib/utils';
 import { CommentForm } from '@/components/forms/CommentForm';
-import { useAddComment } from '@/lib/hooks/useGuides';
+import { useAddComment } from '@/lib/guides/hooks';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { GuideComment, CreateCommentDto } from '@/lib/schemas/guide';
 

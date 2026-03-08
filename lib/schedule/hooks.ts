@@ -1,9 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { scheduleApi } from '@/lib/api/schedule';
 import type { CreateScheduleDto, UpdateScheduleDto } from '@/lib/schemas/schedule';
 
-// Query key factory
 export const scheduleKeys = {
   all: ['schedule'] as const,
   lists: () => [...scheduleKeys.all, 'list'] as const,

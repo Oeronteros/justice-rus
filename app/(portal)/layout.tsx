@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { connection } from 'next/server';
-import PortalShell from '@/components/PortalShell';
+import PortalShell from '@/components/shell/PortalShell';
 import { resolveSessionFromToken } from '@/lib/server/auth-session';
 
 export default async function PortalLayout({ children }: { children: React.ReactNode }) {

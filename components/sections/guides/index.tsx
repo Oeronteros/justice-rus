@@ -6,9 +6,9 @@ import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { GuidesList } from './GuidesList';
 import { GuideModal } from './GuideModal';
 import { GuideEditor } from './GuideEditor';
-import { useGuides } from '@/lib/hooks/useGuides';
+import { useGuides } from '@/lib/guides/hooks';
 import { normalizeGuideTitle } from '@/lib/guides/obsidian';
-import type { User } from '@/types';
+import type { User } from '@/lib/schemas/auth';
 import { useHeader } from '@/lib/ui/headerContext';
 import { canModerateContent } from '@/lib/authz';
 

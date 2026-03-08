@@ -7,9 +7,9 @@ import { LoadingState } from '@/components/shared/LoadingState';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { ClassBadge } from '@/components/ClassIcon';
 import WuxiaIcon from '@/components/WuxiaIcons';
-import { useJoinPvpQueue, useLeavePvpQueue, usePvpState, useReportPvpResult } from '@/lib/hooks/usePvp';
+import { useJoinPvpQueue, useLeavePvpQueue, usePvpState, useReportPvpResult } from '@/lib/pvp/hooks';
 import type { PvpMatch } from '@/lib/schemas/pvp';
-import type { User } from '@/types';
+import type { User } from '@/lib/schemas/auth';
 import { handleApiError } from '@/lib/api/client';
 
 interface PvpSectionProps {

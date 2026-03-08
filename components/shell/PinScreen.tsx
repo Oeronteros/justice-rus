@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { User } from '@/types';
+import type { User } from '@/lib/schemas/auth';
 import { authApi } from '@/lib/api/auth';
-import WuxiaIcon from './WuxiaIcons';
-import { useKnownClasses } from '@/lib/hooks/useKnownClasses';
+import WuxiaIcon from '../WuxiaIcons';
+import { useKnownClasses } from '@/lib/auth/hooks';
 import { ClassBadge } from '@/components/ClassIcon';
 
 interface PinScreenProps {

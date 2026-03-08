@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
-import { useCreateSchedule, useSchedule, useUpdateSchedule } from '@/lib/hooks/useSchedule';
+import { useCreateSchedule, useSchedule, useUpdateSchedule } from '@/lib/schedule/hooks';
 import WuxiaIcon from '@/components/WuxiaIcons';
-import type { User } from '@/types';
+import type { User } from '@/lib/schemas/auth';
 import type { Language } from '@/lib/i18n';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { hasRoleAtLeast } from '@/lib/authz';

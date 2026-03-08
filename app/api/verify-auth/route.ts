@@ -1,7 +1,7 @@
 // API Route: /api/verify-auth
 import { NextRequest, NextResponse } from 'next/server';
 import { clearAuthCookie, getAuthToken } from '@/lib/auth/request';
-import { VerifyAuthResponse } from '@/types';
+import type { VerifyAuthResponse } from '@/lib/schemas/auth';
 import { resolveSessionFromToken } from '@/lib/server/auth-session';
 
 export async function GET(request: NextRequest) {

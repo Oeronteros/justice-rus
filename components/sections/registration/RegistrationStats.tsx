@@ -1,6 +1,7 @@
 'use client';
 
-import type { Registration, User } from '@/types';
+import type { User } from '@/lib/schemas/auth';
+import type { Registration } from '@/lib/schemas/registration';
 import { canSeeNumericKpi } from '@/lib/authz';
 import { getKPIClass } from '@/lib/utils';
 

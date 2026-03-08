@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import MainLayout from '@/components/MainLayout';
-import PinScreen from '@/components/PinScreen';
-import PortalVisualEffects from '@/components/PortalVisualEffects';
+import MainLayout from '@/components/shell/MainLayout';
+import PinScreen from '@/components/shell/PinScreen';
+import PortalVisualEffects from '@/components/effects/PortalVisualEffects';
 import { authApi } from '@/lib/api/auth';
 import { AuthProvider } from '@/lib/auth/context';
-import { User } from '@/types';
+import type { User } from '@/lib/schemas/auth';
 
 interface PortalShellProps {
   initialUser: User | null;

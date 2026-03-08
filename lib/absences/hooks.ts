@@ -1,8 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { absencesApi } from '@/lib/api/absences';
 import type { CreateAbsenceDto, UpdateAbsenceStatusDto } from '@/lib/schemas/absence';
 
-// Query key factory
 export const absenceKeys = {
   all: ['absences'] as const,
   lists: () => [...absenceKeys.all, 'list'] as const,
@@ -17,7 +16,7 @@ export function useAbsences() {
 
 export function useCreateAbsence() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (data: CreateAbsenceDto) => absencesApi.create(data),
     onSuccess: () => {

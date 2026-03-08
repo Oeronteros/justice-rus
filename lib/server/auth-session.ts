@@ -2,7 +2,7 @@ import { verifyToken } from '@/lib/auth';
 import { ensureAccountsSchema } from '@/lib/auth/accounts';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { getCachedTableColumns } from '@/lib/server/db-cache';
-import { User } from '@/types';
+import type { User } from '@/lib/schemas/auth';
 
 export type SessionFailureReason =
   | 'missing-token'

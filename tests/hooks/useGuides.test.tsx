@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as fc from 'fast-check';
 import { cleanup, renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useGuides, useCreateGuide, guideKeys } from '@/lib/hooks/useGuides';
+import { useGuides, useCreateGuide, guideKeys } from '@/lib/guides/hooks';
 import { guidesApi } from '@/lib/api/guides';
 import type { GuideSummary } from '@/lib/schemas/guide';
 import type { ReactNode } from 'react';

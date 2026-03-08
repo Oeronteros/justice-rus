@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { extractMarkdownHeadings, MarkdownRenderer } from '@/components/guides/MarkdownRenderer';
 import { handleApiError } from '@/lib/api/client';
-import { useDeleteGuide, useGuide, useGuides, useVoteGuide } from '@/lib/hooks/useGuides';
+import { useDeleteGuide, useGuide, useGuides, useVoteGuide } from '@/lib/guides/hooks';
 import type { GuideCategory } from '@/lib/schemas/guide';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { GuideComments } from './GuideComments';

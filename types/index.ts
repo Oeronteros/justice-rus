@@ -1,6 +1,5 @@
 // Типы данных для приложения
 
-export type UserRole = 'guest' | 'member' | 'officer' | 'head' | 'sysadmin';
 export type Section =
   | 'registration'
   | 'schedule'
@@ -13,55 +12,11 @@ export type Section =
   | 'calculator'
   | 'profile';
 
-export interface User {
-  id?: string;
-  nickname?: string;
-  role: UserRole;
-  isActive?: boolean;
-  authMethod?: 'account' | 'pin';
-  discordId?: string | null;
-  discordHandle?: string | null;
-  className?: string | null;
-  exp?: number;
+export interface ApiResponse<T> {
+  data?: T;
+  error?: string;
+  message?: string;
 }
-
-export interface PortalAccount {
-  id: string;
-  nickname: string;
-  role: UserRole;
-  isActive: boolean;
-  discordHandle?: string | null;
-  createdAt: string;
-  lastLoginAt: string | null;
-}
-
-export interface Registration {
-  discord: string;
-  discordHandle?: string | null;
-  avatarUrl?: string | null;
-  nickname: string;
-  rank: RegistrationRank;
-  class: string;
-  guild: string;
-  joinDate: string;
-  kpi: number;
-  elo: number;
-  mmr20: number;
-  bounty: number;
-  marks: number;
-  outerHeroic: number;
-  innerHeroic: number;
-  crimsonSands: number;
-  abyss: number;
-  gvg: number;
-  secretRealm: number;
-  duelWins: number;
-  duelLosses: number;
-  status: RegistrationStatus;
-}
-
-export type RegistrationRank = UserRole;
-export type RegistrationStatus = 'active' | 'inactive' | 'pending' | 'leave';
 
 export interface Schedule {
   date: string;
@@ -69,15 +24,6 @@ export interface Schedule {
   type: string;
   description: string;
   group?: string;
-}
-
-export interface News {
-  id: string;
-  title: string;
-  content: string;
-  author: string;
-  date: string;
-  pinned?: boolean;
 }
 
 export interface Guide {
@@ -89,40 +35,17 @@ export interface Guide {
   date: string;
 }
 
-export interface Absence {
-  id: string;
-  member: string;
-  startDate: string;
-  endDate: string;
-  reason: string;
-  status: 'pending' | 'approved' | 'rejected';
-}
+export type { UserRole, User, AuthResponse, VerifyAuthResponse } from '@/lib/schemas/auth';
 
-export interface HelpRequest {
-  id: string;
-  title: string;
-  details: string;
-  category: string;
-  author: string;
-  status: 'open' | 'closed';
-  createdAt: string;
-}
+export type { PortalAccount } from '@/lib/schemas/account';
 
-export interface ApiResponse<T> {
-  data?: T;
-  error?: string;
-  message?: string;
-}
+export type { Registration, RegistrationRank, RegistrationStatus } from '@/lib/schemas/registration';
 
-export interface AuthResponse {
-  success: boolean;
-  user: User;
-}
+export type { News } from '@/lib/schemas/news';
 
-export interface VerifyAuthResponse {
-  valid: boolean;
-  user: User;
-}
+export type { Absence } from '@/lib/schemas/absence';
+
+export type { HelpRequest } from '@/lib/schemas/help';
 
 export type {
   GuideSummary,

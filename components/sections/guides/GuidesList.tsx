@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
-import { useCreateGuide, useGuides } from '@/lib/hooks/useGuides';
+import { useCreateGuide, useGuides } from '@/lib/guides/hooks';
 import { buildGuideDraftFromMarkdownFile, isMarkdownFile } from '@/lib/guides/obsidian';
 import { GuideCard } from './GuideCard';
 import { LoadingState } from '@/components/shared/LoadingState';

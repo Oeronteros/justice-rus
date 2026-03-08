@@ -1,4 +1,4 @@
-import type { UserRole } from '@/types';
+import type { UserRole } from '@/lib/schemas/auth';
 
 export const roleOrder: UserRole[] = ['guest', 'member', 'officer', 'head', 'sysadmin'];
 

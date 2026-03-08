@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { canAssignRoles, canManageAccounts, canModerateContent, canSeeNumericKpi, hasRoleAtLeast, roleOrder } from '@/lib/authz';
-import type { UserRole } from '@/types';
+import type { UserRole } from '@/lib/schemas/auth';
 
 describe('lib/authz', () => {
   it('keeps expected role order', () => {

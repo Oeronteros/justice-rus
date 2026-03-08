@@ -6,7 +6,7 @@ import { useLanguage } from '@/lib/i18n/context';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { authApi } from '@/lib/api/auth';
 import { hasRoleAtLeast } from '@/lib/authz';
-import type { User } from '@/types';
+import type { User } from '@/lib/schemas/auth';
 
 type BuildInput = {
   name: string;

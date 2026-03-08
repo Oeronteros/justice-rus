@@ -1,8 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { guidesApi } from '@/lib/api/guides';
 import type { CreateGuideDto, CreateCommentDto } from '@/lib/schemas/guide';
 
-// Query key factory
 export const guideKeys = {
   all: ['guides'] as const,
   lists: () => [...guideKeys.all, 'list'] as const,
@@ -27,7 +26,7 @@ export function useGuide(id: string | null, voterKey: string) {
 
 export function useCreateGuide() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (data: CreateGuideDto) => guidesApi.create(data),
     onSuccess: () => {
@@ -51,10 +50,9 @@ export function useUpdateGuide() {
 
 export function useVoteGuide() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: ({ id, voterKey }: { id: string; voterKey: string }) => 
-      guidesApi.vote(id, voterKey),
+    mutationFn: ({ id, voterKey }: { id: string; voterKey: string }) => guidesApi.vote(id, voterKey),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: guideKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: guideKeys.lists() });
@@ -64,10 +62,9 @@ export function useVoteGuide() {
 
 export function useAddComment() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CreateCommentDto }) => 
-      guidesApi.addComment(id, data),
+    mutationFn: ({ id, data }: { id: string; data: CreateCommentDto }) => guidesApi.addComment(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: guideKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: guideKeys.lists() });

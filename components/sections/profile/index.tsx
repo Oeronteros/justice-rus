@@ -1,15 +1,16 @@
 'use client';
 
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import type { PortalAccount, Registration, User, UserRole } from '@/types';
+import type { PortalAccount } from '@/lib/schemas/account';
+import type { User, UserRole } from '@/lib/schemas/auth';
+import type { Registration } from '@/lib/schemas/registration';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { ClassBadge } from '@/components/ClassIcon';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { canAssignRoles, canManageAccounts, roleOrder } from '@/lib/authz';
 import { roleExplainerRows, roleLabels } from '@/lib/roles';
-import { useAccounts, useUpdateAccount } from '@/lib/hooks/useAccounts';
-import { useKnownClasses } from '@/lib/hooks/useKnownClasses';
-import { useRegistrations, useUpdateRegistrationStats } from '@/lib/hooks/useRegistrations';
+import { useAccounts, useKnownClasses, useUpdateAccount } from '@/lib/auth/hooks';
+import { useRegistrations, useUpdateRegistrationStats } from '@/lib/registration/hooks';
 import { getKPIClass } from '@/lib/utils';
 import type { UpdateRegistrationStatsPayload } from '@/lib/api/registrations';
 

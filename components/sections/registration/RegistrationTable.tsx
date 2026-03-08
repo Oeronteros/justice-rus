@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { handleApiError } from '@/lib/api/client';
-import { useUpdateRegistrationStats } from '@/lib/hooks';
+import { useUpdateRegistrationStats } from '@/lib/registration/hooks';
 import { getKPIClass, getKpiIndicator, getRankClass, getStatusClass } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { ClassBadge } from '@/components/ClassIcon';
-import type { Registration, User } from '@/types';
+import type { User } from '@/lib/schemas/auth';
+import type { Registration } from '@/lib/schemas/registration';
 import { canSeeNumericKpi, hasRoleAtLeast } from '@/lib/authz';
 import type { UpdateRegistrationStatsPayload } from '@/lib/api/registrations';
 import type { RegistrationColumnLabels } from './columnLabels';

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Section } from '@/types';
 import { Language, portalCopy } from '@/lib/i18n';
-import WuxiaIcon, { type IconName } from './WuxiaIcons';
+import WuxiaIcon, { type IconName } from '../WuxiaIcons';
 
 interface HeaderProps {
   currentSection: Section;

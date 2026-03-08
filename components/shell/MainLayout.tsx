@@ -5,7 +5,8 @@ import { usePathname } from 'next/navigation';
 import Header from './Header';
 import MobileNav from './MobileNav';
 import { HeaderProvider, useHeader } from '@/lib/ui/headerContext';
-import { User, Section } from '@/types';
+import type { User } from '@/lib/schemas/auth';
+import { Section } from '@/types';
 import { useLanguage } from '@/lib/i18n/context';
 
 interface MainLayoutProps {

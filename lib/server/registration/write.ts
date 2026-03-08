@@ -1,7 +1,7 @@
 import { ensureAccountsSchema } from '@/lib/auth/accounts';
 import { hasRoleAtLeast } from '@/lib/authz';
 import { getPool } from '@/lib/neon';
-import type { User } from '@/types';
+import type { User } from '@/lib/schemas/auth';
 import type { UpdateRegistrationStatsPayload } from './contracts';
 import { type PortalOnlyRow, pick, portalStatsDiscordId } from './shared';
 import { ensureActivityRow, ensureRegistrationStatsSchema, getTableColumns } from './schema';

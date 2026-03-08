@@ -14,3 +14,4 @@ export const portalAccountSchema = z.object({
 export const portalAccountsSchema = z.array(portalAccountSchema);
 
 export type PortalAccountDto = z.infer<typeof portalAccountSchema>;
+export type PortalAccount = PortalAccountDto;

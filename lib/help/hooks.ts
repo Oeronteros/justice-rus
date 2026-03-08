@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { helpApi } from '@/lib/api/help';
 import type {
   CreateHelpRequestDto,
@@ -7,7 +7,6 @@ import type {
   HelpRsvpDto,
 } from '@/lib/schemas/help';
 
-// Query key factory
 export const helpKeys = {
   all: ['help'] as const,
   lists: () => [...helpKeys.all, 'list'] as const,
@@ -23,7 +22,7 @@ export function useHelp(status: 'open' | 'closed' | 'all' = 'open') {
 
 export function useCreateHelpRequest() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (data: CreateHelpRequestDto) => helpApi.create(data),
     onSuccess: () => {
@@ -34,7 +33,7 @@ export function useCreateHelpRequest() {
 
 export function useUpdateHelpStatus() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (data: UpdateHelpRequestDto) => helpApi.updateStatus(data),
     onSuccess: () => {

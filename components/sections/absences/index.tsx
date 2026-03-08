@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
-import { useAbsences, useCreateAbsence, useUpdateAbsenceStatus } from '@/lib/hooks/useAbsences';
+import { useAbsences, useCreateAbsence, useUpdateAbsenceStatus } from '@/lib/absences/hooks';
 import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
-import type { User } from '@/types';
+import type { User } from '@/lib/schemas/auth';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { hasRoleAtLeast } from '@/lib/authz';
 

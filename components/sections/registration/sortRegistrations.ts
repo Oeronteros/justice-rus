@@ -1,4 +1,4 @@
-import type { Registration } from '@/types';
+import type { Registration } from '@/lib/schemas/registration';
 
 export type RegistrationSortOption =
   | 'nickname-asc'
