@@ -28,9 +28,9 @@ const classVisuals: Record<KnownClassName, ClassVisual> = {
     ringClassName: 'ring-[#ff918b]/35',
   },
   Numina: {
-    accentClassName: 'text-[#77ffd6]',
-    surfaceClassName: 'from-[#08211e] via-[#0d3934] to-[#126255]',
-    ringClassName: 'ring-[#98ffe0]/35',
+    accentClassName: 'text-[#b68cff]',
+    surfaceClassName: 'from-[#1d1332] via-[#312054] to-[#56308e]',
+    ringClassName: 'ring-[#c4a4ff]/35',
   },
   Celestune: {
     accentClassName: 'text-[#4b79ff]',

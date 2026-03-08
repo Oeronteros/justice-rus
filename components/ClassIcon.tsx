@@ -27,17 +27,24 @@ function ClassGlyph({ className }: { className: string }) {
     case 'Bloodstorm':
       return (
         <svg viewBox="0 0 64 64" className="h-full w-full" fill="none" aria-hidden="true">
-          <path d="M52 12C45 10 38 12 33 18C28 23 26 30 25 37C22 31 16 29 11 31C15 40 21 46 30 50C42 55 51 48 54 36C56 27 55 18 52 12Z" fill="currentColor" />
-          <path d="M18 13C30 10 41 15 47 25C40 21 32 22 27 28C23 33 21 40 20 47C13 40 10 28 18 13Z" fill="currentColor" opacity="0.28" />
+          <path d="M31 9L39 17L35 20L37 45L32 55L27 45L29 20L25 17L31 9Z" fill="currentColor" />
+          <path d="M32 20L32 54" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.45" />
+          <path d="M22 30L31 24" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.72" />
+          <path d="M42 34L33 28" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.72" />
+          <path d="M16 48C21 50 26 51 32 51C39 51 45 49 50 45" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.3" />
         </svg>
       );
     case 'Numina':
       return (
         <svg viewBox="0 0 64 64" className="h-full w-full" fill="none" aria-hidden="true">
-          <circle cx="32" cy="14" r="7" stroke="currentColor" strokeWidth="4" />
-          <path d="M32 22V52" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
-          <path d="M20 28L32 22L44 28" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M18 52C22 44 27 40 32 40C37 40 42 44 46 52" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+          <path d="M28 10C28 8 29 7 32 7C35 7 36 8 36 10C36 13 34 15 32 15C30 15 28 13 28 10Z" fill="currentColor" opacity="0.9" />
+          <path d="M32 15V22" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.85" />
+          <path d="M23 22C25 18 28 16 32 16C36 16 39 18 41 22" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.8" />
+          <path d="M24 27C24 23 27 20 32 20C37 20 40 23 40 27V31C40 38 36 44 32 49C28 44 24 38 24 31V27Z" fill="currentColor" />
+          <path d="M18 28C18 26 19 24 22 24" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.6" />
+          <path d="M46 28C46 26 45 24 42 24" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.6" />
+          <path d="M22 49C25 45 28 43 32 43C36 43 39 45 42 49" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" opacity="0.7" />
+          <path d="M27 55H37" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.85" />
         </svg>
       );
     case 'Celestune':

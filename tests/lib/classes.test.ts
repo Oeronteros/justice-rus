@@ -39,6 +39,11 @@ describe('lib/classes', () => {
       surfaceClassName: 'from-[#0a2528] via-[#103d42] to-[#1d6b73]',
       ringClassName: 'ring-[#d1fcff]/35',
     });
+    expect(getClassVisual('Numina')).toEqual({
+      accentClassName: 'text-[#b68cff]',
+      surfaceClassName: 'from-[#1d1332] via-[#312054] to-[#56308e]',
+      ringClassName: 'ring-[#c4a4ff]/35',
+    });
     expect(getClassVisual('Sylph')).toEqual({
       accentClassName: 'text-[#ffb8bc]',
       surfaceClassName: 'from-[#231520] via-[#402134] to-[#6f3154]',
