@@ -179,7 +179,7 @@ function KpiValue({ registration, user }: { registration: Registration; user: Us
 
 function useIsMobileLayout() {
   const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
       return false;
     }
 
@@ -187,7 +187,7 @@ function useIsMobileLayout() {
   });
 
   useEffect(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
       return;
     }
 
