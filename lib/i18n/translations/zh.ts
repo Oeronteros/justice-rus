@@ -160,6 +160,7 @@ export const zh: Translations = {
     title: '求助请求',
     subtitle: '就机制、配装和战术发起精确求助，让官员更快带着上下文回应。',
     createRequest: '创建请求',
+    category: '请求分类',
     profilePrefix: '来自身份：',
     currentUserFallback: '当前用户',
     gatheringStart: '集合开始',

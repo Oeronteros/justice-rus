@@ -158,6 +158,7 @@ export const ru = {
     title: 'Запросы помощи',
     subtitle: 'Создавай точные запросы по механикам, билдам и тактике. Офицеры увидят контекст и ответят быстрее.',
     createRequest: 'Создать запрос',
+    category: 'Категория запроса',
     profilePrefix: 'От профиля:',
     currentUserFallback: 'текущий пользователь',
     gatheringStart: 'Сбор: начало',

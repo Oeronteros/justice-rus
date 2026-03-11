@@ -155,6 +155,7 @@ export function MarkdownRenderer({
     <div className={joinClasses('dc-md', className)}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        skipHtml
         urlTransform={(url) => normalizeHref(String(url || ''))}
         components={{
           h1: ({ children, node }) => renderHeading(1, children, node?.position?.start.line),

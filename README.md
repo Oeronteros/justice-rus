@@ -166,6 +166,10 @@ GitHub Actions workflow находится в `.github/workflows/ci.yml` и за
 
 Краткие текущие security defaults и trust-boundary правила описаны в `SECURITY.md`.
 
+## Производительность
+
+Краткая стратегия по process-local cache и lightweight performance check описана в `PERFORMANCE.md`.
+
 ## Лицензия
 
 MIT

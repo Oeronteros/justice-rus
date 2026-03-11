@@ -66,9 +66,9 @@ Improve the repository where the risk and leverage are highest: route boundaries
 - [x] `npm run type-check` exits `0`
 - [x] `npm run test` exits `0`
 - [x] `npm run build` exits `0`
-- [ ] Browser E2E covers login, logout, protected navigation, and one role-gated path
-- [ ] Shared UI no longer ships hardcoded fallback/error text where i18n already exists
-- [ ] Security defaults are documented and applied consistently across sensitive routes
+- [x] Browser E2E covers login, logout, protected navigation, and one role-gated path
+- [x] Shared UI no longer ships hardcoded fallback/error text where i18n already exists
+- [x] Security defaults are documented and applied consistently across sensitive routes
 
 ### Must Have
 - Preserve the current App Router + bot-proxy architecture
@@ -235,7 +235,7 @@ Overall: `B`
   - `app/api/auth/route.ts:101`
   - `app/api/`
 
-- [ ] 3. Harden security headers and route trust boundaries
+- [x] 3. Harden security headers and route trust boundaries
 
   **What to do**:
   - Expand security headers in `next.config.ts` to include missing hardened defaults where deployment permits.
@@ -261,7 +261,7 @@ Overall: `B`
   - `app/api/auth/route.ts:106`
   - `app/api/auth/route.ts:201`
 
-- [ ] 4. Remove shared hardcoded UI strings and align i18n surfaces
+- [x] 4. Remove shared hardcoded UI strings and align i18n surfaces
 
   **What to do**:
   - Replace shared hardcoded user-facing strings with translation-backed equivalents.
@@ -287,7 +287,7 @@ Overall: `B`
   - `lib/i18n/index.ts:2`
   - `components/shell/Header.tsx:206`
 
-- [ ] 5. Add Playwright auth and protected-flow coverage
+- [x] 5. Add Playwright auth and protected-flow coverage
 
   **What to do**:
   - Add browser E2E infrastructure.
@@ -387,7 +387,7 @@ Overall: `B`
   - `lib/server/db-cache.ts:3`
   - `next.config.ts:7`
 
-- [ ] 9. Tighten CI and contributor quality gates
+- [x] 9. Tighten CI and contributor quality gates
 
   **What to do**:
   - Make lint, typecheck, unit tests, targeted E2E, and build part of the default validation path.

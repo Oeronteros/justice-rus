@@ -183,6 +183,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                   className="select-field"
+                  aria-label={t.help.category}
                 >
                   {categories.map((c) => (
                     <option key={c.value} value={c.value}>{c.label}</option>
@@ -198,6 +199,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                     value={gatheringStartLocal}
                     onChange={(e) => setGatheringStartLocal(e.target.value)}
                     className="input-field"
+                    aria-label={t.help.gatheringStart}
                     required
                   />
                 </div>
@@ -208,6 +210,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                     value={gatheringEndLocal}
                     onChange={(e) => setGatheringEndLocal(e.target.value)}
                     className="input-field"
+                    aria-label={t.help.gatheringEnd}
                     required
                   />
                 </div>
@@ -218,6 +221,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder={t.help.titlePlaceholder}
                 className="input-field"
+                aria-label={t.help.titlePlaceholder}
                 maxLength={140}
                 required
               />
@@ -227,6 +231,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 onChange={(e) => setDetails(e.target.value)}
                 placeholder={t.help.detailsPlaceholder}
                 className="input-field min-h-[140px]"
+                aria-label={t.help.detailsPlaceholder}
                 maxLength={5000}
                 required
               />
@@ -363,6 +368,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                                     value={editStartLocal}
                                     onChange={(e) => setEditStartLocal(e.target.value)}
                                     className="input-field"
+                                    aria-label={t.help.gatheringStart}
                                     required
                                   />
                                 </div>
@@ -373,6 +379,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                                     value={editEndLocal}
                                     onChange={(e) => setEditEndLocal(e.target.value)}
                                     className="input-field"
+                                    aria-label={t.help.gatheringEnd}
                                     required
                                   />
                                 </div>

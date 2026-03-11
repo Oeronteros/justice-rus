@@ -160,6 +160,7 @@ export const en: Translations = {
     title: 'Help Requests',
     subtitle: 'Create precise requests for mechanics, builds, and tactics so officers can respond faster with context.',
     createRequest: 'Create request',
+    category: 'Request category',
     profilePrefix: 'From profile:',
     currentUserFallback: 'current user',
     gatheringStart: 'Gathering start',
