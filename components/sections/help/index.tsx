@@ -156,19 +156,18 @@ function HelpSectionContent({ user }: HelpSectionProps) {
   };
 
   return (
-    <section className="py-12">
+    <section className="section-shell py-10 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-10">
+        <div className="section-stack-lg">
           <SectionHero
             icon={<WuxiaIcon name="help" className="w-5 h-5" />}
             title={t.help.title}
             subtitle={t.help.subtitle}
             chips={['Support Board', 'Open / Closed', 'Officer Review']}
           />
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
-          <div className="lg:col-span-2 card p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 sm:gap-6 lg:gap-8 items-start">
+            <div className="lg:col-span-2 card section-card p-5 sm:p-6 lg:p-8">
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-gradient-to-r from-[#2f6e8d]/30 to-[#8fb9cc]/30 rounded-full flex items-center justify-center mr-4">
                 <WuxiaIcon name="plus" className="w-7 h-7 text-[#8fb9cc]" />
@@ -182,7 +181,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="select-field"
+                  className="select-field w-full"
                   aria-label={t.help.category}
                 >
                   {categories.map((c) => (
@@ -198,7 +197,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                     type="datetime-local"
                     value={gatheringStartLocal}
                     onChange={(e) => setGatheringStartLocal(e.target.value)}
-                    className="input-field"
+                    className="input-field w-full"
                     aria-label={t.help.gatheringStart}
                     required
                   />
@@ -209,7 +208,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                     type="datetime-local"
                     value={gatheringEndLocal}
                     onChange={(e) => setGatheringEndLocal(e.target.value)}
-                    className="input-field"
+                    className="input-field w-full"
                     aria-label={t.help.gatheringEnd}
                     required
                   />
@@ -220,7 +219,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder={t.help.titlePlaceholder}
-                className="input-field"
+                className="input-field w-full"
                 aria-label={t.help.titlePlaceholder}
                 maxLength={140}
                 required
@@ -230,7 +229,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 value={details}
                 onChange={(e) => setDetails(e.target.value)}
                 placeholder={t.help.detailsPlaceholder}
-                className="input-field min-h-[140px]"
+                className="input-field min-h-[140px] w-full"
                 aria-label={t.help.detailsPlaceholder}
                 maxLength={5000}
                 required
@@ -263,7 +262,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
             </form>
           </div>
 
-          <div className="lg:col-span-3 space-y-6">
+            <div className="lg:col-span-3 section-stack-md">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <span className="text-sm text-gray-400">{t.help.show}</span>
@@ -285,7 +284,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
 
               <button
                 type="button"
-                className="dc-icon-btn p-2.5 rounded-xl"
+                className="dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0"
                 onClick={() => refetch()}
                 title={t.common.refresh}
               >
@@ -294,17 +293,15 @@ function HelpSectionContent({ user }: HelpSectionProps) {
             </div>
 
             {isLoading ? (
-              <div className="grid grid-cols-1 gap-6">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="card p-6">
-                    <div className="h-5 bg-gray-800 rounded w-2/3 animate-pulse mb-3"></div>
-                    <div className="h-4 bg-gray-800 rounded w-full animate-pulse mb-2"></div>
-                    <div className="h-4 bg-gray-800 rounded w-5/6 animate-pulse"></div>
-                  </div>
-                ))}
-              </div>
+              <LoadingState
+                title={t.help.title}
+                subtitle="Собираем активные запросы и отклики..."
+                icon={<WuxiaIcon name="help" className="w-6 h-6 text-[#8fb9cc]" />}
+                skeletonCount={3}
+                layout="list"
+              />
             ) : requests.length === 0 ? (
-              <div className="card p-10 text-center">
+              <div className="card section-card p-8 sm:p-10 text-center">
                 <div className="flex justify-center mb-5">
                   <div className="w-16 h-16 rounded-full bg-[#101922]/70 border border-[#223544]/60 grid place-items-center">
                     <WuxiaIcon name="seal" className="w-8 h-8 text-[#8fb9cc]" />
@@ -314,7 +311,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 <p className="text-gray-400 mt-2">{t.help.noRequestsDescription}</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 gap-4 sm:gap-5">
                 {requests.map((req) => {
                   const isResponder = Boolean(user.id) && req.responders.some((r) => r.userId === user.id);
                   const canEditTime =
@@ -323,7 +320,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                     (!req.authorUserId && user.nickname && req.author && req.author.toLowerCase() === user.nickname.toLowerCase());
 
                   return (
-                    <div key={req.id} className="card p-6">
+                    <div key={req.id} className="card section-card p-5 sm:p-6">
                       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -367,7 +364,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                                     type="datetime-local"
                                     value={editStartLocal}
                                     onChange={(e) => setEditStartLocal(e.target.value)}
-                                    className="input-field"
+                                    className="input-field w-full"
                                     aria-label={t.help.gatheringStart}
                                     required
                                   />
@@ -378,7 +375,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                                     type="datetime-local"
                                     value={editEndLocal}
                                     onChange={(e) => setEditEndLocal(e.target.value)}
-                                    className="input-field"
+                                    className="input-field w-full"
                                     aria-label={t.help.gatheringEnd}
                                     required
                                   />
@@ -388,7 +385,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                               <div className="flex flex-wrap gap-3 mt-3">
                                 <button
                                   type="button"
-                                  className="btn-primary px-4 py-2"
+                                  className="btn-primary px-4 py-2 w-full sm:w-auto"
                                   onClick={() => saveEditTime(req.id)}
                                   disabled={updateTimeRange.isPending}
                                 >
@@ -396,7 +393,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                                 </button>
                                 <button
                                   type="button"
-                                  className="dc-icon-btn px-4 py-2 rounded-xl"
+                                  className="dc-icon-btn px-4 py-2 rounded-xl w-full sm:w-auto"
                                   onClick={() => setEditingTimeId(null)}
                                 >
                                   Отмена
@@ -447,7 +444,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                               ) : (
                                 <button
                                   type="button"
-                                  className="btn-primary px-4 py-2 text-sm"
+                                  className="btn-primary px-4 py-2 text-sm w-full sm:w-auto"
                                   onClick={() => rsvp.mutateAsync({ id: req.id })}
                                   disabled={rsvp.isPending}
                                 >
@@ -506,6 +503,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 })}
               </div>
             )}
+            </div>
           </div>
         </div>
       </div>

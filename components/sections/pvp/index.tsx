@@ -106,7 +106,7 @@ function MatchCard({
   const hasReported = Boolean(match.yourReport);
 
   return (
-    <div className="card p-6 space-y-5">
+    <div className="card section-card p-5 sm:p-6 space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <div>
           <div className="text-sm uppercase tracking-widest text-green-300 mb-2">Текущий матч</div>
@@ -150,10 +150,10 @@ function MatchCard({
         </div>
         {match.status === 'pending' && (
           <div className="flex flex-col sm:flex-row gap-3">
-            <button type="button" className="btn-primary px-4 py-2" disabled={isReporting} onClick={() => onReport('win')}>
+            <button type="button" className="btn-primary px-4 py-2 w-full sm:w-auto" disabled={isReporting} onClick={() => onReport('win')}>
               {hasReported ? 'Обновить: победа' : 'Сообщить победу'}
             </button>
-            <button type="button" className="btn-secondary px-4 py-2" disabled={isReporting} onClick={() => onReport('loss')}>
+            <button type="button" className="btn-secondary px-4 py-2 w-full sm:w-auto" disabled={isReporting} onClick={() => onReport('loss')}>
               {hasReported ? 'Обновить: поражение' : 'Сообщить поражение'}
             </button>
           </div>
@@ -214,6 +214,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
         subtitle="Ищем соперников и обновляем таблицу дуэлей..."
         icon={<WuxiaIcon name="sword" className="w-6 h-6 text-green-300" />}
         skeletonCount={3}
+        layout="list"
       />
     );
   }
@@ -235,8 +236,9 @@ function PvpSectionContent({ user }: PvpSectionProps) {
   const currentQueueEntry = data.queue.find((entry) => entry.playerId === viewerId || entry.nickname === user.nickname);
 
   return (
-    <section className="py-12">
+    <section className="section-shell py-10 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="section-stack-lg">
         <SectionHero
           icon={<WuxiaIcon name="sword" className="w-5 h-5" />}
           title="PvP-комната"
@@ -260,9 +262,9 @@ function PvpSectionContent({ user }: PvpSectionProps) {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
-          <div className="lg:col-span-2 space-y-6">
-            <div className="card p-6 space-y-5">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 sm:gap-6 lg:gap-8 items-start">
+          <div className="lg:col-span-2 section-stack-md">
+            <div className="card section-card p-5 sm:p-6 space-y-5">
               {data.userInQueue && currentQueueEntry?.joinedAt && !data.activeMatch && (
                 <QueueSearchBanner joinedAt={currentQueueEntry.joinedAt} queueSize={data.queue.length} />
               )}
@@ -277,7 +279,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 <div className="rounded-2xl border border-green-700/40 bg-green-950/35 p-4">
                   <div className="text-gray-400 mb-1">Рейтинг</div>
                   <div className="text-[#e6eff5] font-semibold">{data.userRating?.rating ?? 1000}</div>
@@ -318,14 +320,14 @@ function PvpSectionContent({ user }: PvpSectionProps) {
               </div>
             </div>
 
-            <div className="card p-6">
+            <div className="card section-card p-5 sm:p-6">
               <div className="text-sm uppercase tracking-widest text-green-300 mb-4">Очередь</div>
               <div className="space-y-3">
                 {data.queue.length === 0 ? (
                   <div className="text-sm text-gray-400">Очередь пуста — можно стартовать первым.</div>
                 ) : (
                   data.queue.map((entry, index) => (
-                    <div key={`${entry.playerId}-${entry.joinedAt}`} className="rounded-2xl border border-green-700/40 bg-green-950/35 p-4 flex items-center justify-between gap-4">
+                    <div key={`${entry.playerId}-${entry.joinedAt}`} className="rounded-2xl border border-green-700/40 bg-green-950/35 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                       <div>
                         <div className="text-[#e6eff5] font-medium">#{index + 1} {entry.nickname}</div>
                         <div className="mt-1">
@@ -340,7 +342,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
             </div>
           </div>
 
-          <div className="lg:col-span-3 space-y-6">
+          <div className="lg:col-span-3 section-stack-md">
             {data.activeMatch ? (
               <MatchCard
                 match={data.activeMatch}
@@ -351,13 +353,13 @@ function PvpSectionContent({ user }: PvpSectionProps) {
                 }}
               />
             ) : (
-              <div className="card p-6 text-sm text-gray-400">
+              <div className="card section-card p-5 sm:p-6 text-sm text-gray-400">
                 Активного матча нет. Вставай в очередь, чтобы система подобрала ближайшего соперника по FIFO.
               </div>
             )}
 
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              <div className="card p-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+              <div className="card section-card p-5 sm:p-6">
                 <div className="text-sm uppercase tracking-widest text-green-300 mb-4">Топ рейтинга</div>
                 <div className="space-y-3">
                   {data.leaderboard.length === 0 ? (
@@ -376,7 +378,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
                 </div>
               </div>
 
-              <div className="card p-6">
+              <div className="card section-card p-5 sm:p-6">
                 <div className="text-sm uppercase tracking-widest text-green-300 mb-4">Последние подтвержденные матчи</div>
                 <div className="space-y-3">
                   {data.recentMatches.length === 0 ? (
@@ -398,6 +400,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </section>

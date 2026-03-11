@@ -73,6 +73,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
         subtitle={t.absences.loading}
         icon={<WuxiaIcon name="absences" className="w-6 h-6 text-red-400" />}
         skeletonCount={3}
+        layout="list"
       />
     );
   }
@@ -95,19 +96,18 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
   }
 
   return (
-    <section className="py-12">
+    <section className="section-shell py-10 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-10">
+        <div className="section-stack-lg">
           <SectionHero
             icon={<WuxiaIcon name="absences" className="w-5 h-5" />}
             title={t.absences.title}
             subtitle={t.absences.subtitle}
             chips={['Roster Health', 'Requests', 'Status Tracking']}
           />
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
-          <div className="lg:col-span-2 card p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 sm:gap-6 lg:gap-8 items-start">
+          <div className="lg:col-span-2 card section-card p-5 sm:p-6 lg:p-8">
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-gradient-to-r from-[#2f6e8d]/30 to-[#8fb9cc]/30 rounded-full flex items-center justify-center mr-4">
                 <WuxiaIcon name="plus" className="w-7 h-7 text-[#8fb9cc]" />
@@ -125,7 +125,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="input-field"
+                    className="input-field w-full"
                     required
                   />
                 </div>
@@ -135,7 +135,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="input-field"
+                    className="input-field w-full"
                     required
                   />
                 </div>
@@ -145,7 +145,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 placeholder={t.absences.reasonPlaceholder}
-                className="input-field min-h-[120px]"
+                className="input-field min-h-[120px] w-full"
                 maxLength={500}
                 required
               />
@@ -177,14 +177,14 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
             </form>
           </div>
 
-          <div className="lg:col-span-3 space-y-6">
+          <div className="lg:col-span-3 section-stack-md">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <span className="text-sm text-gray-400">{t.absences.filter}</span>
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="select-field max-w-xs"
+                  className="select-field w-full max-w-xs"
                 >
                   <option value="all">{t.absences.allStatuses}</option>
                   <option value="pending">{t.absences.statuses.pending}</option>
@@ -195,7 +195,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
 
               <button
                 type="button"
-                className="dc-icon-btn p-2.5 rounded-xl"
+                className="dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0"
                 onClick={() => refetch()}
                 title={t.common.refresh}
               >
@@ -203,7 +203,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
               </button>
             </div>
 
-            <div className="space-y-6">
+            <div className="section-stack-md">
               {filteredAbsences.length === 0 ? (
                 <EmptyState
                   icon={<WuxiaIcon name="calendarX" className="w-10 h-10 text-gray-500" />}
@@ -214,7 +214,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                 filteredAbsences.map((absence) => (
                   <div
                     key={absence.id}
-                    className="card p-6 hover:transform hover:-translate-y-1 transition-all duration-300"
+                    className="card section-card p-5 sm:p-6 hover:transform hover:-translate-y-1 transition-all duration-300"
                   >
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="text-xl font-bold font-orbitron text-red-400">
@@ -226,28 +226,28 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                      <div className="bg-gray-800/50 p-4 rounded-lg">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 mb-4">
+                      <div className="bg-gray-800/50 p-4 rounded-xl">
                         <div className="text-sm text-gray-400 mb-1">{t.absences.start}</div>
                         <div className="font-bold text-lg">{formatDate(absence.startDate)}</div>
                       </div>
-                      <div className="bg-gray-800/50 p-4 rounded-lg">
+                      <div className="bg-gray-800/50 p-4 rounded-xl">
                         <div className="text-sm text-gray-400 mb-1">{t.absences.end}</div>
                         <div className="font-bold text-lg">{formatDate(absence.endDate)}</div>
                       </div>
                     </div>
 
-                    <div className="bg-gray-800/50 p-4 rounded-lg">
+                    <div className="bg-gray-800/50 p-4 rounded-xl">
                       <div className="text-sm text-gray-400 mb-1">{t.absences.reason}</div>
                       <div className="text-gray-300">{absence.reason}</div>
                     </div>
 
-                    <div className="flex justify-end space-x-3 mt-6">
+                    <div className="flex flex-col sm:flex-row sm:justify-end gap-3 mt-6">
                       {canModerateAbsences && absence.status === 'pending' && (
                         <>
                           <button
                             type="button"
-                            className="px-4 py-2 bg-green-700 hover:bg-green-600 rounded-lg transition text-sm font-medium disabled:opacity-60"
+                            className="btn-primary px-4 py-2 text-sm disabled:opacity-60 w-full sm:w-auto"
                             onClick={() => void handleStatusChange(absence.id, 'approved')}
                             disabled={updateAbsenceStatus.isPending}
                           >
@@ -258,7 +258,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                           </button>
                           <button
                             type="button"
-                            className="px-4 py-2 bg-red-700 hover:bg-red-600 rounded-lg transition text-sm font-medium disabled:opacity-60"
+                            className="btn-secondary px-4 py-2 text-sm disabled:opacity-60 w-full sm:w-auto"
                             onClick={() => void handleStatusChange(absence.id, 'rejected')}
                             disabled={updateAbsenceStatus.isPending}
                           >
@@ -275,6 +275,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
               )}
             </div>
           </div>
+        </div>
         </div>
       </div>
     </section>

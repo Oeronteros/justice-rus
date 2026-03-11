@@ -70,7 +70,7 @@ const ProfileOverview = memo(function ProfileOverview({ profileRegistration, use
   const prefix = profileRegistration?.prefix || user.prefix || null;
 
   return (
-    <div className="card p-6">
+    <div className="card section-card p-5 sm:p-6">
       <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-2">Профиль</div>
       <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4 text-sm">
         <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
@@ -113,7 +113,7 @@ const ProfileOverview = memo(function ProfileOverview({ profileRegistration, use
 
 const RoleAccessPanel = memo(function RoleAccessPanel({ currentRole }: { currentRole: UserRole }) {
   return (
-    <div className="card p-6 space-y-5">
+    <div className="card section-card p-5 sm:p-6 space-y-5">
       <div>
         <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-2">Роли и доступ</div>
         <div className="text-gray-400 text-sm">
@@ -228,12 +228,12 @@ const AccountsPanel = memo(function AccountsPanel({
   updateAccount,
 }: AccountsPanelProps) {
   return (
-    <div className="card p-6">
+    <div className="card section-card p-5 sm:p-6">
       <div className="flex items-center justify-between mb-4 gap-3">
         <h3 className="text-xl font-bold font-orbitron text-[#e6eff5]">Валидность учеток</h3>
         <button
           type="button"
-          className="dc-icon-btn p-2.5 rounded-xl"
+          className="dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0"
           onClick={loadAccounts}
           title="Обновить"
           aria-label="Обновить"
@@ -519,8 +519,9 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
   };
 
   return (
-    <section className="py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <section className="section-shell py-10 sm:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="section-stack-lg">
         <SectionHero
           icon={<WuxiaIcon name="profile" className="w-5 h-5" />}
           title="Личный кабинет"
@@ -532,7 +533,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
 
         <RoleAccessPanel currentRole={user.role} />
 
-        <div className="card p-6 space-y-6">
+        <div className="card section-card p-5 sm:p-6 space-y-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-2">Статистика</div>
@@ -688,6 +689,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
             updateAccount={updateAccount}
           />
         )}
+        </div>
       </div>
     </section>
   );
