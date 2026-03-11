@@ -2,7 +2,7 @@ export * from './absences';
 export * from './accounts';
 export * from './auth';
 export * from './classes';
-export * from './client';
+export * from './errors';
 export * from './guides';
 export * from './help';
 export * from './news';

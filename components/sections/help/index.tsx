@@ -13,7 +13,7 @@ import {
   useHelpWithdrawRsvp,
   useDeleteHelpRequest,
 } from '@/lib/help/hooks';
-import { handleApiError } from '@/lib/api/client';
+import { handleApiError } from '@/lib/api/errors';
 import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { ClassBadge } from '@/components/ClassIcon';

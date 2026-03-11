@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, useCallback, useRef, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import { extractMarkdownHeadings, MarkdownRenderer } from '@/components/guides/MarkdownRenderer';
-import { handleApiError } from '@/lib/api/client';
+import { handleApiError } from '@/lib/api/errors';
 import { useDeleteGuide, useGuide, useGuides, useVoteGuide } from '@/lib/guides/hooks';
 import type { GuideCategory } from '@/lib/schemas/guide';
 import WuxiaIcon from '@/components/WuxiaIcons';

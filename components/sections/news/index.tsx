@@ -11,7 +11,7 @@ import type { User } from '@/lib/schemas/auth';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { useTranslation } from '@/lib/i18n/context';
 import { hasRoleAtLeast } from '@/lib/authz';
-import { handleApiError } from '@/lib/api/client';
+import { handleApiError } from '@/lib/api/errors';
 
 interface NewsSectionProps {
   user: User;

@@ -10,7 +10,7 @@ import WuxiaIcon from '@/components/WuxiaIcons';
 import { useJoinPvpQueue, useLeavePvpQueue, usePvpState, useReportPvpResult } from '@/lib/pvp/hooks';
 import type { PvpMatch } from '@/lib/schemas/pvp';
 import type { User } from '@/lib/schemas/auth';
-import { handleApiError } from '@/lib/api/client';
+import { handleApiError } from '@/lib/api/errors';
 
 interface PvpSectionProps {
   user: User;

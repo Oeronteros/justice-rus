@@ -435,6 +435,78 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
     setEditDraft(null);
   }, [createSchedule.isPending, updateSchedule.isPending]);
 
+  const archiveScheduleEdit = async () => {
+    if (!editingSchedule?.id || !editDraft || updateSchedule.isPending || createSchedule.isPending) {
+      return;
+    }
+
+    const shouldArchive = editDraft.active;
+    const confirmed = window.confirm(
+      shouldArchive
+        ? language === 'ru'
+          ? 'Архивировать это событие? Оно исчезнет из расписания, но данные сохранятся.'
+          : language === 'zh'
+            ? '要归档这个活动吗？它会从日程中隐藏，但数据会保留。'
+            : 'Archive this event? It will disappear from the schedule, but the data will be kept.'
+        : language === 'ru'
+          ? 'Вернуть это событие в расписание?'
+          : language === 'zh'
+            ? '要将这个活动恢复到日程中吗？'
+            : 'Restore this event to the schedule?'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setScheduleNotice(null);
+      await updateSchedule.mutateAsync({
+        id: editingSchedule.id,
+        dayType: editDraft.dayType.trim(),
+        time: editDraft.time.trim(),
+        titleRu: editDraft.titleRu.trim(),
+        titleEn: editDraft.titleEn.trim(),
+        titleZh: editDraft.titleZh.trim() || undefined,
+        orderIndex: Math.max(0, Number(editDraft.orderIndex) || 0),
+        active: !shouldArchive,
+      });
+
+      setScheduleNotice(
+        shouldArchive
+          ? language === 'ru'
+            ? 'Событие отправлено в архив'
+            : language === 'zh'
+              ? '活动已归档'
+              : 'Event archived'
+          : language === 'ru'
+            ? 'Событие возвращено в расписание'
+            : language === 'zh'
+              ? '活动已恢复到日程'
+              : 'Event restored to the schedule'
+      );
+
+      closeEditor();
+      void refetch();
+    } catch (archiveError) {
+      setScheduleNotice(
+        archiveError instanceof Error
+          ? archiveError.message
+          : shouldArchive
+            ? language === 'ru'
+              ? 'Не удалось архивировать событие'
+              : language === 'zh'
+                ? '无法归档活动'
+                : 'Failed to archive the event'
+            : language === 'ru'
+              ? 'Не удалось вернуть событие'
+              : language === 'zh'
+                ? '无法恢复活动'
+                : 'Failed to restore the event'
+      );
+    }
+  };
+
   const saveScheduleEdit = async () => {
     if (!editDraft) {
       return;
@@ -1162,6 +1234,27 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-3 sm:justify-end mt-6">
+                    {editingSchedule?.id && (
+                      <button
+                        type="button"
+                        className={`px-5 py-3 rounded-xl font-medium border transition ${editDraft.active ? 'border-red-500/40 bg-red-500/10 text-red-200 hover:bg-red-500/15' : 'border-emerald-500/35 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/15'}`}
+                        onClick={() => void archiveScheduleEdit()}
+                        disabled={updateSchedule.isPending || createSchedule.isPending}
+                      >
+                        <WuxiaIcon name={editDraft.active ? 'trash' : 'redo'} className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                        {editDraft.active
+                          ? language === 'ru'
+                            ? 'Архивировать'
+                            : language === 'zh'
+                              ? '归档'
+                              : 'Archive'
+                          : language === 'ru'
+                            ? 'Восстановить'
+                            : language === 'zh'
+                              ? '恢复'
+                              : 'Restore'}
+                      </button>
+                    )}
                     <button
                       type="button"
                       className="btn-secondary px-5 py-3"

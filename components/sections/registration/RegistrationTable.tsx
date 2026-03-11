@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { handleApiError } from '@/lib/api/client';
+import { handleApiError } from '@/lib/api/errors';
 import { useUpdateRegistrationStats } from '@/lib/registration/hooks';
 import { getKPIClass, getKpiIndicator, getRankClass, getStatusClass } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
