@@ -597,6 +597,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
             </>
           )}
         </div>
+        </div>
       </div>
     </section>
   );
