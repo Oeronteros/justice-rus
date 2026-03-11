@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { registrationsApi } from '@/lib/api/registrations';
+import type { RegistrationColumnLabels } from '@/components/sections/registration/columnLabels';
 import type { UpdateRegistrationStatsPayload } from '@/lib/api/registrations';
 import type { Registration } from '@/lib/schemas/registration';
 
@@ -8,6 +9,7 @@ export const registrationKeys = {
   all: ['registrations'] as const,
   lists: () => [...registrationKeys.all, 'list'] as const,
   detail: (nickname: string) => [...registrationKeys.all, 'detail', nickname] as const,
+  columnLabels: () => [...registrationKeys.all, 'column-labels'] as const,
 };
 
 // Query function with error handling
@@ -17,6 +19,13 @@ export function useRegistrations() {
     queryFn: registrationsApi.list,
     // Data won't be refetched automatically within 5 minutes
     // This reduces unnecessary network requests
+  });
+}
+
+export function useRegistrationColumnLabels() {
+  return useQuery({
+    queryKey: registrationKeys.columnLabels(),
+    queryFn: registrationsApi.getColumnLabels,
   });
 }
 
@@ -81,6 +90,18 @@ export function useUpdateRegistrationStats() {
     // This ensures data consistency with server
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: registrationKeys.lists() });
+    },
+  });
+}
+
+export function useUpdateRegistrationColumnLabels() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: RegistrationColumnLabels) => registrationsApi.updateColumnLabels(payload),
+    onSuccess: (labels) => {
+      queryClient.setQueryData(registrationKeys.columnLabels(), labels);
+      queryClient.invalidateQueries({ queryKey: registrationKeys.columnLabels() });
     },
   });
 }

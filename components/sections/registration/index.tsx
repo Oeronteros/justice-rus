@@ -4,7 +4,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
-import { useRegistrations } from '@/lib/registration/hooks';
+import {
+  useRegistrationColumnLabels,
+  useRegistrations,
+  useUpdateRegistrationColumnLabels,
+} from '@/lib/registration/hooks';
 import { RegistrationStats } from './RegistrationStats';
 import { RegistrationFilters } from './RegistrationFilters';
 import { RegistrationTable } from './RegistrationTable';
@@ -19,43 +23,28 @@ import {
   type RegistrationColumnLabels,
 } from './columnLabels';
 import { useTranslation } from '@/lib/i18n/context';
+import { hasRoleAtLeast } from '@/lib/authz';
 
 interface RegistrationSectionProps {
   user: User;
 }
 
-function readStoredColumnLabels(): RegistrationColumnLabels {
-  if (typeof window === 'undefined') {
-    return defaultRegistrationColumnLabels;
-  }
-
-  const saved = window.localStorage.getItem('registration-column-labels');
-  if (!saved) {
-    return defaultRegistrationColumnLabels;
-  }
-
-  try {
-    const parsed = JSON.parse(saved) as Partial<RegistrationColumnLabels>;
-    return { ...defaultRegistrationColumnLabels, ...parsed };
-  } catch {
-    return defaultRegistrationColumnLabels;
-  }
-}
-
 function RegistrationSectionContent({ user }: RegistrationSectionProps) {
   const { t } = useTranslation();
   const { data: registrations = [], isLoading, error, refetch } = useRegistrations();
+  const { data: sharedColumnLabels = defaultRegistrationColumnLabels } = useRegistrationColumnLabels();
+  const updateColumnLabels = useUpdateRegistrationColumnLabels();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [rankFilter, setRankFilter] = useState('all');
   const [sortBy, setSortBy] = useState<RegistrationSortOption>('nickname-asc');
   const [labelsOpen, setLabelsOpen] = useState(false);
-  const [columnLabels, setColumnLabels] = useState<RegistrationColumnLabels>(readStoredColumnLabels);
+  const [draftColumnLabels, setDraftColumnLabels] = useState<RegistrationColumnLabels>(defaultRegistrationColumnLabels);
+  const canEditColumns = hasRoleAtLeast(user.role, 'officer');
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    window.localStorage.setItem('registration-column-labels', JSON.stringify(columnLabels));
-  }, [columnLabels]);
+    setDraftColumnLabels(sharedColumnLabels);
+  }, [sharedColumnLabels]);
 
   const filteredRegistrations = useMemo(() => {
     let filtered = [...registrations];
@@ -137,11 +126,12 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
             onSortChange={(value) => setSortBy(value as RegistrationSortOption)}
           />
 
-          <div className="mb-6 rounded-2xl border border-[#2a3c4c]/60 bg-[#101a23]/60 p-4">
+          {canEditColumns && (
+            <div className="mb-6 rounded-2xl border border-[#2a3c4c]/60 bg-[#101a23]/60 p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-1">Названия столбцов</div>
-                <div className="text-sm text-gray-400">Можно переименовать заголовки под ваши текущие термины. Сохраняется локально в браузере.</div>
+                <div className="text-sm text-gray-400">Офицеры и выше могут переименовать заголовки. Сохраненные названия видны всем участникам.</div>
               </div>
               <div className="flex gap-2">
                 <button type="button" className="btn-secondary px-4 py-2 text-sm" onClick={() => setLabelsOpen((value) => !value)}>
@@ -150,7 +140,10 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
                 <button
                   type="button"
                   className="btn-secondary px-4 py-2 text-sm"
-                  onClick={() => setColumnLabels(defaultRegistrationColumnLabels)}
+                  disabled={updateColumnLabels.isPending}
+                  onClick={() => {
+                    void updateColumnLabels.mutateAsync(defaultRegistrationColumnLabels);
+                  }}
                 >
                   Сбросить
                 </button>
@@ -163,10 +156,10 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
                   <label key={key} className="space-y-2 text-sm">
                     <span className="text-gray-400">{defaultRegistrationColumnLabels[key]}</span>
                     <input
-                      value={columnLabels[key]}
+                      value={draftColumnLabels[key]}
                       onChange={(event) => {
                         const value = event.target.value;
-                        setColumnLabels((current) => ({
+                        setDraftColumnLabels((current) => ({
                           ...current,
                           [key]: value || defaultRegistrationColumnLabels[key as RegistrationColumnKey],
                         }));
@@ -175,11 +168,32 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
                     />
                   </label>
                 ))}
+                <div className="sm:col-span-2 xl:col-span-3 flex flex-wrap gap-2 pt-2">
+                  <button
+                    type="button"
+                    className="btn-primary px-4 py-2 text-sm"
+                    disabled={updateColumnLabels.isPending}
+                    onClick={() => {
+                      void updateColumnLabels.mutateAsync(draftColumnLabels);
+                    }}
+                  >
+                    {updateColumnLabels.isPending ? 'Сохраняем...' : 'Сохранить для всех'}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-secondary px-4 py-2 text-sm"
+                    disabled={updateColumnLabels.isPending}
+                    onClick={() => setDraftColumnLabels(sharedColumnLabels)}
+                  >
+                    Отменить
+                  </button>
+                </div>
               </div>
             )}
           </div>
+          )}
 
-          <RegistrationTable registrations={filteredRegistrations} user={user} onRefresh={refetch} columnLabels={columnLabels} />
+          <RegistrationTable registrations={filteredRegistrations} user={user} onRefresh={refetch} columnLabels={sharedColumnLabels} />
         </div>
       </div>
     </section>

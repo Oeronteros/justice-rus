@@ -178,6 +178,9 @@ type ScheduleEditDraft = {
   active: boolean;
 };
 
+type ScheduleDraftField = 'dayType' | 'time' | 'titleRu' | 'titleEn';
+type ScheduleDraftErrors = Partial<Record<ScheduleDraftField, string>>;
+
 function toEditDraft(item: ScheduleItem): ScheduleEditDraft {
   return {
     dayType: item.dayType || item.type || '',
@@ -202,6 +205,136 @@ function createDefaultDraft(): ScheduleEditDraft {
   };
 }
 
+function normalizeClockValue(value: string): string {
+  const match = value.trim().match(/^(\d{1,2}):(\d{2})$/);
+
+  if (!match) {
+    return value.trim();
+  }
+
+  return `${match[1].padStart(2, '0')}:${match[2]}`;
+}
+
+function isValidClockValue(value: string): boolean {
+  return /^([01]\d|2[0-3]):([0-5]\d)$/.test(value);
+}
+
+function extractTimeParts(value: string): { start: string; end: string } {
+  const matches = [...value.matchAll(/(\d{1,2}:\d{2})/g)].map((match) => normalizeClockValue(match[1]));
+
+  return {
+    start: matches[0] || '',
+    end: matches[1] || '',
+  };
+}
+
+function buildTimeValue(start: string, end: string): string {
+  const normalizedStart = normalizeClockValue(start);
+  const normalizedEnd = normalizeClockValue(end);
+
+  if (normalizedStart && normalizedEnd) {
+    return `${normalizedStart} - ${normalizedEnd}`;
+  }
+
+  return normalizedStart;
+}
+
+function addMinutesToTime(start: string, minutes: number): string {
+  if (!isValidClockValue(start)) {
+    return '';
+  }
+
+  const [hoursString, minutesString] = start.split(':');
+  const totalMinutes = Number(hoursString) * 60 + Number(minutesString) + minutes;
+  const normalizedMinutes = ((totalMinutes % 1440) + 1440) % 1440;
+  const hours = Math.floor(normalizedMinutes / 60);
+  const mins = normalizedMinutes % 60;
+
+  return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+}
+
+function getDraftTimeError(time: string, language: Language): string | null {
+  const trimmedTime = time.trim();
+
+  if (!trimmedTime) {
+    return null;
+  }
+
+  const { start, end } = extractTimeParts(trimmedTime);
+
+  if (!start || !isValidClockValue(start)) {
+    return language === 'ru'
+      ? 'Укажи время в формате HH:MM'
+      : language === 'zh'
+        ? '请使用 HH:MM 时间格式'
+        : 'Use HH:MM time format';
+  }
+
+  if (end) {
+    if (!isValidClockValue(end)) {
+      return language === 'ru'
+        ? 'Время окончания должно быть в формате HH:MM'
+        : language === 'zh'
+          ? '结束时间必须使用 HH:MM 格式'
+          : 'End time must use HH:MM format';
+    }
+
+    const parsed = parseTime(buildTimeValue(start, end));
+    if (!parsed || parsed.end <= parsed.start) {
+      return language === 'ru'
+        ? 'Время окончания должно быть позже времени начала'
+        : language === 'zh'
+          ? '结束时间必须晚于开始时间'
+          : 'End time must be later than start time';
+    }
+  }
+
+  return null;
+}
+
+function validateDraft(draft: ScheduleEditDraft, language: Language): ScheduleDraftErrors {
+  const errors: ScheduleDraftErrors = {};
+
+  if (!draft.dayType.trim()) {
+    errors.dayType = language === 'ru' ? 'Выбери день или тип повтора' : language === 'zh' ? '请选择日期或重复类型' : 'Choose a day or recurrence type';
+  }
+
+  const timeError = getDraftTimeError(draft.time, language);
+  if (timeError) {
+    errors.time = timeError;
+  }
+
+  if (!draft.titleRu.trim()) {
+    errors.titleRu = language === 'ru' ? 'Добавь русское название' : language === 'zh' ? '请填写俄文标题' : 'Add a Russian title';
+  }
+
+  if (!draft.titleEn.trim()) {
+    errors.titleEn = language === 'ru' ? 'Добавь английское название' : language === 'zh' ? '请填写英文标题' : 'Add an English title';
+  }
+
+  return errors;
+}
+
+function getRecurringAlias(kind: keyof typeof recurringGroupAliases, language: Language): string {
+  if (language === 'ru') {
+    return recurringGroupAliases[kind][1];
+  }
+
+  if (language === 'zh') {
+    return recurringGroupAliases[kind][2];
+  }
+
+  return recurringGroupAliases[kind][0];
+}
+
+function getRecurrenceLabel(kind: keyof typeof recurringGroupAliases, language: Language): string {
+  if (kind === 'daily') {
+    return language === 'ru' ? 'Каждый день' : language === 'zh' ? '每天' : 'Daily';
+  }
+
+  return language === 'ru' ? 'Каждую неделю' : language === 'zh' ? '每周' : 'Weekly';
+}
+
 function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
   const { data: schedules = [], isLoading, error, refetch } = useSchedule(language);
   const updateSchedule = useUpdateSchedule();
@@ -212,6 +345,71 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
   const [editDraft, setEditDraft] = useState<ScheduleEditDraft | null>(null);
   const [scheduleNotice, setScheduleNotice] = useState<string | null>(null);
   const canEditSchedule = hasRoleAtLeast(user.role, 'officer');
+  const selectedDay = weekdays[selectedDayIndex];
+  const draftErrors = editDraft ? validateDraft(editDraft, language) : {};
+  const hasDraftErrors = Object.keys(draftErrors).length > 0;
+
+  const updateDraft = (patch: Partial<ScheduleEditDraft>) => {
+    setEditDraft((current) => (current ? { ...current, ...patch } : current));
+  };
+
+  const updateDraftTime = (part: 'start' | 'end', value: string) => {
+    setEditDraft((current) => {
+      if (!current) {
+        return current;
+      }
+
+      const timeParts = extractTimeParts(current.time);
+      const nextParts = {
+        ...timeParts,
+        [part]: value,
+      };
+
+      return {
+        ...current,
+        time: buildTimeValue(nextParts.start, nextParts.end),
+      };
+    });
+  };
+
+  const applyDurationPreset = (minutes: number) => {
+    setEditDraft((current) => {
+      if (!current) {
+        return current;
+      }
+
+      const { start } = extractTimeParts(current.time);
+      if (!isValidClockValue(start)) {
+        return current;
+      }
+
+      return {
+        ...current,
+        time: buildTimeValue(start, addMinutesToTime(start, minutes)),
+      };
+    });
+  };
+
+  const fillDraftTitlesFrom = (source: 'titleRu' | 'titleEn' | 'titleZh') => {
+    setEditDraft((current) => {
+      if (!current) {
+        return current;
+      }
+
+      const sourceValue = current[source].trim();
+
+      if (!sourceValue) {
+        return current;
+      }
+
+      return {
+        ...current,
+        titleRu: current.titleRu.trim() ? current.titleRu : sourceValue,
+        titleEn: current.titleEn.trim() ? current.titleEn : sourceValue,
+        titleZh: current.titleZh.trim() ? current.titleZh : sourceValue,
+      };
+    });
+  };
 
   const openEditor = (item: ScheduleItem) => {
     if (!item.id) return;
@@ -221,8 +419,13 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
   };
 
   const openCreator = () => {
+    const exactDayItemsCount = schedules.filter((item) => getScheduleDayIndex(item) === selectedDayIndex).length;
     setEditingSchedule(null);
-    setEditDraft(createDefaultDraft());
+    setEditDraft({
+      ...createDefaultDraft(),
+      dayType: selectedDay.labels[language],
+      orderIndex: String(exactDayItemsCount),
+    });
     setScheduleNotice(null);
   };
 
@@ -234,6 +437,12 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
 
   const saveScheduleEdit = async () => {
     if (!editDraft) {
+      return;
+    }
+
+    const errors = validateDraft(editDraft, language);
+    if (Object.keys(errors).length > 0) {
+      setScheduleNotice(language === 'ru' ? 'Заполни обязательные поля перед сохранением' : language === 'zh' ? '请先填写必填字段' : 'Fill in the required fields before saving');
       return;
     }
 
@@ -273,20 +482,74 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (!editDraft) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeEditor();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [editDraft, updateSchedule.isPending, createSchedule.isPending]);
+
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
   const todayIndex = getWeekdayIndex(now);
-  const selectedDay = weekdays[selectedDayIndex];
   const isSelectedToday = selectedDayIndex === todayIndex;
-  const selectedSchedules = schedules.filter((item) => {
-    const dayIndex = getScheduleDayIndex(item);
+  const selectedSchedules = schedules
+    .filter((item) => {
+      const dayIndex = getScheduleDayIndex(item);
 
-    if (dayIndex === selectedDayIndex) {
-      return true;
-    }
+      if (dayIndex === selectedDayIndex) {
+        return true;
+      }
 
-    return isRecurringScheduleItem(item, 'daily') || isRecurringScheduleItem(item, 'weekly');
-  });
+      return isRecurringScheduleItem(item, 'daily') || isRecurringScheduleItem(item, 'weekly');
+    })
+    .sort((a, b) => {
+      const orderDelta = (a.orderIndex ?? 999) - (b.orderIndex ?? 999);
+      if (orderDelta !== 0) {
+        return orderDelta;
+      }
+
+      const timeA = parseTime(getDisplayTime(a))?.start ?? 9999;
+      const timeB = parseTime(getDisplayTime(b))?.start ?? 9999;
+      if (timeA !== timeB) {
+        return timeA - timeB;
+      }
+
+      return getDisplayTitle(a, language).localeCompare(getDisplayTitle(b, language));
+    });
+
+  const draftTimeParts = editDraft ? extractTimeParts(editDraft.time) : { start: '', end: '' };
+  const draftPreviewItem = editDraft
+    ? {
+        dayType: editDraft.dayType,
+        time: editDraft.time,
+        titleRu: editDraft.titleRu,
+        titleEn: editDraft.titleEn,
+        titleZh: editDraft.titleZh,
+        registration: editingSchedule?.registration || '',
+        description: editDraft.time,
+        group: editingSchedule?.group || (language === 'ru' ? 'Общее' : language === 'zh' ? '综合' : 'General'),
+        orderIndex: Number(editDraft.orderIndex) || 0,
+        active: editDraft.active,
+        date: editingSchedule?.date || '',
+        type: editingSchedule?.type || editDraft.dayType,
+      }
+    : null;
 
   // Группируем по группам
   const groupedByGroup = selectedSchedules.reduce((acc, item) => {

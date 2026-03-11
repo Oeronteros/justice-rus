@@ -99,4 +99,28 @@ describe('ProfileSection role explainer and guild fields', () => {
 
     expect(outerHeroicSwitch).toHaveAttribute('aria-checked', 'false');
   });
+
+  it('resets all activity switches with the reset button', () => {
+    render(<I18nProvider><ProfileSection user={user} /></I18nProvider>);
+
+    const resetButton = screen.getByRole('button', { name: 'Сбросить отметки' });
+    const switches = [
+      screen.getByRole('switch', { name: 'Outer Heroic' }),
+      screen.getByRole('switch', { name: 'Inner Heroic' }),
+      screen.getByRole('switch', { name: 'Crimson Sands' }),
+      screen.getByRole('switch', { name: 'Abyss' }),
+      screen.getByRole('switch', { name: 'GVG' }),
+      screen.getByRole('switch', { name: 'Secret Realm' }),
+    ];
+
+    expect(resetButton).toBeEnabled();
+
+    fireEvent.click(resetButton);
+
+    for (const activitySwitch of switches) {
+      expect(activitySwitch).toHaveAttribute('aria-checked', 'false');
+    }
+
+    expect(resetButton).toBeDisabled();
+  });
 });

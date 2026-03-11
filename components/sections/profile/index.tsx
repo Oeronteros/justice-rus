@@ -20,6 +20,8 @@ interface ProfileSectionProps {
 
 type ActivityKey = 'outerHeroic' | 'innerHeroic' | 'crimsonSands' | 'abyss' | 'gvg' | 'secretRealm';
 
+const activityKeys: ActivityKey[] = ['outerHeroic', 'innerHeroic', 'crimsonSands', 'abyss', 'gvg', 'secretRealm'];
+
 interface ProfileDraftState {
   discordHandle: string;
   prefix: string;
@@ -42,6 +44,16 @@ const activityLabels: Array<{ key: ActivityKey; label: string }> = [
   { key: 'gvg', label: 'GVG' },
   { key: 'secretRealm', label: 'Secret Realm' },
 ];
+
+const resetActivityDraft = (draft: ProfileDraftState): ProfileDraftState => ({
+  ...draft,
+  outerHeroic: 0,
+  innerHeroic: 0,
+  crimsonSands: 0,
+  abyss: 0,
+  gvg: 0,
+  secretRealm: 0,
+});
 
 const roleOptions: UserRole[] = [...roleOrder];
 
@@ -429,6 +441,15 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
     }));
   }, []);
 
+  const resetActivities = useCallback(() => {
+    setProfileDraft((prev) => resetActivityDraft(prev));
+  }, []);
+
+  const hasMarkedActivities = useMemo(
+    () => activityKeys.some((activityKey) => profileDraft[activityKey] > 0),
+    [profileDraft]
+  );
+
   const saveProfileStats = async () => {
     if (!user.nickname) {
       setProfileNotice('Ник не найден для сохранения профиля');
@@ -512,19 +533,29 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
         <RoleAccessPanel currentRole={user.role} />
 
         <div className="card p-6 space-y-6">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-2">Статистика</div>
               <div className="text-gray-400 text-sm">Данные из Neon: отметки, дуэли, Best MMR и расчётный KPI.</div>
             </div>
-            <button
-              type="button"
-              className="btn-secondary px-4 py-2 text-sm"
-              onClick={saveProfileStats}
-              disabled={updateRegistrationStatsMutation.isPending}
-            >
-              {updateRegistrationStatsMutation.isPending ? 'Сохраняем...' : 'Сохранить профиль'}
-            </button>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+              <button
+                type="button"
+                className="btn-secondary px-4 py-2 text-sm"
+                onClick={resetActivities}
+                disabled={updateRegistrationStatsMutation.isPending || !hasMarkedActivities}
+              >
+                Сбросить отметки
+              </button>
+              <button
+                type="button"
+                className="btn-secondary px-4 py-2 text-sm"
+                onClick={saveProfileStats}
+                disabled={updateRegistrationStatsMutation.isPending}
+              >
+                {updateRegistrationStatsMutation.isPending ? 'Сохраняем...' : 'Сохранить профиль'}
+              </button>
+            </div>
           </div>
 
           {profileNotice && (

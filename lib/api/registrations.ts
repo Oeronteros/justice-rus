@@ -1,4 +1,5 @@
 import { getApiDiscordProxyRegistration, patchApiDiscordProxyRegistration } from '@/lib/api/generated';
+import type { RegistrationColumnLabels } from '@/components/sections/registration/columnLabels';
 import {
   prefixOptionSchema,
   registrationsArraySchema,
@@ -6,6 +7,7 @@ import {
 } from '@/lib/schemas/registration';
 import { z } from 'zod';
 import { sameOriginOpenApiClient } from './openapi-client';
+import { registrationColumnLabelsSchema } from '@/lib/registration/column-labels';
 
 const updateRegistrationStatsPayloadSchema = z.object({
   nickname: z.string().trim().min(1),
@@ -28,6 +30,11 @@ const updateRegistrationStatsResponseSchema = z.object({
   success: z.boolean(),
   portalOnly: z.boolean(),
 });
+
+async function readApiError(response: Response, fallbackMessage: string): Promise<never> {
+  const payload = await response.json().catch(() => null) as { error?: string } | null;
+  throw new Error(payload?.error || fallbackMessage);
+}
 
 export type UpdateRegistrationStatsPayload = z.infer<typeof updateRegistrationStatsPayloadSchema>;
 
@@ -59,5 +66,37 @@ export const registrationsApi = {
     });
 
     return updateRegistrationStatsResponseSchema.parse(response.data || {});
+  },
+
+  getColumnLabels: async (): Promise<RegistrationColumnLabels> => {
+    const response = await fetch('/api/registration/column-labels', {
+      method: 'GET',
+      credentials: 'same-origin',
+    });
+
+    if (!response.ok) {
+      await readApiError(response, 'Failed to load registration column labels');
+    }
+
+    const data = await response.json();
+    return registrationColumnLabelsSchema.parse(data);
+  },
+
+  updateColumnLabels: async (payload: RegistrationColumnLabels): Promise<RegistrationColumnLabels> => {
+    const response = await fetch('/api/registration/column-labels', {
+      method: 'PATCH',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      await readApiError(response, 'Failed to update registration column labels');
+    }
+
+    const data = await response.json();
+    return registrationColumnLabelsSchema.parse(data);
   },
 };
