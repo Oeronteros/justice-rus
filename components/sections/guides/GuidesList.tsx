@@ -8,6 +8,7 @@ import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { SectionHero } from '@/components/shared/SectionHero';
 import WuxiaIcon from '@/components/WuxiaIcons';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface GuidesListProps {
   onGuideClick: (guideId: string) => void;
@@ -15,6 +16,7 @@ interface GuidesListProps {
 }
 
 export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
+  const { t } = useTranslation();
   const { data: guides = [], isLoading, error, refetch } = useGuides();
   const createGuide = useCreateGuide();
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -133,8 +135,8 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
   if (isLoading) {
     return (
       <LoadingState
-        title="Гайды гильдии"
-        subtitle="Загружаем свитки знаний..."
+        title={t.guides.title}
+        subtitle={t.guides.loading}
         icon={<WuxiaIcon name="guides" className="w-6 h-6 text-red-400" />}
         skeletonCount={3}
       />
@@ -145,12 +147,12 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
     return (
       <EmptyState
         icon={<WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />}
-        title="Гайды недоступны"
-        description={error instanceof Error ? error.message : 'Не удалось загрузить гайды'}
+        title={t.guides.error}
+        description={error instanceof Error ? error.message : t.errors.server}
         action={
           <button onClick={() => refetch()} className="btn-primary">
             <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
-            Попробовать снова
+            {t.errors.tryAgain}
           </button>
         }
         variant="error"
@@ -162,15 +164,15 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
     <>
       <SectionHero
         icon={<WuxiaIcon name="guides" className="w-5 h-5" />}
-        title="Гайды гильдии"
-        subtitle="Единая база знаний с импортом Obsidian .md, вложениями, wikilinks и быстрым поиском по авторам/темам."
+        title={t.guides.title}
+        subtitle={t.guides.subtitle}
         chips={['Obsidian Import', 'Milkdown Writing', 'Comments']}
         actions={
           <>
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Поиск по названию/автору..."
+              placeholder={t.guides.search}
               className="input-field min-w-[220px]"
             />
             <input
@@ -216,7 +218,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
             </button>
             <button type="button" className="btn-primary px-5 py-3" onClick={onCreateClick}>
               <WuxiaIcon name="edit" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
-              Написать гайд
+              {t.guides.create}
             </button>
           </>
         }

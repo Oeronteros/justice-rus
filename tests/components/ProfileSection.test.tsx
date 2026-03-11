@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import ProfileSection from '@/components/sections/profile';
+import { I18nProvider } from '@/lib/i18n/context';
 import type { User } from '@/lib/schemas/auth';
 import type { Registration } from '@/lib/schemas/registration';
 
@@ -76,7 +77,7 @@ describe('ProfileSection role explainer and guild fields', () => {
   });
 
   it('shows guild and role explainer content for current hierarchy', () => {
-    render(<ProfileSection user={user} />);
+    render(<I18nProvider><ProfileSection user={user} /></I18nProvider>);
 
     expect(screen.getByText('Роли и доступ')).toBeInTheDocument();
     expect(screen.getByText('Гость')).toBeInTheDocument();
@@ -88,7 +89,7 @@ describe('ProfileSection role explainer and guild fields', () => {
   });
 
   it('gives each activity switch a discernible name and updates its state', () => {
-    render(<ProfileSection user={user} />);
+    render(<I18nProvider><ProfileSection user={user} /></I18nProvider>);
 
     const outerHeroicSwitch = screen.getByRole('switch', { name: 'Outer Heroic' });
 

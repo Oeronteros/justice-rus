@@ -137,6 +137,31 @@ vercel --prod
 
 Не забудьте настроить переменные окружения в Vercel Dashboard.
 
+## Проверка качества
+
+Локальный и CI-путь теперь совпадают: основной quality gate запускается одной командой.
+
+```bash
+npm run validate
+```
+
+`validate` выполняет последовательно:
+
+1. `npm run lint`
+2. `npm run test`
+3. `npm run test:e2e`
+4. `npm run build`
+5. `npm run type-check`
+
+Почему порядок именно такой:
+
+- unit и E2E тесты ловят поведенческие регрессии до production build;
+- `build` идет перед финальным `type-check`, потому что в этом репо Next.js генерирует `.next/types`, и такой порядок стабильнее для проверки типов после E2E/webServer сценариев.
+
+### CI
+
+GitHub Actions workflow находится в `.github/workflows/ci.yml` и запускает тот же `npm run validate`, чтобы локальная проверка и pull request gate не расходились.
+
 ## Лицензия
 
 MIT

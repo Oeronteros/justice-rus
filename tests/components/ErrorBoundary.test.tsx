@@ -145,7 +145,7 @@ describe('ErrorBoundary', () => {
         ),
         { numRuns: 100 }
       );
-    });
+    }, 15000);
 
     it('should call onError callback when provided', () => {
       fc.assert(

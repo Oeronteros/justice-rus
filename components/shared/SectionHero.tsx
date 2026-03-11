@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface SectionHeroProps {
   icon?: ReactNode;
@@ -15,14 +16,17 @@ export function SectionHero({
   icon,
   title,
   subtitle,
-  eyebrow = 'Silent Moonfall',
+  eyebrow,
   chips,
   actions,
 }: SectionHeroProps) {
+  const { t } = useTranslation();
+  const resolvedEyebrow = eyebrow ?? t.common.portalEyebrow;
+
   return (
     <div className="portal-hero mb-8">
       <div className="portal-hero-main">
-        <div className="portal-hero-eyebrow">{eyebrow}</div>
+        <div className="portal-hero-eyebrow">{resolvedEyebrow}</div>
         <h2 className="portal-hero-title">
           {icon ? <span className="portal-hero-icon">{icon}</span> : null}
           <span>{title}</span>

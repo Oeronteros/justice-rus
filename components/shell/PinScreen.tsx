@@ -6,6 +6,7 @@ import { authApi } from '@/lib/api/auth';
 import WuxiaIcon from '../WuxiaIcons';
 import { useKnownClasses } from '@/lib/auth/hooks';
 import { ClassBadge } from '@/components/ClassIcon';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface PinScreenProps {
   onAuthSuccess: (user: User) => void;
@@ -14,6 +15,7 @@ interface PinScreenProps {
 type Mode = 'login' | 'register';
 
 export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<Mode>('login');
   const { data: knownClasses = [] } = useKnownClasses({ enabled: mode === 'register' });
   const [nickname, setNickname] = useState('');
@@ -39,7 +41,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
     resetMessages();
 
     if (!nickname.trim() || !password.trim()) {
-      setError('Укажи ник и пароль');
+      setError(t.auth.enterNicknameAndPassword);
       return;
     }
 
@@ -52,7 +54,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
 
       onAuthSuccess(payload.user as User);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Не удалось войти');
+      setError(err instanceof Error ? err.message : t.auth.loginFailed);
     } finally {
       setLoading(false);
     }
@@ -63,22 +65,22 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
     resetMessages();
 
     if (!nickname.trim()) {
-      setError('Укажи ник');
+      setError(t.auth.enterNickname);
       return;
     }
 
     if (!className.trim()) {
-      setError('Выбери или укажи класс');
+      setError(t.auth.chooseOrEnterClass);
       return;
     }
 
     if (password.length < 8) {
-      setError('Пароль должен быть не короче 8 символов');
+      setError(t.auth.passwordTooShort);
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Пароли не совпадают');
+      setError(t.auth.passwordsDoNotMatch);
       return;
     }
 
@@ -93,7 +95,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
 
       setNotice('');
       setApprovalModalMessage(
-        payload.message || 'Ваша учетная запись создана и ожидает одобрения офицера. После подтверждения вы сможете войти в кабинет.'
+        payload.message || t.auth.accountCreatedPendingApproval
       );
       setMode('login');
       setClassName('');
@@ -101,7 +103,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
       setPassword('');
       setConfirmPassword('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Не удалось создать аккаунт');
+      setError(err instanceof Error ? err.message : t.auth.registerFailed);
     } finally {
       setLoading(false);
     }
@@ -110,7 +112,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
   const handleAdminPinLogin = async () => {
     resetMessages();
     if (!adminPin.trim()) {
-      setError('Введи PIN офицера/главы/сис.админа');
+      setError(t.auth.enterAdminPin);
       return;
     }
 
@@ -120,7 +122,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
 
       onAuthSuccess(payload.user as User);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'PIN не принят');
+      setError(err instanceof Error ? err.message : t.auth.adminPinRejected);
     } finally {
       setLoading(false);
     }
@@ -131,7 +133,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
       <div className="card p-0 w-full max-w-4xl relative overflow-hidden grid grid-cols-1 lg:grid-cols-5">
         <div className="lg:col-span-2 p-8 lg:p-10 border-b lg:border-b-0 lg:border-r border-[#273a49]/50 bg-gradient-to-br from-[#13202b]/78 to-[#0b141c]/92">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#37556c]/65 bg-[#10202d]/75 text-xs uppercase tracking-widest text-[#9cc4d7]">
-            Silent Moonfall
+            {t.common.portalEyebrow}
           </div>
 
           <div className="mt-6 flex justify-start">
@@ -140,31 +142,31 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
             </div>
           </div>
 
-          <h2 className="text-3xl font-bold font-orbitron text-[#e6eff5] mt-5 mb-2">Member Access</h2>
+          <h2 className="text-3xl font-bold font-orbitron text-[#e6eff5] mt-5 mb-2">{t.auth.memberAccess}</h2>
           <p className="text-[#b7c9d6] leading-relaxed">
-            Вход в личный кабинет по нику и паролю. Новые учетные записи создаются неактивными до проверки офицером, главой или сис.админом.
+            {t.auth.accessIntro}
           </p>
 
           <div className="mt-6 space-y-3 text-sm text-[#bdd5e4]">
             <div className="inline-flex items-center gap-2">
               <WuxiaIcon name="checkCircle" className="w-4 h-4 text-[#8fb9cc]" />
-              Личные аккаунты с включением/выключением валидности
+              {t.auth.benefitAccounts}
             </div>
             <div className="inline-flex items-center gap-2">
               <WuxiaIcon name="checkCircle" className="w-4 h-4 text-[#8fb9cc]" />
-              Защита от brute-force и secure cookie
+              {t.auth.benefitSecurity}
             </div>
             <div className="inline-flex items-center gap-2">
               <WuxiaIcon name="checkCircle" className="w-4 h-4 text-[#8fb9cc]" />
-              Резервный вход офицера/главы/сис.админа по PIN
+              {t.auth.benefitPin}
             </div>
           </div>
         </div>
 
         <div className="lg:col-span-3 p-8 lg:p-10">
           <div className="mb-6">
-            <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5] mb-2">Guild Portal</h3>
-            <p className="text-[#b7c9d6]">Justice Mobile command dashboard</p>
+            <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5] mb-2">{t.auth.portalTitle}</h3>
+            <p className="text-[#b7c9d6]">{t.auth.portalSubtitle}</p>
           </div>
 
           <div className="inline-flex rounded-2xl p-1 bg-[#0b141d]/70 border border-[#223140]/70 mb-6">
@@ -178,7 +180,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                 mode === 'login' ? 'bg-[#183244]/80 text-[#e6eff5]' : 'text-gray-400 hover:text-[#bcd6e5]'
               }`}
             >
-              Вход
+              {t.auth.loginTab}
             </button>
             <button
               type="button"
@@ -190,7 +192,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                 mode === 'register' ? 'bg-[#183244]/80 text-[#e6eff5]' : 'text-gray-400 hover:text-[#bcd6e5]'
               }`}
             >
-              Регистрация
+              {t.auth.registerTab}
             </button>
           </div>
 
@@ -199,7 +201,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               className="input-field w-full"
-              placeholder="Ник в гильдии"
+              placeholder={t.auth.nickname}
               autoFocus
               disabled={loading}
             />
@@ -210,14 +212,14 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input-field w-full"
-                placeholder="Пароль"
+                placeholder={t.auth.password}
                 disabled={loading}
               />
               <button
                 type="button"
                 className="dc-icon-btn px-3 rounded-xl"
                 onClick={() => setShowPassword((v) => !v)}
-                title={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
+                title={showPassword ? t.auth.hidePassword : t.auth.showPassword}
               >
                 <WuxiaIcon name={showPassword ? 'x' : 'eye'} className="w-5 h-5" />
               </button>
@@ -231,7 +233,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                   className="select-field w-full"
                   disabled={loading}
                 >
-                  <option value="">Выбери класс</option>
+                  <option value="">{t.auth.chooseClass}</option>
                   {knownClasses.map((knownClass) => (
                     <option key={knownClass} value={knownClass}>{knownClass}</option>
                   ))}
@@ -245,7 +247,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                   value={discordHandle}
                   onChange={(e) => setDiscordHandle(e.target.value)}
                   className="input-field w-full"
-                  placeholder="Discord @example (необязательно)"
+                  placeholder={t.auth.discordHandle}
                   disabled={loading}
                 />
                 <input
@@ -253,7 +255,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="input-field w-full"
-                  placeholder="Повтори пароль"
+                  placeholder={t.auth.confirmPassword}
                   disabled={loading}
                 />
               </>
@@ -263,12 +265,12 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
               {loading ? (
                 <span className="inline-flex items-center justify-center">
                   <WuxiaIcon name="spinner" className="w-4 h-4 mr-3 animate-spin" />
-                  {mode === 'login' ? 'Входим...' : 'Создаем...'}
+                  {mode === 'login' ? t.auth.loggingIn : t.auth.creatingAccount}
                 </span>
               ) : (
                 <span className="inline-flex items-center justify-center">
                   <WuxiaIcon name={mode === 'login' ? 'lockOpen' : 'plus'} className="w-4 h-4 mr-3" />
-                  {mode === 'login' ? 'Войти' : 'Создать аккаунт'}
+                  {mode === 'login' ? t.auth.loginSubmit : t.auth.registerSubmit}
                 </span>
               )}
             </button>
@@ -280,23 +282,23 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
               className="text-sm text-[#8fb9cc] hover:text-[#bcd6e5] transition-colors"
               onClick={() => setShowAdminPin((v) => !v)}
             >
-              {showAdminPin ? 'Скрыть' : 'Показать'} вход по служебному PIN
+              {showAdminPin ? t.auth.hidePinLogin : t.auth.showPinLogin}
             </button>
 
             {showAdminPin && (
               <div className="mt-3 p-4 rounded-xl border border-[#2f6e8d]/35 bg-[#12202b]/55">
-                <div className="text-sm text-[#bcd6e5] mb-2">Резервный вход для офицера / главы / сис.админа</div>
+                <div className="text-sm text-[#bcd6e5] mb-2">{t.auth.adminPinHint}</div>
                 <div className="flex gap-2">
                   <input
                     type="password"
                     className="input-field"
                     value={adminPin}
                     onChange={(e) => setAdminPin(e.target.value)}
-                    placeholder="Officer / Head / Sysadmin PIN"
+                    placeholder={t.auth.adminPinPlaceholder}
                     disabled={loading}
                   />
                   <button type="button" className="btn-secondary px-4" onClick={handleAdminPinLogin} disabled={loading}>
-                    Войти
+                    {t.auth.loginSubmit}
                   </button>
                 </div>
               </div>
@@ -320,9 +322,9 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
           <div className="mt-8 pt-5 border-t border-gray-800/70 text-xs text-gray-500 font-medium flex items-center justify-between gap-3">
             <span>
               <WuxiaIcon name="shield" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
-              Secure Guild Access
+              {t.auth.secureAccess}
             </span>
-            <span>Need activation? Ask officer/head/sysadmin</span>
+            <span>{t.auth.activationHelp}</span>
           </div>
         </div>
 
@@ -334,10 +336,10 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                   <WuxiaIcon name="checkCircle" className="h-7 w-7" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-xs uppercase tracking-[0.28em] text-[#7db2ca]">Регистрация завершена</div>
-                  <h4 className="mt-2 text-2xl font-bold font-orbitron text-[#edf7fd]">Нужна проверка офицера</h4>
+                  <div className="text-xs uppercase tracking-[0.28em] text-[#7db2ca]">{t.auth.registrationComplete}</div>
+                  <h4 className="mt-2 text-2xl font-bold font-orbitron text-[#edf7fd]">{t.auth.officerApprovalNeeded}</h4>
                   <p className="mt-3 text-sm leading-6 text-[#c2d8e5]">
-                    Ваша учетная запись создана. Дождитесь одобрения офицера, прежде чем вход в кабинет станет доступен.
+                    {t.auth.accountCreatedPendingApproval}
                   </p>
                 </div>
               </div>
@@ -352,7 +354,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                   className="btn-primary flex-1 px-4 py-3 text-sm font-semibold"
                   onClick={() => setApprovalModalMessage('')}
                 >
-                  Понятно
+                  {t.auth.gotIt}
                 </button>
                 <button
                   type="button"
@@ -362,7 +364,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                     setApprovalModalMessage('');
                   }}
                 >
-                  К входу
+                  {t.auth.backToLogin}
                 </button>
               </div>
             </div>

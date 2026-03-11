@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react';
 import WuxiaIcon, { type IconName } from '@/components/WuxiaIcons';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface LoadingStateProps {
   title?: string;
@@ -13,12 +14,15 @@ interface LoadingStateProps {
 }
 
 export function LoadingState({ 
-  title = 'Загрузка...', 
-  subtitle = 'Призываем данные...',
+  title,
+  subtitle,
   icon = 'spinner',
   skeletonCount,
   cardCount = 3 
 }: LoadingStateProps) {
+  const { t } = useTranslation();
+  const resolvedTitle = title ?? t.common.loading;
+  const resolvedSubtitle = subtitle ?? t.common.loadingDetails;
   const count = skeletonCount ?? cardCount;
   
   const renderIcon = () => {
@@ -34,9 +38,9 @@ export function LoadingState({
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-2">
             {renderIcon()}
-            {title}
+            {resolvedTitle}
           </h2>
-          <p className="text-gray-400">{subtitle}</p>
+          <p className="text-gray-400">{resolvedSubtitle}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

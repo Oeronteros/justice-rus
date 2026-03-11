@@ -18,6 +18,7 @@ import {
   type CreateGuideDto,
 } from '@/lib/schemas/guide';
 import WuxiaIcon from '@/components/WuxiaIcons';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface GuideFormProps {
   onSubmit: (data: CreateGuideDto) => Promise<void>;
@@ -141,6 +142,7 @@ export function GuideForm({
   resetAfterSubmit = true,
   focusMode = false,
 }: GuideFormProps) {
+  const { t } = useTranslation();
   const [editorMode, setEditorMode] = useState<EditorMode>('split');
   const [notice, setNotice] = useState<string | null>(null);
   const editorRef = useRef<MilkdownMarkdownEditorHandle | null>(null);
@@ -292,7 +294,7 @@ export function GuideForm({
         <div>
           <input
             {...register('title')}
-            placeholder="Название гайда"
+            placeholder={t.guides.titleField}
             className="input-field w-full text-lg"
           />
           {errors.title && (
@@ -302,7 +304,7 @@ export function GuideForm({
 
         <input
           {...register('author')}
-          placeholder="Автор / никнейм"
+          placeholder={t.guides.author}
           className={joinClasses('input-field w-full', disableAuthor && 'opacity-60 cursor-not-allowed')}
           disabled={disableAuthor}
         />
@@ -433,7 +435,7 @@ export function GuideForm({
                 ref={editorRef}
                 value={content}
                 onChange={handleEditorChange}
-                placeholder="Пиши здесь... Поддерживаются таблицы, чек-листы, callouts и [[wikilinks]]."
+                placeholder={`${t.guides.newGuideHint} [[wikilinks]]`}
                 className={focusMode ? 'guide-milkdown-shell-focus' : undefined}
               />
 
@@ -484,18 +486,18 @@ export function GuideForm({
 
       <div className="mt-2 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end">
         <button type="button" className="btn-secondary px-5 py-3" onClick={onCancel} disabled={isSubmitting}>
-          Отмена
+          {t.common.cancel}
         </button>
         <button type="submit" className="btn-primary px-5 py-3" disabled={isSubmitting}>
           {isSubmitting ? (
             <span className="inline-flex items-center justify-center">
               <WuxiaIcon name="spinner" className="w-4 h-4 mr-3 animate-spin" />
-              Сохраняем...
+              {t.guides.saving}
             </span>
           ) : (
             <span className="inline-flex items-center justify-center">
               <WuxiaIcon name="seal" className="w-4 h-4 mr-3" />
-              {submitLabel || 'Опубликовать'}
+              {submitLabel || t.guides.publish}
             </span>
           )}
         </button>

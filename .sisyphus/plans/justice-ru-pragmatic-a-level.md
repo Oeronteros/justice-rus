@@ -61,11 +61,11 @@ Improve the repository where the risk and leverage are highest: route boundaries
 - CI/local verification path that enforces lint, typecheck, unit tests, targeted E2E, and build
 
 ### Definition of Done
-- [ ] Shared route helpers are the default pattern for high-risk routes
-- [ ] `npm run lint` exits `0`
-- [ ] `npm run type-check` exits `0`
-- [ ] `npm run test` exits `0`
-- [ ] `npm run build` exits `0`
+- [x] Shared route helpers are the default pattern for high-risk routes
+- [x] `npm run lint` exits `0`
+- [x] `npm run type-check` exits `0`
+- [x] `npm run test` exits `0`
+- [x] `npm run build` exits `0`
 - [ ] Browser E2E covers login, logout, protected navigation, and one role-gated path
 - [ ] Shared UI no longer ships hardcoded fallback/error text where i18n already exists
 - [ ] Security defaults are documented and applied consistently across sensitive routes
@@ -182,7 +182,7 @@ Overall: `B`
 
 ## TODOs
 
-- [ ] 1. Create shared route-boundary primitives
+- [x] 1. Create shared route-boundary primitives
 
   **What to do**:
   - Inspect existing API routes and identify repeated auth, role, origin, validation, and error-response logic.
@@ -210,7 +210,7 @@ Overall: `B`
   - `lib/api/client.ts:18`
   - `lib/authz.ts:3`
 
-- [ ] 2. Refactor highest-risk routes onto shared primitives
+- [x] 2. Refactor highest-risk routes onto shared primitives
 
   **What to do**:
   - Apply the new route primitives to the highest-risk auth/mutation or privileged routes first.

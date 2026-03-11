@@ -10,6 +10,7 @@ import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/lib/schemas/auth';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { hasRoleAtLeast } from '@/lib/authz';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface AbsencesSectionProps {
   user: User;
@@ -31,6 +32,7 @@ const getStatusClass = (status: string) => {
 };
 
 function AbsencesSectionContent({ user }: AbsencesSectionProps) {
+  const { t } = useTranslation();
   const { data: absences = [], isLoading, error, refetch } = useAbsences();
   const createAbsence = useCreateAbsence();
   const updateAbsenceStatus = useUpdateAbsenceStatus();
@@ -67,8 +69,8 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
   if (isLoading) {
     return (
       <LoadingState
-        title="Отлучения"
-        subtitle="Собираем клятвы отсутствия..."
+        title={t.absences.title}
+        subtitle={t.absences.loading}
         icon={<WuxiaIcon name="absences" className="w-6 h-6 text-red-400" />}
         skeletonCount={3}
       />
@@ -79,12 +81,12 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
     return (
       <EmptyState
         icon={<WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />}
-        title="Отлучения недоступны"
-        description={error instanceof Error ? error.message : 'Не удалось загрузить записи отсутствий'}
+        title={t.absences.error}
+        description={error instanceof Error ? error.message : t.absences.error}
         action={
           <button onClick={() => refetch()} className="btn-primary">
             <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
-            Повторить ритуал
+            {t.errors.tryAgain}
           </button>
         }
         variant="error"
@@ -98,8 +100,8 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
         <div className="mb-10">
           <SectionHero
             icon={<WuxiaIcon name="absences" className="w-5 h-5" />}
-            title="Отсутствия"
-            subtitle="Отмечай периоды отсутствия заранее, чтобы рейд-лиды быстро перестроили состав."
+            title={t.absences.title}
+            subtitle={t.absences.subtitle}
             chips={['Roster Health', 'Requests', 'Status Tracking']}
           />
         </div>
@@ -110,15 +112,15 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
               <div className="w-12 h-12 bg-gradient-to-r from-[#2f6e8d]/30 to-[#8fb9cc]/30 rounded-full flex items-center justify-center mr-4">
                 <WuxiaIcon name="plus" className="w-7 h-7 text-[#8fb9cc]" />
               </div>
-              <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5]">Создать заявку</h3>
+              <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5]">{t.absences.createRequest}</h3>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="text-sm text-gray-400">Заявка будет оформлена от профиля: <span className="text-[#c9deea]">{user.nickname || 'текущий пользователь'}</span></div>
+              <div className="text-sm text-gray-400">{t.absences.profilePrefix} <span className="text-[#c9deea]">{user.nickname || t.absences.currentUserFallback}</span></div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-2">Начало отсутствия</label>
+                  <label className="block text-sm text-gray-400 mb-2">{t.absences.startDate}</label>
                   <input
                     type="date"
                     value={startDate}
@@ -128,7 +130,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-2">Окончание отсутствия</label>
+                  <label className="block text-sm text-gray-400 mb-2">{t.absences.endDate}</label>
                   <input
                     type="date"
                     value={endDate}
@@ -142,7 +144,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
               <textarea
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                placeholder="Причина отсутствия..."
+                placeholder={t.absences.reasonPlaceholder}
                 className="input-field min-h-[120px]"
                 maxLength={500}
                 required
@@ -156,12 +158,12 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                 {createAbsence.isPending ? (
                   <span className="inline-flex items-center justify-center">
                     <WuxiaIcon name="spinner" className="w-4 h-4 mr-3 animate-spin" />
-                    Отправляем...
+                    {t.absences.submitting}
                   </span>
                 ) : (
                   <span className="inline-flex items-center justify-center">
                     <WuxiaIcon name="seal" className="w-4 h-4 mr-3" />
-                    Подать заявку
+                    {t.absences.submit}
                   </span>
                 )}
               </button>
@@ -169,7 +171,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
               {createAbsence.error && (
                 <div className="text-[#bcd6e5] text-sm mt-2 p-4 bg-[#16202b]/65 rounded-xl border border-[#2f6e8d]/40">
                   <WuxiaIcon name="alertTriangle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
-                  {createAbsence.error instanceof Error ? createAbsence.error.message : 'Не удалось создать заявку'}
+                  {createAbsence.error instanceof Error ? createAbsence.error.message : t.absences.createFailed}
                 </div>
               )}
             </form>
@@ -178,16 +180,16 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
           <div className="lg:col-span-3 space-y-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-400">Фильтр:</span>
+                <span className="text-sm text-gray-400">{t.absences.filter}</span>
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="select-field max-w-xs"
                 >
-                  <option value="all">Все статусы</option>
-                  <option value="pending">На рассмотрении</option>
-                  <option value="approved">Одобрено</option>
-                  <option value="rejected">Отклонено</option>
+                  <option value="all">{t.absences.allStatuses}</option>
+                  <option value="pending">{t.absences.statuses.pending}</option>
+                  <option value="approved">{t.absences.statuses.approved}</option>
+                  <option value="rejected">{t.absences.statuses.rejected}</option>
                 </select>
               </div>
 
@@ -195,7 +197,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                 type="button"
                 className="dc-icon-btn p-2.5 rounded-xl"
                 onClick={() => refetch()}
-                title="Обновить"
+                title={t.common.refresh}
               >
                 <WuxiaIcon name="refresh" className="w-5 h-5" />
               </button>
@@ -205,8 +207,8 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
               {filteredAbsences.length === 0 ? (
                 <EmptyState
                   icon={<WuxiaIcon name="calendarX" className="w-10 h-10 text-gray-500" />}
-                  title="Отлучения не найдены"
-                  description="Нет записей под текущие фильтры"
+                  title={t.absences.emptyFiltered}
+                  description={t.absences.emptyFilteredDescription}
                 />
               ) : (
                 filteredAbsences.map((absence) => (
@@ -226,17 +228,17 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                       <div className="bg-gray-800/50 p-4 rounded-lg">
-                        <div className="text-sm text-gray-400 mb-1">Начало</div>
+                        <div className="text-sm text-gray-400 mb-1">{t.absences.start}</div>
                         <div className="font-bold text-lg">{formatDate(absence.startDate)}</div>
                       </div>
                       <div className="bg-gray-800/50 p-4 rounded-lg">
-                        <div className="text-sm text-gray-400 mb-1">Окончание</div>
+                        <div className="text-sm text-gray-400 mb-1">{t.absences.end}</div>
                         <div className="font-bold text-lg">{formatDate(absence.endDate)}</div>
                       </div>
                     </div>
 
                     <div className="bg-gray-800/50 p-4 rounded-lg">
-                      <div className="text-sm text-gray-400 mb-1">Причина</div>
+                      <div className="text-sm text-gray-400 mb-1">{t.absences.reason}</div>
                       <div className="text-gray-300">{absence.reason}</div>
                     </div>
 
@@ -249,10 +251,10 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                             onClick={() => void handleStatusChange(absence.id, 'approved')}
                             disabled={updateAbsenceStatus.isPending}
                           >
-                            <WuxiaIcon name="check" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                              <WuxiaIcon name="check" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
                             {updateAbsenceStatus.isPending && updateAbsenceStatus.variables?.id === absence.id && updateAbsenceStatus.variables?.status === 'approved'
-                              ? 'Одобряем...'
-                              : 'Одобрить'}
+                              ? t.absences.approving
+                              : t.absences.approve}
                           </button>
                           <button
                             type="button"
@@ -260,10 +262,10 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                             onClick={() => void handleStatusChange(absence.id, 'rejected')}
                             disabled={updateAbsenceStatus.isPending}
                           >
-                            <WuxiaIcon name="x" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                              <WuxiaIcon name="x" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
                             {updateAbsenceStatus.isPending && updateAbsenceStatus.variables?.id === absence.id && updateAbsenceStatus.variables?.status === 'rejected'
-                              ? 'Отклоняем...'
-                              : 'Отклонить'}
+                              ? t.absences.rejecting
+                              : t.absences.reject}
                           </button>
                         </>
                       )}

@@ -18,6 +18,7 @@ import {
   type RegistrationColumnKey,
   type RegistrationColumnLabels,
 } from './columnLabels';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface RegistrationSectionProps {
   user: User;
@@ -42,6 +43,7 @@ function readStoredColumnLabels(): RegistrationColumnLabels {
 }
 
 function RegistrationSectionContent({ user }: RegistrationSectionProps) {
+  const { t } = useTranslation();
   const { data: registrations = [], isLoading, error, refetch } = useRegistrations();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -84,8 +86,8 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
   if (isLoading) {
     return (
       <LoadingState
-        title="Реестр гильдии"
-        subtitle="Собираем актуальный состав..."
+        title={t.registration.title}
+        subtitle={t.registration.loading}
         icon={<WuxiaIcon name="registration" className="w-6 h-6 text-red-400" />}
         skeletonCount={3}
       />
@@ -96,12 +98,12 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
     return (
       <EmptyState
         icon={<WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />}
-        title="Реестр недоступен"
-        description={error instanceof Error ? error.message : 'Не удалось загрузить реестр'}
+        title={t.registration.error}
+        description={error instanceof Error ? error.message : t.errors.server}
         action={
           <button onClick={() => refetch()} className="btn-primary">
             <WuxiaIcon name="redo" className="inline-block w-4 h-4 mr-2" />
-            Повторить ритуал
+            {t.errors.tryAgain}
           </button>
         }
         variant="error"
@@ -115,8 +117,8 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
         <div className="mb-10">
           <SectionHero
             icon={<WuxiaIcon name="registration" className="w-5 h-5" />}
-            title="Реестр гильдии"
-            subtitle="Состав гильдии, роли и текущая активность по каждому участнику."
+            title={t.registration.title}
+            subtitle={t.registration.subtitle}
             chips={['Roster', 'Readiness', 'Roles']}
           />
         </div>

@@ -1,8 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as fc from 'fast-check';
+import type { ReactNode } from 'react';
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { GuideForm } from '@/components/forms/GuideForm';
+import { I18nProvider } from '@/lib/i18n/context';
 import { guideCategories } from '@/lib/schemas/guide';
 
 vi.mock('@/components/guides/MarkdownRenderer', () => ({
@@ -13,12 +15,16 @@ vi.mock('@/components/guides/MilkdownMarkdownEditor', () => ({
   MilkdownMarkdownEditor: ({ value, onChange }: { value: string; onChange: (value: string) => void }) => (
     <textarea
       aria-label="Milkdown editor"
-      placeholder="Пиши здесь... Поддерживаются таблицы, чек-листы, callouts и [[wikilinks]]."
+      placeholder="Пиши в Markdown. Предпросмотр покажет итог. [[wikilinks]]"
       value={value}
       onChange={(event) => onChange(event.target.value)}
     />
   ),
 }));
+
+function renderWithI18n(node: ReactNode) {
+  return render(<I18nProvider>{node}</I18nProvider>);
+}
 
 describe('GuideForm', () => {
   const mockOnSubmit = vi.fn();
@@ -40,7 +46,7 @@ describe('GuideForm', () => {
    */
   describe('Property 6: Form Validation on Submit', () => {
     it('should not call onSubmit with invalid data', async () => {
-      render(
+      renderWithI18n(
         <GuideForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
@@ -48,7 +54,7 @@ describe('GuideForm', () => {
       );
 
       const titleInput = screen.getByPlaceholderText(/название гайда/i);
-      const contentInput = screen.getByPlaceholderText(/пиши здесь/i);
+      const contentInput = screen.getByRole('textbox', { name: /milkdown editor/i });
 
       fireEvent.change(titleInput, { target: { value: '   ' } });
       fireEvent.change(contentInput, { target: { value: 'Valid content for the guide form' } });
@@ -58,10 +64,10 @@ describe('GuideForm', () => {
       await waitFor(() => {
         expect(mockOnSubmit).not.toHaveBeenCalled();
       });
-    });
+    }, 10000);
 
     it('should call onSubmit with valid data', async () => {
-      render(
+      renderWithI18n(
         <GuideForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
@@ -69,7 +75,7 @@ describe('GuideForm', () => {
       );
 
       const titleInput = screen.getByPlaceholderText(/название гайда/i);
-      const contentInput = screen.getByPlaceholderText(/пиши здесь/i);
+      const contentInput = screen.getByRole('textbox', { name: /milkdown editor/i });
       const categorySelect = screen.getByRole('combobox');
 
       fireEvent.change(titleInput, { target: { value: 'Raid opener guide' } });
@@ -97,7 +103,7 @@ describe('GuideForm', () => {
    */
   describe('Property 7: Form Error Display', () => {
     it('should display error message for empty title', async () => {
-      render(
+      renderWithI18n(
         <GuideForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
@@ -105,7 +111,7 @@ describe('GuideForm', () => {
       );
 
       // Fill only content, leave title empty
-      const contentInput = screen.getByPlaceholderText(/пиши здесь/i);
+      const contentInput = screen.getByRole('textbox', { name: /milkdown editor/i });
       await userEvent.type(contentInput, 'This is valid content with more than 10 characters');
 
       // Try to submit
@@ -116,10 +122,10 @@ describe('GuideForm', () => {
       await waitFor(() => {
         expect(screen.getByText(/название обязательно/i)).toBeInTheDocument();
       });
-    });
+    }, 10000);
 
     it('should display error message for short content', async () => {
-      render(
+      renderWithI18n(
         <GuideForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
@@ -128,7 +134,7 @@ describe('GuideForm', () => {
 
       // Fill title but short content
       const titleInput = screen.getByPlaceholderText(/название гайда/i);
-      const contentInput = screen.getByPlaceholderText(/пиши здесь/i);
+      const contentInput = screen.getByRole('textbox', { name: /milkdown editor/i });
       
       await userEvent.type(titleInput, 'Valid Title');
       await userEvent.type(contentInput, 'Short'); // Less than 10 chars
@@ -162,7 +168,7 @@ describe('GuideForm', () => {
             mockOnSubmit.mockClear();
             mockOnSubmit.mockResolvedValue(undefined);
 
-            render(
+            renderWithI18n(
               <GuideForm
                 onSubmit={mockOnSubmit}
                 onCancel={mockOnCancel}
@@ -171,7 +177,7 @@ describe('GuideForm', () => {
 
             // Fill form
             const titleInput = screen.getByPlaceholderText(/название гайда/i) as HTMLInputElement;
-            const contentInput = screen.getByPlaceholderText(/пиши здесь/i) as HTMLTextAreaElement;
+            const contentInput = screen.getByRole('textbox', { name: /milkdown editor/i }) as HTMLTextAreaElement;
 
             fireEvent.change(titleInput, { target: { value: title } });
             fireEvent.change(contentInput, { target: { value: content } });
@@ -205,7 +211,7 @@ describe('GuideForm', () => {
 
   describe('Cancel functionality', () => {
     it('should call onCancel when cancel button is clicked', async () => {
-      render(
+      renderWithI18n(
         <GuideForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}

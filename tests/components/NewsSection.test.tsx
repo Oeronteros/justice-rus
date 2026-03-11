@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { ReactNode } from 'react';
 import { cleanup, render, screen } from '@testing-library/react';
 import NewsSection from '@/components/sections/news';
+import { I18nProvider } from '@/lib/i18n/context';
 import type { User } from '@/lib/schemas/auth';
 import type { News } from '@/lib/schemas/news';
 
@@ -9,6 +11,10 @@ const useNewsMock = vi.fn();
 vi.mock('@/lib/news/hooks', () => ({
   useNews: () => useNewsMock(),
 }));
+
+function renderWithI18n(node: ReactNode) {
+  return render(<I18nProvider>{node}</I18nProvider>);
+}
 
 describe('NewsSection link rendering', () => {
   const user: User = {
@@ -51,7 +57,7 @@ describe('NewsSection link rendering', () => {
       refetch: vi.fn(),
     });
 
-    render(<NewsSection user={user} />);
+    renderWithI18n(<NewsSection user={user} />);
 
     expect(screen.getByRole('link', { name: 'https://example.com/path?a=1' })).toHaveAttribute(
       'href',
@@ -97,7 +103,7 @@ describe('NewsSection link rendering', () => {
       refetch: vi.fn(),
     });
 
-    render(<NewsSection user={user} />);
+    renderWithI18n(<NewsSection user={user} />);
 
     expect(screen.getByRole('link', { name: 'Raid plan alpha' })).toHaveAttribute(
       'href',
@@ -131,7 +137,7 @@ describe('NewsSection link rendering', () => {
       refetch: vi.fn(),
     });
 
-    render(<NewsSection user={user} />);
+    renderWithI18n(<NewsSection user={user} />);
 
     expect(screen.queryByRole('link', { name: /very-long-link/ })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Read full news' })).toBeInTheDocument();

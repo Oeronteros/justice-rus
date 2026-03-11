@@ -9,6 +9,7 @@ import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/lib/schemas/auth';
 import { SectionHero } from '@/components/shared/SectionHero';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface NewsSectionProps {
   user: User;
@@ -248,6 +249,7 @@ function splitFeaturedNews<T extends { id: string; pinned?: boolean }>(items: T[
 }
 
 function NewsSectionContent({ user }: NewsSectionProps) {
+  const { t } = useTranslation();
   const { data: news = [], isLoading, error, refetch } = useNews();
   const { featured, list } = splitFeaturedNews(news);
   const [expandedNewsIds, setExpandedNewsIds] = useState<string[]>([]);
@@ -262,8 +264,8 @@ function NewsSectionContent({ user }: NewsSectionProps) {
   if (isLoading) {
     return (
       <LoadingState
-        title="News"
-        subtitle="Loading latest guild news and updates..."
+        title={t.news.title}
+        subtitle={t.news.loading}
         icon={<WuxiaIcon name="news" className="w-6 h-6 text-red-400" />}
         skeletonCount={6}
       />
@@ -274,12 +276,12 @@ function NewsSectionContent({ user }: NewsSectionProps) {
     return (
       <EmptyState
         icon={<WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />}
-        title="Error Loading News"
-        description={error instanceof Error ? error.message : 'Failed to load news'}
+        title={t.news.error}
+        description={error instanceof Error ? error.message : t.news.error}
         action={
           <button onClick={() => refetch()} className="btn-primary">
             <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
-            Try Again
+            {t.errors.tryAgain}
           </button>
         }
         variant="error"
@@ -293,8 +295,8 @@ function NewsSectionContent({ user }: NewsSectionProps) {
         <div className="mb-10">
           <SectionHero
             icon={<WuxiaIcon name="news" className="w-5 h-5" />}
-            title="Guild News"
-            subtitle="Оперативные анонсы, решения по рейдам и важные обновления по составу."
+            title={t.news.title}
+            subtitle={t.news.subtitle}
             chips={['Announcements', 'Raid Plans', 'Updates']}
           />
         </div>
@@ -303,12 +305,12 @@ function NewsSectionContent({ user }: NewsSectionProps) {
           {news.length === 0 ? (
             <EmptyState
               icon={<WuxiaIcon name="news" className="w-10 h-10 text-gray-500" />}
-              title="No News Available"
-              description="Пока нет опубликованных анонсов. Проверьте Discord или обновите ленту."
+              title={t.news.empty}
+              description={t.news.emptyDescription}
               action={
                 <button onClick={() => refetch()} className="btn-secondary">
                   <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
-                  Refresh Feed
+                  {t.common.refresh}
                 </button>
               }
             />

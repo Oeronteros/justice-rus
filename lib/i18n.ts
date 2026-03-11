@@ -41,6 +41,39 @@ export const sectionLabels: Record<Language, Record<Section, string>> = {
   },
 };
 
+export const headerCopy: Record<
+  Language,
+  {
+    brandSubtitle: string;
+    activeSection: string;
+    refresh: string;
+    logout: string;
+    languageSwitcher: string;
+  }
+> = {
+  ru: {
+    brandSubtitle: 'Гильдия · Justice Mobile',
+    activeSection: 'Раздел',
+    refresh: 'Обновить данные',
+    logout: 'Выйти',
+    languageSwitcher: 'Язык интерфейса',
+  },
+  en: {
+    brandSubtitle: 'Guild · Justice Mobile',
+    activeSection: 'Section',
+    refresh: 'Refresh data',
+    logout: 'Logout',
+    languageSwitcher: 'Interface language',
+  },
+  zh: {
+    brandSubtitle: '公会 · Justice Mobile',
+    activeSection: '当前',
+    refresh: '刷新数据',
+    logout: '退出',
+    languageSwitcher: '界面语言',
+  },
+};
+
 export const portalCopy: Record<
   Language,
   {

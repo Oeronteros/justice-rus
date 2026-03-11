@@ -20,12 +20,14 @@ import { ClassBadge } from '@/components/ClassIcon';
 import type { User } from '@/lib/schemas/auth';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { canModerateContent, hasRoleAtLeast } from '@/lib/authz';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface HelpSectionProps {
   user: User;
 }
 
 function HelpSectionContent({ user }: HelpSectionProps) {
+  const { t } = useTranslation();
   const [status, setStatus] = useState<'open' | 'closed' | 'all'>('open');
   const { data: requests = [], isLoading, error, refetch } = useHelp(status);
   const createRequest = useCreateHelpRequest();
@@ -159,8 +161,8 @@ function HelpSectionContent({ user }: HelpSectionProps) {
         <div className="mb-10">
           <SectionHero
             icon={<WuxiaIcon name="help" className="w-5 h-5" />}
-            title="Запросы помощи"
-            subtitle="Создавай точные запросы по механикам, билдам и тактике. Офицеры увидят контекст и ответят быстрее."
+            title={t.help.title}
+            subtitle={t.help.subtitle}
             chips={['Support Board', 'Open / Closed', 'Officer Review']}
           />
         </div>
@@ -171,12 +173,12 @@ function HelpSectionContent({ user }: HelpSectionProps) {
               <div className="w-12 h-12 bg-gradient-to-r from-[#2f6e8d]/30 to-[#8fb9cc]/30 rounded-full flex items-center justify-center mr-4">
                 <WuxiaIcon name="plus" className="w-7 h-7 text-[#8fb9cc]" />
               </div>
-              <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5]">Создать запрос</h3>
+              <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5]">{t.help.createRequest}</h3>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="input-field flex items-center text-sm text-gray-400">От профиля: <span className="text-[#d2e5ef] ml-2">{user.nickname || 'текущий пользователь'}</span></div>
+                <div className="input-field flex items-center text-sm text-gray-400">{t.help.profilePrefix} <span className="text-[#d2e5ef] ml-2">{user.nickname || t.help.currentUserFallback}</span></div>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
@@ -190,7 +192,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <div className="text-xs text-gray-400 mb-1 px-1">Сбор: начало</div>
+                  <div className="text-xs text-gray-400 mb-1 px-1">{t.help.gatheringStart}</div>
                   <input
                     type="datetime-local"
                     value={gatheringStartLocal}
@@ -200,7 +202,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                   />
                 </div>
                 <div>
-                  <div className="text-xs text-gray-400 mb-1 px-1">Сбор: конец</div>
+                  <div className="text-xs text-gray-400 mb-1 px-1">{t.help.gatheringEnd}</div>
                   <input
                     type="datetime-local"
                     value={gatheringEndLocal}
@@ -214,7 +216,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Коротко: что нужно?"
+                placeholder={t.help.titlePlaceholder}
                 className="input-field"
                 maxLength={140}
                 required
@@ -223,7 +225,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
               <textarea
                 value={details}
                 onChange={(e) => setDetails(e.target.value)}
-                placeholder="Подробно: билд/класс/ситуация/что уже пробовал. Чем точнее — тем быстрее ответ."
+                placeholder={t.help.detailsPlaceholder}
                 className="input-field min-h-[140px]"
                 maxLength={5000}
                 required
@@ -237,12 +239,12 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 {createRequest.isPending ? (
                   <span className="inline-flex items-center justify-center">
                     <WuxiaIcon name="spinner" className="w-4 h-4 mr-3 animate-spin" />
-                    Отправляем...
+                    {t.help.submitting}
                   </span>
                 ) : (
                   <span className="inline-flex items-center justify-center">
                     <WuxiaIcon name="seal" className="w-4 h-4 mr-3" />
-                    Отправить в штаб
+                    {t.help.submit}
                   </span>
                 )}
               </button>
@@ -250,7 +252,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
               {createRequest.error && (
                 <div className="text-[#bcd6e5] text-sm mt-2 p-4 bg-[#16202b]/65 rounded-xl border border-[#2f6e8d]/40">
                   <WuxiaIcon name="alertTriangle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
-                  {createRequest.error instanceof Error ? createRequest.error.message : 'Не удалось создать запрос'}
+                  {createRequest.error instanceof Error ? createRequest.error.message : t.help.createFailed}
                 </div>
               )}
             </form>
@@ -259,7 +261,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
           <div className="lg:col-span-3 space-y-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-400">Показать:</span>
+                <span className="text-sm text-gray-400">{t.help.show}</span>
                 <div className="inline-flex rounded-2xl p-1 bg-[#0b141d]/70 border border-[#223140]/70">
                   {(['open', 'closed', 'all'] as const).map((value) => (
                     <button
@@ -270,7 +272,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                         status === value ? 'bg-[#183244]/80 text-[#e6eff5]' : 'text-gray-400 hover:text-[#bcd6e5]'
                       }`}
                     >
-                      {value === 'open' ? 'Открытые' : value === 'closed' ? 'Закрытые' : 'Все'}
+                      {value === 'open' ? t.help.open : value === 'closed' ? t.help.closed : t.help.all}
                     </button>
                   ))}
                 </div>
@@ -280,7 +282,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 type="button"
                 className="dc-icon-btn p-2.5 rounded-xl"
                 onClick={() => refetch()}
-                title="Обновить"
+                title={t.common.refresh}
               >
                 <WuxiaIcon name="refresh" className="w-5 h-5" />
               </button>
@@ -303,8 +305,8 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                     <WuxiaIcon name="seal" className="w-8 h-8 text-[#8fb9cc]" />
                   </div>
                 </div>
-                <div className="text-xl font-semibold text-[#e6eff5]">Тишина в зале ритуалов</div>
-                <p className="text-gray-400 mt-2">Пока нет запросов. Открой первый — и штаб откликнется.</p>
+                <div className="text-xl font-semibold text-[#e6eff5]">{t.help.noRequestsTitle}</div>
+                <p className="text-gray-400 mt-2">{t.help.noRequestsDescription}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-6">
@@ -331,14 +333,14 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                                   : 'bg-[#183244]/70 text-[#e6eff5] border border-[#2f6e8d]/50'
                               }`}
                             >
-                              {req.status === 'closed' ? 'Закрыт' : 'Открыт'}
+                              {req.status === 'closed' ? t.help.statusClosed : t.help.statusOpen}
                             </span>
                           </div>
 
                           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
                             <div className="inline-flex items-center gap-2 text-sm text-gray-300">
                               <WuxiaIcon name="calendar" className="w-4 h-4 text-[#8fb9cc]" />
-                              <span className="text-[#d2e5ef]">Сбор: {formatDateTimeRange(req.gatheringStart, req.gatheringEnd)}</span>
+                              <span className="text-[#d2e5ef]">{t.help.gatheringLabel} {formatDateTimeRange(req.gatheringStart, req.gatheringEnd)}</span>
                             </div>
                             {canEditTime && editingTimeId !== req.id && (
                               <button
@@ -346,7 +348,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                                 className="text-sm font-medium text-[#8fb9cc] hover:text-[#bcd6e5] transition-colors text-left"
                                 onClick={() => startEditTime(req.id, req.gatheringStart, req.gatheringEnd)}
                               >
-                                Изменить время
+                                {t.help.editTime}
                               </button>
                             )}
                           </div>

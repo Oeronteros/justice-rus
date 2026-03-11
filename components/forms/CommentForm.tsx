@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createCommentSchema, type CreateCommentDto } from '@/lib/schemas/guide';
 import WuxiaIcon from '@/components/WuxiaIcons';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface CommentFormProps {
   onSubmit: (data: CreateCommentDto) => Promise<void>;
@@ -11,6 +12,7 @@ interface CommentFormProps {
 }
 
 export function CommentForm({ onSubmit, isSubmitting = false }: CommentFormProps) {
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -31,7 +33,7 @@ export function CommentForm({ onSubmit, isSubmitting = false }: CommentFormProps
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="card p-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="text-sm text-gray-400 flex items-center">Комментарий будет опубликован от твоего профиля</div>
+        <div className="text-sm text-gray-400 flex items-center">{t.guides.yourNick}</div>
         <button
           type="submit"
           disabled={isSubmitting}
@@ -40,12 +42,12 @@ export function CommentForm({ onSubmit, isSubmitting = false }: CommentFormProps
           {isSubmitting ? (
             <span className="inline-flex items-center justify-center">
               <WuxiaIcon name="spinner" className="w-4 h-4 mr-3 animate-spin" />
-              Отправляем...
+              {t.guides.sending}
             </span>
           ) : (
             <span className="inline-flex items-center justify-center">
               <WuxiaIcon name="plus" className="w-4 h-4 mr-3" />
-              Комментировать
+              {t.guides.addComment}
             </span>
           )}
         </button>
@@ -53,7 +55,7 @@ export function CommentForm({ onSubmit, isSubmitting = false }: CommentFormProps
 
       <textarea
         {...register('comment')}
-        placeholder="Твой комментарий..."
+        placeholder={t.guides.yourComment}
         className="input-field min-h-[120px] mt-4 w-full"
         maxLength={3000}
       />

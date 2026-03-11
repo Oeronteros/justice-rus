@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Section } from '@/types';
-import { Language, portalCopy } from '@/lib/i18n';
+import { headerCopy, Language, portalCopy, sectionLabels } from '@/lib/i18n';
 import WuxiaIcon, { type IconName } from '../WuxiaIcons';
 
 interface HeaderProps {
@@ -70,80 +70,11 @@ export default function Header({
     };
   }, []);
 
-  const labels = useMemo(() => {
-    if (language === 'ru') {
-      return {
-        brandSubtitle: 'Гильдия · Justice Mobile',
-        activeSection: 'Раздел',
-        about: 'О нас',
-        news: 'Новости',
-        registration: 'Участники',
-        schedule: 'Расписание',
-        pvp: 'PvP',
-        guides: 'Гайды',
-        help: 'Помощь',
-        absences: 'Отсутствия',
-        calculator: 'Калькулятор DPS',
-        profile: 'Кабинет',
-        refresh: 'Обновить данные',
-        logout: 'Выйти',
-        languageSwitcher: 'Язык интерфейса',
-      };
-    }
-
-    if (language === 'zh') {
-      return {
-        brandSubtitle: '公会 · Justice Mobile',
-        activeSection: '当前',
-        about: '关于',
-        news: '公告',
-        registration: '成员',
-        schedule: '日程',
-        pvp: 'PvP',
-        guides: '攻略',
-        help: '求助',
-        absences: '请假',
-        calculator: 'DPS 计算器',
-        profile: '个人页',
-        refresh: '刷新数据',
-        logout: '退出',
-        languageSwitcher: '界面语言',
-      };
-    }
-
-    return {
-      brandSubtitle: 'Guild · Justice Mobile',
-      activeSection: 'Section',
-      about: 'About',
-      news: 'News',
-      registration: 'Members',
-      schedule: 'Schedule',
-      pvp: 'PvP',
-      guides: 'Guides',
-      help: 'Help',
-      absences: 'Absences',
-      calculator: 'DPS Calculator',
-      profile: 'Profile',
-      refresh: 'Refresh data',
-      logout: 'Logout',
-      languageSwitcher: 'Interface language',
-    };
-  }, [language]);
+  const labels = useMemo(() => headerCopy[language], [language]);
 
   const orderLabels = useMemo(() => {
-    return {
-      about: labels.about,
-      news: labels.news,
-      registration: labels.registration,
-      schedule: labels.schedule,
-      pvp: labels.pvp,
-      guides: labels.guides,
-      help: labels.help,
-      absences: labels.absences,
-      calculator: labels.calculator,
-      profile: labels.profile,
-    };
-  }, [labels]);
+    return sectionLabels[language];
+  }, [language]);
 
   const sectionLabel = orderLabels[currentSection];
 
