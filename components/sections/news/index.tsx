@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Fragment, useState, type ReactNode } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -17,7 +17,8 @@ interface NewsSectionProps {
 const ROLE_MENTION_RE = /<@&\d+>/g;
 const USER_MENTION_RE = /<@!?\d+>/g;
 const CHANNEL_MENTION_RE = /<#\d+>/g;
-const URL_RE = /https?:\/\/[^\s)]+/gi;
+const URL_RE = /https?:\/\/[^\s<>"'\])]+/gi;
+const TRAILING_URL_PUNCTUATION_RE = /[.,;!?]+$/;
 
 function decodeUriComponentSafe(value: string): string {
   let decoded = value;
@@ -73,18 +74,25 @@ function formatKnownNewsUrl(value: string): string | null {
   }
 }
 
+function splitUrlFromTrailingPunctuation(value: string): { href: string; trailingPunctuation: string } {
+  const trailingPunctuation = value.match(TRAILING_URL_PUNCTUATION_RE)?.[0] ?? '';
+  if (!trailingPunctuation) {
+    return { href: value, trailingPunctuation: '' };
+  }
+
+  return {
+    href: value.slice(0, -trailingPunctuation.length),
+    trailingPunctuation,
+  };
+}
+
 function normalizeNewsLine(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) {
     return '';
   }
 
-  const directUrlLabel = formatKnownNewsUrl(trimmed);
-  if (directUrlLabel) {
-    return directUrlLabel;
-  }
-
-  return trimmed.replace(URL_RE, (url) => formatKnownNewsUrl(url) ?? url);
+  return trimmed;
 }
 
 function normalizeDiscordText(value: string): string {
@@ -144,6 +152,84 @@ function buildPreview(normalizedContent: string, displayTitle: string): string {
 
 function buildFeaturedPreview(normalizedContent: string, displayTitle: string): string {
   return buildPreview(normalizedContent, displayTitle);
+}
+
+function trimPreviewAtSafeBoundary(value: string, limit: number): string {
+  if (value.length <= limit) {
+    return value;
+  }
+
+  const trimmedValue = value.slice(0, limit).trimEnd();
+  const urlMatches = Array.from(trimmedValue.matchAll(URL_RE));
+  const lastMatch = urlMatches[urlMatches.length - 1];
+
+  if (!lastMatch) {
+    return trimmedValue;
+  }
+
+  const matchIndex = lastMatch.index ?? 0;
+  const matchEnd = matchIndex + lastMatch[0].length;
+  const nextCharacter = value.charAt(matchEnd);
+  if (matchEnd === trimmedValue.length && nextCharacter && /[^\s),.;!?]/.test(nextCharacter)) {
+    return trimmedValue.slice(0, matchIndex).trimEnd();
+  }
+
+  return trimmedValue;
+}
+
+function renderNewsLineWithLinks(value: string, keyPrefix: string): ReactNode {
+  const urlMatches = Array.from(value.matchAll(URL_RE));
+  if (urlMatches.length === 0) {
+    return value;
+  }
+
+  const nodes: ReactNode[] = [];
+  let lastIndex = 0;
+
+  urlMatches.forEach((match, index) => {
+    const matchIndex = match.index ?? 0;
+    const rawUrl = match[0];
+    const { href, trailingPunctuation } = splitUrlFromTrailingPunctuation(rawUrl);
+
+    if (matchIndex > lastIndex) {
+      nodes.push(value.slice(lastIndex, matchIndex));
+    }
+
+    if (href) {
+      nodes.push(
+        <a
+          key={`${keyPrefix}-link-${index}`}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="news-inline-link"
+        >
+          {formatKnownNewsUrl(href) ?? decodeUriComponentSafe(href)}
+        </a>
+      );
+    }
+
+    if (trailingPunctuation) {
+      nodes.push(trailingPunctuation);
+    }
+
+    lastIndex = matchIndex + rawUrl.length;
+  });
+
+  if (lastIndex < value.length) {
+    nodes.push(value.slice(lastIndex));
+  }
+
+  return nodes;
+}
+
+function renderNewsTextWithLinks(value: string, keyPrefix: string): ReactNode {
+  return value.split('\n').map((line, index, lines) => (
+    <Fragment key={`${keyPrefix}-line-${index}`}>
+      {renderNewsLineWithLinks(line, `${keyPrefix}-${index}`)}
+      {index < lines.length - 1 ? <br /> : null}
+    </Fragment>
+  ));
 }
 
 function splitFeaturedNews<T extends { id: string; pinned?: boolean }>(items: T[]): {
@@ -234,7 +320,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                   const displayTitle = resolveDisplayTitle(featured.title, normalizedContent);
                   const preview = buildFeaturedPreview(normalizedContent, displayTitle);
                   const canExpandFeatured = preview.length > 760;
-                  const featuredPreview = canExpandFeatured && !isFeaturedExpanded ? `${preview.slice(0, 757).trimEnd()}...` : preview;
+                  const featuredPreview = canExpandFeatured && !isFeaturedExpanded ? `${trimPreviewAtSafeBoundary(preview, 757)}...` : preview;
 
                   return (
                     <article className="card news-hero p-7 md:p-8">
@@ -256,8 +342,8 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                       </h3>
                       <p className="news-meta mb-4">{formatDate(featured.date)}</p>
 
-                      <p className="text-gray-200/95 mb-6 text-base sm:text-lg leading-relaxed whitespace-pre-line break-words">
-                        {featuredPreview}
+                      <p className="text-gray-200/95 mb-6 text-base sm:text-lg leading-relaxed break-words">
+                        {renderNewsTextWithLinks(featuredPreview, `featured-${featured.id}`)}
                       </p>
 
                       {canExpandFeatured ? (
@@ -277,12 +363,12 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                         </div>
 
                         {featured.messageUrl ? (
-                          <a
-                            href={featured.messageUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="news-discord-link"
-                          >
+                            <a
+                              href={featured.messageUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="news-discord-link"
+                            >
                             <WuxiaIcon name="link" className="w-4 h-4" />
                             Open in Discord
                           </a>
@@ -316,8 +402,8 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                         </h3>
                         <p className="news-meta mb-4">{formatDate(item.date)}</p>
 
-                        <p className={`news-card-preview text-gray-200/95 mb-4 text-sm sm:text-base leading-relaxed whitespace-pre-line break-words${isExpanded ? ' is-expanded' : ''}`}>
-                          {preview}
+                        <p className={`news-card-preview text-gray-200/95 mb-4 text-sm sm:text-base leading-relaxed break-words${isExpanded ? ' is-expanded' : ''}`}>
+                          {renderNewsTextWithLinks(preview, `news-${item.id}`)}
                         </p>
 
                         {canExpand ? (
@@ -340,7 +426,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                             <a
                               href={item.messageUrl}
                               target="_blank"
-                              rel="noreferrer"
+                              rel="noopener noreferrer"
                               className="news-discord-link"
                             >
                               <WuxiaIcon name="link" className="w-4 h-4" />

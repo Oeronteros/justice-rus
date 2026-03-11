@@ -44,4 +44,21 @@ describe('Header navigation accessibility', () => {
     expect(screen.getByRole('button', { name: 'Logout' })).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'Interface language' })).toBeInTheDocument();
   });
+
+  it('removes the March 8 toggle and does not touch March theme storage', () => {
+    render(
+      <Header
+        currentSection="guides"
+        onLogout={vi.fn()}
+        language="en"
+        onLanguageChange={vi.fn()}
+      />
+    );
+
+    expect(screen.queryByRole('button', { name: 'March 8' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '8 Марта' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '3月8日' })).not.toBeInTheDocument();
+    expect(window.localStorage.getItem).not.toHaveBeenCalled();
+    expect(window.localStorage.setItem).not.toHaveBeenCalled();
+  });
 });

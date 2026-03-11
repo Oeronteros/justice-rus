@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { verifyToken } from '@/lib/auth';
-import { getAuthToken } from '@/lib/auth/request';
 import { ensureGuideSchema } from '@/lib/guides/schema';
-import { getPool, hasDatabaseUrl } from '@/lib/neon';
+import { getPool } from '@/lib/neon';
+import {
+  handleRouteError,
+  parseJsonBody,
+  requireAuth,
+  requireDatabase,
+} from '@/lib/server/route-helpers';
 
 const voteSchema = z.object({
   voterKey: z.string().trim().min(8).max(120).optional(),
@@ -11,20 +15,24 @@ const voteSchema = z.object({
 
 export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-    if (!decoded) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const auth = requireAuth(request);
+    if (!auth.ok) {
+      return auth.response;
     }
 
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json(
-        { error: 'Database is not configured (missing DATABASE_URL)' },
-        { status: 503 }
-      );
+    const decoded = auth.value;
+
+    const db = requireDatabase();
+    if (!db.ok) {
+      return db.response;
     }
 
-    const payload = voteSchema.parse(await request.json());
+    const parsed = await parseJsonBody<z.infer<typeof voteSchema>>(request, voteSchema);
+    if (!parsed.ok) {
+      return parsed.response;
+    }
+
+    const payload = parsed.value;
     const voterKey = decoded.id ? `account:${decoded.id}` : (payload.voterKey || '').trim();
     if (!voterKey) {
       return NextResponse.json({ error: 'Missing voter key' }, { status: 400 });
@@ -63,12 +71,10 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
 
     return NextResponse.json({ votes, voted });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
-    }
-
-    console.error('Error voting guide:', error);
-    return NextResponse.json({ error: 'Failed to vote' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error voting guide:',
+      fallbackMessage: 'Failed to vote',
+    });
   }
 }
 

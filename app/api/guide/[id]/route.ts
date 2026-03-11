@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { verifyToken } from '@/lib/auth';
-import { getAuthToken } from '@/lib/auth/request';
 import { ensureGuideSchema } from '@/lib/guides/schema';
 import { normalizeGuideTitle } from '@/lib/guides/obsidian';
-import { getPool, hasDatabaseUrl } from '@/lib/neon';
+import { getPool } from '@/lib/neon';
 import { canModerateContent } from '@/lib/authz';
+import {
+  handleRouteError,
+  parseJsonBody,
+  requireAuth,
+  requireDatabase,
+} from '@/lib/server/route-helpers';
 
 const guideUpdateSchema = z.object({
   title: z.string().trim().min(1).max(140).optional(),
@@ -15,17 +19,16 @@ const guideUpdateSchema = z.object({
 
 export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-    if (!decoded) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const auth = requireAuth(request);
+    if (!auth.ok) {
+      return auth.response;
     }
 
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json(
-        { error: 'Database is not configured (missing DATABASE_URL)' },
-        { status: 503 }
-      );
+    const decoded = auth.value;
+
+    const db = requireDatabase();
+    if (!db.ok) {
+      return db.response;
     }
 
     await ensureGuideSchema();
@@ -77,7 +80,9 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
             `SELECT 1 FROM guide_vote WHERE guide_id = $1 AND voter_key = $2 LIMIT 1`,
             [guideId, voterKey]
           )
-        : { rowCount: 0 };
+        : null;
+
+    const voted = (votedRes?.rowCount ?? 0) > 0;
 
     return NextResponse.json({
       guide: {
@@ -92,7 +97,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
         updatedAt: (guideRow.updated_at || guideRow.created_at || new Date()).toISOString(),
       },
       votes,
-      voted: (votedRes as any).rowCount > 0,
+      voted,
       comments: commentsRes.rows.map((row) => ({
         id: String(row.id),
         author: row.author || 'unknown',
@@ -101,29 +106,35 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
       })),
     });
   } catch (error) {
-    console.error('Error loading guide:', error);
-    return NextResponse.json({ error: 'Failed to load guide' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error loading guide:',
+      fallbackMessage: 'Failed to load guide',
+    });
   }
 }
 
 export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-    if (!decoded) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const auth = requireAuth(request);
+    if (!auth.ok) {
+      return auth.response;
     }
+
+    const decoded = auth.value;
 
     const isModerator = canModerateContent(decoded.role);
 
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json(
-        { error: 'Database is not configured (missing DATABASE_URL)' },
-        { status: 503 }
-      );
+    const db = requireDatabase();
+    if (!db.ok) {
+      return db.response;
     }
 
-    const payload = guideUpdateSchema.parse(await request.json());
+    const parsed = await parseJsonBody<z.infer<typeof guideUpdateSchema>>(request, guideUpdateSchema);
+    if (!parsed.ok) {
+      return parsed.response;
+    }
+
+    const payload = parsed.value;
     if (!payload.title && !payload.content && !payload.category) {
       return NextResponse.json({ error: 'Nothing to update' }, { status: 400 });
     }
@@ -179,12 +190,10 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
       updatedAt: (updatedRow.updated_at || updatedRow.created_at || new Date()).toISOString(),
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
-    }
-
-    console.error('Error updating guide:', error);
-    return NextResponse.json({ error: 'Failed to update guide' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error updating guide:',
+      fallbackMessage: 'Failed to update guide',
+    });
   }
 }
 
@@ -201,18 +210,20 @@ export async function OPTIONS() {
 
 export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-    if (!decoded) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const auth = requireAuth(request);
+    if (!auth.ok) {
+      return auth.response;
     }
+
+    const decoded = auth.value;
 
     if (!canModerateContent(decoded.role)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json({ error: 'Database is not configured (missing DATABASE_URL)' }, { status: 503 });
+    const db = requireDatabase();
+    if (!db.ok) {
+      return db.response;
     }
 
     await ensureGuideSchema();
@@ -230,7 +241,9 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting guide:', error);
-    return NextResponse.json({ error: 'Failed to delete guide' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error deleting guide:',
+      fallbackMessage: 'Failed to delete guide',
+    });
   }
 }

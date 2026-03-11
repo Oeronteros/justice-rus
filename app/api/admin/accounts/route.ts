@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { verifyToken } from '@/lib/auth';
-import { getAuthToken } from '@/lib/auth/request';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureAccountsSchema, toPublicAccount } from '@/lib/auth/accounts';
 import { canAssignRoles, canManageAccounts } from '@/lib/authz';
+import {
+  handleRouteError,
+  parseJsonBody,
+  requireAuth,
+  requireDatabase,
+  requirePermission,
+} from '@/lib/server/route-helpers';
 
 const updateSchema = z.object({
   id: z.union([z.string(), z.number()]),
@@ -13,28 +18,24 @@ const updateSchema = z.object({
 });
 
 function ensureAdmin(request: NextRequest) {
-  const token = getAuthToken(request);
-  const decoded = token ? verifyToken(token) : null;
-  if (!decoded) {
-    return { error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
+  const auth = requireAuth(request);
+  if (!auth.ok) {
+    return auth;
   }
 
-  if (!canManageAccounts(decoded.role)) {
-    return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
-  }
-
-  return { decoded };
+  return requirePermission(auth.value, (user) => canManageAccounts(user.role));
 }
 
 export async function GET(request: NextRequest) {
   const guard = ensureAdmin(request);
-  if ('error' in guard) {
-    return guard.error;
+  if (!guard.ok) {
+    return guard.response;
   }
 
   try {
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json({ error: 'Database is not configured' }, { status: 503 });
+    const db = requireDatabase('Database is not configured');
+    if (!db.ok) {
+      return db.response;
     }
 
     await ensureAccountsSchema();
@@ -50,33 +51,41 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result.rows.map(toPublicAccount));
   } catch (error) {
-    console.error('Error loading accounts:', error);
-    return NextResponse.json({ error: 'Failed to load accounts' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error loading accounts:',
+      fallbackMessage: 'Failed to load accounts',
+    });
   }
 }
 
 export async function PATCH(request: NextRequest) {
   const guard = ensureAdmin(request);
-  if ('error' in guard) {
-    return guard.error;
+  if (!guard.ok) {
+    return guard.response;
   }
 
   try {
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json({ error: 'Database is not configured' }, { status: 503 });
+    const db = requireDatabase('Database is not configured');
+    if (!db.ok) {
+      return db.response;
     }
 
-    const payload = updateSchema.parse(await request.json());
+    const parsed = await parseJsonBody<z.infer<typeof updateSchema>>(request, updateSchema);
+    if (!parsed.ok) {
+      return parsed.response;
+    }
+
+    const payload = parsed.value;
     const accountId = Number(payload.id);
     if (!Number.isFinite(accountId)) {
       return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
     }
 
-    if (guard.decoded.id && Number(guard.decoded.id) === accountId && payload.isActive === false) {
+    if (guard.value.id && Number(guard.value.id) === accountId && payload.isActive === false) {
       return NextResponse.json({ error: 'You cannot deactivate your own account' }, { status: 400 });
     }
 
-    if (payload.role && !canAssignRoles(guard.decoded.role)) {
+    if (payload.role && !canAssignRoles(guard.value.role)) {
       return NextResponse.json({ error: 'Only head/sysadmin can assign roles' }, { status: 403 });
     }
 
@@ -101,11 +110,9 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json(toPublicAccount(row));
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
-    }
-
-    console.error('Error updating account:', error);
-    return NextResponse.json({ error: 'Failed to update account' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error updating account:',
+      fallbackMessage: 'Failed to update account',
+    });
   }
 }

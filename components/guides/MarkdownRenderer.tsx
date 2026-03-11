@@ -16,6 +16,7 @@ export interface MarkdownHeading {
   id: string;
   level: number;
   text: string;
+  line?: number;
 }
 
 interface MarkdownRendererProps {
@@ -71,7 +72,7 @@ export function extractMarkdownHeadings(content: string): MarkdownHeading[] {
   const headings: MarkdownHeading[] = [];
   const seen = new Map<string, number>();
 
-  for (const line of lines) {
+  for (const [index, line] of lines.entries()) {
     const match = line.match(/^(#{1,6})\s+(.*)$/);
     if (!match) continue;
 
@@ -87,6 +88,7 @@ export function extractMarkdownHeadings(content: string): MarkdownHeading[] {
       id: currentCount === 0 ? baseId : `${baseId}-${currentCount + 1}`,
       level,
       text,
+      line: index + 1,
     });
   }
 
@@ -109,13 +111,15 @@ export function MarkdownRenderer({
 }: MarkdownRendererProps) {
   const markdown = prepareMarkdownForRender(content || '');
   const headings = extractMarkdownHeadings(content);
-  let headingIndex = 0;
 
-  const renderHeading = (fallbackLevel: 1 | 2 | 3 | 4 | 5 | 6, children: ReactNode) => {
-    const heading = headings[headingIndex];
-    headingIndex += 1;
+  const renderHeading = (
+    fallbackLevel: 1 | 2 | 3 | 4 | 5 | 6,
+    children: ReactNode,
+    lineNumber?: number
+  ) => {
+    const heading = lineNumber == null ? undefined : headings.find((candidate) => candidate.line === lineNumber);
     const headingText = heading?.text || collectText(children).trim();
-    const headingId = heading?.id || normalizeGuideTitle(headingText) || `section-${headingIndex}`;
+    const headingId = heading?.id || normalizeGuideTitle(headingText) || `section-${lineNumber ?? fallbackLevel}`;
     const Tag = `h${fallbackLevel}` as const;
 
     return (
@@ -153,12 +157,12 @@ export function MarkdownRenderer({
         remarkPlugins={[remarkGfm]}
         urlTransform={(url) => normalizeHref(String(url || ''))}
         components={{
-          h1: ({ children }) => renderHeading(1, children),
-          h2: ({ children }) => renderHeading(2, children),
-          h3: ({ children }) => renderHeading(3, children),
-          h4: ({ children }) => renderHeading(4, children),
-          h5: ({ children }) => renderHeading(5, children),
-          h6: ({ children }) => renderHeading(6, children),
+          h1: ({ children, node }) => renderHeading(1, children, node?.position?.start.line),
+          h2: ({ children, node }) => renderHeading(2, children, node?.position?.start.line),
+          h3: ({ children, node }) => renderHeading(3, children, node?.position?.start.line),
+          h4: ({ children, node }) => renderHeading(4, children, node?.position?.start.line),
+          h5: ({ children, node }) => renderHeading(5, children, node?.position?.start.line),
+          h6: ({ children, node }) => renderHeading(6, children, node?.position?.start.line),
           p: ({ children }) => <p className="dc-md-p">{children}</p>,
           ul: ({ children, className: listClassName }) => (
             <ul className={joinClasses('dc-md-ul', listClassName)}>{children}</ul>

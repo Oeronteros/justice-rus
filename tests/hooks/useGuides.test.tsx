@@ -56,9 +56,12 @@ function createWrapper() {
       },
     },
   });
-  return ({ children }: { children: ReactNode }) => (
+  const Wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+
+  Wrapper.displayName = 'GuidesQueryClientWrapper';
+  return Wrapper;
 }
 
 describe('useGuides hooks', () => {
@@ -91,13 +94,14 @@ describe('useGuides hooks', () => {
               },
             });
 
-            const wrapper = ({ children }: { children: ReactNode }) => (
+            const Wrapper = ({ children }: { children: ReactNode }) => (
               <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
             );
+            Wrapper.displayName = 'GuidesDedupWrapper';
 
             // Render multiple hooks simultaneously
             const hooks = Array.from({ length: numHooks }, () =>
-              renderHook(() => useGuides(), { wrapper })
+              renderHook(() => useGuides(), { wrapper: Wrapper })
             );
 
             // Wait for all to complete

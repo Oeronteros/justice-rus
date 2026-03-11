@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { verifyToken } from '@/lib/auth';
-import { getAuthToken } from '@/lib/auth/request';
-import { getPool, hasDatabaseUrl } from '@/lib/neon';
+import { getPool } from '@/lib/neon';
 import { ensureHelpSchema, resolveRosterClassName } from '../_shared';
+import {
+  handleRouteError,
+  parseJsonBody,
+  requireAuth,
+  requireDatabase,
+} from '@/lib/server/route-helpers';
 
 const rsvpSchema = z.object({
   id: z.union([z.string(), z.number()]),
@@ -61,24 +65,28 @@ async function loadHelpRequest(requestId: number) {
 
 export async function POST(request: NextRequest) {
   try {
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-    if (!decoded) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const auth = requireAuth(request);
+    if (!auth.ok) {
+      return auth.response;
     }
 
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json(
-        { error: 'Database is not configured (missing DATABASE_URL)' },
-        { status: 503 }
-      );
+    const decoded = auth.value;
+
+    const db = requireDatabase();
+    if (!db.ok) {
+      return db.response;
     }
 
     if (!decoded.id) {
       return NextResponse.json({ error: 'Responder identity is unavailable' }, { status: 400 });
     }
 
-    const payload = rsvpSchema.parse(await request.json());
+    const parsed = await parseJsonBody<z.infer<typeof rsvpSchema>>(request, rsvpSchema);
+    if (!parsed.ok) {
+      return parsed.response;
+    }
+
+    const payload = parsed.value;
     const requestId = Number(payload.id);
     if (!Number.isFinite(requestId)) {
       return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
@@ -106,28 +114,25 @@ export async function POST(request: NextRequest) {
     }
     return NextResponse.json(updated);
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
-    }
-
-    console.error('Error RSVP help request:', error);
-    return NextResponse.json({ error: 'Failed to RSVP help request' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error RSVP help request:',
+      fallbackMessage: 'Failed to RSVP help request',
+    });
   }
 }
 
 export async function DELETE(request: NextRequest) {
   try {
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-    if (!decoded) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const auth = requireAuth(request);
+    if (!auth.ok) {
+      return auth.response;
     }
 
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json(
-        { error: 'Database is not configured (missing DATABASE_URL)' },
-        { status: 503 }
-      );
+    const decoded = auth.value;
+
+    const db = requireDatabase();
+    if (!db.ok) {
+      return db.response;
     }
 
     if (!decoded.id) {
@@ -153,8 +158,10 @@ export async function DELETE(request: NextRequest) {
     }
     return NextResponse.json(updated);
   } catch (error) {
-    console.error('Error withdrawing RSVP:', error);
-    return NextResponse.json({ error: 'Failed to withdraw RSVP' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error withdrawing RSVP:',
+      fallbackMessage: 'Failed to withdraw RSVP',
+    });
   }
 }
 

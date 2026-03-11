@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import { ru, type Translations } from './translations/ru';
 import { en } from './translations/en';
 import { zh } from './translations/zh';
@@ -19,21 +19,22 @@ const I18nContext = createContext<I18nContextValue | null>(null);
 
 const STORAGE_KEY = 'guild_portal_lang';
 
+function getInitialLanguage(defaultLanguage: Language): Language {
+  if (typeof window === 'undefined') {
+    return defaultLanguage;
+  }
+
+  const stored = localStorage.getItem(STORAGE_KEY);
+  return stored === 'ru' || stored === 'en' || stored === 'zh' ? stored : defaultLanguage;
+}
+
 interface I18nProviderProps {
   children: ReactNode;
   defaultLanguage?: Language;
 }
 
 export function I18nProvider({ children, defaultLanguage = 'ru' }: I18nProviderProps) {
-  const [language, setLanguageState] = useState<Language>(defaultLanguage);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === 'ru' || stored === 'en' || stored === 'zh') {
-      setLanguageState(stored);
-    }
-  }, []);
+  const [language, setLanguageState] = useState<Language>(() => getInitialLanguage(defaultLanguage));
 
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);

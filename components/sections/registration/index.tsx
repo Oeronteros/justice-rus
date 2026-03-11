@@ -23,6 +23,24 @@ interface RegistrationSectionProps {
   user: User;
 }
 
+function readStoredColumnLabels(): RegistrationColumnLabels {
+  if (typeof window === 'undefined') {
+    return defaultRegistrationColumnLabels;
+  }
+
+  const saved = window.localStorage.getItem('registration-column-labels');
+  if (!saved) {
+    return defaultRegistrationColumnLabels;
+  }
+
+  try {
+    const parsed = JSON.parse(saved) as Partial<RegistrationColumnLabels>;
+    return { ...defaultRegistrationColumnLabels, ...parsed };
+  } catch {
+    return defaultRegistrationColumnLabels;
+  }
+}
+
 function RegistrationSectionContent({ user }: RegistrationSectionProps) {
   const { data: registrations = [], isLoading, error, refetch } = useRegistrations();
   const [searchTerm, setSearchTerm] = useState('');
@@ -30,19 +48,7 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
   const [rankFilter, setRankFilter] = useState('all');
   const [sortBy, setSortBy] = useState<RegistrationSortOption>('nickname-asc');
   const [labelsOpen, setLabelsOpen] = useState(false);
-  const [columnLabels, setColumnLabels] = useState<RegistrationColumnLabels>(defaultRegistrationColumnLabels);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const saved = window.localStorage.getItem('registration-column-labels');
-    if (!saved) return;
-    try {
-      const parsed = JSON.parse(saved) as Partial<RegistrationColumnLabels>;
-      setColumnLabels({ ...defaultRegistrationColumnLabels, ...parsed });
-    } catch {
-      // ignore malformed local state
-    }
-  }, []);
+  const [columnLabels, setColumnLabels] = useState<RegistrationColumnLabels>(readStoredColumnLabels);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

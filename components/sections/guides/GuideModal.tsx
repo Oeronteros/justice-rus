@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import { extractMarkdownHeadings, MarkdownRenderer } from '@/components/guides/MarkdownRenderer';
 import { handleApiError } from '@/lib/api/client';
@@ -40,19 +40,19 @@ export function GuideModal({
   userId,
 }: GuideModalProps) {
   const [voterKey] = useState(getVoterKey);
-  const [mounted, setMounted] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
   
   const { data: guideDetail, isLoading, error } = useGuide(guideId, voterKey);
   const { data: guides = [] } = useGuides();
   const voteGuide = useVoteGuide();
   const deleteGuide = useDeleteGuide();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -112,7 +112,7 @@ export function GuideModal({
     }
   }, [deleteGuide, guideId, onClose]);
 
-  const buildStableGuideUrl = useCallback(() => {
+  const stableGuideUrl = useMemo(() => {
     if (typeof window === 'undefined') return `/`;
     const url = new URL(window.location.origin);
     url.pathname = '/guides';
@@ -121,7 +121,7 @@ export function GuideModal({
       url.searchParams.set('slug', guideDetail.guide.slug);
     }
     return url.toString();
-  }, [guideDetail?.guide.slug, guideId]);
+  }, [guideDetail, guideId]);
 
   const copyText = useCallback(async (text: string) => {
     if (typeof window === 'undefined') return;
@@ -145,7 +145,7 @@ export function GuideModal({
 
   const handleShare = useCallback(async () => {
     if (!guideDetail) return;
-    const url = buildStableGuideUrl();
+    const url = stableGuideUrl;
 
     try {
       if (typeof navigator !== 'undefined' && 'share' in navigator && typeof (navigator as any).share === 'function') {
@@ -167,7 +167,7 @@ export function GuideModal({
     } catch {
       window.prompt('Скопируй ссылку', url);
     }
-  }, [buildStableGuideUrl, copyText, guideDetail]);
+  }, [copyText, guideDetail, stableGuideUrl]);
 
   const handleDownload = useCallback(() => {
     if (!guideDetail || typeof window === 'undefined') return;

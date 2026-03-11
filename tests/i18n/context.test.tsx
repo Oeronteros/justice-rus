@@ -128,6 +128,7 @@ describe('I18n Context', () => {
 
             // Should have called getItem to check stored preference
             expect(localStorageMock.getItem).toHaveBeenCalledWith('guild_portal_lang');
+            expect(screen.getByTestId('current-language')).toHaveTextContent(storedLang);
 
             unmount();
           }

@@ -2,6 +2,7 @@
 
 import { Component, type ReactNode, type ErrorInfo } from 'react';
 import WuxiaIcon from '@/components/WuxiaIcons';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface ErrorFallbackProps {
   error: Error | null;
@@ -9,6 +10,8 @@ interface ErrorFallbackProps {
 }
 
 function ErrorFallback({ error, onRetry }: ErrorFallbackProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,13 +21,13 @@ function ErrorFallback({ error, onRetry }: ErrorFallbackProps) {
               <WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />
             </div>
           </div>
-          <h3 className="text-2xl font-bold text-red-400 mb-2">Что-то пошло не так</h3>
+          <h3 className="text-2xl font-bold text-red-400 mb-2">{t.errors.somethingWrong}</h3>
           <p className="text-gray-400 mb-6 max-w-md mx-auto">
-            {error?.message || 'Произошла непредвиденная ошибка'}
+            {error?.message || t.errors.unknown}
           </p>
           <button onClick={onRetry} className="btn-primary">
             <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
-            Попробовать снова
+            {t.errors.tryAgain}
           </button>
         </div>
       </div>

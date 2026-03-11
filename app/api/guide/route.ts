@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { verifyToken } from '@/lib/auth';
-import { getAuthToken } from '@/lib/auth/request';
 import { extractWikiReferences, normalizeGuideTitle } from '@/lib/guides/obsidian';
 import { ensureGuideSchema, seedGuidesIfEmpty } from '@/lib/guides/schema';
-import { getPool, hasDatabaseUrl } from '@/lib/neon';
+import { getPool } from '@/lib/neon';
+import {
+  handleRouteError,
+  parseJsonBody,
+  requireAuth,
+  requireDatabase,
+} from '@/lib/server/route-helpers';
 
 const guideCreateSchema = z.object({
   title: z.string().trim().min(1).max(140),
@@ -15,16 +19,14 @@ const guideCreateSchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
-    const token = getAuthToken(request);
-    if (!token || !verifyToken(token)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const auth = requireAuth(request);
+    if (!auth.ok) {
+      return auth.response;
     }
 
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json(
-        { error: 'Database is not configured (missing DATABASE_URL)' },
-        { status: 503 }
-      );
+    const db = requireDatabase();
+    if (!db.ok) {
+      return db.response;
     }
 
     await ensureGuideSchema();
@@ -72,27 +74,33 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error loading guides:', error);
-    return NextResponse.json({ error: 'Failed to load guides' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error loading guides:',
+      fallbackMessage: 'Failed to load guides',
+    });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-    if (!decoded) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const auth = requireAuth(request);
+    if (!auth.ok) {
+      return auth.response;
     }
 
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json(
-        { error: 'Database is not configured (missing DATABASE_URL)' },
-        { status: 503 }
-      );
+    const decoded = auth.value;
+
+    const db = requireDatabase();
+    if (!db.ok) {
+      return db.response;
     }
 
-    const payload = guideCreateSchema.parse(await request.json());
+    const parsed = await parseJsonBody<z.infer<typeof guideCreateSchema>>(request, guideCreateSchema);
+    if (!parsed.ok) {
+      return parsed.response;
+    }
+
+    const payload = parsed.value;
 
     await ensureGuideSchema();
     const pool = getPool();
@@ -128,12 +136,10 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
-    }
-
-    console.error('Error creating guide:', error);
-    return NextResponse.json({ error: 'Failed to create guide' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error creating guide:',
+      fallbackMessage: 'Failed to create guide',
+    });
   }
 }
 

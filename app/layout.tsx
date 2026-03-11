@@ -6,6 +6,8 @@ import InputPerformanceMode from "@/components/InputPerformanceMode";
 import { QueryProvider } from "@/lib/providers/QueryProvider";
 import { I18nProvider } from "@/lib/i18n/context";
 
+const shouldLoadVercelAnalytics = process.env.VERCEL === "1";
+
 export const metadata: Metadata = {
   title: "Silent Moonfall | Guild Portal",
   description: "Official Silent Moonfall guild portal for Justice Mobile players.",
@@ -20,6 +22,11 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+  },
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
   },
 };
 
@@ -45,7 +52,7 @@ export default function RootLayout({
             </Suspense>
           </I18nProvider>
         </QueryProvider>
-        <Analytics />
+        {shouldLoadVercelAnalytics ? <Analytics /> : null}
       </body>
     </html>
   );

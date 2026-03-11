@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { verifyToken } from '@/lib/auth';
-import { getAuthToken } from '@/lib/auth/request';
 import { ensureGuideSchema } from '@/lib/guides/schema';
-import { getPool, hasDatabaseUrl } from '@/lib/neon';
+import { getPool } from '@/lib/neon';
+import {
+  handleRouteError,
+  parseJsonBody,
+  requireAuth,
+  requireDatabase,
+} from '@/lib/server/route-helpers';
 
 const commentSchema = z.object({
   author: z.string().trim().min(1).max(60).optional(),
@@ -12,20 +16,24 @@ const commentSchema = z.object({
 
 export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-    if (!decoded) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const auth = requireAuth(request);
+    if (!auth.ok) {
+      return auth.response;
     }
 
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json(
-        { error: 'Database is not configured (missing DATABASE_URL)' },
-        { status: 503 }
-      );
+    const decoded = auth.value;
+
+    const db = requireDatabase();
+    if (!db.ok) {
+      return db.response;
     }
 
-    const payload = commentSchema.parse(await request.json());
+    const parsed = await parseJsonBody<z.infer<typeof commentSchema>>(request, commentSchema);
+    if (!parsed.ok) {
+      return parsed.response;
+    }
+
+    const payload = parsed.value;
 
     await ensureGuideSchema();
     const pool = getPool();
@@ -63,12 +71,10 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
       { status: 201 }
     );
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
-    }
-
-    console.error('Error creating guide comment:', error);
-    return NextResponse.json({ error: 'Failed to create comment' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error creating guide comment:',
+      fallbackMessage: 'Failed to create comment',
+    });
   }
 }
 

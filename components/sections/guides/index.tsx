@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { GuidesList } from './GuidesList';
@@ -17,7 +17,6 @@ interface GuidesSectionProps {
 }
 
 function GuidesSectionContent({ user }: GuidesSectionProps) {
-  const [openGuideId, setOpenGuideId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const { hideHeader, showHeader } = useHeader();
   const { data: guides = [] } = useGuides();
@@ -28,7 +27,7 @@ function GuidesSectionContent({ user }: GuidesSectionProps) {
 
   const canModerate = canModerateContent(user.role);
 
-  const replaceGuideParam = (guideId: string | null) => {
+  const replaceGuideParam = useCallback((guideId: string | null) => {
     const params = new URLSearchParams(searchParams?.toString());
     if (guideId) {
       const selectedGuide = guides.find((guide) => guide.id === guideId);
@@ -42,10 +41,27 @@ function GuidesSectionContent({ user }: GuidesSectionProps) {
     }
     const next = params.toString();
     router.replace(next ? `${pathname}?${next}` : pathname, { scroll: false });
-  };
+  }, [guides, pathname, router, searchParams]);
+
+  const openGuideId = useMemo(() => {
+    const guideFromUrl = searchParams?.get('guide');
+    if (guideFromUrl) {
+      return guideFromUrl;
+    }
+
+    const slugFromUrl = searchParams?.get('slug');
+    if (!slugFromUrl || guides.length === 0) {
+      return null;
+    }
+
+    const matchedGuide = guides.find(
+      (guide) => (guide.slug || normalizeGuideTitle(guide.title)) === normalizeGuideTitle(slugFromUrl)
+    );
+
+    return matchedGuide?.id || null;
+  }, [guides, searchParams]);
 
   const openGuide = (guideId: string) => {
-    setOpenGuideId(guideId);
     replaceGuideParam(guideId);
   };
 
@@ -54,7 +70,6 @@ function GuidesSectionContent({ user }: GuidesSectionProps) {
   };
 
   const handleCloseGuide = () => {
-    setOpenGuideId(null);
     replaceGuideParam(null);
   };
 
@@ -71,27 +86,12 @@ function GuidesSectionContent({ user }: GuidesSectionProps) {
   };
 
   useEffect(() => {
-    const guideFromUrl = searchParams?.get('guide');
     const slugFromUrl = searchParams?.get('slug');
 
-    if (guideFromUrl && guideFromUrl !== openGuideId) {
-      setOpenGuideId(guideFromUrl);
-      return;
+    if (!searchParams?.get('guide') && slugFromUrl && openGuideId) {
+      replaceGuideParam(openGuideId);
     }
-
-    if (!guideFromUrl && slugFromUrl && guides.length > 0) {
-      const matchedGuide = guides.find((guide) => (guide.slug || normalizeGuideTitle(guide.title)) === normalizeGuideTitle(slugFromUrl));
-      if (matchedGuide && matchedGuide.id !== openGuideId) {
-        setOpenGuideId(matchedGuide.id);
-        replaceGuideParam(matchedGuide.id);
-        return;
-      }
-    }
-
-    if (!guideFromUrl && openGuideId) {
-      setOpenGuideId(null);
-    }
-  }, [guides, openGuideId, searchParams]);
+  }, [openGuideId, replaceGuideParam, searchParams]);
 
   useEffect(() => {
     const modalOpen = Boolean(openGuideId) || createOpen;

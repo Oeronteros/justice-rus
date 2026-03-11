@@ -1,7 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as fc from 'fast-check';
+import type { ReactNode } from 'react';
 import { cleanup, render, screen, fireEvent } from '@testing-library/react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
+import { I18nProvider } from '@/lib/i18n/context';
 
 // Suppress console.error for cleaner test output
 const originalError = console.error;
@@ -26,6 +28,10 @@ function SafeComponent({ text }: { text: string }) {
   return <div data-testid="safe-content">{text}</div>;
 }
 
+function renderWithI18n(node: ReactNode) {
+  return render(<I18nProvider>{node}</I18nProvider>);
+}
+
 describe('ErrorBoundary', () => {
   /**
    * Property 9: Error Boundary Catch
@@ -41,7 +47,7 @@ describe('ErrorBoundary', () => {
             cleanup();
             const error = new Error(errorMessage);
 
-            const { container } = render(
+            const { container } = renderWithI18n(
               <ErrorBoundary>
                 <ThrowingComponent error={error} />
               </ErrorBoundary>
@@ -67,7 +73,7 @@ describe('ErrorBoundary', () => {
           fc.string({ minLength: 1, maxLength: 100 }),
           (text) => {
             cleanup();
-            render(
+            renderWithI18n(
               <ErrorBoundary>
                 <SafeComponent text={text} />
               </ErrorBoundary>
@@ -89,7 +95,7 @@ describe('ErrorBoundary', () => {
             cleanup();
             const error = new Error(errorMessage);
 
-            render(
+            renderWithI18n(
               <ErrorBoundary fallback={<div data-testid="custom-fallback">{fallbackText}</div>}>
                 <ThrowingComponent error={error} />
               </ErrorBoundary>
@@ -118,7 +124,7 @@ describe('ErrorBoundary', () => {
             const error = new Error(errorMessage);
             const consoleSpy = vi.spyOn(console, 'error');
 
-            render(
+            renderWithI18n(
               <ErrorBoundary>
                 <ThrowingComponent error={error} />
               </ErrorBoundary>
@@ -150,7 +156,7 @@ describe('ErrorBoundary', () => {
             const error = new Error(errorMessage);
             const onError = vi.fn();
 
-            render(
+            renderWithI18n(
               <ErrorBoundary onError={onError}>
                 <ThrowingComponent error={error} />
               </ErrorBoundary>
@@ -180,7 +186,7 @@ describe('ErrorBoundary', () => {
         return <div data-testid="recovered">Recovered!</div>;
       }
 
-      render(
+      renderWithI18n(
         <ErrorBoundary>
           <ConditionalThrow />
         </ErrorBoundary>
