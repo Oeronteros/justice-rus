@@ -139,6 +139,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
         subtitle={t.guides.loading}
         icon={<WuxiaIcon name="guides" className="w-6 h-6 text-red-400" />}
         skeletonCount={3}
+        layout="cards"
       />
     );
   }
@@ -161,7 +162,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
   }
 
   return (
-    <>
+    <div className="section-stack-lg">
       <SectionHero
         icon={<WuxiaIcon name="guides" className="w-5 h-5" />}
         title={t.guides.title}
@@ -173,7 +174,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t.guides.search}
-              className="input-field min-w-[220px]"
+              className="input-field w-full min-w-0 sm:min-w-[220px]"
             />
             <input
               ref={markdownInputRef}
@@ -192,7 +193,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
             />
             <button
               type="button"
-              className="btn-secondary"
+              className="btn-secondary w-full sm:w-auto"
               onClick={() => markdownInputRef.current?.click()}
               disabled={isImporting}
             >
@@ -201,7 +202,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
             </button>
             <button
               type="button"
-              className="btn-secondary"
+              className="btn-secondary w-full sm:w-auto"
               onClick={() => markdownFolderInputRef.current?.click()}
               disabled={isImporting}
             >
@@ -210,13 +211,13 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
             </button>
             <button
               type="button"
-              className="dc-icon-btn p-2.5 rounded-xl"
+              className="dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0"
               onClick={() => refetch()}
               title="Обновить"
             >
               <WuxiaIcon name="refresh" className="w-5 h-5" />
             </button>
-            <button type="button" className="btn-primary px-5 py-3" onClick={onCreateClick}>
+            <button type="button" className="btn-primary w-full sm:w-auto px-5 py-3" onClick={onCreateClick}>
               <WuxiaIcon name="edit" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
               {t.guides.create}
             </button>
@@ -225,7 +226,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
       />
 
       <div
-        className="portal-dropzone mb-6"
+        className="portal-dropzone"
         data-over={isDragOver ? 'true' : 'false'}
         onDragOver={(event) => {
           event.preventDefault();
@@ -241,13 +242,13 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
       </div>
 
       {notice && (
-        <div className="mb-6 text-sm text-[#bcd6e5] p-4 bg-[#16202b]/65 rounded-xl border border-[#2f6e8d]/40">
+        <div className="text-sm text-[#bcd6e5] p-4 bg-[#16202b]/65 rounded-xl border border-[#2f6e8d]/40">
           <WuxiaIcon name="checkCircle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
           {notice}
         </div>
       )}
 
-      <div className="space-y-4 mb-8">
+      <div className="section-stack-md">
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
@@ -288,12 +289,12 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
           ))}
         </div>
 
-        <div className="text-sm text-gray-500 text-center sm:text-left">
+        <div className="text-sm text-[#b8ccd8] text-center sm:text-left">
           Показано: <span className="text-gray-300 font-medium">{filteredGuides.length}</span> из <span className="text-gray-300 font-medium">{guides.length}</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
         {filteredGuides.length === 0 ? (
           <div className="col-span-full">
             <EmptyState
@@ -312,6 +313,6 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
           ))
         )}
       </div>
-    </>
+    </div>
   );
 }

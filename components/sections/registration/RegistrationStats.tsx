@@ -23,25 +23,25 @@ export function RegistrationStats({ registrations, user }: RegistrationStatsProp
   const avgKpiClass = getKPIClass(Number(stats.avgKPI));
 
   return (
-    <div id="registration-kpi" className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div className="card p-6 text-center">
+    <div id="registration-kpi" className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-3">
+      <div className="card section-card p-5 sm:p-6 text-center">
         <div className="text-3xl font-bold font-orbitron text-red-400 mb-2">
           {stats.total}
         </div>
-        <div className="text-gray-400">Всего учётных записей</div>
+        <div className="text-sm text-[#c7dbe7]">Всего учётных записей</div>
       </div>
-      <div className="card p-6 text-center">
+      <div className="card section-card p-5 sm:p-6 text-center">
         <div className="text-3xl font-bold font-orbitron text-green-400 mb-2">
           {stats.online}
         </div>
-        <div className="text-gray-400">В строю</div>
+        <div className="text-sm text-[#c7dbe7]">В строю</div>
       </div>
       {canSeeNumericKpi(user.role) && (
-        <div className="card p-6 text-center">
+        <div className="card section-card p-5 sm:p-6 text-center">
           <div className={`text-3xl font-bold font-orbitron mb-2 ${avgKpiClass}`}>
             {stats.avgKPI}
           </div>
-          <div className="text-gray-400">Средний KPI</div>
+          <div className="text-sm text-[#c7dbe7]">Средний KPI</div>
         </div>
       )}
     </div>

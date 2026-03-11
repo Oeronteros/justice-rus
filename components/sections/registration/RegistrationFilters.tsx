@@ -22,19 +22,19 @@ export function RegistrationFilters({
   onSortChange,
 }: RegistrationFiltersProps) {
   return (
-    <div className="flex flex-col md:flex-row gap-4 mb-6">
+    <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-[minmax(0,1.3fr)_repeat(3,minmax(0,0.72fr))] lg:items-center">
       <input
         type="text"
         value={searchTerm}
         onChange={(e) => onSearchChange(e.target.value)}
         placeholder="Поиск по имени, Discord или классу..."
-        className="input-field flex-1"
+        className="input-field w-full"
       />
 
       <select
         value={statusFilter}
         onChange={(e) => onStatusChange(e.target.value)}
-        className="select-field"
+        className="select-field w-full"
       >
         <option value="all">Все статусы</option>
         <option value="active">Активен</option>
@@ -44,7 +44,7 @@ export function RegistrationFilters({
       <select
         value={rankFilter}
         onChange={(e) => onRankChange(e.target.value)}
-        className="select-field"
+        className="select-field w-full"
       >
         <option value="all">Все ранги</option>
         <option value="guest">Гость</option>
@@ -57,7 +57,7 @@ export function RegistrationFilters({
       <select
         value={sortBy}
         onChange={(e) => onSortChange(e.target.value)}
-        className="select-field"
+        className="select-field w-full"
         aria-label="Сортировка участников"
       >
         <option value="nickname-asc">Имя: А-Я</option>

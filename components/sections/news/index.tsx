@@ -329,6 +329,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
         subtitle={t.news.loading}
         icon={<WuxiaIcon name="news" className="w-6 h-6 text-red-400" />}
         skeletonCount={6}
+        layout="cards"
       />
     );
   }
@@ -351,23 +352,22 @@ function NewsSectionContent({ user }: NewsSectionProps) {
   }
 
   return (
-    <section className="py-12">
+    <section className="section-shell py-10 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-10">
+        <div className="section-stack-lg">
           <SectionHero
             icon={<WuxiaIcon name="news" className="w-5 h-5" />}
             title={t.news.title}
             subtitle={t.news.subtitle}
             chips={['Announcements', 'Raid Plans', 'Updates']}
           />
-        </div>
 
         {canPublish ? (
-          <div className="mb-8 grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-            <article className="card p-6 md:p-7">
+          <div className="grid gap-4 sm:gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+            <article className="card section-card p-5 sm:p-6 md:p-7">
               <div className="mb-5 flex items-center justify-between gap-3">
                 <div>
-                  <div className="text-sm uppercase tracking-[0.24em] text-[#9ec5d8]">News console</div>
+                  <div className="text-xs sm:text-sm uppercase tracking-[0.18em] text-[#9ec5d8]">News console</div>
                   <h3 className="mt-2 text-2xl font-bold font-orbitron text-cyan-100">Публикация в портал и Discord</h3>
                 </div>
                 <DeliveryBadge status={createNewsMutation.isPending ? 'pending' : undefined} />
@@ -420,13 +420,13 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                   >
                     {createNewsMutation.isPending ? 'Публикуем...' : 'Опубликовать новость'}
                   </button>
-                  <span className="text-sm text-gray-400">Публикация создает запись на сайте и сразу отправляет сообщение через бота.</span>
+                  <span className="text-sm text-[#c7dbe7]">Публикация создает запись на сайте и сразу отправляет сообщение через бота.</span>
                 </div>
               </div>
             </article>
 
-            <article className="card p-6 md:p-7">
-              <div className="text-sm uppercase tracking-[0.24em] text-[#9ec5d8]">Discord preview</div>
+            <article className="card section-card p-5 sm:p-6 md:p-7">
+              <div className="text-xs sm:text-sm uppercase tracking-[0.18em] text-[#9ec5d8]">Discord preview</div>
               <h3 className="mt-2 text-xl font-bold font-orbitron text-cyan-100">Как это будет выглядеть</h3>
 
               {composerPreview ? (
@@ -452,7 +452,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
           </div>
         ) : null}
 
-        <div className="space-y-8">
+        <div className="section-stack-lg">
           {news.length === 0 ? (
             <EmptyState
               icon={<WuxiaIcon name="news" className="w-10 h-10 text-gray-500" />}
@@ -476,7 +476,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                   const featuredPreview = canExpandFeatured && !isFeaturedExpanded ? `${trimPreviewAtSafeBoundary(preview, 757)}...` : preview;
 
                   return (
-                    <article className="card news-hero p-7 md:p-8">
+                    <article className="card news-hero section-card p-5 sm:p-6 md:p-8">
                       <div className="flex items-center gap-2 text-xs sm:text-sm mb-4">
                         {featured.pinned ? (
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-500/10 text-yellow-300 border border-yellow-400/30">
@@ -491,7 +491,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                         <DeliveryBadge status={featured.discordDeliveryStatus} />
                       </div>
 
-                      <h3 className="text-2xl sm:text-3xl font-bold font-orbitron mb-2 text-cyan-100 tracking-wide">
+                      <h3 className="text-[1.45rem] sm:text-3xl font-bold font-orbitron mb-2 text-cyan-100 tracking-[0.01em]">
                         {displayTitle}
                       </h3>
                       <p className="news-meta mb-4">{formatDate(featured.date)}</p>
@@ -534,7 +534,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
               ) : null}
 
               {list.length > 0 ? (
-                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 items-stretch">
+                <div className="grid gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-3 items-stretch">
                   {list.map((item) => {
                     const normalizedContent = normalizeDiscordText(item.content);
                     const displayTitle = resolveDisplayTitle(item.title, normalizedContent);
@@ -543,7 +543,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                     const canExpand = preview.length > 320;
 
                     return (
-                      <article key={item.id} className="card news-card p-6 md:p-7">
+                      <article key={item.id} className="card news-card section-card p-5 sm:p-6 md:p-7">
                         <div className="flex items-center gap-2 text-xs sm:text-sm mb-3">
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-300 border border-blue-400/20">
                             <WuxiaIcon name="news" className="w-3.5 h-3.5" />
@@ -552,7 +552,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                           <DeliveryBadge status={item.discordDeliveryStatus} />
                         </div>
 
-                        <h3 className="text-lg sm:text-xl font-bold font-orbitron mb-2 text-cyan-200 tracking-wide">
+                        <h3 className="text-lg sm:text-xl font-bold font-orbitron mb-2 text-cyan-200 tracking-[0.01em]">
                           {displayTitle}
                         </h3>
                         <p className="news-meta mb-4">{formatDate(item.date)}</p>

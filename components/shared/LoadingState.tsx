@@ -9,6 +9,7 @@ interface LoadingStateProps {
   subtitle?: string;
   icon?: ReactNode | IconName;
   skeletonCount?: number;
+  layout?: 'cards' | 'list';
   /** @deprecated Use skeletonCount instead */
   cardCount?: number;
 }
@@ -18,6 +19,7 @@ export function LoadingState({
   subtitle,
   icon = 'spinner',
   skeletonCount,
+  layout = 'cards',
   cardCount = 3 
 }: LoadingStateProps) {
   const { t } = useTranslation();
@@ -33,23 +35,40 @@ export function LoadingState({
   };
 
   return (
-    <section className="py-12">
+    <section className="py-10 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-purple-400 mb-2">
-            {renderIcon()}
-            {resolvedTitle}
-          </h2>
-          <p className="text-gray-400">{resolvedSubtitle}</p>
+        <div className="loading-shell mb-8 sm:mb-10">
+          <div className="loading-shell-header">
+            <div className="loading-shell-kicker">Silent Moonfall</div>
+            <h2 className="loading-shell-title">
+              <span className="loading-shell-icon">{renderIcon()}</span>
+              <span>{resolvedTitle}</span>
+            </h2>
+            <p className="loading-shell-subtitle">{resolvedSubtitle}</p>
+          </div>
+
+          <div className="loading-shell-chips" aria-hidden="true">
+            <span className="loading-chip" />
+            <span className="loading-chip loading-chip-wide" />
+            <span className="loading-chip" />
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className={`loading-grid ${layout === 'list' ? 'loading-grid-list' : 'loading-grid-cards'}`}>
           {Array.from({ length: count }).map((_, i) => (
-            <div key={i} className="card p-6">
-              <div className="h-6 bg-gray-800 rounded mb-4 animate-pulse"></div>
-              <div className="h-4 bg-gray-800 rounded w-full animate-pulse mb-3"></div>
-              <div className="h-4 bg-gray-800 rounded w-3/4 animate-pulse mb-4"></div>
-              <div className="h-20 bg-gray-800 rounded animate-pulse"></div>
+            <div key={i} className="loading-card card p-5 sm:p-6">
+              <div className="loading-card-top">
+                <span className="loading-pill" />
+                <span className="loading-line loading-line-short" />
+              </div>
+              <div className="loading-line loading-line-title" />
+              <div className="loading-line loading-line-body" />
+              <div className="loading-line loading-line-body loading-line-body-short" />
+              <div className="loading-block" />
+              <div className="loading-card-footer">
+                <span className="loading-pill loading-pill-wide" />
+                <span className="loading-pill" />
+              </div>
             </div>
           ))}
         </div>

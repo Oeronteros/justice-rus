@@ -79,6 +79,7 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
         subtitle={t.registration.loading}
         icon={<WuxiaIcon name="registration" className="w-6 h-6 text-red-400" />}
         skeletonCount={3}
+        layout="cards"
       />
     );
   }
@@ -101,20 +102,19 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
   }
 
   return (
-    <section className="py-12">
+    <section className="section-shell py-10 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-10">
+        <div className="section-stack-lg">
           <SectionHero
             icon={<WuxiaIcon name="registration" className="w-5 h-5" />}
             title={t.registration.title}
             subtitle={t.registration.subtitle}
             chips={['Roster', 'Readiness', 'Roles']}
           />
-        </div>
 
-        <RegistrationStats registrations={registrations} user={user} />
+          <RegistrationStats registrations={registrations} user={user} />
 
-        <div className="card p-6 mb-8">
+          <div className="card section-card section-filter-card p-4 sm:p-6">
           <RegistrationFilters
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
@@ -127,7 +127,7 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
           />
 
           {canEditColumns && (
-            <div className="mb-6 rounded-2xl border border-[#2a3c4c]/60 bg-[#101a23]/60 p-4">
+            <div className="mb-4 sm:mb-6 rounded-2xl border border-[#2a3c4c]/60 bg-[#101a23]/60 p-4 sm:p-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-1">Названия столбцов</div>
@@ -194,6 +194,7 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
           )}
 
           <RegistrationTable registrations={filteredRegistrations} user={user} onRefresh={refetch} columnLabels={sharedColumnLabels} />
+          </div>
         </div>
       </div>
     </section>
