@@ -312,7 +312,7 @@ Overall: `B`
   - `vitest.config.ts:7`
   - `app/api/auth/route.ts:101`
 
-- [ ] 6. Add automated accessibility checks and keyboard/focus fixes
+- [x] 6. Add automated accessibility checks and keyboard/focus fixes
 
   **What to do**:
   - Add automated a11y checks for key shared surfaces.
@@ -337,7 +337,7 @@ Overall: `B`
   - `components/shell/Header.tsx:243`
   - `components/shared/ErrorBoundary.tsx:11`
 
-- [ ] 7. Improve proxy-boundary validation and rich-content safety
+- [x] 7. Improve proxy-boundary validation and rich-content safety
 
   **What to do**:
   - Ensure request and response validation is explicit where external or bot-provided data enters the app.
@@ -362,7 +362,7 @@ Overall: `B`
   - `lib/api/client.ts:46`
   - `lib/schemas/guide.ts:47`
 
-- [ ] 8. Clarify cache/performance strategy and add lightweight performance checks
+- [x] 8. Clarify cache/performance strategy and add lightweight performance checks
 
   **What to do**:
   - Document where process-local caching is acceptable and where it is insufficient.
@@ -416,7 +416,7 @@ Overall: `B`
 
 ## Final Verification Tasks
 
-- [ ] F1. Plan compliance audit
+- [x] F1. Plan compliance audit
 
   **What to do**:
   - Compare all implementation diffs against this plan.
@@ -425,7 +425,7 @@ Overall: `B`
   **Recommended Agent Profile**:
   - **Category**: `unspecified-high`
 
-- [ ] F2. Verification replay across quality gates
+- [x] F2. Verification replay across quality gates
 
   **What to do**:
   - Re-run lint, typecheck, unit tests, E2E tests, and build from the final worktree state.
@@ -434,7 +434,7 @@ Overall: `B`
   **Recommended Agent Profile**:
   - **Category**: `unspecified-high`
 
-- [ ] F3. Scope fidelity and regression check
+- [x] F3. Scope fidelity and regression check
 
   **What to do**:
   - Confirm the repository improved against the targeted grades without hidden regressions.
