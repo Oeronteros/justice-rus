@@ -28,9 +28,13 @@
       "get": {
         "summary": "Получить список регистраций",
         "description": "Возвращает список всех участников гильдии с их статистиками",
-        "tags": ["Registrations"],
+        "tags": [
+          "Registrations"
+        ],
         "security": [
-          { "bearerAuth": [] }
+          {
+            "bearerAuth": []
+          }
         ],
         "responses": {
           "200": {
@@ -56,9 +60,13 @@
       "patch": {
         "summary": "Обновить статистику регистрации",
         "description": "Обновляет KPI, ELO и другие статистики участника",
-        "tags": ["Registrations"],
+        "tags": [
+          "Registrations"
+        ],
         "security": [
-          { "bearerAuth": [] }
+          {
+            "bearerAuth": []
+          }
         ],
         "requestBody": {
           "required": true,
@@ -94,7 +102,9 @@
       "get": {
         "summary": "Получить расписание",
         "description": "Возвращает список событий гильдии",
-        "tags": ["Schedule"],
+        "tags": [
+          "Schedule"
+        ],
         "parameters": [
           {
             "name": "language",
@@ -102,7 +112,11 @@
             "description": "Язык локализации расписания",
             "schema": {
               "type": "string",
-              "enum": ["ru", "en", "zh"],
+              "enum": [
+                "ru",
+                "en",
+                "zh"
+              ],
               "default": "ru"
             }
           }
@@ -125,9 +139,13 @@
       },
       "post": {
         "summary": "Создать событие расписания",
-        "tags": ["Schedule"],
+        "tags": [
+          "Schedule"
+        ],
         "security": [
-          { "bearerAuth": [] }
+          {
+            "bearerAuth": []
+          }
         ],
         "requestBody": {
           "required": true,
@@ -157,9 +175,13 @@
       },
       "patch": {
         "summary": "Обновить событие расписания",
-        "tags": ["Schedule"],
+        "tags": [
+          "Schedule"
+        ],
         "security": [
-          { "bearerAuth": [] }
+          {
+            "bearerAuth": []
+          }
         ],
         "requestBody": {
           "required": true,
@@ -192,7 +214,9 @@
       "get": {
         "summary": "Получить новости",
         "description": "Возвращает список новостей гильдии",
-        "tags": ["News"],
+        "tags": [
+          "News"
+        ],
         "responses": {
           "200": {
             "description": "Успешный ответ",
@@ -208,26 +232,43 @@
             }
           }
         }
-      }
-    },
-    "/api/guides": {
-      "get": {
-        "summary": "Получить гайды",
-        "description": "Возвращает список гайдов",
-        "tags": ["Guides"],
+      },
+      "post": {
+        "summary": "Создать новость",
+        "tags": [
+          "News"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateNews"
+              }
+            }
+          }
+        },
         "responses": {
-          "200": {
-            "description": "Успешный ответ",
+          "201": {
+            "description": "Новость создана",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Guide"
-                  }
+                  "$ref": "#/components/schemas/News"
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -236,9 +277,13 @@
       "get": {
         "summary": "Получить отсутствия",
         "description": "Возвращает список заявок на отсутствие",
-        "tags": ["Absences"],
+        "tags": [
+          "Absences"
+        ],
         "security": [
-          { "bearerAuth": [] }
+          {
+            "bearerAuth": []
+          }
         ],
         "responses": {
           "200": {
@@ -258,9 +303,13 @@
       },
       "post": {
         "summary": "Создать заявку на отсутствие",
-        "tags": ["Absences"],
+        "tags": [
+          "Absences"
+        ],
         "security": [
-          { "bearerAuth": [] }
+          {
+            "bearerAuth": []
+          }
         ],
         "requestBody": {
           "required": true,
@@ -283,9 +332,13 @@
       "get": {
         "summary": "Получить регистрации через Next.js proxy",
         "description": "Возвращает список участников через внутренний route портала",
-        "tags": ["Registrations"],
+        "tags": [
+          "Registrations"
+        ],
         "security": [
-          { "bearerAuth": [] }
+          {
+            "bearerAuth": []
+          }
         ],
         "responses": {
           "200": {
@@ -308,9 +361,13 @@
       },
       "patch": {
         "summary": "Обновить статистику регистрации через Next.js proxy",
-        "tags": ["Registrations"],
+        "tags": [
+          "Registrations"
+        ],
         "security": [
-          { "bearerAuth": [] }
+          {
+            "bearerAuth": []
+          }
         ],
         "requestBody": {
           "required": true,
@@ -345,9 +402,13 @@
     "/api/discord-proxy/absences": {
       "get": {
         "summary": "Получить отсутствия через Next.js proxy",
-        "tags": ["Absences"],
+        "tags": [
+          "Absences"
+        ],
         "security": [
-          { "bearerAuth": [] }
+          {
+            "bearerAuth": []
+          }
         ],
         "responses": {
           "200": {
@@ -367,9 +428,13 @@
       },
       "post": {
         "summary": "Создать отсутствие через Next.js proxy",
-        "tags": ["Absences"],
+        "tags": [
+          "Absences"
+        ],
         "security": [
-          { "bearerAuth": [] }
+          {
+            "bearerAuth": []
+          }
         ],
         "requestBody": {
           "required": true,
@@ -396,9 +461,13 @@
       },
       "patch": {
         "summary": "Обновить статус отсутствия через Next.js proxy",
-        "tags": ["Absences"],
+        "tags": [
+          "Absences"
+        ],
         "security": [
-          { "bearerAuth": [] }
+          {
+            "bearerAuth": []
+          }
         ],
         "requestBody": {
           "required": true,
@@ -423,6 +492,552 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/api/guide": {
+      "get": {
+        "summary": "Получить гайды",
+        "description": "Возвращает список гайдов",
+        "tags": [
+          "Guides"
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Guide"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Создать гайд",
+        "tags": [
+          "Guides"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGuide"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Гайд создан",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideSummary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/guide/{id}": {
+      "get": {
+        "summary": "Получить гайд",
+        "tags": [
+          "Guides"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "voterKey",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideDetailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Обновить гайд",
+        "tags": [
+          "Guides"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateGuide"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Гайд обновлен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideEntity"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Удалить гайд",
+        "tags": [
+          "Guides"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Гайд удален",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/guide/{id}/comment": {
+      "post": {
+        "summary": "Добавить комментарий к гайду",
+        "tags": [
+          "Guides"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGuideComment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Комментарий создан",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideComment"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/guide/{id}/vote": {
+      "post": {
+        "summary": "Проголосовать за гайд",
+        "tags": [
+          "Guides"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuideVoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Голос обработан",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/help": {
+      "get": {
+        "summary": "Получить запросы помощи",
+        "tags": [
+          "Help"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "open",
+                "closed",
+                "all"
+              ],
+              "default": "open"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HelpRequest"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "summary": "Создать запрос помощи",
+        "tags": [
+          "Help"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateHelpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Запрос создан",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HelpRequest"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Обновить запрос помощи",
+        "tags": [
+          "Help"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateHelpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Запрос обновлен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HelpRequest"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Удалить запрос помощи",
+        "tags": [
+          "Help"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Запрос удален",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/help/responders": {
+      "post": {
+        "summary": "Откликнуться на запрос помощи",
+        "tags": [
+          "Help"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HelpRsvp"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Отклик сохранен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HelpRequest"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Отозвать отклик на запрос помощи",
+        "tags": [
+          "Help"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Отклик отозван",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HelpRequest"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -453,7 +1068,13 @@
           },
           "rank": {
             "type": "string",
-            "enum": ["guest", "member", "officer", "head", "sysadmin"],
+            "enum": [
+              "guest",
+              "member",
+              "officer",
+              "head",
+              "sysadmin"
+            ],
             "description": "Ранг в гильдии"
           },
           "class": {
@@ -523,11 +1144,25 @@
           },
           "status": {
             "type": "string",
-            "enum": ["active", "inactive", "pending", "leave"],
+            "enum": [
+              "active",
+              "inactive",
+              "pending",
+              "leave"
+            ],
             "description": "Статус участника"
           }
         },
-        "required": ["discord", "nickname", "rank", "class", "guild", "joinDate", "kpi", "status"]
+        "required": [
+          "discord",
+          "nickname",
+          "rank",
+          "class",
+          "guild",
+          "joinDate",
+          "kpi",
+          "status"
+        ]
       },
       "UpdateRegistrationStats": {
         "type": "object",
@@ -572,7 +1207,9 @@
             "type": "number"
           }
         },
-        "required": ["nickname"]
+        "required": [
+          "nickname"
+        ]
       },
       "UpdateRegistrationStatsResponse": {
         "type": "object",
@@ -663,11 +1300,31 @@
             "type": "boolean"
           },
           "messageUrl": {
+            "type": "string"
+          },
+          "discordDeliveryStatus": {
             "type": "string",
-            "description": "Ссылка на сообщение в Discord"
+            "enum": [
+              "pending",
+              "sent",
+              "failed"
+            ]
+          },
+          "discordDeliveryError": {
+            "type": "string"
+          },
+          "publishedToDiscordAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
-        "required": ["id", "title", "content", "author", "date"]
+        "required": [
+          "id",
+          "title",
+          "content",
+          "author",
+          "date"
+        ]
       },
       "Guide": {
         "type": "object",
@@ -704,7 +1361,14 @@
             }
           }
         },
-        "required": ["id", "title", "content", "category", "author", "date"]
+        "required": [
+          "id",
+          "title",
+          "content",
+          "category",
+          "author",
+          "date"
+        ]
       },
       "Comment": {
         "type": "object",
@@ -746,10 +1410,21 @@
           },
           "status": {
             "type": "string",
-            "enum": ["pending", "approved", "rejected"]
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ]
           }
         },
-        "required": ["id", "member", "startDate", "endDate", "reason", "status"]
+        "required": [
+          "id",
+          "member",
+          "startDate",
+          "endDate",
+          "reason",
+          "status"
+        ]
       },
       "CreateAbsence": {
         "type": "object",
@@ -769,7 +1444,11 @@
             "type": "string"
           }
         },
-        "required": ["startDate", "endDate", "reason"]
+        "required": [
+          "startDate",
+          "endDate",
+          "reason"
+        ]
       },
       "UpdateAbsenceStatus": {
         "type": "object",
@@ -779,10 +1458,17 @@
           },
           "status": {
             "type": "string",
-            "enum": ["pending", "approved", "rejected"]
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ]
           }
         },
-        "required": ["id", "status"]
+        "required": [
+          "id",
+          "status"
+        ]
       },
       "CreateSchedule": {
         "type": "object",
@@ -809,7 +1495,14 @@
             "type": "boolean"
           }
         },
-        "required": ["dayType", "time", "titleRu", "titleEn", "orderIndex", "active"]
+        "required": [
+          "dayType",
+          "time",
+          "titleRu",
+          "titleEn",
+          "orderIndex",
+          "active"
+        ]
       },
       "UpdateSchedule": {
         "type": "object",
@@ -839,7 +1532,422 @@
             "type": "boolean"
           }
         },
-        "required": ["id", "dayType", "time", "titleRu", "titleEn", "orderIndex", "active"]
+        "required": [
+          "id",
+          "dayType",
+          "time",
+          "titleRu",
+          "titleEn",
+          "orderIndex",
+          "active"
+        ]
+      },
+      "CreateNews": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "pinned": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "title",
+          "content"
+        ]
+      },
+      "GuideSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "ownerAccountId": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "votes": {
+            "type": "integer"
+          },
+          "commentsCount": {
+            "type": "integer"
+          },
+          "linkTargets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "category",
+          "author",
+          "createdAt",
+          "updatedAt",
+          "votes",
+          "commentsCount",
+          "linkTargets"
+        ]
+      },
+      "GuideComment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "author",
+          "comment",
+          "createdAt"
+        ]
+      },
+      "GuideEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "ownerAccountId": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "content",
+          "category",
+          "author",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "GuideDetailResponse": {
+        "type": "object",
+        "properties": {
+          "guide": {
+            "$ref": "#/components/schemas/GuideEntity"
+          },
+          "votes": {
+            "type": "integer"
+          },
+          "voted": {
+            "type": "boolean"
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuideComment"
+            }
+          }
+        },
+        "required": [
+          "guide",
+          "votes",
+          "voted",
+          "comments"
+        ]
+      },
+      "CreateGuide": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "content",
+          "category"
+        ]
+      },
+      "UpdateGuide": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateGuideComment": {
+        "type": "object",
+        "properties": {
+          "author": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "comment"
+        ]
+      },
+      "GuideVoteRequest": {
+        "type": "object",
+        "properties": {
+          "voterKey": {
+            "type": "string"
+          }
+        }
+      },
+      "VoteResponse": {
+        "type": "object",
+        "properties": {
+          "votes": {
+            "type": "integer"
+          },
+          "voted": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "votes",
+          "voted"
+        ]
+      },
+      "HelpResponder": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "className": {
+            "type": "string"
+          },
+          "respondedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "userId",
+          "nickname",
+          "className",
+          "respondedAt"
+        ]
+      },
+      "HelpRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "details": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "authorUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "closed"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "gatheringStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "gatheringEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "responders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HelpResponder"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "details",
+          "category",
+          "author",
+          "authorUserId",
+          "status",
+          "createdAt",
+          "gatheringStart",
+          "gatheringEnd",
+          "responders"
+        ]
+      },
+      "CreateHelpRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "details": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "gatheringStart": {
+            "type": "string"
+          },
+          "gatheringEnd": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "details",
+          "category",
+          "gatheringStart",
+          "gatheringEnd"
+        ]
+      },
+      "UpdateHelpRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "closed"
+            ]
+          },
+          "gatheringStart": {
+            "type": "string"
+          },
+          "gatheringEnd": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "HelpRsvp": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
       }
     },
     "securitySchemes": {

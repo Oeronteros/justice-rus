@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { GetApiAbsencesData, GetApiAbsencesResponses, GetApiDiscordProxyAbsencesData, GetApiDiscordProxyAbsencesResponses, GetApiDiscordProxyRegistrationData, GetApiDiscordProxyRegistrationErrors, GetApiDiscordProxyRegistrationResponses, GetApiGuidesData, GetApiGuidesResponses, GetApiNewsData, GetApiNewsResponses, GetApiRegistrationsData, GetApiRegistrationsErrors, GetApiRegistrationsResponses, GetApiScheduleData, GetApiScheduleResponses, PatchApiDiscordProxyAbsencesData, PatchApiDiscordProxyAbsencesErrors, PatchApiDiscordProxyAbsencesResponses, PatchApiDiscordProxyRegistrationData, PatchApiDiscordProxyRegistrationErrors, PatchApiDiscordProxyRegistrationResponses, PatchApiRegistrationData, PatchApiRegistrationErrors, PatchApiRegistrationResponses, PatchApiScheduleData, PatchApiScheduleErrors, PatchApiScheduleResponses, PostApiAbsencesData, PostApiAbsencesResponses, PostApiDiscordProxyAbsencesData, PostApiDiscordProxyAbsencesResponses, PostApiScheduleData, PostApiScheduleErrors, PostApiScheduleResponses } from './types.gen';
+import type { DeleteApiGuideByIdData, DeleteApiGuideByIdErrors, DeleteApiGuideByIdResponses, DeleteApiHelpData, DeleteApiHelpErrors, DeleteApiHelpRespondersData, DeleteApiHelpRespondersErrors, DeleteApiHelpRespondersResponses, DeleteApiHelpResponses, GetApiAbsencesData, GetApiAbsencesResponses, GetApiDiscordProxyAbsencesData, GetApiDiscordProxyAbsencesResponses, GetApiDiscordProxyRegistrationData, GetApiDiscordProxyRegistrationErrors, GetApiDiscordProxyRegistrationResponses, GetApiGuideByIdData, GetApiGuideByIdErrors, GetApiGuideByIdResponses, GetApiGuideData, GetApiGuideResponses, GetApiHelpData, GetApiHelpErrors, GetApiHelpResponses, GetApiNewsData, GetApiNewsResponses, GetApiRegistrationsData, GetApiRegistrationsErrors, GetApiRegistrationsResponses, GetApiScheduleData, GetApiScheduleResponses, PatchApiDiscordProxyAbsencesData, PatchApiDiscordProxyAbsencesErrors, PatchApiDiscordProxyAbsencesResponses, PatchApiDiscordProxyRegistrationData, PatchApiDiscordProxyRegistrationErrors, PatchApiDiscordProxyRegistrationResponses, PatchApiGuideByIdData, PatchApiGuideByIdErrors, PatchApiGuideByIdResponses, PatchApiHelpData, PatchApiHelpErrors, PatchApiHelpResponses, PatchApiRegistrationData, PatchApiRegistrationErrors, PatchApiRegistrationResponses, PatchApiScheduleData, PatchApiScheduleErrors, PatchApiScheduleResponses, PostApiAbsencesData, PostApiAbsencesResponses, PostApiDiscordProxyAbsencesData, PostApiDiscordProxyAbsencesResponses, PostApiGuideByIdCommentData, PostApiGuideByIdCommentErrors, PostApiGuideByIdCommentResponses, PostApiGuideByIdVoteData, PostApiGuideByIdVoteErrors, PostApiGuideByIdVoteResponses, PostApiGuideData, PostApiGuideErrors, PostApiGuideResponses, PostApiHelpData, PostApiHelpErrors, PostApiHelpRespondersData, PostApiHelpRespondersErrors, PostApiHelpRespondersResponses, PostApiHelpResponses, PostApiNewsData, PostApiNewsErrors, PostApiNewsResponses, PostApiScheduleData, PostApiScheduleErrors, PostApiScheduleResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -85,11 +85,17 @@ export const postApiSchedule = <ThrowOnError extends boolean = false>(options: O
 export const getApiNews = <ThrowOnError extends boolean = false>(options?: Options<GetApiNewsData, ThrowOnError>) => (options?.client ?? client).get<GetApiNewsResponses, unknown, ThrowOnError>({ url: '/api/news', ...options });
 
 /**
- * Получить гайды
- *
- * Возвращает список гайдов
+ * Создать новость
  */
-export const getApiGuides = <ThrowOnError extends boolean = false>(options?: Options<GetApiGuidesData, ThrowOnError>) => (options?.client ?? client).get<GetApiGuidesResponses, unknown, ThrowOnError>({ url: '/api/guides', ...options });
+export const postApiNews = <ThrowOnError extends boolean = false>(options: Options<PostApiNewsData, ThrowOnError>) => (options.client ?? client).post<PostApiNewsResponses, PostApiNewsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/news',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Получить отсутствия
@@ -167,6 +173,149 @@ export const patchApiDiscordProxyAbsences = <ThrowOnError extends boolean = fals
 export const postApiDiscordProxyAbsences = <ThrowOnError extends boolean = false>(options: Options<PostApiDiscordProxyAbsencesData, ThrowOnError>) => (options.client ?? client).post<PostApiDiscordProxyAbsencesResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/discord-proxy/absences',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Получить гайды
+ *
+ * Возвращает список гайдов
+ */
+export const getApiGuide = <ThrowOnError extends boolean = false>(options?: Options<GetApiGuideData, ThrowOnError>) => (options?.client ?? client).get<GetApiGuideResponses, unknown, ThrowOnError>({ url: '/api/guide', ...options });
+
+/**
+ * Создать гайд
+ */
+export const postApiGuide = <ThrowOnError extends boolean = false>(options: Options<PostApiGuideData, ThrowOnError>) => (options.client ?? client).post<PostApiGuideResponses, PostApiGuideErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/guide',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Удалить гайд
+ */
+export const deleteApiGuideById = <ThrowOnError extends boolean = false>(options: Options<DeleteApiGuideByIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteApiGuideByIdResponses, DeleteApiGuideByIdErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/guide/{id}',
+    ...options
+});
+
+/**
+ * Получить гайд
+ */
+export const getApiGuideById = <ThrowOnError extends boolean = false>(options: Options<GetApiGuideByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiGuideByIdResponses, GetApiGuideByIdErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/guide/{id}',
+    ...options
+});
+
+/**
+ * Обновить гайд
+ */
+export const patchApiGuideById = <ThrowOnError extends boolean = false>(options: Options<PatchApiGuideByIdData, ThrowOnError>) => (options.client ?? client).patch<PatchApiGuideByIdResponses, PatchApiGuideByIdErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/guide/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Добавить комментарий к гайду
+ */
+export const postApiGuideByIdComment = <ThrowOnError extends boolean = false>(options: Options<PostApiGuideByIdCommentData, ThrowOnError>) => (options.client ?? client).post<PostApiGuideByIdCommentResponses, PostApiGuideByIdCommentErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/guide/{id}/comment',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Проголосовать за гайд
+ */
+export const postApiGuideByIdVote = <ThrowOnError extends boolean = false>(options: Options<PostApiGuideByIdVoteData, ThrowOnError>) => (options.client ?? client).post<PostApiGuideByIdVoteResponses, PostApiGuideByIdVoteErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/guide/{id}/vote',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Удалить запрос помощи
+ */
+export const deleteApiHelp = <ThrowOnError extends boolean = false>(options: Options<DeleteApiHelpData, ThrowOnError>) => (options.client ?? client).delete<DeleteApiHelpResponses, DeleteApiHelpErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/help',
+    ...options
+});
+
+/**
+ * Получить запросы помощи
+ */
+export const getApiHelp = <ThrowOnError extends boolean = false>(options?: Options<GetApiHelpData, ThrowOnError>) => (options?.client ?? client).get<GetApiHelpResponses, GetApiHelpErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/help',
+    ...options
+});
+
+/**
+ * Обновить запрос помощи
+ */
+export const patchApiHelp = <ThrowOnError extends boolean = false>(options: Options<PatchApiHelpData, ThrowOnError>) => (options.client ?? client).patch<PatchApiHelpResponses, PatchApiHelpErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/help',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Создать запрос помощи
+ */
+export const postApiHelp = <ThrowOnError extends boolean = false>(options: Options<PostApiHelpData, ThrowOnError>) => (options.client ?? client).post<PostApiHelpResponses, PostApiHelpErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/help',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Отозвать отклик на запрос помощи
+ */
+export const deleteApiHelpResponders = <ThrowOnError extends boolean = false>(options: Options<DeleteApiHelpRespondersData, ThrowOnError>) => (options.client ?? client).delete<DeleteApiHelpRespondersResponses, DeleteApiHelpRespondersErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/help/responders',
+    ...options
+});
+
+/**
+ * Откликнуться на запрос помощи
+ */
+export const postApiHelpResponders = <ThrowOnError extends boolean = false>(options: Options<PostApiHelpRespondersData, ThrowOnError>) => (options.client ?? client).post<PostApiHelpRespondersResponses, PostApiHelpRespondersErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/help/responders',
     ...options,
     headers: {
         'Content-Type': 'application/json',

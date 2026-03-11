@@ -1,6 +1,5 @@
-import { getApiNews } from '@/lib/api/generated';
+import { getApiNews, postApiNews } from '@/lib/api/generated';
 import { sameOriginOpenApiClient } from './openapi-client';
-import { api } from './client';
 import {
   newsArraySchema,
   newsSchema,
@@ -24,6 +23,11 @@ export const newsApi = {
   },
 
   create: async (payload: CreateNewsPayload): Promise<News> => {
-    return api.post('news', createNewsPayloadSchema.parse(payload), newsSchema);
+    const response = await postApiNews({
+      client: sameOriginOpenApiClient,
+      body: createNewsPayloadSchema.parse(payload),
+    });
+
+    return newsSchema.parse(response.data || {});
   },
 };

@@ -172,10 +172,10 @@ export type News = {
     author: string;
     date: string;
     pinned?: boolean;
-    /**
-     * Ссылка на сообщение в Discord
-     */
     messageUrl?: string;
+    discordDeliveryStatus?: 'pending' | 'sent' | 'failed';
+    discordDeliveryError?: string;
+    publishedToDiscordAt?: string;
 };
 
 export type Guide = {
@@ -237,6 +237,125 @@ export type UpdateSchedule = {
     titleZh?: string;
     orderIndex: number;
     active: boolean;
+};
+
+export type CreateNews = {
+    title: string;
+    content: string;
+    author?: string;
+    pinned?: boolean;
+};
+
+export type GuideSummary = {
+    id: string;
+    slug: string;
+    ownerAccountId?: string | null;
+    title: string;
+    category: string;
+    author: string;
+    createdAt: string;
+    updatedAt: string;
+    votes: number;
+    commentsCount: number;
+    linkTargets: Array<string>;
+};
+
+export type GuideComment = {
+    id: string;
+    author: string;
+    comment: string;
+    createdAt: string;
+};
+
+export type GuideEntity = {
+    id: string;
+    slug: string;
+    ownerAccountId?: string | null;
+    title: string;
+    content: string;
+    category: string;
+    author: string;
+    createdAt: string;
+    updatedAt: string;
+};
+
+export type GuideDetailResponse = {
+    guide: GuideEntity;
+    votes: number;
+    voted: boolean;
+    comments: Array<GuideComment>;
+};
+
+export type CreateGuide = {
+    title: string;
+    content: string;
+    category: string;
+    author?: string;
+};
+
+export type UpdateGuide = {
+    title?: string;
+    content?: string;
+    category?: string;
+};
+
+export type CreateGuideComment = {
+    author?: string;
+    comment: string;
+};
+
+export type GuideVoteRequest = {
+    voterKey?: string;
+};
+
+export type VoteResponse = {
+    votes: number;
+    voted: boolean;
+};
+
+export type HelpResponder = {
+    userId: string;
+    nickname: string;
+    className: string;
+    respondedAt: string;
+};
+
+export type HelpRequest = {
+    id: string;
+    title: string;
+    details: string;
+    category: string;
+    author: string;
+    authorUserId: string | null;
+    status: 'open' | 'closed';
+    createdAt: string;
+    gatheringStart: string;
+    gatheringEnd: string;
+    responders: Array<HelpResponder>;
+};
+
+export type CreateHelpRequest = {
+    title: string;
+    details: string;
+    category: string;
+    author?: string;
+    gatheringStart: string;
+    gatheringEnd: string;
+};
+
+export type UpdateHelpRequest = {
+    id: string;
+    status?: 'open' | 'closed';
+    gatheringStart?: string;
+    gatheringEnd?: string;
+};
+
+export type HelpRsvp = {
+    id: string;
+};
+
+export type SuccessResponse = {
+    success: boolean;
 };
 
 export type GetApiRegistrationsData = {
@@ -399,21 +518,41 @@ export type GetApiNewsResponses = {
 
 export type GetApiNewsResponse = GetApiNewsResponses[keyof GetApiNewsResponses];
 
-export type GetApiGuidesData = {
-    body?: never;
+export type PostApiNewsData = {
+    body: CreateNews;
     path?: never;
     query?: never;
-    url: '/api/guides';
+    url: '/api/news';
 };
 
-export type GetApiGuidesResponses = {
+export type PostApiNewsErrors = {
     /**
-     * Успешный ответ
+     * Неверный запрос
      */
-    200: Array<Guide>;
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
 };
 
-export type GetApiGuidesResponse = GetApiGuidesResponses[keyof GetApiGuidesResponses];
+export type PostApiNewsError = PostApiNewsErrors[keyof PostApiNewsErrors];
+
+export type PostApiNewsResponses = {
+    /**
+     * Новость создана
+     */
+    201: News;
+};
+
+export type PostApiNewsResponse = PostApiNewsResponses[keyof PostApiNewsResponses];
 
 export type GetApiAbsencesData = {
     body?: never;
@@ -569,3 +708,460 @@ export type PostApiDiscordProxyAbsencesResponses = {
 };
 
 export type PostApiDiscordProxyAbsencesResponse = PostApiDiscordProxyAbsencesResponses[keyof PostApiDiscordProxyAbsencesResponses];
+
+export type GetApiGuideData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/guide';
+};
+
+export type GetApiGuideResponses = {
+    /**
+     * Успешный ответ
+     */
+    200: Array<Guide>;
+};
+
+export type GetApiGuideResponse = GetApiGuideResponses[keyof GetApiGuideResponses];
+
+export type PostApiGuideData = {
+    body: CreateGuide;
+    path?: never;
+    query?: never;
+    url: '/api/guide';
+};
+
+export type PostApiGuideErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type PostApiGuideError = PostApiGuideErrors[keyof PostApiGuideErrors];
+
+export type PostApiGuideResponses = {
+    /**
+     * Гайд создан
+     */
+    201: GuideSummary;
+};
+
+export type PostApiGuideResponse = PostApiGuideResponses[keyof PostApiGuideResponses];
+
+export type DeleteApiGuideByIdData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/guide/{id}';
+};
+
+export type DeleteApiGuideByIdErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type DeleteApiGuideByIdError = DeleteApiGuideByIdErrors[keyof DeleteApiGuideByIdErrors];
+
+export type DeleteApiGuideByIdResponses = {
+    /**
+     * Гайд удален
+     */
+    200: SuccessResponse;
+};
+
+export type DeleteApiGuideByIdResponse = DeleteApiGuideByIdResponses[keyof DeleteApiGuideByIdResponses];
+
+export type GetApiGuideByIdData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: {
+        voterKey?: string;
+    };
+    url: '/api/guide/{id}';
+};
+
+export type GetApiGuideByIdErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type GetApiGuideByIdError = GetApiGuideByIdErrors[keyof GetApiGuideByIdErrors];
+
+export type GetApiGuideByIdResponses = {
+    /**
+     * Успешный ответ
+     */
+    200: GuideDetailResponse;
+};
+
+export type GetApiGuideByIdResponse = GetApiGuideByIdResponses[keyof GetApiGuideByIdResponses];
+
+export type PatchApiGuideByIdData = {
+    body: UpdateGuide;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/guide/{id}';
+};
+
+export type PatchApiGuideByIdErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type PatchApiGuideByIdError = PatchApiGuideByIdErrors[keyof PatchApiGuideByIdErrors];
+
+export type PatchApiGuideByIdResponses = {
+    /**
+     * Гайд обновлен
+     */
+    200: GuideEntity;
+};
+
+export type PatchApiGuideByIdResponse = PatchApiGuideByIdResponses[keyof PatchApiGuideByIdResponses];
+
+export type PostApiGuideByIdCommentData = {
+    body: CreateGuideComment;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/guide/{id}/comment';
+};
+
+export type PostApiGuideByIdCommentErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type PostApiGuideByIdCommentError = PostApiGuideByIdCommentErrors[keyof PostApiGuideByIdCommentErrors];
+
+export type PostApiGuideByIdCommentResponses = {
+    /**
+     * Комментарий создан
+     */
+    201: GuideComment;
+};
+
+export type PostApiGuideByIdCommentResponse = PostApiGuideByIdCommentResponses[keyof PostApiGuideByIdCommentResponses];
+
+export type PostApiGuideByIdVoteData = {
+    body: GuideVoteRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/guide/{id}/vote';
+};
+
+export type PostApiGuideByIdVoteErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type PostApiGuideByIdVoteError = PostApiGuideByIdVoteErrors[keyof PostApiGuideByIdVoteErrors];
+
+export type PostApiGuideByIdVoteResponses = {
+    /**
+     * Голос обработан
+     */
+    200: VoteResponse;
+};
+
+export type PostApiGuideByIdVoteResponse = PostApiGuideByIdVoteResponses[keyof PostApiGuideByIdVoteResponses];
+
+export type DeleteApiHelpData = {
+    body?: never;
+    path?: never;
+    query: {
+        id: string;
+    };
+    url: '/api/help';
+};
+
+export type DeleteApiHelpErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type DeleteApiHelpError = DeleteApiHelpErrors[keyof DeleteApiHelpErrors];
+
+export type DeleteApiHelpResponses = {
+    /**
+     * Запрос удален
+     */
+    200: SuccessResponse;
+};
+
+export type DeleteApiHelpResponse = DeleteApiHelpResponses[keyof DeleteApiHelpResponses];
+
+export type GetApiHelpData = {
+    body?: never;
+    path?: never;
+    query?: {
+        status?: 'open' | 'closed' | 'all';
+    };
+    url: '/api/help';
+};
+
+export type GetApiHelpErrors = {
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type GetApiHelpError = GetApiHelpErrors[keyof GetApiHelpErrors];
+
+export type GetApiHelpResponses = {
+    /**
+     * Успешный ответ
+     */
+    200: Array<HelpRequest>;
+};
+
+export type GetApiHelpResponse = GetApiHelpResponses[keyof GetApiHelpResponses];
+
+export type PatchApiHelpData = {
+    body: UpdateHelpRequest;
+    path?: never;
+    query?: never;
+    url: '/api/help';
+};
+
+export type PatchApiHelpErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type PatchApiHelpError = PatchApiHelpErrors[keyof PatchApiHelpErrors];
+
+export type PatchApiHelpResponses = {
+    /**
+     * Запрос обновлен
+     */
+    200: HelpRequest;
+};
+
+export type PatchApiHelpResponse = PatchApiHelpResponses[keyof PatchApiHelpResponses];
+
+export type PostApiHelpData = {
+    body: CreateHelpRequest;
+    path?: never;
+    query?: never;
+    url: '/api/help';
+};
+
+export type PostApiHelpErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type PostApiHelpError = PostApiHelpErrors[keyof PostApiHelpErrors];
+
+export type PostApiHelpResponses = {
+    /**
+     * Запрос создан
+     */
+    201: HelpRequest;
+};
+
+export type PostApiHelpResponse = PostApiHelpResponses[keyof PostApiHelpResponses];
+
+export type DeleteApiHelpRespondersData = {
+    body?: never;
+    path?: never;
+    query: {
+        id: string;
+    };
+    url: '/api/help/responders';
+};
+
+export type DeleteApiHelpRespondersErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type DeleteApiHelpRespondersError = DeleteApiHelpRespondersErrors[keyof DeleteApiHelpRespondersErrors];
+
+export type DeleteApiHelpRespondersResponses = {
+    /**
+     * Отклик отозван
+     */
+    200: HelpRequest;
+};
+
+export type DeleteApiHelpRespondersResponse = DeleteApiHelpRespondersResponses[keyof DeleteApiHelpRespondersResponses];
+
+export type PostApiHelpRespondersData = {
+    body: HelpRsvp;
+    path?: never;
+    query?: never;
+    url: '/api/help/responders';
+};
+
+export type PostApiHelpRespondersErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type PostApiHelpRespondersError = PostApiHelpRespondersErrors[keyof PostApiHelpRespondersErrors];
+
+export type PostApiHelpRespondersResponses = {
+    /**
+     * Отклик сохранен
+     */
+    200: HelpRequest;
+};
+
+export type PostApiHelpRespondersResponse = PostApiHelpRespondersResponses[keyof PostApiHelpRespondersResponses];
