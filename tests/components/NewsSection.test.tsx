@@ -7,9 +7,14 @@ import type { User } from '@/lib/schemas/auth';
 import type { News } from '@/lib/schemas/news';
 
 const useNewsMock = vi.fn();
+const createNewsMutateAsyncMock = vi.fn();
 
 vi.mock('@/lib/news/hooks', () => ({
   useNews: () => useNewsMock(),
+  useCreateNews: () => ({
+    mutateAsync: createNewsMutateAsyncMock,
+    isPending: false,
+  }),
 }));
 
 function renderWithI18n(node: ReactNode) {
@@ -25,6 +30,7 @@ describe('NewsSection link rendering', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    createNewsMutateAsyncMock.mockReset();
     useNewsMock.mockReturnValue({
       data: [],
       isLoading: false,

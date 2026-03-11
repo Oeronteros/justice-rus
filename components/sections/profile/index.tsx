@@ -3,7 +3,7 @@
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import type { PortalAccount } from '@/lib/schemas/account';
 import type { User, UserRole } from '@/lib/schemas/auth';
-import type { Registration } from '@/lib/schemas/registration';
+import { prefixOptions, type Registration } from '@/lib/schemas/registration';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { ClassBadge } from '@/components/ClassIcon';
 import { SectionHero } from '@/components/shared/SectionHero';
@@ -22,6 +22,7 @@ type ActivityKey = 'outerHeroic' | 'innerHeroic' | 'crimsonSands' | 'abyss' | 'g
 
 interface ProfileDraftState {
   discordHandle: string;
+  prefix: string;
   className: string;
   guild: string;
   mmr20: number;
@@ -44,12 +45,18 @@ const activityLabels: Array<{ key: ActivityKey; label: string }> = [
 
 const roleOptions: UserRole[] = [...roleOrder];
 
+function isPrefixOption(value: string): value is (typeof prefixOptions)[number] {
+  return prefixOptions.includes(value as (typeof prefixOptions)[number]);
+}
+
 interface ProfileOverviewProps {
   profileRegistration?: Registration;
   user: User;
 }
 
 const ProfileOverview = memo(function ProfileOverview({ profileRegistration, user }: ProfileOverviewProps) {
+  const prefix = profileRegistration?.prefix || user.prefix || null;
+
   return (
     <div className="card p-6">
       <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-2">Профиль</div>
@@ -57,6 +64,11 @@ const ProfileOverview = memo(function ProfileOverview({ profileRegistration, use
         <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
           <div className="text-gray-400 mb-1">Ник</div>
           <div className="text-[#e6eff5] font-medium">{user.nickname || '—'}</div>
+          {prefix ? (
+            <div className="mt-2 inline-flex rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-100">
+              {prefix}
+            </div>
+          ) : null}
         </div>
         <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
           <div className="text-gray-400 mb-1">Discord</div>
@@ -317,6 +329,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [profileDraft, setProfileDraft] = useState<ProfileDraftState>({
     discordHandle: '',
+    prefix: '',
     className: '',
     guild: '',
     mmr20: 0,
@@ -378,6 +391,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
   useEffect(() => {
     setProfileDraft({
       discordHandle: profileRegistration?.discordHandle || user.discordHandle || '',
+      prefix: profileRegistration?.prefix || user.prefix || '',
       className: profileRegistration?.class || user.className || '',
       guild: profileRegistration?.guild || '',
       mmr20: profileRegistration?.mmr20 || 0,
@@ -388,7 +402,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
       gvg: profileRegistration?.gvg || 0,
       secretRealm: profileRegistration?.secretRealm || 0,
     });
-  }, [profileRegistration, user.className, user.discordHandle]);
+  }, [profileRegistration, user.className, user.discordHandle, user.prefix]);
 
   const loadAccounts = useCallback(() => {
     if (!isAdmin) return;
@@ -426,11 +440,16 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
     };
 
     const nextDiscordHandle = profileDraft.discordHandle.trim();
+    const nextPrefix = profileDraft.prefix.trim();
     const nextClassName = profileDraft.className.trim();
     const nextGuild = profileDraft.guild.trim();
 
     if (nextDiscordHandle !== (profileRegistration?.discordHandle || user.discordHandle || '')) {
       payload.discordHandle = nextDiscordHandle;
+    }
+
+    if (nextPrefix !== (profileRegistration?.prefix || user.prefix || '')) {
+      payload.prefix = nextPrefix ? (isPrefixOption(nextPrefix) ? nextPrefix : null) : null;
     }
 
     if (nextClassName && nextClassName !== (profileRegistration?.class || user.className || '')) {
@@ -556,6 +575,19 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
                 className="input-field w-full"
                 placeholder="@example"
               />
+            </label>
+            <label className="space-y-2">
+              <span className="text-gray-400">Титул / префикс</span>
+              <select
+                value={profileDraft.prefix}
+                onChange={(e) => setProfileDraft((prev) => ({ ...prev, prefix: e.target.value }))}
+                className="select-field w-full"
+              >
+                <option value="">Без префикса</option>
+                {prefixOptions.map((prefix) => (
+                  <option key={prefix} value={prefix}>{prefix}</option>
+                ))}
+              </select>
             </label>
             <label className="space-y-2">
               <span className="text-gray-400">Класс</span>

@@ -1,3 +1,5 @@
+import { getApiSchedule } from '@/lib/api/generated';
+import { sameOriginOpenApiClient } from './openapi-client';
 import { api } from './client';
 import {
   createScheduleSchema,
@@ -11,7 +13,12 @@ import {
 
 export const scheduleApi = {
   list: async (language: string = 'ru'): Promise<Schedule[]> => {
-    const data = await api.get(`schedule?language=${encodeURIComponent(language)}`, schedulesArraySchema);
+    const queryLanguage = language === 'en' || language === 'zh' ? language : 'ru';
+    const response = await getApiSchedule({
+      client: sameOriginOpenApiClient,
+      query: { language: queryLanguage },
+    });
+    const data = schedulesArraySchema.parse(response.data || []);
     return data.map((item) => ({
       date: item.date || '',
       registration: item.registration || '',

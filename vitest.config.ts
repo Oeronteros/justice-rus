@@ -10,7 +10,7 @@ export default defineConfig({
     setupFiles: ['./tests/setup.ts'],
     globals: true,
     pool: 'forks',
-    maxWorkers: 2,
+    maxWorkers: 1,
     testTimeout: 15000,
     coverage: {
       provider: 'v8',

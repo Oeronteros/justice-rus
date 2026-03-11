@@ -8,6 +8,7 @@ import WuxiaIcon from '../WuxiaIcons';
 interface MobileNavProps {
   currentSection: Section;
   language: Language;
+  onNavPrefetch?: (section: Section) => void;
 }
 
 type NavItem = {
@@ -28,7 +29,7 @@ const navItems: NavItem[] = [
   { section: 'profile', href: '/profile' },
 ];
 
-export default function MobileNav({ currentSection, language }: MobileNavProps) {
+export default function MobileNav({ currentSection, language, onNavPrefetch }: MobileNavProps) {
   return (
     <div className="wuxia-dock md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a1118]/95 to-[#111d27]/85 backdrop-blur-xl border-t border-[#223544]/60 z-40 shadow-2xl shadow-black/40">
       <div className="flex items-center gap-2 overflow-x-auto py-2 px-1 no-scrollbar">
@@ -36,6 +37,9 @@ export default function MobileNav({ currentSection, language }: MobileNavProps) 
           <Link
             key={item.section}
             href={item.href}
+            onTouchStart={() => onNavPrefetch?.(item.section)}
+            onMouseEnter={() => onNavPrefetch?.(item.section)}
+            onFocus={() => onNavPrefetch?.(item.section)}
             className={`nav-chip flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 ${
               currentSection === item.section ? 'is-active' : ''
             }`}

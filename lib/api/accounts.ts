@@ -7,6 +7,7 @@ const updateAccountPayloadSchema = z.object({
   id: z.string(),
   isActive: z.boolean(),
   role: userRoleSchema.optional(),
+  prefix: z.string().trim().max(40).nullable().optional(),
 });
 
 export type UpdateAccountPayload = z.infer<typeof updateAccountPayloadSchema>;

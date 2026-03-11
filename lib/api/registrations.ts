@@ -1,5 +1,6 @@
 import { api } from './client';
 import {
+  prefixOptionSchema,
   registrationsArraySchema,
   type Registration,
 } from '@/lib/schemas/registration';
@@ -10,6 +11,7 @@ const updateRegistrationStatsPayloadSchema = z.object({
   className: z.string().trim().min(1).max(100).optional(),
   guild: z.string().trim().max(120).optional(),
   discordHandle: z.string().trim().max(120).optional(),
+  prefix: prefixOptionSchema.nullable().optional(),
   elo: z.number().optional(),
   mmr20: z.number().optional(),
   bounty: z.number().optional(),

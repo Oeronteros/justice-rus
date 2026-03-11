@@ -1,0 +1,609 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Silent Moonfall Guild Portal API",
+    "description": "API для веб-портала гильдии Justice Mobile. Next.js frontend взаимодействует с Discord ботом через этот API.",
+    "version": "2.0.0",
+    "contact": {
+      "name": "Silent Moonfall Guild"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3001",
+      "description": "Локальный Discord бот"
+    },
+    {
+      "url": "{DISCORD_BOT_API_URL}",
+      "description": "Продакшен Discord бот",
+      "variables": {
+        "DISCORD_BOT_API_URL": {
+          "default": "https://your-bot.example.com"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/api/registrations": {
+      "get": {
+        "summary": "Получить список регистраций",
+        "description": "Возвращает список всех участников гильдии с их статистиками",
+        "tags": ["Registrations"],
+        "security": [
+          { "bearerAuth": [] }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Registration"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/registration": {
+      "patch": {
+        "summary": "Обновить статистику регистрации",
+        "description": "Обновляет KPI, ELO и другие статистики участника",
+        "tags": ["Registrations"],
+        "security": [
+          { "bearerAuth": [] }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRegistrationStats"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Статистика обновлена",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateRegistrationStatsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/schedule": {
+      "get": {
+        "summary": "Получить расписание",
+        "description": "Возвращает список событий гильдии",
+        "tags": ["Schedule"],
+        "parameters": [
+          {
+            "name": "language",
+            "in": "query",
+            "description": "Язык локализации расписания",
+            "schema": {
+              "type": "string",
+              "enum": ["ru", "en", "zh"],
+              "default": "ru"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Schedule"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news": {
+      "get": {
+        "summary": "Получить новости",
+        "description": "Возвращает список новостей гильдии",
+        "tags": ["News"],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/News"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/guides": {
+      "get": {
+        "summary": "Получить гайды",
+        "description": "Возвращает список гайдов",
+        "tags": ["Guides"],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Guide"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/absences": {
+      "get": {
+        "summary": "Получить отсутствия",
+        "description": "Возвращает список заявок на отсутствие",
+        "tags": ["Absences"],
+        "security": [
+          { "bearerAuth": [] }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Absence"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Создать заявку на отсутствие",
+        "tags": ["Absences"],
+        "security": [
+          { "bearerAuth": [] }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAbsence"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Заявка создана"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Registration": {
+        "type": "object",
+        "properties": {
+          "discord": {
+            "type": "string",
+            "description": "Discord ID пользователя"
+          },
+          "discordHandle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Discord username"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL аватара"
+          },
+          "nickname": {
+            "type": "string",
+            "description": "Игровой никнейм"
+          },
+          "rank": {
+            "type": "string",
+            "enum": ["guest", "member", "officer", "head", "sysadmin"],
+            "description": "Ранг в гильдии"
+          },
+          "class": {
+            "type": "string",
+            "description": "Игровой класс"
+          },
+          "guild": {
+            "type": "string",
+            "description": "Название гильдии"
+          },
+          "joinDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Дата вступления"
+          },
+          "kpi": {
+            "type": "number",
+            "description": "KPI участника"
+          },
+          "elo": {
+            "type": "number",
+            "description": "Рейтинг ELO"
+          },
+          "mmr20": {
+            "type": "number",
+            "description": "MMR для 20x"
+          },
+          "bounty": {
+            "type": "number",
+            "description": "Награда за убийство"
+          },
+          "marks": {
+            "type": "number",
+            "description": "Очки"
+          },
+          "outerHeroic": {
+            "type": "number",
+            "description": "Outer Heroic очки"
+          },
+          "innerHeroic": {
+            "type": "number",
+            "description": "Inner Heroic очки"
+          },
+          "crimsonSands": {
+            "type": "number",
+            "description": "Crimson Sands очки"
+          },
+          "abyss": {
+            "type": "number",
+            "description": "Abyss очки"
+          },
+          "gvg": {
+            "type": "number",
+            "description": "GvG очки"
+          },
+          "secretRealm": {
+            "type": "number",
+            "description": "Secret Realm очки"
+          },
+          "duelWins": {
+            "type": "number",
+            "description": "Победы в дуэлях"
+          },
+          "duelLosses": {
+            "type": "number",
+            "description": "Поражения в дуэлях"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "inactive", "pending", "leave"],
+            "description": "Статус участника"
+          }
+        },
+        "required": ["discord", "nickname", "rank", "class", "guild", "joinDate", "kpi", "status"]
+      },
+      "UpdateRegistrationStats": {
+        "type": "object",
+        "properties": {
+          "nickname": {
+            "type": "string"
+          },
+          "className": {
+            "type": "string"
+          },
+          "guild": {
+            "type": "string"
+          },
+          "discordHandle": {
+            "type": "string"
+          },
+          "elo": {
+            "type": "number"
+          },
+          "mmr20": {
+            "type": "number"
+          },
+          "bounty": {
+            "type": "number"
+          },
+          "outerHeroic": {
+            "type": "number"
+          },
+          "innerHeroic": {
+            "type": "number"
+          },
+          "crimsonSands": {
+            "type": "number"
+          },
+          "abyss": {
+            "type": "number"
+          },
+          "gvg": {
+            "type": "number"
+          },
+          "secretRealm": {
+            "type": "number"
+          }
+        },
+        "required": ["nickname"]
+      },
+      "UpdateRegistrationStatsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "portalOnly": {
+            "type": "boolean",
+            "description": "true если изменение сохранено только в портале (не в боте)"
+          }
+        }
+      },
+      "Schedule": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "description": "Дата события"
+          },
+          "registration": {
+            "type": "string",
+            "description": "Регистрация"
+          },
+          "type": {
+            "type": "string",
+            "description": "Тип события"
+          },
+          "description": {
+            "type": "string",
+            "description": "Описание"
+          },
+          "group": {
+            "type": "string",
+            "description": "Группа"
+          },
+          "dayType": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string"
+          },
+          "titleRu": {
+            "type": "string",
+            "description": "Заголовок на русском"
+          },
+          "titleEn": {
+            "type": "string",
+            "description": "Заголовок на английском"
+          },
+          "titleZh": {
+            "type": "string",
+            "description": "Заголовок на китайском"
+          },
+          "orderIndex": {
+            "type": "number",
+            "description": "Порядок сортировки"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Активно"
+          }
+        }
+      },
+      "News": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "pinned": {
+            "type": "boolean"
+          },
+          "messageUrl": {
+            "type": "string",
+            "description": "Ссылка на сообщение в Discord"
+          }
+        },
+        "required": ["id", "title", "content", "author", "date"]
+      },
+      "Guide": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "votes": {
+            "type": "number"
+          },
+          "userVoted": {
+            "type": "boolean"
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Comment"
+            }
+          }
+        },
+        "required": ["id", "title", "content", "category", "author", "date"]
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Absence": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "member": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "approved", "rejected"]
+          }
+        },
+        "required": ["id", "member", "startDate", "endDate", "reason", "status"]
+      },
+      "CreateAbsence": {
+        "type": "object",
+        "properties": {
+          "member": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": ["startDate", "endDate", "reason"]
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "Требуется авторизация",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "Неверный запрос",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                },
+                "details": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

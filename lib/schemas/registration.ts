@@ -1,5 +1,17 @@
 import { z } from 'zod';
 
+export const prefixOptions = [
+  'Чертила',
+  'VIP',
+  'Boobs',
+  'Moonborn',
+  'Raid Lead',
+  'PvP Ace',
+  'Abyss Walker',
+] as const;
+
+export const prefixOptionSchema = z.enum(prefixOptions);
+
 export const registrationRanks = [
   'guest', 'member', 'officer', 'head', 'sysadmin'
 ] as const;
@@ -12,6 +24,7 @@ export const registrationSchema = z.object({
   discord: z.string(),
   discordHandle: z.string().nullable().optional(),
   avatarUrl: z.string().nullable().optional(),
+  prefix: z.string().nullable().optional(),
   nickname: z.string(),
   rank: z.enum(registrationRanks),
   class: z.string(),
@@ -38,3 +51,4 @@ export const registrationsArraySchema = z.array(registrationSchema);
 export type Registration = z.infer<typeof registrationSchema>;
 export type RegistrationRank = typeof registrationRanks[number];
 export type RegistrationStatus = typeof registrationStatuses[number];
+export type PrefixOption = typeof prefixOptions[number];

@@ -101,6 +101,7 @@ async function getPortalOnlyRows(
         pa.class_name,
         pa.guild_name,
         pa.discord_handle,
+        pa.prefix,
         pa.role,
         pa.is_active,
         pa.created_at,
@@ -126,6 +127,7 @@ async function getPortalOnlyRows(
     discord: portalStatsDiscordId(row.id),
     discordHandle: String(row.discord_handle || '') || null,
     avatarUrl: null,
+    prefix: String(row.prefix || '') || null,
     nickname: String(row.nickname || ''),
     rank: String(row.role || 'guest') as Registration['rank'],
     class: String(row.class_name || ''),
@@ -228,6 +230,7 @@ export async function getRegistrationsFromDb(): Promise<Registration[]> {
       ${avatarCol ? `NULLIF(r.${avatarCol}, '') AS avatar_url,` : `NULL AS avatar_url,`}
       r.${nickCol} AS nickname,
       NULLIF(a.discord_handle, '') AS discord_handle,
+      NULLIF(a.prefix, '') AS prefix,
       ${classCol ? `COALESCE(NULLIF(r.${classCol}, ''), a.class_name, '') AS class_name,` : `COALESCE(a.class_name, '') AS class_name,`}
       ${guildCol ? `COALESCE(NULLIF(r.${guildCol}, ''), a.guild_name, '') AS guild_name,` : `COALESCE(a.guild_name, '') AS guild_name,`}
       ${joinCol ? `r.${joinCol} AS join_date,` : `NOW() AS join_date,`}
@@ -257,6 +260,7 @@ export async function getRegistrationsFromDb(): Promise<Registration[]> {
     discord: String(row.discord || ''),
     discordHandle: typeof row.discord_handle === 'string' && row.discord_handle.trim() ? String(row.discord_handle) : null,
     avatarUrl: typeof row.avatar_url === 'string' && row.avatar_url.trim() ? String(row.avatar_url) : null,
+    prefix: typeof row.prefix === 'string' && row.prefix.trim() ? String(row.prefix) : null,
     nickname: String(row.nickname || ''),
     rank: String(row.role || 'guest') as Registration['rank'],
     class: String(row.class_name || ''),

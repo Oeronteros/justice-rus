@@ -11,6 +11,7 @@ interface HeaderProps {
   onLogout: () => void;
   language: Language;
   onLanguageChange: (language: Language) => void;
+  onNavPrefetch?: (section: Section) => void;
 }
 
 type NavItem = {
@@ -37,6 +38,7 @@ export default function Header({
   onLogout,
   language,
   onLanguageChange,
+  onNavPrefetch,
 }: HeaderProps) {
   const [headerCompact, setHeaderCompact] = useState(false);
 
@@ -148,6 +150,9 @@ export default function Header({
               <Link
                 key={item.section}
                 href={item.href}
+                onMouseEnter={() => onNavPrefetch?.(item.section)}
+                onFocus={() => onNavPrefetch?.(item.section)}
+                onTouchStart={() => onNavPrefetch?.(item.section)}
                 className={`dc-order-step ${currentSection === item.section ? 'is-active' : ''}`}
                 aria-label={orderLabels[item.section]}
                 aria-current={currentSection === item.section ? 'page' : undefined}

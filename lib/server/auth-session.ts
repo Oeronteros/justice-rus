@@ -67,6 +67,7 @@ export async function resolveSessionFromToken(token: string | null | undefined):
     discordId: decoded.discordId,
     discordHandle: decoded.discordHandle,
     className: null,
+    prefix: decoded.prefix ?? null,
   };
 
   if (decoded.authMethod !== 'pin') {
@@ -81,7 +82,7 @@ export async function resolveSessionFromToken(token: string | null | undefined):
     const pool = getPool();
     const result = await pool.query(
       `
-      SELECT id, nickname, class_name, discord_handle, role, is_active
+      SELECT id, nickname, class_name, discord_handle, prefix, role, is_active
       FROM portal_account
       WHERE id = $1
       LIMIT 1
@@ -106,6 +107,7 @@ export async function resolveSessionFromToken(token: string | null | undefined):
       discordId: decoded.discordId,
       discordHandle: row.discord_handle || null,
       className: (await resolveClassName(row.nickname)) || row.class_name || null,
+      prefix: row.prefix || null,
     };
   } else {
     user.className = await resolveClassName(decoded.nickname);

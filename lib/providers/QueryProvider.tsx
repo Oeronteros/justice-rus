@@ -7,14 +7,23 @@ function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 5 * 60 * 1000,      // 5 minutes
-        gcTime: 10 * 60 * 1000,        // 10 minutes
+        // Data is considered fresh for 5 minutes - reduces unnecessary refetches
+        staleTime: 5 * 60 * 1000,
+        // Keep unused data in cache for 30 minutes - allows back navigation without refetch
+        gcTime: 30 * 60 * 1000,
+        // Retry failed requests 3 times with exponential backoff
         retry: 3,
         retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-        refetchOnWindowFocus: false,
+        // Refetch data when window gains focus - useful for multi-tab usage
+        refetchOnWindowFocus: true,
+        // Refetch data when network reconnects after being offline
+        refetchOnReconnect: true,
+        // Don't refetch on mount if data already exists in cache
+        refetchOnMount: false,
       },
       mutations: {
         retry: 1,
+        // Default mutation behavior - can be overridden per mutation
       },
     },
   });

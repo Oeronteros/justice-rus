@@ -56,12 +56,12 @@ async function resolveRegistrationTarget(nickname: string): Promise<Registration
 
 async function updatePortalAccountProfile(
   nickname: string,
-  next: { className?: string; guild?: string; discordHandle?: string }
+  next: { className?: string; guild?: string; discordHandle?: string; prefix?: string | null }
 ) {
   const pool = getPool();
   await ensureAccountsSchema();
   const updates: string[] = [];
-  const values: string[] = [nickname];
+  const values: Array<string | null> = [nickname];
 
   if (next.className !== undefined) {
     values.push(next.className);
@@ -76,6 +76,11 @@ async function updatePortalAccountProfile(
   if (next.discordHandle !== undefined) {
     values.push(next.discordHandle);
     updates.push(`discord_handle = $${values.length}`);
+  }
+
+  if (next.prefix !== undefined) {
+    values.push(next.prefix);
+    updates.push(`prefix = $${values.length}`);
   }
 
   if (updates.length === 0) {
@@ -93,7 +98,7 @@ async function resolvePortalAccount(nickname: string): Promise<PortalOnlyRow | n
   await ensureAccountsSchema();
   const result = await pool.query(
     `
-      SELECT id, nickname, class_name, role, is_active, created_at
+      SELECT id, nickname, class_name, prefix, role, is_active, created_at
       FROM portal_account
       WHERE LOWER(nickname) = LOWER($1)
       LIMIT 1
@@ -160,11 +165,12 @@ export async function updateRegistrationStats(
     );
   }
 
-  if (payload.className !== undefined || payload.guild !== undefined || payload.discordHandle !== undefined) {
+  if (payload.className !== undefined || payload.guild !== undefined || payload.discordHandle !== undefined || payload.prefix !== undefined) {
     await updatePortalAccountProfile(payload.nickname, {
       className: payload.className,
       guild: payload.guild,
       discordHandle: payload.discordHandle,
+      prefix: payload.prefix,
     });
   }
 

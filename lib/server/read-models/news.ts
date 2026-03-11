@@ -31,6 +31,20 @@ function normalizeNewsRows(data: ReadonlyArray<Record<string, unknown>>): News[]
       item.message_url || item.messageUrl
         ? String(item.message_url ?? item.messageUrl)
         : undefined,
+    discordDeliveryStatus:
+      item.discord_delivery_status || item.discordDeliveryStatus
+        ? String(item.discord_delivery_status ?? item.discordDeliveryStatus) as News['discordDeliveryStatus']
+        : item.message_url || item.messageUrl
+          ? 'sent'
+          : undefined,
+    discordDeliveryError:
+      item.discord_delivery_error || item.discordDeliveryError
+        ? String(item.discord_delivery_error ?? item.discordDeliveryError)
+        : undefined,
+    publishedToDiscordAt:
+      item.published_to_discord_at || item.publishedToDiscordAt
+        ? String(item.published_to_discord_at ?? item.publishedToDiscordAt)
+        : undefined,
   }));
 }
 
@@ -126,10 +140,30 @@ async function fetchNewsFromBotSource(token?: string): Promise<News[]> {
   return loadNews();
 }
 
+export async function ensureNewsSourceSchema() {
+  if (!hasDatabaseUrl()) {
+    return;
+  }
+
+  await runServerTaskOnce('schema:news_source', async () => {
+    const pool = getPool();
+    await pool.query(`ALTER TABLE news ADD COLUMN IF NOT EXISTS publish_key TEXT NULL;`).catch(() => undefined);
+    await pool.query(`ALTER TABLE news ADD COLUMN IF NOT EXISTS discord_delivery_status TEXT NOT NULL DEFAULT 'pending';`).catch(() => undefined);
+    await pool.query(`ALTER TABLE news ADD COLUMN IF NOT EXISTS discord_delivery_error TEXT NULL;`).catch(() => undefined);
+    await pool.query(`ALTER TABLE news ADD COLUMN IF NOT EXISTS published_to_discord_at TIMESTAMP NULL;`).catch(() => undefined);
+    await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS news_publish_key_uq ON news(publish_key) WHERE publish_key IS NOT NULL;`).catch(() => undefined);
+  });
+}
+
 async function loadNewsFromDatabase(): Promise<News[]> {
+  await ensureNewsSourceSchema();
   const pool = getPool();
   const result = await pool.query(
-    'SELECT id, title, content, author, date, pinned, created_at, message_url FROM news ORDER BY pinned DESC, date DESC, created_at DESC LIMIT 50'
+    `SELECT id, title, content, author, date, pinned, created_at, message_url,
+            discord_delivery_status, discord_delivery_error, published_to_discord_at
+     FROM news
+     ORDER BY pinned DESC, date DESC, created_at DESC
+     LIMIT 50`
   );
 
   return result.rows.map((row) => ({
@@ -140,6 +174,13 @@ async function loadNewsFromDatabase(): Promise<News[]> {
     date: row.date instanceof Date ? row.date.toISOString() : String(row.date || ''),
     pinned: Boolean(row.pinned),
     messageUrl: row.message_url ? String(row.message_url) : undefined,
+    discordDeliveryStatus: row.discord_delivery_status ? String(row.discord_delivery_status) as News['discordDeliveryStatus'] : undefined,
+    discordDeliveryError: row.discord_delivery_error ? String(row.discord_delivery_error) : undefined,
+    publishedToDiscordAt: row.published_to_discord_at
+      ? row.published_to_discord_at instanceof Date
+        ? row.published_to_discord_at.toISOString()
+        : String(row.published_to_discord_at)
+      : undefined,
   }));
 }
 
@@ -169,6 +210,7 @@ export async function ensureNewsReadModelSchema() {
   }
 
   await runServerTaskOnce('schema:news_read_model', async () => {
+    await ensureNewsSourceSchema();
     await ensureReadModelStateSchema();
     const pool = getPool();
     await pool.query(`
@@ -180,12 +222,18 @@ export async function ensureNewsReadModelSchema() {
         published_at TIMESTAMP NOT NULL DEFAULT NOW(),
         pinned BOOLEAN NOT NULL DEFAULT FALSE,
         message_url TEXT NULL,
+        discord_delivery_status TEXT NOT NULL DEFAULT 'pending',
+        discord_delivery_error TEXT NULL,
+        published_to_discord_at TIMESTAMP NULL,
         source TEXT NOT NULL DEFAULT 'database',
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
     `);
     await pool.query(`CREATE INDEX IF NOT EXISTS news_read_model_published_at_idx ON news_read_model(published_at DESC);`);
     await pool.query(`CREATE INDEX IF NOT EXISTS news_read_model_pinned_idx ON news_read_model(pinned DESC);`);
+    await pool.query(`ALTER TABLE news_read_model ADD COLUMN IF NOT EXISTS discord_delivery_status TEXT NOT NULL DEFAULT 'pending';`).catch(() => undefined);
+    await pool.query(`ALTER TABLE news_read_model ADD COLUMN IF NOT EXISTS discord_delivery_error TEXT NULL;`).catch(() => undefined);
+    await pool.query(`ALTER TABLE news_read_model ADD COLUMN IF NOT EXISTS published_to_discord_at TIMESTAMP NULL;`).catch(() => undefined);
   });
 }
 
@@ -198,7 +246,8 @@ export async function listNewsReadModel(): Promise<News[]> {
   const pool = getPool();
   const result = await pool.query(
     `
-      SELECT id, title, content, author, published_at, pinned, message_url
+      SELECT id, title, content, author, published_at, pinned, message_url,
+             discord_delivery_status, discord_delivery_error, published_to_discord_at
       FROM news_read_model
       ORDER BY pinned DESC, published_at DESC, updated_at DESC
       LIMIT 50
@@ -213,6 +262,13 @@ export async function listNewsReadModel(): Promise<News[]> {
     date: row.published_at instanceof Date ? row.published_at.toISOString() : String(row.published_at || ''),
     pinned: Boolean(row.pinned),
     messageUrl: row.message_url ? String(row.message_url) : undefined,
+    discordDeliveryStatus: row.discord_delivery_status ? String(row.discord_delivery_status) as News['discordDeliveryStatus'] : undefined,
+    discordDeliveryError: row.discord_delivery_error ? String(row.discord_delivery_error) : undefined,
+    publishedToDiscordAt: row.published_to_discord_at
+      ? row.published_to_discord_at instanceof Date
+        ? row.published_to_discord_at.toISOString()
+        : String(row.published_to_discord_at)
+      : undefined,
   }));
 }
 
@@ -234,8 +290,12 @@ export async function syncNewsReadModel(): Promise<News[]> {
       for (const row of rows) {
         await client.query(
           `
-            INSERT INTO news_read_model (id, title, content, author, published_at, pinned, message_url, source, updated_at)
-            VALUES ($1, $2, $3, $4, $5::timestamp, $6, $7, $8, NOW())
+            INSERT INTO news_read_model (
+              id, title, content, author, published_at, pinned, message_url,
+              discord_delivery_status, discord_delivery_error, published_to_discord_at,
+              source, updated_at
+            )
+            VALUES ($1, $2, $3, $4, $5::timestamp, $6, $7, $8, $9, $10::timestamp, $11, NOW())
           `,
           [
             row.id,
@@ -245,6 +305,9 @@ export async function syncNewsReadModel(): Promise<News[]> {
             row.date || new Date().toISOString(),
             Boolean(row.pinned),
             row.messageUrl || null,
+            row.discordDeliveryStatus || (row.messageUrl ? 'sent' : 'pending'),
+            row.discordDeliveryError || null,
+            row.publishedToDiscordAt || null,
             source,
           ]
         );

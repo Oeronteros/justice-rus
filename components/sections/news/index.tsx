@@ -1,15 +1,17 @@
 'use client';
 
-import { Fragment, useState, type ReactNode } from 'react';
+import { Fragment, useMemo, useState, type ReactNode } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
-import { useNews } from '@/lib/news/hooks';
+import { useCreateNews, useNews } from '@/lib/news/hooks';
 import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/lib/schemas/auth';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { useTranslation } from '@/lib/i18n/context';
+import { hasRoleAtLeast } from '@/lib/authz';
+import { handleApiError } from '@/lib/api/client';
 
 interface NewsSectionProps {
   user: User;
@@ -248,17 +250,76 @@ function splitFeaturedNews<T extends { id: string; pinned?: boolean }>(items: T[
   };
 }
 
+function DeliveryBadge({ status }: { status?: 'pending' | 'sent' | 'failed' }) {
+  if (!status) {
+    return null;
+  }
+
+  const tone = status === 'sent'
+    ? 'bg-emerald-500/12 text-emerald-200 border-emerald-400/30'
+    : status === 'failed'
+      ? 'bg-rose-500/12 text-rose-200 border-rose-400/30'
+      : 'bg-amber-500/12 text-amber-100 border-amber-400/30';
+  const label = status === 'sent' ? 'Sent to Discord' : status === 'failed' ? 'Discord failed' : 'Publishing';
+
+  return <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 ${tone}`}>{label}</span>;
+}
+
 function NewsSectionContent({ user }: NewsSectionProps) {
   const { t } = useTranslation();
   const { data: news = [], isLoading, error, refetch } = useNews();
+  const createNewsMutation = useCreateNews();
   const { featured, list } = splitFeaturedNews(news);
   const [expandedNewsIds, setExpandedNewsIds] = useState<string[]>([]);
   const [isFeaturedExpanded, setIsFeaturedExpanded] = useState(false);
+  const [draftTitle, setDraftTitle] = useState('');
+  const [draftContent, setDraftContent] = useState('');
+  const [draftPinned, setDraftPinned] = useState(false);
+  const [composerNotice, setComposerNotice] = useState<string | null>(null);
+  const canPublish = hasRoleAtLeast(user.role, 'officer');
+
+  const composerPreview = useMemo(() => {
+    const normalizedContent = normalizeDiscordText(draftContent);
+    if (!normalizedContent) {
+      return null;
+    }
+
+    const displayTitle = resolveDisplayTitle(draftTitle, normalizedContent);
+    return {
+      title: displayTitle,
+      body: buildPreview(normalizedContent, displayTitle),
+    };
+  }, [draftContent, draftTitle]);
 
   const toggleExpandedNews = (id: string) => {
     setExpandedNewsIds((current) =>
       current.includes(id) ? current.filter((itemId) => itemId !== id) : [...current, id]
     );
+  };
+
+  const submitNews = async () => {
+    const title = draftTitle.trim();
+    const content = draftContent.trim();
+    if (title.length < 3 || content.length < 3) {
+      setComposerNotice('Заполни заголовок и текст новости.');
+      return;
+    }
+
+    try {
+      setComposerNotice(null);
+      await createNewsMutation.mutateAsync({
+        title,
+        content,
+        pinned: draftPinned,
+        author: user.nickname || undefined,
+      });
+      setDraftTitle('');
+      setDraftContent('');
+      setDraftPinned(false);
+      setComposerNotice('Новость опубликована и отправлена в Discord.');
+    } catch (submitError) {
+      setComposerNotice(handleApiError(submitError));
+    }
   };
 
   if (isLoading) {
@@ -301,6 +362,96 @@ function NewsSectionContent({ user }: NewsSectionProps) {
           />
         </div>
 
+        {canPublish ? (
+          <div className="mb-8 grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+            <article className="card p-6 md:p-7">
+              <div className="mb-5 flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-sm uppercase tracking-[0.24em] text-[#9ec5d8]">News console</div>
+                  <h3 className="mt-2 text-2xl font-bold font-orbitron text-cyan-100">Публикация в портал и Discord</h3>
+                </div>
+                <DeliveryBadge status={createNewsMutation.isPending ? 'pending' : undefined} />
+              </div>
+
+              <div className="grid gap-4">
+                <label className="space-y-2">
+                  <span className="text-sm text-gray-400">Заголовок</span>
+                  <input
+                    type="text"
+                    value={draftTitle}
+                    onChange={(event) => setDraftTitle(event.target.value)}
+                    className="input-field w-full"
+                    placeholder="Например: Подготовка к GVG"
+                  />
+                </label>
+
+                <label className="space-y-2">
+                  <span className="text-sm text-gray-400">Текст новости</span>
+                  <textarea
+                    value={draftContent}
+                    onChange={(event) => setDraftContent(event.target.value)}
+                    className="input-field min-h-[220px] w-full resize-y"
+                    placeholder="Пиши как в гайдах: заголовки, ссылки, списки. Бот адаптирует сообщение для Discord."
+                  />
+                </label>
+
+                <label className="inline-flex items-center gap-3 rounded-2xl border border-cyan-400/15 bg-[#101821]/75 px-4 py-3 text-sm text-cyan-50">
+                  <input
+                    type="checkbox"
+                    checked={draftPinned}
+                    onChange={(event) => setDraftPinned(event.target.checked)}
+                    className="h-4 w-4 accent-cyan-300"
+                  />
+                  Закрепить как featured-новость
+                </label>
+
+                {composerNotice ? (
+                  <div className="rounded-2xl border border-cyan-400/20 bg-[#11202a]/75 px-4 py-3 text-sm text-[#d9edf7]">
+                    {composerNotice}
+                  </div>
+                ) : null}
+
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    className="btn-primary px-5 py-3"
+                    onClick={submitNews}
+                    disabled={createNewsMutation.isPending}
+                  >
+                    {createNewsMutation.isPending ? 'Публикуем...' : 'Опубликовать новость'}
+                  </button>
+                  <span className="text-sm text-gray-400">Публикация создает запись на сайте и сразу отправляет сообщение через бота.</span>
+                </div>
+              </div>
+            </article>
+
+            <article className="card p-6 md:p-7">
+              <div className="text-sm uppercase tracking-[0.24em] text-[#9ec5d8]">Discord preview</div>
+              <h3 className="mt-2 text-xl font-bold font-orbitron text-cyan-100">Как это будет выглядеть</h3>
+
+              {composerPreview ? (
+                <div className="mt-5 rounded-[28px] border border-cyan-400/15 bg-[#0b131b]/88 p-5 shadow-[0_24px_60px_rgba(2,8,14,0.45)]">
+                  <div className="mb-3 flex items-center gap-2 text-xs text-cyan-100/70">
+                    <DeliveryBadge status="sent" />
+                    {draftPinned ? <span className="rounded-full border border-amber-400/30 bg-amber-500/10 px-2.5 py-1 text-amber-200">Pinned</span> : null}
+                  </div>
+                  <div className="rounded-3xl border border-cyan-400/12 bg-[#111b24] p-5">
+                    <h4 className="text-xl font-bold text-cyan-100">{composerPreview.title}</h4>
+                    <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-7 text-gray-200/90">
+                      {renderNewsTextWithLinks(composerPreview.body, 'composer-preview')}
+                    </p>
+                    <div className="mt-4 text-xs uppercase tracking-[0.22em] text-gray-500">Автор: {user.nickname || 'Guild Staff'}</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-5 rounded-[28px] border border-dashed border-cyan-400/20 bg-[#0b131b]/78 p-6 text-sm text-gray-400">
+                  Заполни новость слева, и здесь появится Discord-safe превью.
+                </div>
+              )}
+            </article>
+          </div>
+        ) : null}
+
         <div className="space-y-8">
           {news.length === 0 ? (
             <EmptyState
@@ -337,6 +488,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                           <WuxiaIcon name="news" className="w-3.5 h-3.5" />
                           Guild Update
                         </span>
+                        <DeliveryBadge status={featured.discordDeliveryStatus} />
                       </div>
 
                       <h3 className="text-2xl sm:text-3xl font-bold font-orbitron mb-2 text-cyan-100 tracking-wide">
@@ -397,6 +549,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                             <WuxiaIcon name="news" className="w-3.5 h-3.5" />
                             Guild Update
                           </span>
+                          <DeliveryBadge status={item.discordDeliveryStatus} />
                         </div>
 
                         <h3 className="text-lg sm:text-xl font-bold font-orbitron mb-2 text-cyan-200 tracking-wide">

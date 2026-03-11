@@ -16,6 +16,7 @@ const updateSchema = z.object({
   id: z.union([z.string(), z.number()]),
   isActive: z.boolean(),
   role: z.enum(['guest', 'member', 'officer', 'head', 'sysadmin']).optional(),
+  prefix: z.string().trim().max(40).nullable().optional(),
 });
 
 function ensureAdmin(request: NextRequest) {
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
     const pool = getPool();
     const result = await pool.query(
       `
-      SELECT id, nickname, role, is_active, password_hash, created_at, updated_at, last_login_at
+      SELECT id, nickname, role, is_active, prefix, password_hash, created_at, updated_at, last_login_at
       FROM portal_account
       ORDER BY created_at DESC
       LIMIT 500
@@ -102,11 +103,12 @@ export async function PATCH(request: NextRequest) {
       UPDATE portal_account
       SET is_active = $2,
           role = COALESCE($3, role),
+          prefix = COALESCE($4, prefix),
           updated_at = NOW()
       WHERE id = $1
-      RETURNING id, nickname, role, is_active, password_hash, created_at, updated_at, last_login_at
+      RETURNING id, nickname, role, is_active, prefix, password_hash, created_at, updated_at, last_login_at
       `,
-      [accountId, payload.isActive, payload.role ?? null]
+      [accountId, payload.isActive, payload.role ?? null, payload.prefix === undefined ? null : payload.prefix]
     );
 
     const row = updated.rows[0];

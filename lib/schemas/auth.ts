@@ -12,6 +12,7 @@ export const authUserSchema = z.object({
   discordId: z.string().nullable().optional(),
   discordHandle: z.string().nullable().optional(),
   className: z.string().nullable().optional(),
+  prefix: z.string().nullable().optional(),
   exp: z.number().optional(),
 });
 

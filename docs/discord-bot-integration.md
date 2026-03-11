@@ -250,6 +250,64 @@ npm run dev
 ```
 4. Откройте браузер и проверьте работу
 
+## OpenAPI контракт для type-safe клиента
+
+Чтобы фронтенд мог генерировать типизированный TypeScript-клиент, бот должен публиковать OpenAPI-схему.
+
+### FastAPI
+
+FastAPI делает это автоматически:
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI(title="Silent Moonfall Bot API", version="2.0.0")
+
+@app.get("/api/news")
+async def get_news():
+    return []
+```
+
+После запуска схема будет доступна по адресам:
+
+- `/openapi.json`
+- `/docs`
+- `/redoc`
+
+### Flask
+
+Flask не публикует OpenAPI сам по себе, поэтому есть два практичных пути:
+
+1. перейти на FastAPI для HTTP API слоя;
+2. хранить статическую схему рядом с ботом и отдавать ее отдельным route.
+
+Пример простого route для Flask:
+
+```python
+from flask import Flask, jsonify
+import json
+from pathlib import Path
+
+app = Flask(__name__)
+
+@app.route('/openapi.json', methods=['GET'])
+def openapi_spec():
+    spec_path = Path(__file__).with_name('openapi.json')
+    return jsonify(json.loads(spec_path.read_text(encoding='utf-8')))
+```
+
+### Генерация клиента в Next.js
+
+В этом репозитории для генерации клиента используется локальная схема `docs/openapi.json`:
+
+```bash
+npm run codegen
+```
+
+Команда генерирует SDK в `lib/api/generated` через `@hey-api/openapi-ts`.
+
+Если бот начнет публиковать живую схему, источник можно заменить с локального файла на URL бота без смены остального фронтенд-пайплайна.
+
 ## Troubleshooting
 
 **Ошибка: "Failed to connect to Discord bot"**
