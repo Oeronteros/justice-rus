@@ -1332,6 +1332,150 @@ body {
     gap: 18px;
   }
 
+  .ui-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 28px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(143, 185, 204, 0.22);
+    background: rgba(11, 20, 29, 0.68);
+    color: rgba(205, 225, 236, 0.94);
+    font-size: 0.74rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.04em;
+  }
+
+  .ui-badge-accent {
+    border-color: rgba(143, 185, 204, 0.38);
+    background: linear-gradient(135deg, rgba(19, 41, 55, 0.9), rgba(12, 24, 34, 0.92));
+    color: rgba(225, 241, 249, 0.98);
+  }
+
+  .ui-badge-muted {
+    color: rgba(170, 194, 208, 0.9);
+    background: rgba(10, 16, 24, 0.78);
+  }
+
+  .ui-badge-success {
+    border-color: rgba(74, 222, 128, 0.3);
+    background: rgba(20, 83, 45, 0.22);
+    color: rgba(167, 243, 208, 0.96);
+  }
+
+  .ui-badge-warning {
+    border-color: rgba(245, 158, 11, 0.28);
+    background: rgba(120, 53, 15, 0.2);
+    color: rgba(253, 230, 138, 0.96);
+  }
+
+  .ui-badge-danger {
+    border-color: rgba(248, 113, 113, 0.3);
+    background: rgba(127, 29, 29, 0.2);
+    color: rgba(254, 202, 202, 0.96);
+  }
+
+  .ui-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(45, 66, 83, 0.9);
+    background: rgba(14, 25, 34, 0.9);
+    color: rgba(183, 201, 214, 0.96);
+    font-size: 0.9rem;
+    transition: border-color 0.16s ease, background-color 0.16s ease, color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+  }
+
+  .ui-chip:hover {
+    border-color: rgba(94, 135, 160, 0.9);
+    background: rgba(22, 40, 56, 0.96);
+    color: rgba(222, 238, 246, 0.98);
+    transform: translateY(-1px);
+  }
+
+  .ui-chip.is-active {
+    border-color: rgba(110, 164, 191, 0.74);
+    background: linear-gradient(135deg, rgba(22, 52, 69, 0.94), rgba(14, 29, 39, 0.98));
+    color: rgba(238, 248, 253, 0.98);
+    box-shadow: 0 14px 28px rgba(4, 8, 12, 0.34);
+  }
+
+  .toolbar-surface {
+    display: grid;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 22px;
+    border: 1px solid rgba(34, 53, 68, 0.7);
+    background: linear-gradient(145deg, rgba(10, 18, 26, 0.9), rgba(8, 13, 19, 0.9));
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(3, 6, 9, 0.76);
+    backdrop-filter: blur(10px);
+  }
+
+  .modal-shell {
+    position: relative;
+    width: min(100%, 1120px);
+    max-height: min(92vh, 980px);
+    overflow: auto;
+    border-radius: 30px;
+    border: 1px solid rgba(66, 97, 118, 0.7);
+    background:
+      radial-gradient(circle at 10% 0%, rgba(110, 190, 230, 0.08), transparent 36%),
+      linear-gradient(145deg, rgba(10, 16, 24, 0.96), rgba(8, 12, 18, 0.94));
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(255,255,255,0.03);
+  }
+
+  .modal-shell-narrow {
+    max-width: 980px;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .modal-title {
+    font-family: 'Rajdhani', 'Trebuchet MS', sans-serif;
+    font-size: clamp(1.55rem, 3vw, 2rem);
+    font-weight: 700;
+    color: #e6eff5;
+    letter-spacing: 0.01em;
+  }
+
+  .modal-subtitle {
+    margin-top: 8px;
+    color: rgba(181, 199, 212, 0.88);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    max-width: 66ch;
+  }
+
+  .table-frame {
+    overflow: hidden;
+    border-radius: 24px;
+    border: 1px solid rgba(73, 110, 130, 0.42);
+    background: linear-gradient(145deg, rgba(10, 16, 24, 0.86), rgba(8, 12, 18, 0.9));
+    box-shadow: 0 18px 34px rgba(4, 8, 12, 0.36);
+  }
+
   .loading-shell {
     display: grid;
     gap: 16px;
@@ -2675,20 +2819,23 @@ body {
   /* Таблицы */
   .table-modern {
     @apply min-w-full divide-y divide-gray-700/50;
-    border: 1px solid rgba(143, 185, 204, 0.15);
-    border-radius: 16px;
-    overflow: hidden;
-    background: rgba(9, 14, 20, 0.6);
+    background: transparent;
   }
 
   .table-modern th {
     @apply px-6 py-4 text-left text-xs font-medium text-red-400 uppercase tracking-wider;
-    background: rgba(12, 18, 26, 0.75);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: rgba(12, 18, 26, 0.94);
+    backdrop-filter: blur(8px);
+    color: rgba(159, 201, 223, 0.92);
   }
 
   .table-modern td {
     @apply px-6 py-4 whitespace-nowrap text-sm text-gray-300;
     color: #c1d4e1;
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
   }
 
   .table-modern tr:nth-child(even) {
@@ -2697,6 +2844,50 @@ body {
 
   .table-modern tr:hover {
     background: rgba(20, 34, 46, 0.6);
+  }
+
+  .table-card-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .table-card {
+    display: grid;
+    gap: 14px;
+    border-radius: 24px;
+    border: 1px solid rgba(42, 60, 76, 0.72);
+    background: linear-gradient(145deg, rgba(10, 18, 26, 0.9), rgba(8, 12, 18, 0.9));
+    padding: 18px;
+    box-shadow: 0 16px 28px rgba(4, 8, 12, 0.28);
+  }
+
+  .table-card-section {
+    display: grid;
+    gap: 10px;
+  }
+
+  .metric-tile {
+    display: grid;
+    gap: 6px;
+    min-height: 72px;
+    padding: 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(34, 53, 68, 0.7);
+    background: rgba(12, 21, 29, 0.82);
+  }
+
+  .metric-label {
+    font-size: 0.73rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(145, 170, 186, 0.88);
+  }
+
+  .metric-value {
+    color: #e6eff5;
+    font-weight: 600;
+    line-height: 1.3;
   }
 
   /* Селекты */
@@ -2818,6 +3009,49 @@ table td, table th {
 
   .wuxia-dock {
     border-radius: 24px;
+  }
+
+  .toolbar-surface {
+    gap: 12px;
+    padding: 14px;
+    border-radius: 20px;
+  }
+
+  .modal-backdrop {
+    padding: 12px;
+    align-items: flex-end;
+  }
+
+  .modal-shell {
+    width: 100%;
+    max-height: 94vh;
+    border-radius: 26px 26px 18px 18px;
+  }
+
+  .modal-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .table-frame {
+    border-radius: 20px;
+  }
+
+  .table-card-grid {
+    gap: 12px;
+  }
+
+  .table-card {
+    padding: 16px;
+    gap: 12px;
+    border-radius: 20px;
+  }
+
+  .metric-tile {
+    min-height: 68px;
+    padding: 11px;
   }
 }
 

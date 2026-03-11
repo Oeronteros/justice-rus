@@ -378,12 +378,13 @@ export function GuideForm({
 
       <div className={`rounded-3xl border border-[#223140]/70 bg-[#091019]/70 p-4 md:p-5 space-y-4 ${focusMode ? 'guide-form-focus-wrap' : ''}`}>
         {!focusMode && (
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="toolbar-surface">
+          <div className="flex flex-wrap items-center gap-2">
           {GUIDE_TEMPLATES.map((template) => (
             <button
               key={template.label}
               type="button"
-              className="rounded-full border border-[#2d4253] bg-[#12202c] px-3 py-1.5 text-sm text-[#cfe6f5] transition hover:border-[#4e6f87] hover:bg-[#162838]"
+              className="ui-chip ui-badge-accent"
               onClick={() => insertMarkdown(template.snippet)}
             >
               {template.label}
@@ -391,32 +392,33 @@ export function GuideForm({
           ))}
           <button
             type="button"
-            className="rounded-full border border-[#2d4253] bg-[#0e1922] px-3 py-1.5 text-sm text-[#b7c9d6] transition hover:border-[#4e6f87] hover:bg-[#162838]"
+            className="ui-chip"
             onClick={() => insertMarkdown('\n> [!tip] Key takeaway\n> \n')}
           >
             Callout
           </button>
           <button
             type="button"
-            className="rounded-full border border-[#2d4253] bg-[#0e1922] px-3 py-1.5 text-sm text-[#b7c9d6] transition hover:border-[#4e6f87] hover:bg-[#162838]"
+            className="ui-chip"
             onClick={() => insertMarkdown('\n| Item | Value | Notes |\n| --- | --- | --- |\n|  |  |  |\n')}
           >
             Table
           </button>
           <button
             type="button"
-            className="rounded-full border border-[#2d4253] bg-[#0e1922] px-3 py-1.5 text-sm text-[#b7c9d6] transition hover:border-[#4e6f87] hover:bg-[#162838]"
+            className="ui-chip"
             onClick={() => insertMarkdown('\n- [ ] Step one\n- [ ] Step two\n- [ ] Step three\n')}
           >
             Checklist
           </button>
           <button
             type="button"
-            className="rounded-full border border-[#2d4253] bg-[#0e1922] px-3 py-1.5 text-sm text-[#b7c9d6] transition hover:border-[#4e6f87] hover:bg-[#162838]"
+            className="ui-chip"
             onClick={() => insertMarkdown('[[Related Guide]]', true)}
           >
             Wikilink
           </button>
+        </div>
         </div>
         )}
 

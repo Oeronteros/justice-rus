@@ -64,16 +64,16 @@ export function GuideEditor({ onClose, onSuccess, mode = 'create', guideId, init
 
   return (
     <div
-      className="fixed inset-0 z-[100001] bg-black/75 backdrop-blur-md flex items-center justify-center px-4 py-10"
-      style={{ perspective: 'none', transform: 'none' }}
+      className="modal-backdrop"
+      style={{ zIndex: 100001, perspective: 'none', transform: 'none' }}
     >
-      <div className={`card w-full relative overflow-auto ${isFocusMode ? 'guide-editor-focus-card p-4 md:p-6' : 'max-w-7xl p-6 md:p-8 max-h-[92vh]'}`}>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+      <div className={`modal-shell w-full relative overflow-auto ${isFocusMode ? 'guide-editor-focus-card p-4 md:p-6' : 'max-w-7xl p-6 md:p-8 max-h-[92vh]'}`}>
+        <div className="modal-header">
           <div>
-            <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5]">
+            <h3 className="modal-title">
               {isEdit ? 'Редактировать гайд' : 'Новый гайд'}
             </h3>
-            <p className="text-gray-400 text-sm mt-1">
+            <p className="modal-subtitle">
               {isEdit
                 ? 'Обнови текст, категория сохранится. Автор остаётся как в публикации.'
                 : 'Пиши как в Obsidian: Milkdown editor, живой reader и импорт .md с вложениями.'}
@@ -90,7 +90,7 @@ export function GuideEditor({ onClose, onSuccess, mode = 'create', guideId, init
             </button>
             <button
               type="button"
-              className="dc-icon-btn p-2.5 rounded-xl"
+              className="dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0"
               onClick={onClose}
             >
               <WuxiaIcon name="x" className="w-5 h-5" />

@@ -298,11 +298,14 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
 
   if (registrations.length === 0) {
     return (
-      <div className="py-12 text-center text-gray-500">
-        <div className="flex flex-col items-center">
-          <WuxiaIcon name="usersSlash" className="w-10 h-10 mb-3 text-gray-400" />
-          <div className="text-lg">Записей не найдено</div>
-          <div className="text-sm">Смени поиск или фильтры</div>
+      <div className="card section-card px-6 py-10 text-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-16 h-16 rounded-full bg-[#101922]/70 border border-[#223544]/60 grid place-items-center">
+            <WuxiaIcon name="usersSlash" className="w-8 h-8 text-gray-400" />
+          </div>
+          <span className="ui-badge ui-badge-muted">Roster empty</span>
+          <div className="text-lg text-[#d9e9f2] font-semibold">Записей не найдено</div>
+          <div className="text-sm text-[#9fb5c3]">Смени поиск или фильтры</div>
         </div>
       </div>
     );
@@ -311,53 +314,53 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
   return (
     <>
       {isMobileLayout ? (
-        <div className="grid grid-cols-1 gap-4">
+        <div className="table-card-grid">
           {registrations.map((registration, index) => (
-            <div key={`${registration.nickname}-${registration.discord || index}`} className="rounded-2xl border border-[#2a3c4c]/60 bg-[#101a23]/60 p-5 space-y-4">
+            <div key={`${registration.nickname}-${registration.discord || index}`} className="table-card">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3 min-w-0">
                   <RegistrationIdentity registration={registration} compact />
                   <div className="min-w-0">
-                    <div className="text-xs uppercase tracking-[0.18em] text-[#9ec5d8] mb-1">#{index + 1}</div>
+                    <div className="text-xs uppercase tracking-[0.14em] text-[#9ec5d8] mb-1">#{index + 1}</div>
                     <div className="text-lg font-semibold text-[#e6eff5]">{registration.nickname}</div>
                     <div className="text-sm text-gray-400 mt-1 truncate">{getDisplayDiscord(registration) || 'Discord не указан'}</div>
                   </div>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-xs ${getRankClass(registration.rank)}`}>
+                <span className={`ui-badge ${getRankClass(registration.rank)}`}>
                   {rankLabels[registration.rank] || registration.rank}
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="rounded-xl bg-[#0c151d]/80 border border-[#223544]/60 p-3">
-                  <div className="text-gray-400 mb-1">{columnLabels.class}</div>
+              <div className="table-card-section grid grid-cols-2 gap-3 text-sm">
+                <div className="metric-tile">
+                  <div className="metric-label">{columnLabels.class}</div>
                   <ClassBadge className={registration.class} textClassName="text-[#e6eff5]" iconSizeClassName="h-8 w-8" />
                 </div>
-                <div className="rounded-xl bg-[#0c151d]/80 border border-[#223544]/60 p-3">
-                  <div className="text-gray-400 mb-1">{columnLabels.guild}</div>
-                  <div className="text-[#e6eff5]">{registration.guild || '—'}</div>
+                <div className="metric-tile">
+                  <div className="metric-label">{columnLabels.guild}</div>
+                  <div className="metric-value">{registration.guild || '—'}</div>
                 </div>
-                <div className="rounded-xl bg-[#0c151d]/80 border border-[#223544]/60 p-3">
-                  <div className="text-gray-400 mb-1">{columnLabels.elo}</div>
-                  <div className="text-[#e6eff5]">{registration.elo || 0}</div>
+                <div className="metric-tile">
+                  <div className="metric-label">{columnLabels.elo}</div>
+                  <div className="metric-value">{registration.elo || 0}</div>
                 </div>
-                <div className="rounded-xl bg-[#0c151d]/80 border border-[#223544]/60 p-3">
-                  <div className="text-gray-400 mb-1">{columnLabels.mmr20}</div>
-                  <div className="text-[#e6eff5]">{registration.mmr20 || 0}</div>
+                <div className="metric-tile">
+                  <div className="metric-label">{columnLabels.mmr20}</div>
+                  <div className="metric-value">{registration.mmr20 || 0}</div>
                 </div>
-                <div className="rounded-xl bg-[#0c151d]/80 border border-[#223544]/60 p-3">
-                  <div className="text-gray-400 mb-1">{columnLabels.bounty}</div>
-                  <div className="text-[#e6eff5]">{registration.bounty || 0}</div>
+                <div className="metric-tile">
+                  <div className="metric-label">{columnLabels.bounty}</div>
+                  <div className="metric-value">{registration.bounty || 0}</div>
                 </div>
-                <div className="rounded-xl bg-[#0c151d]/80 border border-[#223544]/60 p-3">
-                  <div className="text-gray-400 mb-1">{columnLabels.status}</div>
-                  <span className={`inline-flex px-3 py-1 rounded-full text-xs ${getStatusClass(registration.status)}`}>
+                <div className="metric-tile">
+                  <div className="metric-label">{columnLabels.status}</div>
+                  <span className={`ui-badge ${getStatusClass(registration.status)}`}>
                     {statusLabels[registration.status] || registration.status}
                   </span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="table-card-section grid grid-cols-2 gap-3 text-sm">
                 {[
                   ['outerHeroic', renderActivityValue(registration.outerHeroic || 0)],
                   ['innerHeroic', renderActivityValue(registration.innerHeroic || 0)],
@@ -367,13 +370,13 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
                   ['secretRealm', renderActivityValue(registration.secretRealm || 0)],
                   ['marks', String(registration.marks || 0)],
                 ].map(([key, value]) => (
-                  <div key={key} className="rounded-xl bg-[#0c151d]/80 border border-[#223544]/60 p-3">
-                    <div className="text-gray-400 mb-1">{columnLabels[key as keyof RegistrationColumnLabels]}</div>
-                    <div className="text-[#e6eff5]">{value}</div>
+                  <div key={key} className="metric-tile">
+                    <div className="metric-label">{columnLabels[key as keyof RegistrationColumnLabels]}</div>
+                    <div className="metric-value">{value}</div>
                   </div>
                 ))}
-                <div className="rounded-xl bg-[#0c151d]/80 border border-[#223544]/60 p-3 col-span-2">
-                  <div className="text-gray-400 mb-1">{columnLabels.kpi}</div>
+                <div className="metric-tile col-span-2">
+                  <div className="metric-label">{columnLabels.kpi}</div>
                   <KpiValue registration={registration} user={user} />
                 </div>
               </div>
@@ -387,7 +390,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
           ))}
         </div>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="table-frame overflow-x-auto">
           <table className="table-modern">
             <thead>
               <tr>
@@ -421,7 +424,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
                   </td>
                   <td className="font-medium">{registration.nickname}</td>
                   <td>
-                    <span className={`px-3 py-1 rounded-full text-xs ${getRankClass(registration.rank)}`}>
+                    <span className={`ui-badge ${getRankClass(registration.rank)}`}>
                       {rankLabels[registration.rank] || registration.rank}
                     </span>
                   </td>
@@ -439,7 +442,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
                   <td>{registration.marks || 0}</td>
                   <td><KpiValue registration={registration} user={user} /></td>
                   <td>
-                    <span className={`px-3 py-1 rounded-full text-xs ${getStatusClass(registration.status)}`}>
+                    <span className={`ui-badge ${getStatusClass(registration.status)}`}>
                       {statusLabels[registration.status] || registration.status}
                     </span>
                   </td>
@@ -458,18 +461,18 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
       )}
 
       {canSeeFullStats && editingRegistration && editDraft && (
-        <div className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center px-4 py-8" onClick={closeEditor}>
-          <div className="card w-full max-w-4xl p-6 md:p-8 max-h-[90vh] overflow-auto" onClick={(event) => event.stopPropagation()}>
-            <div className="flex items-start justify-between gap-4 mb-6">
+        <div className="modal-backdrop" onClick={closeEditor}>
+          <div className="modal-shell modal-shell-narrow p-6 md:p-8" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="registration-editor-title">
+            <div className="modal-header">
               <div>
-                <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5]">Редактирование записи</h3>
-                <p className="text-sm text-gray-400 mt-2">
+                <h3 id="registration-editor-title" className="modal-title">Редактирование записи</h3>
+                <p className="modal-subtitle">
                   {editingRegistration.nickname} · {getDisplayDiscord(editingRegistration) || 'Discord не указан'}
                 </p>
               </div>
               <button
                 type="button"
-                className="dc-icon-btn p-2.5 rounded-xl"
+                className="dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0"
                 onClick={closeEditor}
                 disabled={updateRegistrationStats.isPending}
                 title="Закрыть"

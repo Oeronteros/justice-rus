@@ -250,16 +250,16 @@ export function GuideModal({
               {guideDetail && `${guideDetail.guide.author} • ${guideDetail.guide.category}`}
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 flex-wrap justify-end">
             {actionNotice && (
-              <span className="text-[11px] uppercase tracking-[0.18em] text-[#6f8799] hidden sm:inline">
+              <span className="ui-badge ui-badge-muted hidden sm:inline-flex">
                 {actionNotice}
               </span>
             )}
             {guideDetail && (
               <button
                 type="button"
-                className={`text-sm px-3 py-1 rounded ${guideDetail.voted ? 'bg-[#1a2a38] text-[#8fb9cc]' : 'text-gray-500 hover:text-[#8fb9cc]'}`}
+                className={`ui-chip ${guideDetail.voted ? 'is-active' : ''}`}
                 onClick={handleVote}
                 disabled={voteGuide.isPending}
               >
@@ -269,7 +269,7 @@ export function GuideModal({
             {guideDetail && (
               <button
                 type="button"
-                className="text-sm px-3 py-1 rounded text-gray-500 hover:text-[#8fb9cc] hover:bg-[#1a2a38]"
+                className="ui-chip"
                 onClick={handleDownload}
               >
                 Скачать
@@ -278,7 +278,7 @@ export function GuideModal({
             {guideDetail && (
               <button
                 type="button"
-                className="text-sm px-3 py-1 rounded text-gray-500 hover:text-[#8fb9cc] hover:bg-[#1a2a38]"
+                className="ui-chip"
                 onClick={handleShare}
               >
                 Поделиться
@@ -287,7 +287,7 @@ export function GuideModal({
             {guideDetail && (
               <button
                 type="button"
-                className="text-sm px-3 py-1 rounded text-gray-500 hover:text-[#8fb9cc] hover:bg-[#1a2a38]"
+                className="ui-chip"
                 onClick={handleTranslate}
               >
                 Перевести
@@ -296,7 +296,7 @@ export function GuideModal({
             {guideDetail && canEdit && (
               <button
                 type="button"
-                className="text-sm px-3 py-1 rounded text-gray-500 hover:text-[#8fb9cc] hover:bg-[#1a2a38]"
+                className="ui-chip"
                 onClick={() => {
                   setActionNotice(null);
                   setEditOpen(true);
@@ -308,7 +308,7 @@ export function GuideModal({
             {canModerate && (
               <button
                 type="button"
-                className="text-sm px-3 py-1 rounded text-red-400 hover:text-red-300 hover:bg-[#1a2a38]"
+                className="ui-chip ui-badge-danger"
                 onClick={handleDelete}
                 disabled={deleteGuide.isPending}
               >
@@ -317,10 +317,10 @@ export function GuideModal({
             )}
             <button
               type="button"
-              className="text-gray-400 hover:text-white text-xl px-2 py-1 rounded hover:bg-[#1a2a38]"
+              className="dc-icon-btn h-[42px] w-[42px] rounded-xl shrink-0 text-gray-300"
               onClick={handleClose}
             >
-              ✕
+              <WuxiaIcon name="x" className="w-5 h-5" />
             </button>
           </div>
         </div>

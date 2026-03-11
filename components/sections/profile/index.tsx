@@ -252,7 +252,7 @@ const AccountsPanel = memo(function AccountsPanel({
       {accountsLoading ? (
         <div className="text-sm text-gray-400">Загрузка аккаунтов...</div>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="table-frame overflow-x-auto">
           <table className="table-modern">
             <thead>
               <tr>
