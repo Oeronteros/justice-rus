@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { GetApiAbsencesData, GetApiAbsencesResponses, GetApiGuidesData, GetApiGuidesResponses, GetApiNewsData, GetApiNewsResponses, GetApiRegistrationsData, GetApiRegistrationsErrors, GetApiRegistrationsResponses, GetApiScheduleData, GetApiScheduleResponses, PatchApiRegistrationData, PatchApiRegistrationErrors, PatchApiRegistrationResponses, PostApiAbsencesData, PostApiAbsencesResponses } from './types.gen';
+import type { GetApiAbsencesData, GetApiAbsencesResponses, GetApiDiscordProxyAbsencesData, GetApiDiscordProxyAbsencesResponses, GetApiDiscordProxyRegistrationData, GetApiDiscordProxyRegistrationErrors, GetApiDiscordProxyRegistrationResponses, GetApiGuidesData, GetApiGuidesResponses, GetApiNewsData, GetApiNewsResponses, GetApiRegistrationsData, GetApiRegistrationsErrors, GetApiRegistrationsResponses, GetApiScheduleData, GetApiScheduleResponses, PatchApiDiscordProxyAbsencesData, PatchApiDiscordProxyAbsencesErrors, PatchApiDiscordProxyAbsencesResponses, PatchApiDiscordProxyRegistrationData, PatchApiDiscordProxyRegistrationErrors, PatchApiDiscordProxyRegistrationResponses, PatchApiRegistrationData, PatchApiRegistrationErrors, PatchApiRegistrationResponses, PatchApiScheduleData, PatchApiScheduleErrors, PatchApiScheduleResponses, PostApiAbsencesData, PostApiAbsencesResponses, PostApiDiscordProxyAbsencesData, PostApiDiscordProxyAbsencesResponses, PostApiScheduleData, PostApiScheduleErrors, PostApiScheduleResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -52,6 +52,32 @@ export const patchApiRegistration = <ThrowOnError extends boolean = false>(optio
 export const getApiSchedule = <ThrowOnError extends boolean = false>(options?: Options<GetApiScheduleData, ThrowOnError>) => (options?.client ?? client).get<GetApiScheduleResponses, unknown, ThrowOnError>({ url: '/api/schedule', ...options });
 
 /**
+ * Обновить событие расписания
+ */
+export const patchApiSchedule = <ThrowOnError extends boolean = false>(options: Options<PatchApiScheduleData, ThrowOnError>) => (options.client ?? client).patch<PatchApiScheduleResponses, PatchApiScheduleErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/schedule',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Создать событие расписания
+ */
+export const postApiSchedule = <ThrowOnError extends boolean = false>(options: Options<PostApiScheduleData, ThrowOnError>) => (options.client ?? client).post<PostApiScheduleResponses, PostApiScheduleErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/schedule',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Получить новости
  *
  * Возвращает список новостей гильдии
@@ -82,6 +108,65 @@ export const getApiAbsences = <ThrowOnError extends boolean = false>(options?: O
 export const postApiAbsences = <ThrowOnError extends boolean = false>(options: Options<PostApiAbsencesData, ThrowOnError>) => (options.client ?? client).post<PostApiAbsencesResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/absences',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Получить регистрации через Next.js proxy
+ *
+ * Возвращает список участников через внутренний route портала
+ */
+export const getApiDiscordProxyRegistration = <ThrowOnError extends boolean = false>(options?: Options<GetApiDiscordProxyRegistrationData, ThrowOnError>) => (options?.client ?? client).get<GetApiDiscordProxyRegistrationResponses, GetApiDiscordProxyRegistrationErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/discord-proxy/registration',
+    ...options
+});
+
+/**
+ * Обновить статистику регистрации через Next.js proxy
+ */
+export const patchApiDiscordProxyRegistration = <ThrowOnError extends boolean = false>(options: Options<PatchApiDiscordProxyRegistrationData, ThrowOnError>) => (options.client ?? client).patch<PatchApiDiscordProxyRegistrationResponses, PatchApiDiscordProxyRegistrationErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/discord-proxy/registration',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Получить отсутствия через Next.js proxy
+ */
+export const getApiDiscordProxyAbsences = <ThrowOnError extends boolean = false>(options?: Options<GetApiDiscordProxyAbsencesData, ThrowOnError>) => (options?.client ?? client).get<GetApiDiscordProxyAbsencesResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/discord-proxy/absences',
+    ...options
+});
+
+/**
+ * Обновить статус отсутствия через Next.js proxy
+ */
+export const patchApiDiscordProxyAbsences = <ThrowOnError extends boolean = false>(options: Options<PatchApiDiscordProxyAbsencesData, ThrowOnError>) => (options.client ?? client).patch<PatchApiDiscordProxyAbsencesResponses, PatchApiDiscordProxyAbsencesErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/discord-proxy/absences',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Создать отсутствие через Next.js proxy
+ */
+export const postApiDiscordProxyAbsences = <ThrowOnError extends boolean = false>(options: Options<PostApiDiscordProxyAbsencesData, ThrowOnError>) => (options.client ?? client).post<PostApiDiscordProxyAbsencesResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/discord-proxy/absences',
     ...options,
     headers: {
         'Content-Type': 'application/json',

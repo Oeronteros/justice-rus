@@ -213,6 +213,32 @@ export type CreateAbsence = {
     reason: string;
 };
 
+export type UpdateAbsenceStatus = {
+    id: string;
+    status: 'pending' | 'approved' | 'rejected';
+};
+
+export type CreateSchedule = {
+    dayType: string;
+    time: string;
+    titleRu: string;
+    titleEn: string;
+    titleZh?: string;
+    orderIndex: number;
+    active: boolean;
+};
+
+export type UpdateSchedule = {
+    id: string;
+    dayType: string;
+    time: string;
+    titleRu: string;
+    titleEn: string;
+    titleZh?: string;
+    orderIndex: number;
+    active: boolean;
+};
+
 export type GetApiRegistrationsData = {
     body?: never;
     path?: never;
@@ -297,6 +323,66 @@ export type GetApiScheduleResponses = {
 
 export type GetApiScheduleResponse = GetApiScheduleResponses[keyof GetApiScheduleResponses];
 
+export type PatchApiScheduleData = {
+    body: UpdateSchedule;
+    path?: never;
+    query?: never;
+    url: '/api/schedule';
+};
+
+export type PatchApiScheduleErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+};
+
+export type PatchApiScheduleError = PatchApiScheduleErrors[keyof PatchApiScheduleErrors];
+
+export type PatchApiScheduleResponses = {
+    /**
+     * Событие обновлено
+     */
+    200: Schedule;
+};
+
+export type PatchApiScheduleResponse = PatchApiScheduleResponses[keyof PatchApiScheduleResponses];
+
+export type PostApiScheduleData = {
+    body: CreateSchedule;
+    path?: never;
+    query?: never;
+    url: '/api/schedule';
+};
+
+export type PostApiScheduleErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+};
+
+export type PostApiScheduleError = PostApiScheduleErrors[keyof PostApiScheduleErrors];
+
+export type PostApiScheduleResponses = {
+    /**
+     * Событие создано
+     */
+    201: Schedule;
+};
+
+export type PostApiScheduleResponse = PostApiScheduleResponses[keyof PostApiScheduleResponses];
+
 export type GetApiNewsData = {
     body?: never;
     path?: never;
@@ -358,3 +444,128 @@ export type PostApiAbsencesResponses = {
      */
     201: unknown;
 };
+
+export type GetApiDiscordProxyRegistrationData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/discord-proxy/registration';
+};
+
+export type GetApiDiscordProxyRegistrationErrors = {
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type GetApiDiscordProxyRegistrationError = GetApiDiscordProxyRegistrationErrors[keyof GetApiDiscordProxyRegistrationErrors];
+
+export type GetApiDiscordProxyRegistrationResponses = {
+    /**
+     * Успешный ответ
+     */
+    200: Array<Registration>;
+};
+
+export type GetApiDiscordProxyRegistrationResponse = GetApiDiscordProxyRegistrationResponses[keyof GetApiDiscordProxyRegistrationResponses];
+
+export type PatchApiDiscordProxyRegistrationData = {
+    body: UpdateRegistrationStats;
+    path?: never;
+    query?: never;
+    url: '/api/discord-proxy/registration';
+};
+
+export type PatchApiDiscordProxyRegistrationErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type PatchApiDiscordProxyRegistrationError = PatchApiDiscordProxyRegistrationErrors[keyof PatchApiDiscordProxyRegistrationErrors];
+
+export type PatchApiDiscordProxyRegistrationResponses = {
+    /**
+     * Статистика обновлена
+     */
+    200: UpdateRegistrationStatsResponse;
+};
+
+export type PatchApiDiscordProxyRegistrationResponse = PatchApiDiscordProxyRegistrationResponses[keyof PatchApiDiscordProxyRegistrationResponses];
+
+export type GetApiDiscordProxyAbsencesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/discord-proxy/absences';
+};
+
+export type GetApiDiscordProxyAbsencesResponses = {
+    /**
+     * Успешный ответ
+     */
+    200: Array<Absence>;
+};
+
+export type GetApiDiscordProxyAbsencesResponse = GetApiDiscordProxyAbsencesResponses[keyof GetApiDiscordProxyAbsencesResponses];
+
+export type PatchApiDiscordProxyAbsencesData = {
+    body: UpdateAbsenceStatus;
+    path?: never;
+    query?: never;
+    url: '/api/discord-proxy/absences';
+};
+
+export type PatchApiDiscordProxyAbsencesErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+};
+
+export type PatchApiDiscordProxyAbsencesError = PatchApiDiscordProxyAbsencesErrors[keyof PatchApiDiscordProxyAbsencesErrors];
+
+export type PatchApiDiscordProxyAbsencesResponses = {
+    /**
+     * Статус обновлен
+     */
+    200: Absence;
+};
+
+export type PatchApiDiscordProxyAbsencesResponse = PatchApiDiscordProxyAbsencesResponses[keyof PatchApiDiscordProxyAbsencesResponses];
+
+export type PostApiDiscordProxyAbsencesData = {
+    body: CreateAbsence;
+    path?: never;
+    query?: never;
+    url: '/api/discord-proxy/absences';
+};
+
+export type PostApiDiscordProxyAbsencesResponses = {
+    /**
+     * Заявка создана
+     */
+    201: Absence;
+};
+
+export type PostApiDiscordProxyAbsencesResponse = PostApiDiscordProxyAbsencesResponses[keyof PostApiDiscordProxyAbsencesResponses];

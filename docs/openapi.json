@@ -122,6 +122,70 @@
             }
           }
         }
+      },
+      "post": {
+        "summary": "Создать событие расписания",
+        "tags": ["Schedule"],
+        "security": [
+          { "bearerAuth": [] }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSchedule"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Событие создано",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Schedule"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Обновить событие расписания",
+        "tags": ["Schedule"],
+        "security": [
+          { "bearerAuth": [] }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSchedule"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Событие обновлено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Schedule"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
       }
     },
     "/api/news": {
@@ -211,6 +275,154 @@
         "responses": {
           "201": {
             "description": "Заявка создана"
+          }
+        }
+      }
+    },
+    "/api/discord-proxy/registration": {
+      "get": {
+        "summary": "Получить регистрации через Next.js proxy",
+        "description": "Возвращает список участников через внутренний route портала",
+        "tags": ["Registrations"],
+        "security": [
+          { "bearerAuth": [] }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Registration"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Обновить статистику регистрации через Next.js proxy",
+        "tags": ["Registrations"],
+        "security": [
+          { "bearerAuth": [] }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRegistrationStats"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Статистика обновлена",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateRegistrationStatsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/discord-proxy/absences": {
+      "get": {
+        "summary": "Получить отсутствия через Next.js proxy",
+        "tags": ["Absences"],
+        "security": [
+          { "bearerAuth": [] }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Absence"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Создать отсутствие через Next.js proxy",
+        "tags": ["Absences"],
+        "security": [
+          { "bearerAuth": [] }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAbsence"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Заявка создана",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Absence"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Обновить статус отсутствия через Next.js proxy",
+        "tags": ["Absences"],
+        "security": [
+          { "bearerAuth": [] }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAbsenceStatus"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Статус обновлен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Absence"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
           }
         }
       }
@@ -558,6 +770,76 @@
           }
         },
         "required": ["startDate", "endDate", "reason"]
+      },
+      "UpdateAbsenceStatus": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "approved", "rejected"]
+          }
+        },
+        "required": ["id", "status"]
+      },
+      "CreateSchedule": {
+        "type": "object",
+        "properties": {
+          "dayType": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string"
+          },
+          "titleRu": {
+            "type": "string"
+          },
+          "titleEn": {
+            "type": "string"
+          },
+          "titleZh": {
+            "type": "string"
+          },
+          "orderIndex": {
+            "type": "integer"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": ["dayType", "time", "titleRu", "titleEn", "orderIndex", "active"]
+      },
+      "UpdateSchedule": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "dayType": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string"
+          },
+          "titleRu": {
+            "type": "string"
+          },
+          "titleEn": {
+            "type": "string"
+          },
+          "titleZh": {
+            "type": "string"
+          },
+          "orderIndex": {
+            "type": "integer"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": ["id", "dayType", "time", "titleRu", "titleEn", "orderIndex", "active"]
       }
     },
     "securitySchemes": {

@@ -1,10 +1,11 @@
-import { api } from './client';
+import { getApiDiscordProxyRegistration, patchApiDiscordProxyRegistration } from '@/lib/api/generated';
 import {
   prefixOptionSchema,
   registrationsArraySchema,
   type Registration,
 } from '@/lib/schemas/registration';
 import { z } from 'zod';
+import { sameOriginOpenApiClient } from './openapi-client';
 
 const updateRegistrationStatsPayloadSchema = z.object({
   nickname: z.string().trim().min(1),
@@ -32,7 +33,8 @@ export type UpdateRegistrationStatsPayload = z.infer<typeof updateRegistrationSt
 
 export const registrationsApi = {
   list: async (): Promise<Registration[]> => {
-    const data = await api.get('discord-proxy/registration', registrationsArraySchema);
+    const response = await getApiDiscordProxyRegistration({ client: sameOriginOpenApiClient });
+    const data = registrationsArraySchema.parse(response.data || []);
     return data.map((item) => ({
       ...item,
       elo: (item.elo ?? 0) > 0 ? (item.elo ?? 0) : 1000,
@@ -51,10 +53,11 @@ export const registrationsApi = {
   },
 
   updateStats: async (payload: UpdateRegistrationStatsPayload): Promise<{ success: boolean; portalOnly: boolean }> => {
-    return api.patch(
-      'discord-proxy/registration',
-      updateRegistrationStatsPayloadSchema.parse(payload),
-      updateRegistrationStatsResponseSchema
-    );
+    const response = await patchApiDiscordProxyRegistration({
+      client: sameOriginOpenApiClient,
+      body: updateRegistrationStatsPayloadSchema.parse(payload),
+    });
+
+    return updateRegistrationStatsResponseSchema.parse(response.data || {});
   },
 };

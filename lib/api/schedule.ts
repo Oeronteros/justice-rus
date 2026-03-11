@@ -1,6 +1,5 @@
-import { getApiSchedule } from '@/lib/api/generated';
+import { getApiSchedule, patchApiSchedule, postApiSchedule } from '@/lib/api/generated';
 import { sameOriginOpenApiClient } from './openapi-client';
-import { api } from './client';
 import {
   createScheduleSchema,
   scheduleSchema,
@@ -37,7 +36,11 @@ export const scheduleApi = {
   },
 
   update: async (payload: UpdateScheduleDto): Promise<Schedule> => {
-    const item = await api.patch('schedule', updateScheduleSchema.parse(payload), scheduleSchema);
+    const response = await patchApiSchedule({
+      client: sameOriginOpenApiClient,
+      body: updateScheduleSchema.parse(payload),
+    });
+    const item = scheduleSchema.parse(response.data || {});
     return {
       date: item.date || '',
       registration: item.registration || '',
@@ -56,7 +59,11 @@ export const scheduleApi = {
   },
 
   create: async (payload: CreateScheduleDto): Promise<Schedule> => {
-    const item = await api.post('schedule', createScheduleSchema.parse(payload), scheduleSchema);
+    const response = await postApiSchedule({
+      client: sameOriginOpenApiClient,
+      body: createScheduleSchema.parse(payload),
+    });
+    const item = scheduleSchema.parse(response.data || {});
     return {
       date: item.date || '',
       registration: item.registration || '',
