@@ -21,7 +21,7 @@ async function request<T>(
   schema?: z.ZodType<T>
 ): Promise<T> {
   const { body, ...restOptions } = options;
-  
+
   const response = await fetch(`/api/${endpoint}`, {
     ...restOptions,
     credentials: 'include',
@@ -29,7 +29,7 @@ async function request<T>(
       'Content-Type': 'application/json',
       ...restOptions.headers,
     },
-    body: body ? JSON.stringify(body) : undefined,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 
   if (!response.ok) {
@@ -42,27 +42,27 @@ async function request<T>(
   }
 
   const data = await response.json();
-  
+
   if (schema) {
     return schema.parse(data);
   }
-  
+
   return data as T;
 }
 
 export const api = {
-  get: <T>(endpoint: string, schema?: z.ZodType<T>) => 
+  get: <T>(endpoint: string, schema?: z.ZodType<T>) =>
     request<T>(endpoint, { method: 'GET' }, schema),
-    
+
   post: <T>(endpoint: string, body: unknown, schema?: z.ZodType<T>) =>
     request<T>(endpoint, { method: 'POST', body }, schema),
-    
+
   put: <T>(endpoint: string, body: unknown, schema?: z.ZodType<T>) =>
     request<T>(endpoint, { method: 'PUT', body }, schema),
-    
+
   patch: <T>(endpoint: string, body: unknown, schema?: z.ZodType<T>) =>
     request<T>(endpoint, { method: 'PATCH', body }, schema),
-    
+
   delete: <T>(endpoint: string, schema?: z.ZodType<T>) =>
     request<T>(endpoint, { method: 'DELETE' }, schema),
 };
@@ -70,11 +70,16 @@ export const api = {
 export function handleApiError(error: unknown): string {
   if (error instanceof ApiError) {
     switch (error.status) {
-      case 401: return 'Требуется авторизация';
-      case 403: return 'Доступ запрещён';
-      case 404: return 'Не найдено';
-      case 500: return 'Ошибка сервера';
-      default: return error.message;
+      case 401:
+        return 'Требуется авторизация';
+      case 403:
+        return 'Доступ запрещён';
+      case 404:
+        return 'Не найдено';
+      case 500:
+        return 'Ошибка сервера';
+      default:
+        return error.message;
     }
   }
   if (error instanceof z.ZodError) {

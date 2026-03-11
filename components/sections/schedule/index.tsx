@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { useCreateSchedule, useSchedule, useUpdateSchedule } from '@/lib/schedule/hooks';
 import WuxiaIcon from '@/components/WuxiaIcons';
@@ -429,11 +429,11 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
     setScheduleNotice(null);
   };
 
-  const closeEditor = () => {
+  const closeEditor = useCallback(() => {
     if (updateSchedule.isPending || createSchedule.isPending) return;
     setEditingSchedule(null);
     setEditDraft(null);
-  };
+  }, [createSchedule.isPending, updateSchedule.isPending]);
 
   const saveScheduleEdit = async () => {
     if (!editDraft) {
@@ -502,7 +502,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', handleEscape);
     };
-  }, [editDraft, updateSchedule.isPending, createSchedule.isPending]);
+  }, [closeEditor, editDraft]);
 
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
@@ -666,6 +666,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                 onClick={() => refetch()}
                 className="dc-icon-btn p-2.5 rounded-xl"
                 title={language === 'ru' ? 'Обновить' : language === 'zh' ? '刷新' : 'Refresh'}
+                aria-label={language === 'ru' ? 'Обновить расписание' : language === 'zh' ? '刷新日程' : 'Refresh schedule'}
               >
                 <WuxiaIcon name="refresh" className="w-5 h-5" />
               </button>
@@ -795,14 +796,14 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                     {items.map((item, idx) => {
                       const timeLabel = getDisplayTime(item);
                       const time = parseTime(timeLabel);
-                      const isNow = time && time.start <= currentMinutes && time.end > currentMinutes;
-                      const isPast = time && time.end <= currentMinutes;
+                      const isNow = isSelectedToday && Boolean(time && time.start <= currentMinutes && time.end > currentMinutes);
+                      const isPast = isSelectedToday && Boolean(time && time.end <= currentMinutes);
                       const isNext = nextEvent && item.id === nextEvent.id;
                       const isRecurring = isRecurringScheduleItem(item, 'daily') || isRecurringScheduleItem(item, 'weekly');
                       
                       return (
                         <div
-                          key={idx}
+                          key={item.id || `${groupName}-${timeLabel}-${idx}`}
                           className={`px-4 py-3 flex items-start gap-3 transition-colors ${
                             isNow 
                               ? 'bg-green-900/20' 
@@ -858,6 +859,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                               className="dc-icon-btn p-2 rounded-lg text-[#8fb9cc]"
                               onClick={() => openEditor(item)}
                               title={language === 'ru' ? 'Редактировать слот' : language === 'zh' ? '编辑活动' : 'Edit slot'}
+                              aria-label={language === 'ru' ? 'Редактировать событие' : language === 'zh' ? '编辑活动' : 'Edit event'}
                             >
                               <WuxiaIcon name="edit" className="w-4 h-4" />
                             </button>
@@ -896,108 +898,369 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
 
         {canEditSchedule && editDraft && (
           <div className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center px-4 py-8" onClick={closeEditor}>
-            <div className="card w-full max-w-3xl p-6 md:p-8 max-h-[90vh] overflow-auto" onClick={(event) => event.stopPropagation()}>
-              <div className="flex items-start justify-between gap-4 mb-6">
-                <div>
-                  <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5]">
-                    {editingSchedule
-                      ? (language === 'ru' ? 'Редактировать слот' : language === 'zh' ? '编辑活动' : 'Edit schedule slot')
-                      : (language === 'ru' ? 'Добавить событие' : language === 'zh' ? '添加活动' : 'Add event')}
-                  </h3>
-                  {editingSchedule && <p className="text-sm text-gray-400 mt-2">{editingSchedule.registration}</p>}
+            <div
+              className="card w-full max-w-6xl p-0 max-h-[92vh] overflow-hidden"
+              onClick={(event) => event.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="schedule-editor-title"
+            >
+              <div className="grid max-h-[92vh] grid-cols-1 overflow-auto lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.95fr)]">
+                <div className="p-6 md:p-8">
+                  <div className="flex items-start justify-between gap-4 mb-6">
+                    <div>
+                      <h3 id="schedule-editor-title" className="text-2xl font-bold font-orbitron text-[#e6eff5]">
+                        {editingSchedule
+                          ? (language === 'ru' ? 'Редактировать слот' : language === 'zh' ? '编辑活动' : 'Edit schedule slot')
+                          : (language === 'ru' ? 'Добавить событие' : language === 'zh' ? '添加活动' : 'Add event')}
+                      </h3>
+                      <p className="text-sm text-gray-400 mt-2">
+                        {editingSchedule
+                          ? editingSchedule.registration || (language === 'ru' ? 'Обнови слот и проверь живой предпросмотр справа.' : language === 'zh' ? '更新活动并查看右侧实时预览。' : 'Update the slot and review the live preview on the right.')
+                          : language === 'ru'
+                            ? 'Собери новый слот быстрее: выбери день, время и сразу проверь, как он выглядит в расписании.'
+                            : language === 'zh'
+                              ? '更快创建活动：选择日期、时间，并立即查看右侧预览。'
+                              : 'Create a new slot faster: pick a day, set the time, and review the preview instantly.'}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      className="dc-icon-btn p-2.5 rounded-xl"
+                      onClick={closeEditor}
+                      disabled={updateSchedule.isPending || createSchedule.isPending}
+                      aria-label={language === 'ru' ? 'Закрыть редактор расписания' : language === 'zh' ? '关闭日程编辑器' : 'Close schedule editor'}
+                    >
+                      <WuxiaIcon name="x" className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  <div className="mb-6 flex flex-wrap gap-2 text-xs">
+                    <span className="rounded-full border border-[#365667]/70 bg-[#11202b]/80 px-3 py-1 text-[#d8ecf7]">
+                      {editingSchedule ? (language === 'ru' ? 'Режим: редактирование' : language === 'zh' ? '模式：编辑' : 'Mode: editing') : language === 'ru' ? 'Режим: создание' : language === 'zh' ? '模式：创建' : 'Mode: create'}
+                    </span>
+                    <span className={`rounded-full border px-3 py-1 ${editDraft.active ? 'border-emerald-500/35 bg-emerald-500/10 text-emerald-300' : 'border-amber-500/30 bg-amber-500/10 text-amber-300'}`}>
+                      {editDraft.active ? (language === 'ru' ? 'Показывается в расписании' : language === 'zh' ? '活动显示中' : 'Visible in schedule') : language === 'ru' ? 'Скрыт из расписания' : language === 'zh' ? '活动已隐藏' : 'Hidden from schedule'}
+                    </span>
+                    <span className={`rounded-full border px-3 py-1 ${hasDraftErrors ? 'border-rose-500/35 bg-rose-500/10 text-rose-200' : 'border-sky-500/35 bg-sky-500/10 text-sky-200'}`}>
+                      {hasDraftErrors
+                        ? (language === 'ru' ? 'Нужно поправить поля' : language === 'zh' ? '仍有字段需要修正' : 'Some fields need attention')
+                        : (language === 'ru' ? 'Форма готова к сохранению' : language === 'zh' ? '表单已可保存' : 'Form is ready to save')}
+                    </span>
+                  </div>
+
+                  <div className="space-y-5">
+                    <div className="rounded-[1.75rem] border border-[#223544]/70 bg-[#0c151d]/82 p-5">
+                      <div className="mb-4 flex items-center justify-between gap-3">
+                        <div>
+                          <div className="text-sm font-semibold text-[#e6eff5]">
+                            {language === 'ru' ? 'День и повтор' : language === 'zh' ? '日期与重复' : 'Day and recurrence'}
+                          </div>
+                          <p className="mt-1 text-xs text-[#7f97a6]">
+                            {language === 'ru' ? 'Выбери конкретный день недели или быстро переключись на повторяющийся слот.' : language === 'zh' ? '选择具体星期，或一键切换到重复活动。' : 'Pick a specific weekday or switch to a recurring slot in one tap.'}
+                          </p>
+                        </div>
+                        <WuxiaIcon name="calendar" className="h-5 w-5 text-[#8fb9cc]" />
+                      </div>
+
+                      <div className="mb-3 grid grid-cols-2 gap-2 md:grid-cols-4 xl:grid-cols-7">
+                        {weekdays.map((day) => {
+                          const isActive = day.aliases.some((alias) => normalizeDayValue(alias) === normalizeDayValue(editDraft.dayType));
+
+                          return (
+                            <button
+                              key={day.key}
+                              type="button"
+                              onClick={() => updateDraft({ dayType: day.labels[language] })}
+                              className={`rounded-2xl border px-3 py-2 text-sm transition ${isActive ? 'border-[#a9d1e4]/70 bg-[#173040] text-[#eff9ff]' : 'border-[#274152]/70 bg-[#101b24] text-[#bcd0db] hover:border-[#4c7388]/80 hover:text-white'}`}
+                            >
+                              {day.labels[language]}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      <div className="mb-4 flex flex-wrap gap-2">
+                        {(['daily', 'weekly'] as const).map((kind) => {
+                          const isActive = isRecurringScheduleItem({ dayType: editDraft.dayType } as ScheduleItem, kind);
+
+                          return (
+                            <button
+                              key={kind}
+                              type="button"
+                              onClick={() => updateDraft({ dayType: getRecurringAlias(kind, language) })}
+                              className={`rounded-full border px-4 py-2 text-sm transition ${isActive ? 'border-[#8fb9cc]/65 bg-[#1f3948] text-[#eff9ff]' : 'border-[#2c4556]/70 bg-[#101a22] text-[#95aebb] hover:border-[#55788d]/80 hover:text-white'}`}
+                            >
+                              {getRecurrenceLabel(kind, language)}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      <label className="space-y-2 text-sm block">
+                        <span className="text-gray-400">{language === 'ru' ? 'Свободное значение' : language === 'zh' ? '自定义值' : 'Custom value'}</span>
+                        <input
+                          value={editDraft.dayType}
+                          onChange={(event) => updateDraft({ dayType: event.target.value })}
+                          className={`input-field w-full ${draftErrors.dayType ? 'border-rose-500/60' : ''}`}
+                          placeholder={language === 'ru' ? 'Например: Понедельник или Еженедельные' : language === 'zh' ? '例如：星期一 或 每周' : 'For example: Monday or Weekly'}
+                        />
+                        {draftErrors.dayType && <p className="text-xs text-rose-300">{draftErrors.dayType}</p>}
+                      </label>
+                    </div>
+
+                    <div className="rounded-[1.75rem] border border-[#223544]/70 bg-[#0c151d]/82 p-5">
+                      <div className="mb-4 flex items-center justify-between gap-3">
+                        <div>
+                          <div className="text-sm font-semibold text-[#e6eff5]">
+                            {language === 'ru' ? 'Время и порядок' : language === 'zh' ? '时间与顺序' : 'Time and order'}
+                          </div>
+                          <p className="mt-1 text-xs text-[#7f97a6]">
+                            {language === 'ru' ? 'Структурированный ввод ускоряет создание слота и снижает риск ошибки в диапазоне.' : language === 'zh' ? '结构化输入可加快创建活动并减少时间范围错误。' : 'Structured inputs make slot creation faster and reduce range mistakes.'}
+                          </p>
+                        </div>
+                        <WuxiaIcon name="schedule" className="h-5 w-5 text-[#8fb9cc]" />
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_140px]">
+                        <label className="space-y-2 text-sm">
+                          <span className="text-gray-400">{language === 'ru' ? 'Начало' : language === 'zh' ? '开始' : 'Start'}</span>
+                          <input
+                            type="time"
+                            value={draftTimeParts.start}
+                            onChange={(event) => updateDraftTime('start', event.target.value)}
+                            className={`input-field w-full ${draftErrors.time ? 'border-rose-500/60' : ''}`}
+                          />
+                        </label>
+                        <label className="space-y-2 text-sm">
+                          <span className="text-gray-400">{language === 'ru' ? 'Конец' : language === 'zh' ? '结束' : 'End'}</span>
+                          <input
+                            type="time"
+                            value={draftTimeParts.end}
+                            onChange={(event) => updateDraftTime('end', event.target.value)}
+                            className={`input-field w-full ${draftErrors.time ? 'border-rose-500/60' : ''}`}
+                          />
+                        </label>
+                        <label className="space-y-2 text-sm">
+                          <span className="text-gray-400">{language === 'ru' ? 'Порядок' : language === 'zh' ? '排序' : 'Order'}</span>
+                          <input
+                            type="number"
+                            min={0}
+                            max={999}
+                            value={editDraft.orderIndex}
+                            onChange={(event) => updateDraft({ orderIndex: event.target.value })}
+                            className="input-field w-full"
+                          />
+                        </label>
+                      </div>
+
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {[60, 90, 120].map((minutes) => (
+                          <button
+                            key={minutes}
+                            type="button"
+                            onClick={() => applyDurationPreset(minutes)}
+                            className="rounded-full border border-[#2c4556]/70 bg-[#101a22] px-3 py-1.5 text-sm text-[#bcd0db] transition hover:border-[#55788d]/80 hover:text-white"
+                          >
+                            {language === 'ru' ? `${minutes} мин` : language === 'zh' ? `${minutes} 分钟` : `${minutes} min`}
+                          </button>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() => updateDraft({ time: '' })}
+                          className="rounded-full border border-[#2c4556]/70 bg-[#101a22] px-3 py-1.5 text-sm text-[#bcd0db] transition hover:border-[#55788d]/80 hover:text-white"
+                        >
+                          {language === 'ru' ? 'Очистить время' : language === 'zh' ? '清除时间' : 'Clear time'}
+                        </button>
+                      </div>
+
+                      <label className="mt-4 block space-y-2 text-sm">
+                        <span className="text-gray-400">{language === 'ru' ? 'Текстовое значение' : language === 'zh' ? '文本值' : 'Text value'}</span>
+                        <input
+                          value={editDraft.time}
+                          onChange={(event) => updateDraft({ time: event.target.value })}
+                          className={`input-field w-full ${draftErrors.time ? 'border-rose-500/60' : ''}`}
+                          placeholder="19:30 - 20:30"
+                        />
+                        <p className="text-xs text-[#7f97a6]">
+                          {language === 'ru' ? 'Можно оставить только начало или указать полный диапазон.' : language === 'zh' ? '可以只填写开始时间，也可以填写完整时间范围。' : 'You can keep only the start time or set the full range.'}
+                        </p>
+                        {draftErrors.time && <p className="text-xs text-rose-300">{draftErrors.time}</p>}
+                      </label>
+                    </div>
+
+                    <div className="rounded-[1.75rem] border border-[#223544]/70 bg-[#0c151d]/82 p-5">
+                      <div className="mb-4 flex items-center justify-between gap-3">
+                        <div>
+                          <div className="text-sm font-semibold text-[#e6eff5]">
+                            {language === 'ru' ? 'Названия и доступность' : language === 'zh' ? '标题与可见性' : 'Titles and visibility'}
+                          </div>
+                          <p className="mt-1 text-xs text-[#7f97a6]">
+                            {language === 'ru' ? 'RU и EN обязательны, а китайский вариант можно быстро заполнить из готового текста.' : language === 'zh' ? 'RU 和 EN 为必填，中文标题可快速从现有内容补全。' : 'RU and EN are required, and the Chinese title can be quickly filled from existing text.'}
+                          </p>
+                        </div>
+                        <WuxiaIcon name="bookOpen" className="h-5 w-5 text-[#8fb9cc]" />
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <label className="space-y-2 text-sm">
+                          <span className="text-gray-400">Title RU</span>
+                          <input
+                            value={editDraft.titleRu}
+                            onChange={(event) => updateDraft({ titleRu: event.target.value })}
+                            className={`input-field w-full ${draftErrors.titleRu ? 'border-rose-500/60' : ''}`}
+                          />
+                          {draftErrors.titleRu && <p className="text-xs text-rose-300">{draftErrors.titleRu}</p>}
+                        </label>
+                        <label className="space-y-2 text-sm">
+                          <span className="text-gray-400">Title EN</span>
+                          <input
+                            value={editDraft.titleEn}
+                            onChange={(event) => updateDraft({ titleEn: event.target.value })}
+                            className={`input-field w-full ${draftErrors.titleEn ? 'border-rose-500/60' : ''}`}
+                          />
+                          {draftErrors.titleEn && <p className="text-xs text-rose-300">{draftErrors.titleEn}</p>}
+                        </label>
+                        <label className="space-y-2 text-sm md:col-span-2">
+                          <span className="text-gray-400">Title ZH</span>
+                          <input
+                            value={editDraft.titleZh}
+                            onChange={(event) => updateDraft({ titleZh: event.target.value })}
+                            className="input-field w-full"
+                          />
+                        </label>
+                      </div>
+
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => fillDraftTitlesFrom('titleRu')}
+                          className="rounded-full border border-[#2c4556]/70 bg-[#101a22] px-3 py-1.5 text-sm text-[#bcd0db] transition hover:border-[#55788d]/80 hover:text-white"
+                        >
+                          {language === 'ru' ? 'Заполнить пустые из RU' : language === 'zh' ? '用 RU 填充空字段' : 'Fill empty titles from RU'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => fillDraftTitlesFrom('titleEn')}
+                          className="rounded-full border border-[#2c4556]/70 bg-[#101a22] px-3 py-1.5 text-sm text-[#bcd0db] transition hover:border-[#55788d]/80 hover:text-white"
+                        >
+                          {language === 'ru' ? 'Заполнить пустые из EN' : language === 'zh' ? '用 EN 填充空字段' : 'Fill empty titles from EN'}
+                        </button>
+                      </div>
+
+                      <label className="mt-4 flex items-center gap-3 text-sm rounded-2xl border border-[#223544]/60 bg-[#0c151d]/80 p-4">
+                        <input
+                          type="checkbox"
+                          checked={editDraft.active}
+                          onChange={(event) => updateDraft({ active: event.target.checked })}
+                        />
+                        <span className="text-gray-300">
+                          {language === 'ru' ? 'Активно в расписании' : language === 'zh' ? '显示在日程中' : 'Visible in the schedule'}
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-3 sm:justify-end mt-6">
+                    <button
+                      type="button"
+                      className="btn-secondary px-5 py-3"
+                      onClick={closeEditor}
+                      disabled={updateSchedule.isPending || createSchedule.isPending}
+                    >
+                      {language === 'ru' ? 'Отмена' : language === 'zh' ? '取消' : 'Cancel'}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-primary px-5 py-3"
+                      onClick={() => void saveScheduleEdit()}
+                      disabled={updateSchedule.isPending || createSchedule.isPending || hasDraftErrors}
+                    >
+                      {updateSchedule.isPending || createSchedule.isPending
+                        ? (language === 'ru' ? 'Сохраняем...' : language === 'zh' ? '保存中...' : 'Saving...')
+                        : editingSchedule
+                          ? (language === 'ru' ? 'Сохранить' : language === 'zh' ? '保存' : 'Save')
+                          : (language === 'ru' ? 'Добавить' : language === 'zh' ? '添加' : 'Add')}
+                    </button>
+                  </div>
                 </div>
-                <button
-                  type="button"
-                  className="dc-icon-btn p-2.5 rounded-xl"
-                  onClick={closeEditor}
-                  disabled={updateSchedule.isPending || createSchedule.isPending}
-                >
-                  <WuxiaIcon name="x" className="w-5 h-5" />
-                </button>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <label className="space-y-2 text-sm">
-                  <span className="text-gray-400">Day type</span>
-                  <input
-                    value={editDraft.dayType}
-                    onChange={(event) => setEditDraft((current) => current ? { ...current, dayType: event.target.value } : current)}
-                    className="input-field w-full"
-                  />
-                </label>
-                <label className="space-y-2 text-sm">
-                  <span className="text-gray-400">Time</span>
-                  <input
-                    value={editDraft.time}
-                    onChange={(event) => setEditDraft((current) => current ? { ...current, time: event.target.value } : current)}
-                    className="input-field w-full"
-                    placeholder="19:30 - 20:30"
-                  />
-                </label>
-                <label className="space-y-2 text-sm">
-                  <span className="text-gray-400">Title RU</span>
-                  <input
-                    value={editDraft.titleRu}
-                    onChange={(event) => setEditDraft((current) => current ? { ...current, titleRu: event.target.value } : current)}
-                    className="input-field w-full"
-                  />
-                </label>
-                <label className="space-y-2 text-sm">
-                  <span className="text-gray-400">Title EN</span>
-                  <input
-                    value={editDraft.titleEn}
-                    onChange={(event) => setEditDraft((current) => current ? { ...current, titleEn: event.target.value } : current)}
-                    className="input-field w-full"
-                  />
-                </label>
-                <label className="space-y-2 text-sm">
-                  <span className="text-gray-400">Title ZH</span>
-                  <input
-                    value={editDraft.titleZh}
-                    onChange={(event) => setEditDraft((current) => current ? { ...current, titleZh: event.target.value } : current)}
-                    className="input-field w-full"
-                  />
-                </label>
-                <label className="space-y-2 text-sm">
-                  <span className="text-gray-400">Order</span>
-                  <input
-                    type="number"
-                    value={editDraft.orderIndex}
-                    onChange={(event) => setEditDraft((current) => current ? { ...current, orderIndex: event.target.value } : current)}
-                    className="input-field w-full"
-                  />
-                </label>
-                <label className="flex items-center gap-3 text-sm md:col-span-2 rounded-2xl border border-[#223544]/60 bg-[#0c151d]/80 p-4">
-                  <input
-                    type="checkbox"
-                    checked={editDraft.active}
-                    onChange={(event) => setEditDraft((current) => current ? { ...current, active: event.target.checked } : current)}
-                  />
-                  <span className="text-gray-300">Активно в расписании</span>
-                </label>
-              </div>
+                <aside className="border-t border-[#203342]/80 bg-[radial-gradient(circle_at_top,rgba(47,111,144,0.22),transparent_45%),linear-gradient(180deg,#0d151c,#091017)] p-6 md:p-8 lg:border-l lg:border-t-0">
+                  <div className="mb-6 flex items-center justify-between gap-3">
+                    <div>
+                      <h4 className="text-lg font-semibold text-[#eff8fd]">
+                        {language === 'ru' ? 'Живой предпросмотр' : language === 'zh' ? '实时预览' : 'Live preview'}
+                      </h4>
+                      <p className="mt-1 text-sm text-[#8ba4b4]">
+                        {language === 'ru' ? 'Так слот будет выглядеть в карточке дня.' : language === 'zh' ? '活动将在日程卡片中这样显示。' : 'This is how the slot will appear inside the day card.'}
+                      </p>
+                    </div>
+                    <WuxiaIcon name="sparkle" className="h-5 w-5 text-[#8fb9cc]" />
+                  </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
-                <button
-                  type="button"
-                  className="btn-secondary px-5 py-3"
-                  onClick={closeEditor}
-                  disabled={updateSchedule.isPending || createSchedule.isPending}
-                >
-                  Отмена
-                </button>
-                <button
-                  type="button"
-                  className="btn-primary px-5 py-3"
-                  onClick={() => void saveScheduleEdit()}
-                  disabled={updateSchedule.isPending || createSchedule.isPending}
-                >
-                  {updateSchedule.isPending || createSchedule.isPending
-                    ? 'Сохраняем...'
-                    : editingSchedule
-                      ? 'Сохранить'
-                      : 'Добавить'}
-                </button>
+                  {draftPreviewItem && (
+                    <div className="rounded-[1.75rem] border border-[#2a4454]/75 bg-[#0c151d]/92 p-5 shadow-[0_20px_40px_rgba(3,8,12,0.45)]">
+                      <div className="mb-4 flex items-start justify-between gap-3">
+                        <div>
+                          <div className="text-xs uppercase tracking-[0.24em] text-[#7d99aa]">
+                            {editDraft.dayType || (language === 'ru' ? 'Новый слот' : language === 'zh' ? '新活动' : 'New slot')}
+                          </div>
+                          <div className="mt-2 text-lg font-semibold text-[#f1f8fd]">
+                            {getDisplayTitle(draftPreviewItem, language) || (language === 'ru' ? 'Название появится здесь' : language === 'zh' ? '标题会显示在这里' : 'The title will appear here')}
+                          </div>
+                        </div>
+                        <div className="rounded-full border border-[#35596a]/70 bg-[#10202a]/80 px-3 py-1 text-xs text-[#9dc5d7]">
+                          #{Number(editDraft.orderIndex) || 0}
+                        </div>
+                      </div>
+
+                      <div className="space-y-3 text-sm text-[#c8d9e3]">
+                        <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#223544]/70 bg-[#111c24]/85 px-4 py-3">
+                          <span className="text-[#86a4b5]">{language === 'ru' ? 'Время' : language === 'zh' ? '时间' : 'Time'}</span>
+                          <span className="font-mono text-[#eef9ff]">{draftPreviewItem.time || '--:--'}</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#223544]/70 bg-[#111c24]/85 px-4 py-3">
+                          <span className="text-[#86a4b5]">{language === 'ru' ? 'Группа' : language === 'zh' ? '分组' : 'Group'}</span>
+                          <span className="text-right text-[#eef9ff]">{draftPreviewItem.group}</span>
+                        </div>
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                          <div className="rounded-2xl border border-[#223544]/70 bg-[#111c24]/85 px-4 py-3">
+                            <div className="text-xs uppercase tracking-[0.18em] text-[#6f8b9b]">RU</div>
+                            <div className="mt-2 text-sm text-[#eef9ff]">{editDraft.titleRu || '—'}</div>
+                          </div>
+                          <div className="rounded-2xl border border-[#223544]/70 bg-[#111c24]/85 px-4 py-3">
+                            <div className="text-xs uppercase tracking-[0.18em] text-[#6f8b9b]">EN</div>
+                            <div className="mt-2 text-sm text-[#eef9ff]">{editDraft.titleEn || '—'}</div>
+                          </div>
+                          <div className="rounded-2xl border border-[#223544]/70 bg-[#111c24]/85 px-4 py-3 sm:col-span-2 lg:col-span-1 xl:col-span-2">
+                            <div className="text-xs uppercase tracking-[0.18em] text-[#6f8b9b]">ZH</div>
+                            <div className="mt-2 text-sm text-[#eef9ff]">{editDraft.titleZh || '—'}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-6 rounded-[1.5rem] border border-[#223544]/70 bg-[#0c151d]/82 p-5">
+                    <div className="text-sm font-semibold text-[#e6eff5]">
+                      {language === 'ru' ? 'Быстрые подсказки' : language === 'zh' ? '快速提示' : 'Quick tips'}
+                    </div>
+                    <div className="mt-3 space-y-3 text-sm text-[#9db3c1]">
+                      <div className="flex gap-3">
+                        <WuxiaIcon name="checkCircle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-300" />
+                        <span>{language === 'ru' ? 'Повторяющиеся события лучше помечать как Daily или Weekly, чтобы они автоматически появлялись в нужных днях.' : language === 'zh' ? '重复活动最好标记为 Daily 或 Weekly，这样它们会自动出现在对应日期。' : 'Recurring events work best when marked as Daily or Weekly so they appear automatically on the right days.'}</span>
+                      </div>
+                      <div className="flex gap-3">
+                        <WuxiaIcon name="checkCircle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-300" />
+                        <span>{language === 'ru' ? 'Порядок помогает вручную расставить карточки, если время у нескольких слотов совпадает.' : language === 'zh' ? '如果多个活动时间相同，排序字段可以帮助你手动调整顺序。' : 'The order field helps you manually arrange cards when several slots share the same time.'}</span>
+                      </div>
+                      <div className="flex gap-3">
+                        <WuxiaIcon name="checkCircle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-300" />
+                        <span>{language === 'ru' ? 'Если событие временно не нужно показывать, его можно скрыть, не теряя данные.' : language === 'zh' ? '如果活动暂时不需要显示，可以隐藏而不必丢失数据。' : 'If an event is temporarily inactive, hide it without losing the data.'}</span>
+                      </div>
+                    </div>
+                  </div>
+                </aside>
               </div>
             </div>
           </div>
