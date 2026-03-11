@@ -158,7 +158,7 @@ export function GuideForm({
       category: (initialValues?.category ?? DEFAULT_VALUES.category) as CreateGuideDto['category'],
       author: initialValues?.author ?? DEFAULT_VALUES.author,
     };
-  }, [initialValues?.author, initialValues?.category, initialValues?.content, initialValues?.title]);
+  }, [initialValues]);
 
   const hasInitialValues = Boolean(initialValues);
 

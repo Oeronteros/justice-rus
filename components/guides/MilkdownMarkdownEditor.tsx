@@ -78,6 +78,8 @@ export const MilkdownMarkdownEditor = forwardRef<MilkdownMarkdownEditorHandle, M
     useEffect(() => {
       if (!hostRef.current) return;
 
+      const host = hostRef.current;
+
       let cancelled = false;
 
       const setup = async () => {
@@ -86,10 +88,10 @@ export const MilkdownMarkdownEditor = forwardRef<MilkdownMarkdownEditorHandle, M
           import('@milkdown/kit/utils'),
         ]);
 
-        if (!hostRef.current || cancelled) return;
+        if (cancelled) return;
 
         const crepe = new Crepe({
-          root: hostRef.current,
+          root: host,
           defaultValue: value,
           featureConfigs: {
             [Crepe.Feature.Placeholder]: {
@@ -134,11 +136,9 @@ export const MilkdownMarkdownEditor = forwardRef<MilkdownMarkdownEditorHandle, M
             console.error('Failed to destroy Milkdown editor:', error);
           });
         }
-        if (hostRef.current) {
-          hostRef.current.innerHTML = '';
-        }
+        host.innerHTML = '';
       };
-    }, [placeholder]);
+    }, [placeholder, readOnly, value]);
 
     useEffect(() => {
       const runtime = runtimeRef.current;

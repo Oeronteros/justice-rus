@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
-import { getAuthToken } from '@/lib/auth/request';
+import { getAuthToken, isSameOrigin } from '@/lib/auth/request';
 import { canManageAccounts } from '@/lib/authz';
 import { hasDatabaseUrl } from '@/lib/neon';
 import { getReadModelState } from '@/lib/server/read-models/shared';
@@ -43,6 +43,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  if (!isSameOrigin(request)) {
+    return NextResponse.json({ error: 'Forbidden origin' }, { status: 403 });
+  }
+
   return GET(request);
 }
 

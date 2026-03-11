@@ -7,6 +7,7 @@ import {
   parseJsonBody,
   requireAuth,
   requireDatabase,
+  requireSameOrigin,
 } from '@/lib/server/route-helpers';
 
 const commentSchema = z.object({
@@ -16,6 +17,11 @@ const commentSchema = z.object({
 
 export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
+    const sameOrigin = requireSameOrigin(request);
+    if (!sameOrigin.ok) {
+      return sameOrigin.response;
+    }
+
     const auth = requireAuth(request);
     if (!auth.ok) {
       return auth.response;

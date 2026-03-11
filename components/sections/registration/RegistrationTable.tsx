@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { handleApiError } from '@/lib/api/client';
 import { useUpdateRegistrationStats } from '@/lib/registration/hooks';
@@ -138,10 +139,13 @@ function RegistrationIdentity({ registration, compact = false }: { registration:
   return (
     <div className="flex items-center gap-3 min-w-0">
       {registration.avatarUrl ? (
-        <img
+        <Image
           src={registration.avatarUrl}
           alt={registration.nickname || displayDiscord || 'Avatar'}
+          width={compact ? 44 : 36}
+          height={compact ? 44 : 36}
           className={`${sizeClass} rounded-full border border-[#385264] object-cover bg-[#0c151d] shrink-0`}
+          unoptimized
         />
       ) : (
         <div className={`${sizeClass} rounded-full border border-[#385264] bg-gradient-to-br from-[#223544] to-[#4a90b0] text-[#f7fbff] font-semibold shrink-0 grid place-items-center`}>

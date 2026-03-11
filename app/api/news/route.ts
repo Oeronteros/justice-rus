@@ -8,6 +8,7 @@ import {
   getNewsReadModel,
   refreshNewsReadModelAfterWrite,
 } from '@/lib/server/read-models/news';
+import { requireSameOrigin } from '@/lib/server/route-helpers';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -46,6 +47,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const sameOrigin = requireSameOrigin(request);
+    if (!sameOrigin.ok) {
+      return NextResponse.json({ error: 'Forbidden origin' }, { status: 403, headers: corsHeaders });
+    }
+
     const token = getAuthToken(request);
 
     const decoded = token ? verifyToken(token) : null;

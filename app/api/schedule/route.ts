@@ -6,6 +6,7 @@ import { getAuthToken } from '@/lib/auth/request';
 import { canManageAccounts } from '@/lib/authz';
 import { createScheduleSchema, updateScheduleSchema } from '@/lib/schemas/schedule';
 import { getCachedTableColumns, getPreferredTableName } from '@/lib/server/db-cache';
+import { requireSameOrigin } from '@/lib/server/route-helpers';
 import {
   fetchScheduleDirect,
   getScheduleReadModel,
@@ -133,6 +134,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const sameOrigin = requireSameOrigin(request);
+    if (!sameOrigin.ok) {
+      return sameOrigin.response;
+    }
+
     const token = getAuthToken(request);
     const decoded = token ? verifyToken(token) : null;
     if (!decoded) {
@@ -204,6 +210,11 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
+    const sameOrigin = requireSameOrigin(request);
+    if (!sameOrigin.ok) {
+      return sameOrigin.response;
+    }
+
     const token = getAuthToken(request);
     const decoded = token ? verifyToken(token) : null;
     if (!decoded) {

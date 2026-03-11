@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { useUser } from '@/lib/auth/context';
 import type { Language } from '@/lib/i18n';
@@ -28,12 +28,7 @@ export default function RulesBlock({ language }: RulesBlockProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editingRules, setEditingRules] = useState<Rule[]>([]);
 
-  // Загружаем правила из API
-  useEffect(() => {
-    loadRules();
-  }, []);
-
-  const loadRules = async () => {
+  const loadRules = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -51,7 +46,12 @@ export default function RulesBlock({ language }: RulesBlockProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [language]);
+
+  // Загружаем правила из API
+  useEffect(() => {
+    void loadRules();
+  }, [loadRules]);
 
   const startEditing = () => {
     setEditingRules([...rules]);

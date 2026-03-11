@@ -9,6 +9,7 @@ import {
   parseJsonBody,
   requireAuth,
   requireDatabase,
+  requireSameOrigin,
 } from '@/lib/server/route-helpers';
 
 const guideUpdateSchema = z.object({
@@ -115,6 +116,11 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
 
 export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
+    const sameOrigin = requireSameOrigin(request);
+    if (!sameOrigin.ok) {
+      return sameOrigin.response;
+    }
+
     const auth = requireAuth(request);
     if (!auth.ok) {
       return auth.response;
@@ -210,6 +216,11 @@ export async function OPTIONS() {
 
 export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
+    const sameOrigin = requireSameOrigin(request);
+    if (!sameOrigin.ok) {
+      return sameOrigin.response;
+    }
+
     const auth = requireAuth(request);
     if (!auth.ok) {
       return auth.response;

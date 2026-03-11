@@ -162,6 +162,10 @@ npm run validate
 
 GitHub Actions workflow находится в `.github/workflows/ci.yml` и запускает тот же `npm run validate`, чтобы локальная проверка и pull request gate не расходились.
 
+## Безопасность
+
+Краткие текущие security defaults и trust-boundary правила описаны в `SECURITY.md`.
+
 ## Лицензия
 
 MIT

@@ -4,6 +4,7 @@ import { getAuthToken } from '@/lib/auth/request';
 import { hasRoleAtLeast } from '@/lib/authz';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { runServerTaskOnce } from '@/lib/server/db-cache';
+import { isSameOrigin } from '@/lib/auth/request';
 
 type RuleInput = {
   text_ru?: unknown;
@@ -40,6 +41,10 @@ function sanitizeRule(rule: RuleInput) {
 }
 
 function requireOfficerWrite(request: NextRequest) {
+  if (!isSameOrigin(request)) {
+    return NextResponse.json({ error: 'Forbidden origin' }, { status: 403 });
+  }
+
   const token = getAuthToken(request);
   const decoded = token ? verifyToken(token) : null;
 

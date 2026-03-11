@@ -5,6 +5,7 @@ import { getAuthToken } from '@/lib/auth/request';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { canModerateContent, hasRoleAtLeast } from '@/lib/authz';
 import { ensureHelpSchema } from './_shared';
+import { requireSameOrigin } from '@/lib/server/route-helpers';
 
 const helpCreateSchema = z.object({
   title: z.string().trim().min(1).max(140),
@@ -136,6 +137,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const sameOrigin = requireSameOrigin(request);
+    if (!sameOrigin.ok) {
+      return sameOrigin.response;
+    }
+
     const token = getAuthToken(request);
     const decoded = token ? verifyToken(token) : null;
     if (!decoded) {
@@ -208,6 +214,11 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
+    const sameOrigin = requireSameOrigin(request);
+    if (!sameOrigin.ok) {
+      return sameOrigin.response;
+    }
+
     const token = getAuthToken(request);
     const decoded = token ? verifyToken(token) : null;
     if (!decoded) {
@@ -357,6 +368,11 @@ export async function OPTIONS() {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const sameOrigin = requireSameOrigin(request);
+    if (!sameOrigin.ok) {
+      return sameOrigin.response;
+    }
+
     const token = getAuthToken(request);
     const decoded = token ? verifyToken(token) : null;
     if (!decoded) {

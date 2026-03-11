@@ -7,6 +7,7 @@ import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { pvpReportSchema } from '@/lib/schemas/pvp';
 import { calculateRating, deriveConfirmationStatus, resolveMatchWinner } from '@/lib/server/pvp/logic';
 import { getCachedTableColumns, runServerTaskOnce } from '@/lib/server/db-cache';
+import { requireSameOrigin } from '@/lib/server/route-helpers';
 
 type Actor = {
   id: string;
@@ -467,6 +468,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const sameOrigin = requireSameOrigin(request);
+    if (!sameOrigin.ok) {
+      return sameOrigin.response;
+    }
+
     const token = getAuthToken(request);
     const decoded = token ? verifyToken(token) : null;
     if (!decoded) {
@@ -561,6 +567,11 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const sameOrigin = requireSameOrigin(request);
+    if (!sameOrigin.ok) {
+      return sameOrigin.response;
+    }
+
     const token = getAuthToken(request);
     const decoded = token ? verifyToken(token) : null;
     const actorId = actorIdFromUser(decoded);
@@ -588,6 +599,11 @@ export async function DELETE(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
+    const sameOrigin = requireSameOrigin(request);
+    if (!sameOrigin.ok) {
+      return sameOrigin.response;
+    }
+
     const token = getAuthToken(request);
     const decoded = token ? verifyToken(token) : null;
     const actorId = actorIdFromUser(decoded);

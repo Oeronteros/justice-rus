@@ -9,6 +9,7 @@ import {
   requireAuth,
   requireDatabase,
   requirePermission,
+  requireSameOrigin,
 } from '@/lib/server/route-helpers';
 
 const updateSchema = z.object({
@@ -59,6 +60,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  const sameOrigin = requireSameOrigin(request);
+  if (!sameOrigin.ok) {
+    return sameOrigin.response;
+  }
+
   const guard = ensureAdmin(request);
   if (!guard.ok) {
     return guard.response;
