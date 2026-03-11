@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteApiGuideByIdData, DeleteApiGuideByIdErrors, DeleteApiGuideByIdResponses, DeleteApiHelpData, DeleteApiHelpErrors, DeleteApiHelpRespondersData, DeleteApiHelpRespondersErrors, DeleteApiHelpRespondersResponses, DeleteApiHelpResponses, GetApiAbsencesData, GetApiAbsencesResponses, GetApiDiscordProxyAbsencesData, GetApiDiscordProxyAbsencesResponses, GetApiDiscordProxyRegistrationData, GetApiDiscordProxyRegistrationErrors, GetApiDiscordProxyRegistrationResponses, GetApiGuideByIdData, GetApiGuideByIdErrors, GetApiGuideByIdResponses, GetApiGuideData, GetApiGuideResponses, GetApiHelpData, GetApiHelpErrors, GetApiHelpResponses, GetApiNewsData, GetApiNewsResponses, GetApiRegistrationsData, GetApiRegistrationsErrors, GetApiRegistrationsResponses, GetApiScheduleData, GetApiScheduleResponses, PatchApiDiscordProxyAbsencesData, PatchApiDiscordProxyAbsencesErrors, PatchApiDiscordProxyAbsencesResponses, PatchApiDiscordProxyRegistrationData, PatchApiDiscordProxyRegistrationErrors, PatchApiDiscordProxyRegistrationResponses, PatchApiGuideByIdData, PatchApiGuideByIdErrors, PatchApiGuideByIdResponses, PatchApiHelpData, PatchApiHelpErrors, PatchApiHelpResponses, PatchApiRegistrationData, PatchApiRegistrationErrors, PatchApiRegistrationResponses, PatchApiScheduleData, PatchApiScheduleErrors, PatchApiScheduleResponses, PostApiAbsencesData, PostApiAbsencesResponses, PostApiDiscordProxyAbsencesData, PostApiDiscordProxyAbsencesResponses, PostApiGuideByIdCommentData, PostApiGuideByIdCommentErrors, PostApiGuideByIdCommentResponses, PostApiGuideByIdVoteData, PostApiGuideByIdVoteErrors, PostApiGuideByIdVoteResponses, PostApiGuideData, PostApiGuideErrors, PostApiGuideResponses, PostApiHelpData, PostApiHelpErrors, PostApiHelpRespondersData, PostApiHelpRespondersErrors, PostApiHelpRespondersResponses, PostApiHelpResponses, PostApiNewsData, PostApiNewsErrors, PostApiNewsResponses, PostApiScheduleData, PostApiScheduleErrors, PostApiScheduleResponses } from './types.gen';
+import type { DeleteApiGuideByIdData, DeleteApiGuideByIdErrors, DeleteApiGuideByIdResponses, DeleteApiHelpData, DeleteApiHelpErrors, DeleteApiHelpRespondersData, DeleteApiHelpRespondersErrors, DeleteApiHelpRespondersResponses, DeleteApiHelpResponses, DeleteApiPvpData, DeleteApiPvpErrors, DeleteApiPvpResponses, GetApiAbsencesData, GetApiAbsencesResponses, GetApiAdminAccountsData, GetApiAdminAccountsErrors, GetApiAdminAccountsResponses, GetApiClassesData, GetApiClassesResponses, GetApiDiscordProxyAbsencesData, GetApiDiscordProxyAbsencesResponses, GetApiDiscordProxyRegistrationData, GetApiDiscordProxyRegistrationErrors, GetApiDiscordProxyRegistrationResponses, GetApiGuideByIdData, GetApiGuideByIdErrors, GetApiGuideByIdResponses, GetApiGuideData, GetApiGuideResponses, GetApiHelpData, GetApiHelpErrors, GetApiHelpResponses, GetApiNewsData, GetApiNewsResponses, GetApiPvpData, GetApiPvpErrors, GetApiPvpResponses, GetApiRegistrationsData, GetApiRegistrationsErrors, GetApiRegistrationsResponses, GetApiScheduleData, GetApiScheduleResponses, GetApiVerifyAuthData, GetApiVerifyAuthErrors, GetApiVerifyAuthResponses, PatchApiAdminAccountsData, PatchApiAdminAccountsErrors, PatchApiAdminAccountsResponses, PatchApiDiscordProxyAbsencesData, PatchApiDiscordProxyAbsencesErrors, PatchApiDiscordProxyAbsencesResponses, PatchApiDiscordProxyRegistrationData, PatchApiDiscordProxyRegistrationErrors, PatchApiDiscordProxyRegistrationResponses, PatchApiGuideByIdData, PatchApiGuideByIdErrors, PatchApiGuideByIdResponses, PatchApiHelpData, PatchApiHelpErrors, PatchApiHelpResponses, PatchApiPvpData, PatchApiPvpErrors, PatchApiPvpResponses, PatchApiRegistrationData, PatchApiRegistrationErrors, PatchApiRegistrationResponses, PatchApiScheduleData, PatchApiScheduleErrors, PatchApiScheduleResponses, PostApiAbsencesData, PostApiAbsencesResponses, PostApiAuthData, PostApiAuthErrors, PostApiAuthRegisterData, PostApiAuthRegisterErrors, PostApiAuthRegisterResponses, PostApiAuthResponses, PostApiDiscordProxyAbsencesData, PostApiDiscordProxyAbsencesResponses, PostApiGuideByIdCommentData, PostApiGuideByIdCommentErrors, PostApiGuideByIdCommentResponses, PostApiGuideByIdVoteData, PostApiGuideByIdVoteErrors, PostApiGuideByIdVoteResponses, PostApiGuideData, PostApiGuideErrors, PostApiGuideResponses, PostApiHelpData, PostApiHelpErrors, PostApiHelpRespondersData, PostApiHelpRespondersErrors, PostApiHelpRespondersResponses, PostApiHelpResponses, PostApiLogoutData, PostApiLogoutErrors, PostApiLogoutResponses, PostApiNewsData, PostApiNewsErrors, PostApiNewsResponses, PostApiPvpData, PostApiPvpErrors, PostApiPvpResponses, PostApiScheduleData, PostApiScheduleErrors, PostApiScheduleResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -322,3 +322,100 @@ export const postApiHelpResponders = <ThrowOnError extends boolean = false>(opti
         ...options.headers
     }
 });
+
+/**
+ * Получить список классов
+ */
+export const getApiClasses = <ThrowOnError extends boolean = false>(options?: Options<GetApiClassesData, ThrowOnError>) => (options?.client ?? client).get<GetApiClassesResponses, unknown, ThrowOnError>({ url: '/api/classes', ...options });
+
+/**
+ * Получить список аккаунтов портала
+ */
+export const getApiAdminAccounts = <ThrowOnError extends boolean = false>(options?: Options<GetApiAdminAccountsData, ThrowOnError>) => (options?.client ?? client).get<GetApiAdminAccountsResponses, GetApiAdminAccountsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/admin/accounts',
+    ...options
+});
+
+/**
+ * Обновить аккаунт портала
+ */
+export const patchApiAdminAccounts = <ThrowOnError extends boolean = false>(options: Options<PatchApiAdminAccountsData, ThrowOnError>) => (options.client ?? client).patch<PatchApiAdminAccountsResponses, PatchApiAdminAccountsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/admin/accounts',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Выйти из PvP очереди
+ */
+export const deleteApiPvp = <ThrowOnError extends boolean = false>(options?: Options<DeleteApiPvpData, ThrowOnError>) => (options?.client ?? client).delete<DeleteApiPvpResponses, DeleteApiPvpErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/pvp',
+    ...options
+});
+
+/**
+ * Получить состояние PvP
+ */
+export const getApiPvp = <ThrowOnError extends boolean = false>(options?: Options<GetApiPvpData, ThrowOnError>) => (options?.client ?? client).get<GetApiPvpResponses, GetApiPvpErrors, ThrowOnError>({ url: '/api/pvp', ...options });
+
+/**
+ * Отправить результат PvP матча
+ */
+export const patchApiPvp = <ThrowOnError extends boolean = false>(options: Options<PatchApiPvpData, ThrowOnError>) => (options.client ?? client).patch<PatchApiPvpResponses, PatchApiPvpErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/pvp',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Войти в PvP очередь
+ */
+export const postApiPvp = <ThrowOnError extends boolean = false>(options?: Options<PostApiPvpData, ThrowOnError>) => (options?.client ?? client).post<PostApiPvpResponses, PostApiPvpErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/pvp',
+    ...options
+});
+
+/**
+ * Войти в портал
+ */
+export const postApiAuth = <ThrowOnError extends boolean = false>(options: Options<PostApiAuthData, ThrowOnError>) => (options.client ?? client).post<PostApiAuthResponses, PostApiAuthErrors, ThrowOnError>({
+    url: '/api/auth',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Зарегистрировать аккаунт портала
+ */
+export const postApiAuthRegister = <ThrowOnError extends boolean = false>(options: Options<PostApiAuthRegisterData, ThrowOnError>) => (options.client ?? client).post<PostApiAuthRegisterResponses, PostApiAuthRegisterErrors, ThrowOnError>({
+    url: '/api/auth/register',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Проверить текущую авторизацию
+ */
+export const getApiVerifyAuth = <ThrowOnError extends boolean = false>(options?: Options<GetApiVerifyAuthData, ThrowOnError>) => (options?.client ?? client).get<GetApiVerifyAuthResponses, GetApiVerifyAuthErrors, ThrowOnError>({ url: '/api/verify-auth', ...options });
+
+/**
+ * Выйти из портала
+ */
+export const postApiLogout = <ThrowOnError extends boolean = false>(options?: Options<PostApiLogoutData, ThrowOnError>) => (options?.client ?? client).post<PostApiLogoutResponses, PostApiLogoutErrors, ThrowOnError>({ url: '/api/logout', ...options });

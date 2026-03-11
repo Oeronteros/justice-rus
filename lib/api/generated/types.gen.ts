@@ -358,6 +358,123 @@ export type SuccessResponse = {
     success: boolean;
 };
 
+export type AuthUser = {
+    id?: string;
+    nickname?: string;
+    role: 'guest' | 'member' | 'officer' | 'head' | 'sysadmin';
+    isActive?: boolean;
+    authMethod?: 'account' | 'pin';
+    discordId?: string | null;
+    discordHandle?: string | null;
+    className?: string | null;
+    prefix?: string | null;
+    exp?: number;
+};
+
+export type AuthResponse = {
+    success: boolean;
+    user: AuthUser;
+};
+
+export type RegisterAuthUser = AuthUser & {
+    createdAt?: string;
+};
+
+export type RegisterResponse = {
+    success: boolean;
+    pendingApproval?: boolean;
+    message?: string;
+    user: RegisterAuthUser;
+};
+
+export type VerifyAuthResponse = {
+    valid: boolean;
+    user: AuthUser;
+};
+
+export type LogoutResponse = {
+    success: boolean;
+};
+
+export type LoginPayload = {
+    nickname?: string;
+    password: string;
+};
+
+export type RegisterPayload = {
+    nickname: string;
+    className: string;
+    discordHandle?: string;
+    password: string;
+};
+
+export type PortalAccount = {
+    id: string;
+    nickname: string;
+    role: 'guest' | 'member' | 'officer' | 'head' | 'sysadmin';
+    isActive: boolean;
+    discordHandle?: string | null;
+    prefix?: string | null;
+    createdAt: string;
+    lastLoginAt: string | null;
+};
+
+export type UpdatePortalAccount = {
+    id: string;
+    isActive: boolean;
+    role?: 'guest' | 'member' | 'officer' | 'head' | 'sysadmin';
+    prefix?: string | null;
+};
+
+export type PvpQueueEntry = {
+    playerId: string;
+    nickname: string;
+    className: string;
+    joinedAt: string;
+};
+
+export type PvpRating = {
+    playerId: string;
+    nickname: string;
+    rating: number;
+    wins: number;
+    losses: number;
+};
+
+export type PvpPlayer = {
+    id: string;
+    nickname: string;
+    className: string;
+};
+
+export type PvpMatch = {
+    id: string;
+    status: 'pending' | 'completed';
+    createdAt: string;
+    updatedAt: string;
+    confirmedAt: string | null;
+    winnerId: string | null;
+    playerOne: PvpPlayer;
+    playerTwo: PvpPlayer;
+    yourReport: 'win' | 'loss';
+    opponentReport: 'win' | 'loss';
+    confirmationStatus: 'unreported' | 'waiting' | 'disputed' | 'confirmed';
+};
+
+export type PvpState = {
+    queue: Array<PvpQueueEntry>;
+    leaderboard: Array<PvpRating>;
+    recentMatches: Array<PvpMatch>;
+    activeMatch: PvpMatch | unknown;
+    userInQueue: boolean;
+    userRating: PvpRating | unknown;
+};
+
+export type PvpReport = {
+    matchId: string;
+    result: 'win' | 'loss';
+};
+
 export type GetApiRegistrationsData = {
     body?: never;
     path?: never;
@@ -1165,3 +1282,322 @@ export type PostApiHelpRespondersResponses = {
 };
 
 export type PostApiHelpRespondersResponse = PostApiHelpRespondersResponses[keyof PostApiHelpRespondersResponses];
+
+export type GetApiClassesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/classes';
+};
+
+export type GetApiClassesResponses = {
+    /**
+     * Успешный ответ
+     */
+    200: Array<string>;
+};
+
+export type GetApiClassesResponse = GetApiClassesResponses[keyof GetApiClassesResponses];
+
+export type GetApiAdminAccountsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/admin/accounts';
+};
+
+export type GetApiAdminAccountsErrors = {
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type GetApiAdminAccountsError = GetApiAdminAccountsErrors[keyof GetApiAdminAccountsErrors];
+
+export type GetApiAdminAccountsResponses = {
+    /**
+     * Успешный ответ
+     */
+    200: Array<PortalAccount>;
+};
+
+export type GetApiAdminAccountsResponse = GetApiAdminAccountsResponses[keyof GetApiAdminAccountsResponses];
+
+export type PatchApiAdminAccountsData = {
+    body: UpdatePortalAccount;
+    path?: never;
+    query?: never;
+    url: '/api/admin/accounts';
+};
+
+export type PatchApiAdminAccountsErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type PatchApiAdminAccountsError = PatchApiAdminAccountsErrors[keyof PatchApiAdminAccountsErrors];
+
+export type PatchApiAdminAccountsResponses = {
+    /**
+     * Аккаунт обновлен
+     */
+    200: PortalAccount;
+};
+
+export type PatchApiAdminAccountsResponse = PatchApiAdminAccountsResponses[keyof PatchApiAdminAccountsResponses];
+
+export type DeleteApiPvpData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/pvp';
+};
+
+export type DeleteApiPvpErrors = {
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type DeleteApiPvpError = DeleteApiPvpErrors[keyof DeleteApiPvpErrors];
+
+export type DeleteApiPvpResponses = {
+    /**
+     * Состояние обновлено
+     */
+    200: PvpState;
+};
+
+export type DeleteApiPvpResponse = DeleteApiPvpResponses[keyof DeleteApiPvpResponses];
+
+export type GetApiPvpData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/pvp';
+};
+
+export type GetApiPvpErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+};
+
+export type GetApiPvpError = GetApiPvpErrors[keyof GetApiPvpErrors];
+
+export type GetApiPvpResponses = {
+    /**
+     * Успешный ответ
+     */
+    200: PvpState;
+};
+
+export type GetApiPvpResponse = GetApiPvpResponses[keyof GetApiPvpResponses];
+
+export type PatchApiPvpData = {
+    body: PvpReport;
+    path?: never;
+    query?: never;
+    url: '/api/pvp';
+};
+
+export type PatchApiPvpErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type PatchApiPvpError = PatchApiPvpErrors[keyof PatchApiPvpErrors];
+
+export type PatchApiPvpResponses = {
+    /**
+     * Состояние обновлено
+     */
+    200: PvpState;
+};
+
+export type PatchApiPvpResponse = PatchApiPvpResponses[keyof PatchApiPvpResponses];
+
+export type PostApiPvpData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/pvp';
+};
+
+export type PostApiPvpErrors = {
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type PostApiPvpError = PostApiPvpErrors[keyof PostApiPvpErrors];
+
+export type PostApiPvpResponses = {
+    /**
+     * Состояние обновлено
+     */
+    200: PvpState;
+};
+
+export type PostApiPvpResponse = PostApiPvpResponses[keyof PostApiPvpResponses];
+
+export type PostApiAuthData = {
+    body: LoginPayload;
+    path?: never;
+    query?: never;
+    url: '/api/auth';
+};
+
+export type PostApiAuthErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type PostApiAuthError = PostApiAuthErrors[keyof PostApiAuthErrors];
+
+export type PostApiAuthResponses = {
+    /**
+     * Успешный вход
+     */
+    200: AuthResponse;
+};
+
+export type PostApiAuthResponse = PostApiAuthResponses[keyof PostApiAuthResponses];
+
+export type PostApiAuthRegisterData = {
+    body: RegisterPayload;
+    path?: never;
+    query?: never;
+    url: '/api/auth/register';
+};
+
+export type PostApiAuthRegisterErrors = {
+    /**
+     * Неверный запрос
+     */
+    400: {
+        error?: string;
+        details?: Array<{
+            [key: string]: unknown;
+        }>;
+    };
+};
+
+export type PostApiAuthRegisterError = PostApiAuthRegisterErrors[keyof PostApiAuthRegisterErrors];
+
+export type PostApiAuthRegisterResponses = {
+    /**
+     * Аккаунт создан
+     */
+    201: RegisterResponse;
+};
+
+export type PostApiAuthRegisterResponse = PostApiAuthRegisterResponses[keyof PostApiAuthRegisterResponses];
+
+export type GetApiVerifyAuthData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/verify-auth';
+};
+
+export type GetApiVerifyAuthErrors = {
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type GetApiVerifyAuthError = GetApiVerifyAuthErrors[keyof GetApiVerifyAuthErrors];
+
+export type GetApiVerifyAuthResponses = {
+    /**
+     * Токен валиден
+     */
+    200: VerifyAuthResponse;
+};
+
+export type GetApiVerifyAuthResponse = GetApiVerifyAuthResponses[keyof GetApiVerifyAuthResponses];
+
+export type PostApiLogoutData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/logout';
+};
+
+export type PostApiLogoutErrors = {
+    /**
+     * Требуется авторизация
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type PostApiLogoutError = PostApiLogoutErrors[keyof PostApiLogoutErrors];
+
+export type PostApiLogoutResponses = {
+    /**
+     * Выход выполнен
+     */
+    200: LogoutResponse;
+};
+
+export type PostApiLogoutResponse = PostApiLogoutResponses[keyof PostApiLogoutResponses];

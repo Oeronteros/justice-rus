@@ -680,6 +680,44 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
           </div>
         )}
 
+        <div className="mb-6 overflow-x-auto pb-2">
+          <div className="flex min-w-max gap-2">
+            {weekdays.map((day, index) => {
+              const dayEventsCount = schedules.filter((item) => {
+                const itemDayIndex = getScheduleDayIndex(item);
+                return itemDayIndex === index || isRecurringScheduleItem(item, 'daily') || isRecurringScheduleItem(item, 'weekly');
+              }).length;
+              const isActive = index === selectedDayIndex;
+              const isToday = index === todayIndex;
+
+              return (
+                <button
+                  key={day.key}
+                  type="button"
+                  onClick={() => setSelectedDayIndex(index)}
+                  className={`min-w-[8.75rem] rounded-2xl border px-4 py-3 text-left transition-all ${
+                    isActive
+                      ? 'border-[#a9d1e4]/65 bg-[linear-gradient(135deg,rgba(37,79,103,0.95),rgba(18,36,48,0.98))] shadow-[0_18px_30px_rgba(5,10,15,0.42)]'
+                      : 'border-[#223544]/70 bg-[#0c151d]/85 hover:border-[#4b6f84]/80 hover:bg-[#101d27]/95'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className={`text-sm font-semibold ${isActive ? 'text-[#f3fbff]' : 'text-[#d3e3ec]'}`}>{day.labels[language]}</span>
+                    {isToday && (
+                      <span className="rounded-full border border-emerald-400/35 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
+                        {language === 'ru' ? 'Сегодня' : language === 'zh' ? '今天' : 'Today'}
+                      </span>
+                    )}
+                  </div>
+                  <div className="mt-2 text-xs text-[#8aa4b3]">
+                    {dayEventsCount} {language === 'ru' ? 'событий' : language === 'zh' ? '活动' : 'events'}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Текущее/следующее событие */}
         {(currentEvent || nextEvent) && (
           <div className="mb-6">
@@ -760,6 +798,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                       const isNow = time && time.start <= currentMinutes && time.end > currentMinutes;
                       const isPast = time && time.end <= currentMinutes;
                       const isNext = nextEvent && item.id === nextEvent.id;
+                      const isRecurring = isRecurringScheduleItem(item, 'daily') || isRecurringScheduleItem(item, 'weekly');
                       
                       return (
                         <div
@@ -785,6 +824,25 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                           <div className="flex-1 min-w-0">
                             <div className={`${isPast ? 'text-gray-500' : 'text-gray-200'} ${isNow ? 'font-medium' : ''}`}>
                               {getDisplayTitle(item, language)}
+                            </div>
+                            <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[#7f97a6]">
+                              {typeof item.orderIndex === 'number' && (
+                                <span className="rounded-full border border-[#294454]/70 bg-[#0f1c25]/80 px-2 py-0.5">
+                                  #{item.orderIndex}
+                                </span>
+                              )}
+                              {isRecurring && (
+                                <span className="rounded-full border border-[#35596a]/70 bg-[#10202a]/80 px-2 py-0.5 text-[#9dc5d7]">
+                                  {isRecurringScheduleItem(item, 'daily')
+                                    ? getRecurrenceLabel('daily', language)
+                                    : getRecurrenceLabel('weekly', language)}
+                                </span>
+                              )}
+                              {item.active === false && (
+                                <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-amber-300">
+                                  {language === 'ru' ? 'Скрыто' : language === 'zh' ? '隐藏' : 'Hidden'}
+                                </span>
+                              )}
                             </div>
                             {isNow && (
                               <span className="inline-flex items-center gap-1 text-xs text-green-400 mt-1">

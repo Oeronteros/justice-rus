@@ -1041,6 +1041,328 @@
           }
         }
       }
+    },
+    "/api/classes": {
+      "get": {
+        "summary": "Получить список классов",
+        "tags": [
+          "Classes"
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/accounts": {
+      "get": {
+        "summary": "Получить список аккаунтов портала",
+        "tags": [
+          "Accounts"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PortalAccount"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Обновить аккаунт портала",
+        "tags": [
+          "Accounts"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePortalAccount"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Аккаунт обновлен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortalAccount"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/pvp": {
+      "get": {
+        "summary": "Получить состояние PvP",
+        "tags": [
+          "Pvp"
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PvpState"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      },
+      "post": {
+        "summary": "Войти в PvP очередь",
+        "tags": [
+          "Pvp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Состояние обновлено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PvpState"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Выйти из PvP очереди",
+        "tags": [
+          "Pvp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Состояние обновлено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PvpState"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Отправить результат PvP матча",
+        "tags": [
+          "Pvp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PvpReport"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Состояние обновлено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PvpState"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/auth": {
+      "post": {
+        "summary": "Войти в портал",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешный вход",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "summary": "Зарегистрировать аккаунт портала",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Аккаунт создан",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/api/verify-auth": {
+      "get": {
+        "summary": "Проверить текущую авторизацию",
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Токен валиден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyAuthResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/logout": {
+      "post": {
+        "summary": "Выйти из портала",
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Выход выполнен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogoutResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1947,6 +2269,470 @@
         },
         "required": [
           "success"
+        ]
+      },
+      "AuthUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "guest",
+              "member",
+              "officer",
+              "head",
+              "sysadmin"
+            ]
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "authMethod": {
+            "type": "string",
+            "enum": [
+              "account",
+              "pin"
+            ]
+          },
+          "discordId": {
+            "type": "string",
+            "nullable": true
+          },
+          "discordHandle": {
+            "type": "string",
+            "nullable": true
+          },
+          "className": {
+            "type": "string",
+            "nullable": true
+          },
+          "prefix": {
+            "type": "string",
+            "nullable": true
+          },
+          "exp": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "user": {
+            "$ref": "#/components/schemas/AuthUser"
+          }
+        },
+        "required": [
+          "success",
+          "user"
+        ]
+      },
+      "RegisterAuthUser": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthUser"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
+      },
+      "RegisterResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "pendingApproval": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/RegisterAuthUser"
+          }
+        },
+        "required": [
+          "success",
+          "user"
+        ]
+      },
+      "VerifyAuthResponse": {
+        "type": "object",
+        "properties": {
+          "valid": {
+            "type": "boolean"
+          },
+          "user": {
+            "$ref": "#/components/schemas/AuthUser"
+          }
+        },
+        "required": [
+          "valid",
+          "user"
+        ]
+      },
+      "LogoutResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "LoginPayload": {
+        "type": "object",
+        "properties": {
+          "nickname": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "password"
+        ]
+      },
+      "RegisterPayload": {
+        "type": "object",
+        "properties": {
+          "nickname": {
+            "type": "string"
+          },
+          "className": {
+            "type": "string"
+          },
+          "discordHandle": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "nickname",
+          "className",
+          "password"
+        ]
+      },
+      "PortalAccount": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "guest",
+              "member",
+              "officer",
+              "head",
+              "sysadmin"
+            ]
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "discordHandle": {
+            "type": "string",
+            "nullable": true
+          },
+          "prefix": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastLoginAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "nickname",
+          "role",
+          "isActive",
+          "createdAt",
+          "lastLoginAt"
+        ]
+      },
+      "UpdatePortalAccount": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "guest",
+              "member",
+              "officer",
+              "head",
+              "sysadmin"
+            ]
+          },
+          "prefix": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "isActive"
+        ]
+      },
+      "PvpQueueEntry": {
+        "type": "object",
+        "properties": {
+          "playerId": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "className": {
+            "type": "string"
+          },
+          "joinedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "playerId",
+          "nickname",
+          "className",
+          "joinedAt"
+        ]
+      },
+      "PvpRating": {
+        "type": "object",
+        "properties": {
+          "playerId": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "wins": {
+            "type": "number"
+          },
+          "losses": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "playerId",
+          "nickname",
+          "rating",
+          "wins",
+          "losses"
+        ]
+      },
+      "PvpPlayer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "className": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "nickname",
+          "className"
+        ]
+      },
+      "PvpMatch": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "completed"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "confirmedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "winnerId": {
+            "type": "string",
+            "nullable": true
+          },
+          "playerOne": {
+            "$ref": "#/components/schemas/PvpPlayer"
+          },
+          "playerTwo": {
+            "$ref": "#/components/schemas/PvpPlayer"
+          },
+          "yourReport": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "win",
+              "loss"
+            ]
+          },
+          "opponentReport": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "win",
+              "loss"
+            ]
+          },
+          "confirmationStatus": {
+            "type": "string",
+            "enum": [
+              "unreported",
+              "waiting",
+              "disputed",
+              "confirmed"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "createdAt",
+          "updatedAt",
+          "confirmedAt",
+          "winnerId",
+          "playerOne",
+          "playerTwo",
+          "yourReport",
+          "opponentReport",
+          "confirmationStatus"
+        ]
+      },
+      "PvpState": {
+        "type": "object",
+        "properties": {
+          "queue": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PvpQueueEntry"
+            }
+          },
+          "leaderboard": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PvpRating"
+            }
+          },
+          "recentMatches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PvpMatch"
+            }
+          },
+          "activeMatch": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PvpMatch"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "userInQueue": {
+            "type": "boolean"
+          },
+          "userRating": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PvpRating"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "queue",
+          "leaderboard",
+          "recentMatches",
+          "activeMatch",
+          "userInQueue",
+          "userRating"
+        ]
+      },
+      "PvpReport": {
+        "type": "object",
+        "properties": {
+          "matchId": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "win",
+              "loss"
+            ]
+          }
+        },
+        "required": [
+          "matchId",
+          "result"
         ]
       }
     },

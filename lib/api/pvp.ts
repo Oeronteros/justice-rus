@@ -1,9 +1,25 @@
-import { api } from './client';
+import { deleteApiPvp, getApiPvp, patchApiPvp, postApiPvp } from '@/lib/api/generated';
 import { pvpReportSchema, pvpStateSchema, type PvpReportDto, type PvpState } from '@/lib/schemas/pvp';
+import { sameOriginOpenApiClient } from './openapi-client';
 
 export const pvpApi = {
-  getState: async (): Promise<PvpState> => api.get('pvp', pvpStateSchema),
-  joinQueue: async (): Promise<PvpState> => api.post('pvp', {}, pvpStateSchema),
-  leaveQueue: async (): Promise<PvpState> => api.delete('pvp', pvpStateSchema),
-  reportResult: async (data: PvpReportDto): Promise<PvpState> => api.patch('pvp', pvpReportSchema.parse(data), pvpStateSchema),
+  getState: async (): Promise<PvpState> => {
+    const response = await getApiPvp({ client: sameOriginOpenApiClient });
+    return pvpStateSchema.parse(response.data || {});
+  },
+  joinQueue: async (): Promise<PvpState> => {
+    const response = await postApiPvp({ client: sameOriginOpenApiClient });
+    return pvpStateSchema.parse(response.data || {});
+  },
+  leaveQueue: async (): Promise<PvpState> => {
+    const response = await deleteApiPvp({ client: sameOriginOpenApiClient });
+    return pvpStateSchema.parse(response.data || {});
+  },
+  reportResult: async (data: PvpReportDto): Promise<PvpState> => {
+    const response = await patchApiPvp({
+      client: sameOriginOpenApiClient,
+      body: pvpReportSchema.parse(data),
+    });
+    return pvpStateSchema.parse(response.data || {});
+  },
 };

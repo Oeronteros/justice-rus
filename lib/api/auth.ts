@@ -1,5 +1,10 @@
 import { z } from 'zod';
-import { api } from './client';
+import {
+  getApiVerifyAuth,
+  postApiAuth,
+  postApiAuthRegister,
+  postApiLogout,
+} from '@/lib/api/generated';
 import {
   authResponseSchema,
   logoutResponseSchema,
@@ -9,6 +14,7 @@ import {
   type RegisterResponseDto,
   type VerifyAuthResponseDto,
 } from '@/lib/schemas/auth';
+import { sameOriginOpenApiClient } from './openapi-client';
 
 const loginPayloadSchema = z.object({
   nickname: z.string().trim().min(1).optional(),
@@ -27,18 +33,28 @@ export type RegisterPayload = z.infer<typeof registerPayloadSchema>;
 
 export const authApi = {
   login: async (payload: LoginPayload): Promise<AuthResponseDto> => {
-    return api.post('auth', loginPayloadSchema.parse(payload), authResponseSchema);
+    const response = await postApiAuth({
+      client: sameOriginOpenApiClient,
+      body: loginPayloadSchema.parse(payload),
+    });
+    return authResponseSchema.parse(response.data || {});
   },
 
   register: async (payload: RegisterPayload): Promise<RegisterResponseDto> => {
-    return api.post('auth/register', registerPayloadSchema.parse(payload), registerResponseSchema);
+    const response = await postApiAuthRegister({
+      client: sameOriginOpenApiClient,
+      body: registerPayloadSchema.parse(payload),
+    });
+    return registerResponseSchema.parse(response.data || {});
   },
 
   verify: async (): Promise<VerifyAuthResponseDto> => {
-    return api.get('verify-auth', verifyAuthResponseSchema);
+    const response = await getApiVerifyAuth({ client: sameOriginOpenApiClient });
+    return verifyAuthResponseSchema.parse(response.data || {});
   },
 
   logout: async (): Promise<void> => {
-    await api.post('logout', {}, logoutResponseSchema);
+    const response = await postApiLogout({ client: sameOriginOpenApiClient });
+    logoutResponseSchema.parse(response.data || {});
   },
 };

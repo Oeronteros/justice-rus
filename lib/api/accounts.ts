@@ -1,7 +1,8 @@
 import { z } from 'zod';
-import { api } from './client';
+import { getApiAdminAccounts, patchApiAdminAccounts } from '@/lib/api/generated';
 import { portalAccountSchema, portalAccountsSchema, type PortalAccountDto } from '@/lib/schemas/account';
 import { userRoleSchema } from '@/lib/schemas/auth';
+import { sameOriginOpenApiClient } from './openapi-client';
 
 const updateAccountPayloadSchema = z.object({
   id: z.string(),
@@ -14,10 +15,15 @@ export type UpdateAccountPayload = z.infer<typeof updateAccountPayloadSchema>;
 
 export const accountsApi = {
   list: async (): Promise<PortalAccountDto[]> => {
-    return api.get('admin/accounts', portalAccountsSchema);
+    const response = await getApiAdminAccounts({ client: sameOriginOpenApiClient });
+    return portalAccountsSchema.parse(response.data || []);
   },
 
   update: async (payload: UpdateAccountPayload): Promise<PortalAccountDto> => {
-    return api.patch('admin/accounts', updateAccountPayloadSchema.parse(payload), portalAccountSchema);
+    const response = await patchApiAdminAccounts({
+      client: sameOriginOpenApiClient,
+      body: updateAccountPayloadSchema.parse(payload),
+    });
+    return portalAccountSchema.parse(response.data || {});
   },
 };
