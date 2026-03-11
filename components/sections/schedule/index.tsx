@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
+import { LoadingState } from '@/components/shared/LoadingState';
+import { EmptyState } from '@/components/shared/EmptyState';
 import { useCreateSchedule, useSchedule, useUpdateSchedule } from '@/lib/schedule/hooks';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/lib/schemas/auth';
@@ -654,43 +656,37 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
 
   if (isLoading) {
     return (
-      <section className="py-8">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-gray-800 rounded w-48"></div>
-            <div className="grid gap-4 md:grid-cols-2">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="h-32 bg-gray-800/50 rounded-xl"></div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <LoadingState
+        title={language === 'ru' ? 'Расписание' : language === 'zh' ? '日程' : 'Schedule'}
+        subtitle={language === 'ru' ? 'Собираем слоты дня...' : language === 'zh' ? '正在整理当天活动...' : 'Organizing the day slots...'}
+        icon={<WuxiaIcon name="schedule" className="w-6 h-6 text-[#8fb9cc]" />}
+        skeletonCount={4}
+        layout="list"
+      />
     );
   }
 
   if (error) {
     return (
-      <section className="py-8">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="bg-red-900/20 border border-red-800/50 rounded-xl p-6 text-center">
-            <WuxiaIcon name="alertTriangle" className="w-8 h-8 text-red-400 mx-auto mb-3" />
-            <p className="text-red-400 mb-4">
-              {error instanceof Error ? error.message : language === 'ru' ? 'Не удалось загрузить' : 'Failed to load'}
-            </p>
-            <button onClick={() => refetch()} className="btn-primary">
-              <WuxiaIcon name="refresh" className="w-4 h-4 mr-2" />
-              {language === 'ru' ? 'Повторить' : 'Retry'}
-            </button>
-          </div>
-        </div>
-      </section>
+      <EmptyState
+        icon={<WuxiaIcon name="alertTriangle" className="w-8 h-8 text-red-400" />}
+        title={language === 'ru' ? 'Расписание недоступно' : language === 'zh' ? '日程暂时不可用' : 'Schedule is unavailable'}
+        description={error instanceof Error ? error.message : language === 'ru' ? 'Не удалось загрузить' : language === 'zh' ? '加载失败' : 'Failed to load'}
+        action={
+          <button onClick={() => refetch()} className="btn-primary">
+            <WuxiaIcon name="refresh" className="w-4 h-4 mr-2" />
+            {language === 'ru' ? 'Повторить' : language === 'zh' ? '重试' : 'Retry'}
+          </button>
+        }
+        variant="error"
+      />
     );
   }
 
   return (
-    <section className="py-8">
+    <section className="section-shell py-8 sm:py-10">
       <div className="max-w-4xl mx-auto px-4">
+        <div className="section-stack-lg">
         <SectionHero
           icon={<WuxiaIcon name="schedule" className="w-5 h-5" />}
           title={language === 'ru' ? `Расписание — ${selectedDay.labels.ru}` : language === 'zh' ? `日程 - ${selectedDay.labels.zh}` : `Schedule - ${selectedDay.labels.en}`}
@@ -701,7 +697,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
           ]}
           actions={
             <>
-              <div className="flex items-center gap-2 rounded-xl border border-[#223544]/60 bg-[#0c151d]/80 px-2 py-1">
+              <div className="flex w-full sm:w-auto items-center gap-2 rounded-xl border border-[#223544]/60 bg-[#0c151d]/80 px-2 py-1">
                 <button
                   type="button"
                   className="dc-icon-btn h-10 w-10 rounded-lg text-[#8fb9cc]"
@@ -711,7 +707,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                 >
                   <span aria-hidden="true" className="text-lg leading-none">&lt;</span>
                 </button>
-                <div className="min-w-[9rem] px-2 text-center text-sm font-semibold text-[#e6eff5]">
+                <div className="min-w-0 flex-1 px-2 text-center text-sm font-semibold text-[#e6eff5]">
                   {selectedDay.labels[language]}
                 </div>
                 <button
@@ -728,7 +724,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                 <button
                   type="button"
                   onClick={openCreator}
-                  className="btn-secondary"
+                  className="btn-secondary w-full sm:w-auto"
                 >
                   <WuxiaIcon name="plus" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
                   {language === 'ru' ? 'Добавить событие' : language === 'zh' ? '添加活动' : 'Add event'}
@@ -736,7 +732,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
               )}
               <button
                 onClick={() => refetch()}
-                className="dc-icon-btn p-2.5 rounded-xl"
+                className="dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0"
                 title={language === 'ru' ? 'Обновить' : language === 'zh' ? '刷新' : 'Refresh'}
                 aria-label={language === 'ru' ? 'Обновить расписание' : language === 'zh' ? '刷新日程' : 'Refresh schedule'}
               >
@@ -753,7 +749,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
           </div>
         )}
 
-        <div className="mb-6 overflow-x-auto pb-2">
+        <div className="overflow-x-auto pb-1 no-scrollbar">
           <div className="flex min-w-max gap-2">
             {weekdays.map((day, index) => {
               const dayEventsCount = schedules.filter((item) => {
@@ -768,7 +764,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                   key={day.key}
                   type="button"
                   onClick={() => setSelectedDayIndex(index)}
-                  className={`min-w-[8.75rem] rounded-2xl border px-4 py-3 text-left transition-all ${
+                  className={`min-w-[8rem] sm:min-w-[8.75rem] rounded-2xl border px-3.5 py-3 text-left transition-all ${
                     isActive
                       ? 'border-[#a9d1e4]/65 bg-[linear-gradient(135deg,rgba(37,79,103,0.95),rgba(18,36,48,0.98))] shadow-[0_18px_30px_rgba(5,10,15,0.42)]'
                       : 'border-[#223544]/70 bg-[#0c151d]/85 hover:border-[#4b6f84]/80 hover:bg-[#101d27]/95'
@@ -793,9 +789,9 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
 
         {/* Текущее/следующее событие */}
         {(currentEvent || nextEvent) && (
-          <div className="mb-6">
+          <div>
             {currentEvent ? (
-              <div className="bg-gradient-to-r from-green-900/30 to-green-800/20 border border-green-700/50 rounded-xl p-4">
+              <div className="card section-card rounded-2xl border-green-700/50 bg-gradient-to-r from-green-900/30 to-green-800/20 p-4 sm:p-5">
                 <div className="flex items-center gap-2 text-green-400 text-sm font-medium mb-2">
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                   {language === 'ru' ? 'Сейчас идёт' : language === 'zh' ? '进行中' : 'Happening now'}
@@ -806,8 +802,8 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                 </div>
               </div>
             ) : nextEvent && nextEvent.parsedTime ? (
-              <div className="bg-gradient-to-r from-[#1a2a3a] to-[#1a1a2a] border border-[#8fb9cc]/30 rounded-xl p-4">
-                <div className="flex items-center justify-between">
+              <div className="card section-card rounded-2xl border-[#8fb9cc]/30 bg-gradient-to-r from-[#1a2a3a] to-[#1a1a2a] p-4 sm:p-5">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <div className="flex items-center gap-2 text-[#8fb9cc] text-sm font-medium mb-2">
                       <WuxiaIcon name="schedule" className="w-4 h-4" />
@@ -830,7 +826,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
         )}
 
         {selectedSchedules.length === 0 ? (
-          <div className="bg-[#1a1a1a] rounded-xl border border-gray-800 p-12 text-center">
+          <div className="card section-card rounded-2xl border-gray-800 p-8 sm:p-12 text-center">
             <WuxiaIcon name="schedule" className="w-12 h-12 text-gray-600 mx-auto mb-4" />
             <p className="text-gray-400 text-lg">
               {language === 'ru' ? `Нет событий на ${selectedDay.labels.ru.toLowerCase()}` : language === 'zh' ? `${selectedDay.labels.zh}没有活动` : `No events for ${selectedDay.labels.en}`}
@@ -840,7 +836,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
             </p>
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 sm:gap-5 md:grid-cols-2">
             {sortedGroups.map((groupName) => {
               const items = groupedByGroup[groupName];
               const color = getGroupColor(groupName);
@@ -848,7 +844,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
               return (
                 <div
                   key={groupName}
-                  className="bg-[#1a1a1a] rounded-xl border border-gray-800 overflow-hidden hover:border-gray-700 transition-colors"
+                  className="card section-card rounded-2xl border-gray-800 overflow-hidden hover:border-gray-700 transition-colors"
                 >
                   {/* Заголовок группы */}
                   <div 
@@ -876,7 +872,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                       return (
                         <div
                           key={item.id || `${groupName}-${timeLabel}-${idx}`}
-                          className={`px-4 py-3 flex items-start gap-3 transition-colors ${
+                          className={`px-4 py-3.5 flex items-start gap-3 transition-colors ${
                             isNow 
                               ? 'bg-green-900/20' 
                               : isNext 
@@ -887,7 +883,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                           }`}
                         >
                           {/* Время */}
-                          <div className={`font-mono text-sm w-16 flex-shrink-0 ${
+                          <div className={`font-mono text-sm w-[4.5rem] flex-shrink-0 ${
                             isNow ? 'text-green-400' : isNext ? 'text-[#8fb9cc]' : 'text-gray-500'
                           }`}>
                             {timeLabel}
@@ -953,7 +949,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
 
         {/* Статистика */}
         {selectedSchedules.length > 0 && (
-          <div className="mt-6 flex items-center justify-center gap-6 text-sm text-gray-500">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-sm text-gray-500">
             <span>{selectedDay.labels[language]}</span>
             <span>•</span>
             <span>{selectedSchedules.length} {language === 'ru' ? 'событий' : language === 'zh' ? '活动' : 'events'}</span>
@@ -1358,6 +1354,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
             </div>
           </div>
         )}
+        </div>
       </div>
     </section>
   );

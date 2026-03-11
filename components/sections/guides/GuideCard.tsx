@@ -14,7 +14,7 @@ export function GuideCard({ guide, onClick }: GuideCardProps) {
     <button
       type="button"
       onClick={onClick}
-      className="card p-4 text-left hover:transform hover:-translate-y-1 transition-all duration-300"
+      className="card section-card p-4 sm:p-5 text-left hover:transform hover:-translate-y-1 transition-all duration-300"
     >
       <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
         <span className="px-3 py-1 bg-gradient-to-r from-[#142636]/60 to-[#1d3b52]/60 text-[#8fb9cc] rounded-full text-xs font-medium">
@@ -24,7 +24,7 @@ export function GuideCard({ guide, onClick }: GuideCardProps) {
         <span className="text-xs text-gray-400">{formatDate(guide.updatedAt)}</span>
       </div>
 
-      <h3 className="text-lg font-bold font-orbitron mb-3 text-[#e6eff5] leading-snug min-h-[3.5rem]">
+      <h3 className="text-lg font-bold font-orbitron mb-3 text-[#e6eff5] leading-snug min-h-[3.1rem] sm:min-h-[3.5rem] tracking-[0.01em]">
         {guide.title}
       </h3>
 
