@@ -1,0 +1,5 @@
+ M .sisyphus/drafts/astro-migration-assessment.md
+ M package-lock.json
+ M package.json
+?? .sisyphus/evidence/
+?? .sisyphus/plans/react-doctor-installation.md
