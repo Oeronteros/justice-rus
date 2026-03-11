@@ -2,8 +2,9 @@
 *.md
 docs/
 
-# Игнорируем скрипты (для локального запуска только)
-scripts/
+# Игнорируем локальные скрипты, но оставляем build helper для Vercel
+scripts/*
+!scripts/prepare-build.mjs
 
 # Игнорируем конфиги разработки
 .eslintrc.json
