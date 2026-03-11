@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Section } from '@/types';
 import { Language, sectionLabels } from '@/lib/i18n';
@@ -30,31 +31,89 @@ const navItems: NavItem[] = [
 ];
 
 export default function MobileNav({ currentSection, language, onNavPrefetch }: MobileNavProps) {
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
+
+  const primaryItems = useMemo(
+    () => navItems.filter((item) => ['about', 'news', 'registration', 'schedule'].includes(item.section)),
+    []
+  );
+  const secondaryItems = useMemo(
+    () => navItems.filter((item) => !primaryItems.some((primaryItem) => primaryItem.section === item.section)),
+    [primaryItems]
+  );
+  const isMoreActive = secondaryItems.some((item) => item.section === currentSection);
+  const moreLabel = language === 'ru' ? 'Еще' : language === 'zh' ? '更多' : 'More';
+
   return (
-    <div className="wuxia-dock md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a1118]/95 to-[#111d27]/85 backdrop-blur-xl border-t border-[#223544]/60 z-40 shadow-2xl shadow-black/40">
-      <div className="flex items-center gap-2 overflow-x-auto py-2 px-1 no-scrollbar">
-        {navItems.map((item) => (
-          <Link
-            key={item.section}
-            href={item.href}
-            onTouchStart={() => onNavPrefetch?.(item.section)}
-            onMouseEnter={() => onNavPrefetch?.(item.section)}
-            onFocus={() => onNavPrefetch?.(item.section)}
-            className={`nav-chip flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 ${
-              currentSection === item.section ? 'is-active' : ''
+    <div className="md:hidden fixed inset-x-0 bottom-0 z-40 px-[max(12px,env(safe-area-inset-left))] pb-[max(10px,env(safe-area-inset-bottom))] pr-[max(12px,env(safe-area-inset-right))]">
+      {isMoreOpen ? (
+        <div className="mobile-nav-sheet mb-3">
+          <div className="mobile-nav-sheet-grid">
+            {secondaryItems.map((item) => (
+              <Link
+                key={item.section}
+                href={item.href}
+                onClick={() => setIsMoreOpen(false)}
+                onTouchStart={() => onNavPrefetch?.(item.section)}
+                onMouseEnter={() => onNavPrefetch?.(item.section)}
+                onFocus={() => onNavPrefetch?.(item.section)}
+                className={`mobile-nav-sheet-link ${currentSection === item.section ? 'is-active' : ''}`}
+                aria-label={sectionLabels[language][item.section]}
+                aria-current={currentSection === item.section ? 'page' : undefined}
+                title={sectionLabels[language][item.section]}
+              >
+                <span className="mobile-nav-sheet-icon dc-accent">
+                  <WuxiaIcon name={item.section} className="h-5 w-5" />
+                </span>
+                <span className="min-w-0">{sectionLabels[language][item.section]}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      <div className="wuxia-dock bg-gradient-to-t from-[#0a1118]/96 to-[#111d27]/88 backdrop-blur-xl border border-[#223544]/60 shadow-2xl shadow-black/45">
+        <div className="flex items-center justify-between gap-2 no-scrollbar">
+          {primaryItems.map((item) => (
+            <Link
+              key={item.section}
+              href={item.href}
+              onClick={() => setIsMoreOpen(false)}
+              onTouchStart={() => onNavPrefetch?.(item.section)}
+              onMouseEnter={() => onNavPrefetch?.(item.section)}
+              onFocus={() => onNavPrefetch?.(item.section)}
+              className={`nav-chip mobile-nav-link flex flex-1 flex-col items-center justify-center rounded-2xl transition-all duration-300 ${
+                currentSection === item.section ? 'is-active' : ''
+              }`}
+              aria-label={sectionLabels[language][item.section]}
+              aria-current={currentSection === item.section ? 'page' : undefined}
+              title={sectionLabels[language][item.section]}
+            >
+              <span className="mb-1 dc-accent">
+                <WuxiaIcon name={item.section} className="w-5 h-5" />
+              </span>
+              <span className="text-[11px] font-semibold leading-none tracking-[0.02em] whitespace-nowrap">
+                {sectionLabels[language][item.section]}
+              </span>
+            </Link>
+          ))}
+
+          <button
+            type="button"
+            className={`nav-chip mobile-nav-link mobile-nav-more flex flex-1 flex-col items-center justify-center rounded-2xl transition-all duration-300 ${
+              isMoreOpen || isMoreActive ? 'is-active' : ''
             }`}
-            aria-label={sectionLabels[language][item.section]}
-            aria-current={currentSection === item.section ? 'page' : undefined}
-            title={sectionLabels[language][item.section]}
+            onClick={() => setIsMoreOpen((value) => !value)}
+            aria-expanded={isMoreOpen}
+            aria-label={moreLabel}
+            title={moreLabel}
           >
             <span className="mb-1 dc-accent">
-              <WuxiaIcon name={item.section} className="w-5 h-5" />
+              <WuxiaIcon name="dots" className="w-5 h-5" />
             </span>
-            <span className="text-[11px] font-semibold leading-none tracking-wide whitespace-nowrap">
-              {sectionLabels[language][item.section]}
-            </span>
-          </Link>
-        ))}
+            <span className="text-[11px] font-semibold leading-none tracking-[0.02em] whitespace-nowrap">{moreLabel}</span>
+          </button>
+        </div>
       </div>
     </div>
   );

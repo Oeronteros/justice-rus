@@ -72,7 +72,7 @@ function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
   );
 
   return (
-    <div className="relative z-30">
+    <div className="relative z-30 overflow-x-clip">
       <div className={`transition-transform duration-300 ${isHeaderHidden ? '-translate-y-full' : ''}`}>
         <Header
           currentSection={currentSection}
@@ -82,8 +82,8 @@ function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
           onNavPrefetch={handleNavPrefetch}
         />
       </div>
-      <main id="portal-main" className={`min-h-screen pb-24 md:pb-0 ${isHeaderHidden ? '-mt-[var(--header-height,80px)]' : ''}`}>
-        <div className="mx-auto max-w-[1280px] px-3 sm:px-5 lg:px-8 pt-4 sm:pt-6">
+      <main id="portal-main" className={`min-h-screen pb-[calc(96px+env(safe-area-inset-bottom))] md:pb-0 ${isHeaderHidden ? '-mt-[var(--header-height,80px)]' : ''}`}>
+        <div className="mx-auto max-w-[1280px] overflow-x-clip px-3 sm:px-5 lg:px-8 pt-4 sm:pt-6">
           <div className={`wuxia-section wuxia-section-${currentSection} rounded-2xl overflow-hidden`}> 
             {children}
           </div>

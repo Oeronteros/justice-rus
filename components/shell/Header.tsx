@@ -82,23 +82,23 @@ export default function Header({
 
   return (
     <header className={`dc-header sticky top-0 z-40 ${headerCompact ? 'dc-header--compact' : ''}`}>
-      <div className={`max-w-7xl mx-auto px-6 ${headerCompact ? 'py-2.5' : 'py-3.5'}`}>
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 ${headerCompact ? 'py-2.5' : 'py-3 sm:py-3.5'}`}>
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-          <Link href="/" className="flex items-center gap-4 text-left group">
-            <div className="relative">
+          <Link href="/" className="flex min-w-0 items-start gap-3 sm:items-center sm:gap-4 text-left group">
+            <div className="relative shrink-0">
               <div className="seal-ring">
                 <div className="seal-core">
                   <WuxiaIcon name="skull" className="w-5 h-5 text-white" />
                 </div>
               </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#5fd1d4] rounded-full border-2 border-[#0a1118]"></div>
+              <div className="absolute -top-1 -right-1 hidden sm:block w-4 h-4 bg-[#5fd1d4] rounded-full border-2 border-[#0a1118]"></div>
             </div>
-            <div className="text-left">
-              <h1 className="text-2xl font-bold font-orbitron dc-text drop-shadow">
+            <div className="min-w-0 text-left">
+              <h1 className="text-[1.9rem] sm:text-2xl font-bold font-orbitron dc-text drop-shadow leading-none">
                 Silent Moonfall
               </h1>
-              <p className="text-sm dc-muted font-roboto whitespace-nowrap">{labels.brandSubtitle}</p>
-              <div className="dc-header-oath flex flex-wrap items-center gap-2 mt-2">
+              <p className="mt-1 text-xs sm:text-sm dc-muted font-roboto leading-snug sm:whitespace-nowrap">{labels.brandSubtitle}</p>
+              <div className="dc-header-oath hidden sm:flex flex-wrap items-center gap-2 mt-2">
                 <span className="wuxia-tag wuxia-tag-compact">
                   <WuxiaIcon name="eye" className="w-4 h-4" />
                   <span className="wuxia-tag-text">{portalCopy[language].oath}</span>
@@ -108,16 +108,22 @@ export default function Header({
                   <span className="wuxia-tag-text">{labels.activeSection}: {sectionLabel}</span>
                 </span>
               </div>
+              <div className="sm:hidden mt-2">
+                <span className="wuxia-tag wuxia-tag-compact">
+                  <WuxiaIcon name="seal" className="w-4 h-4" />
+                  <span className="wuxia-tag-text">{sectionLabel}</span>
+                </span>
+              </div>
             </div>
           </Link>
 
-          <div className="flex flex-wrap items-center justify-center lg:justify-end gap-2">
+          <div className="flex w-full sm:w-auto flex-wrap items-center justify-between sm:justify-end gap-2">
             <select
               id="langSwitch"
               value={language}
               onChange={(e) => onLanguageChange(e.target.value as Language)}
               aria-label={labels.languageSwitcher}
-              className="dc-select rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a90b0]/40 transition-all font-medium"
+              className="dc-select min-w-[102px] flex-1 sm:flex-none rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a90b0]/40 transition-all font-medium"
             >
               <option value="ru">RU</option>
               <option value="en">EN</option>
