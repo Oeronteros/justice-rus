@@ -242,7 +242,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
       </div>
 
       {notice && (
-        <div className="text-sm text-[#bcd6e5] p-4 bg-[#16202b]/65 rounded-xl border border-[#2f6e8d]/40">
+        <div className="ds-notice">
           <WuxiaIcon name="checkCircle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
           {notice}
         </div>
@@ -252,7 +252,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            className={`px-3 py-2 rounded-full text-sm transition ${selectedCategory === 'all' ? 'bg-[#204154] text-[#e6eff5] border border-[#4d7a90]/60' : 'bg-[#101a23]/80 text-[#9ec5d8] border border-[#223544]/60'}`}
+            className={`ds-filter-chip ${selectedCategory === 'all' ? 'is-active' : ''}`}
             onClick={() => setSelectedCategory('all')}
           >
             Все категории · {guides.length}
@@ -261,7 +261,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
             <button
               key={category}
               type="button"
-              className={`px-3 py-2 rounded-full text-sm transition ${selectedCategory === category ? 'bg-[#204154] text-[#e6eff5] border border-[#4d7a90]/60' : 'bg-[#101a23]/80 text-[#9ec5d8] border border-[#223544]/60'}`}
+              className={`ds-filter-chip ${selectedCategory === category ? 'is-active' : ''}`}
               onClick={() => setSelectedCategory(category)}
             >
               {category} · {count}
@@ -272,7 +272,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
         <div className="flex flex-wrap gap-2 items-center">
           <button
             type="button"
-            className={`px-3 py-2 rounded-full text-sm transition ${selectedAuthor === 'all' ? 'bg-[#173041]/80 text-[#e6eff5] border border-[#4d7a90]/50' : 'bg-[#101a23]/80 text-[#9ec5d8] border border-[#223544]/60'}`}
+            className={`ds-filter-chip ${selectedAuthor === 'all' ? 'is-active' : ''}`}
             onClick={() => setSelectedAuthor('all')}
           >
             Все авторы
@@ -281,7 +281,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
             <button
               key={author}
               type="button"
-              className={`px-3 py-2 rounded-full text-sm transition ${selectedAuthor === author ? 'bg-[#173041]/80 text-[#e6eff5] border border-[#4d7a90]/50' : 'bg-[#101a23]/80 text-[#9ec5d8] border border-[#223544]/60'}`}
+              className={`ds-filter-chip ${selectedAuthor === author ? 'is-active' : ''}`}
               onClick={() => setSelectedAuthor(author)}
             >
               {author} · {count}

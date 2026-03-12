@@ -14,10 +14,10 @@ export function GuideCard({ guide, onClick }: GuideCardProps) {
     <button
       type="button"
       onClick={onClick}
-      className="card section-card p-4 sm:p-5 text-left hover:transform hover:-translate-y-1 transition-all duration-300"
+      className="card section-card ds-section-panel p-4 sm:p-5 text-left hover:transform hover:-translate-y-1 transition-all duration-300"
     >
       <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-        <span className="px-3 py-1 bg-gradient-to-r from-[#142636]/60 to-[#1d3b52]/60 text-[#8fb9cc] rounded-full text-xs font-medium">
+        <span className="ds-kicker">
           <WuxiaIcon name="tag" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
           {guide.category}
         </span>

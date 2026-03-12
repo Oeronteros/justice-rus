@@ -78,7 +78,7 @@ const ProfileOverview = memo(function ProfileOverview({ profileRegistration, use
     <div className="card section-card p-5 sm:p-6">
       <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-2">Профиль</div>
       <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4 text-sm">
-        <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+        <div className="ds-metric-tile">
           <div className="text-gray-400 mb-1">Ник</div>
           <div className="text-[#e6eff5] font-medium">{user.nickname || '—'}</div>
           {prefix ? (
@@ -87,11 +87,11 @@ const ProfileOverview = memo(function ProfileOverview({ profileRegistration, use
             </div>
           ) : null}
         </div>
-        <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+        <div className="ds-metric-tile">
           <div className="text-gray-400 mb-1">Discord</div>
           <div className="text-[#e6eff5] font-medium">{profileRegistration?.discordHandle || user.discordHandle || '—'}</div>
         </div>
-        <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+        <div className="ds-metric-tile">
           <div className="text-gray-400 mb-1">Класс</div>
           <ClassBadge
             className={profileRegistration?.class || user.className}
@@ -99,15 +99,15 @@ const ProfileOverview = memo(function ProfileOverview({ profileRegistration, use
             iconSizeClassName="h-8 w-8"
           />
         </div>
-        <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+        <div className="ds-metric-tile">
           <div className="text-gray-400 mb-1">Клан</div>
           <div className="text-[#e6eff5] font-medium">{profileRegistration?.guild || '—'}</div>
         </div>
-        <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+        <div className="ds-metric-tile">
           <div className="text-gray-400 mb-1">Роль</div>
           <div className="text-[#e6eff5] font-medium">{roleLabels[user.role]}</div>
         </div>
-        <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+        <div className="ds-metric-tile">
           <div className="text-gray-400 mb-1">Статус</div>
           <div className="text-[#e6eff5] font-medium">{user.isActive ? 'active' : 'inactive'}</div>
         </div>
@@ -249,7 +249,7 @@ const RoleAccessPanel = memo(function RoleAccessPanel({ currentRole }: { current
               className={`rounded-2xl border p-4 space-y-3 ${
                 isCurrentRole
                   ? 'border-[#2f6e8d]/70 bg-[#163042]/45'
-                  : 'border-[#2a3c4c]/60 bg-[#101a23]/65'
+                  : 'ds-section-panel-soft'
               }`}
             >
               <div className="flex items-center justify-between gap-2">
@@ -289,7 +289,7 @@ const ActivityToggleCard = memo(function ActivityToggleCard({ activityKey, isMar
   const labelId = `profile-activity-${activityKey}-label`;
 
   return (
-    <div className="rounded-2xl border border-[#2a3c4c]/60 bg-[#101a23]/70 p-4">
+    <div className="rounded-2xl ds-section-panel-soft p-4">
       <div className="flex items-start justify-between gap-4">
         <div>
           <div id={labelId} className="text-[#e6eff5] font-medium">{label}</div>
@@ -361,7 +361,7 @@ const AccountsPanel = memo(function AccountsPanel({
       </div>
 
       {accountsError && (
-        <div className="text-[#bcd6e5] text-sm mb-4 p-4 bg-[#16202b]/65 rounded-xl border border-[#2f6e8d]/40">
+        <div className="ds-notice mb-4">
           <WuxiaIcon name="alertTriangle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
           {accountsError}
         </div>
@@ -678,38 +678,38 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
           </div>
 
           {profileNotice && (
-            <div className="text-[#bcd6e5] text-sm p-4 bg-[#16202b]/65 rounded-xl border border-[#2f6e8d]/40">
+            <div className="ds-notice">
               <WuxiaIcon name="checkCircle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
               {profileNotice}
             </div>
           )}
 
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 text-sm">
-            <div className={`p-4 rounded-xl border ${profileKpiTone}`}>
+            <div className={`ds-metric-tile border ${profileKpiTone}`}>
               <div className="text-gray-400 mb-1">KPI</div>
               <div className={`font-medium ${profileKpiClass}`}>{profileRegistration?.kpi ?? 0}</div>
             </div>
-            <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+            <div className="ds-metric-tile">
               <div className="text-gray-400 mb-1">ELO</div>
               <div className="text-[#e6eff5] font-medium">{profileRegistration?.elo ?? 0}</div>
             </div>
-            <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+            <div className="ds-metric-tile">
               <div className="text-gray-400 mb-1">Best MMR</div>
               <div className="text-[#e6eff5] font-medium">{profileRegistration?.mmr20 ?? 0}</div>
             </div>
-            <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+            <div className="ds-metric-tile">
               <div className="text-gray-400 mb-1">Всего отметок</div>
               <div className="text-[#e6eff5] font-medium">{profileRegistration?.marks ?? 0}</div>
             </div>
-            <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+            <div className="ds-metric-tile">
               <div className="text-gray-400 mb-1">Bounty</div>
               <div className="text-[#e6eff5] font-medium">{profileRegistration?.bounty ?? 0}</div>
             </div>
-            <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+            <div className="ds-metric-tile">
               <div className="text-gray-400 mb-1">Победы в дуэлях</div>
               <div className="text-[#e6eff5] font-medium">{profileRegistration?.duelWins ?? 0}</div>
             </div>
-            <div className="p-4 rounded-xl bg-[#101a23]/70 border border-[#2a3c4c]/60">
+            <div className="ds-metric-tile">
               <div className="text-gray-400 mb-1">Поражения в дуэлях</div>
               <div className="text-[#e6eff5] font-medium">{profileRegistration?.duelLosses ?? 0}</div>
             </div>

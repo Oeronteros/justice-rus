@@ -710,7 +710,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
           ]}
           actions={
             <>
-              <div className="flex w-full sm:w-auto items-center gap-2 rounded-xl border border-[#223544]/60 bg-[#0c151d]/80 px-2 py-1">
+              <div className="ds-toolbar w-full sm:w-auto">
                 <button
                   type="button"
                   className="dc-icon-btn h-10 w-10 rounded-lg text-[#8fb9cc]"
@@ -756,7 +756,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
         />
 
         {scheduleNotice && (
-          <div className="mt-4 mb-6 rounded-2xl border border-[#2f6e8d]/40 bg-[#16202b]/65 p-4 text-sm text-[#c7dce8]">
+          <div className="ds-notice mt-4 mb-6">
             <WuxiaIcon name="checkCircle" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
             {scheduleNotice}
           </div>
@@ -804,7 +804,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
         {(currentEvent || nextEvent) && (
           <div>
             {currentEvent ? (
-              <div className="card section-card rounded-2xl border-green-700/50 bg-gradient-to-r from-green-900/30 to-green-800/20 p-4 sm:p-5">
+              <div className="card section-card ds-section-panel rounded-2xl border-green-700/50 bg-gradient-to-r from-green-900/30 to-green-800/20 p-4 sm:p-5">
                 <div className="flex items-center gap-2 text-green-400 text-sm font-medium mb-2">
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                   {language === 'ru' ? 'Сейчас идёт' : language === 'zh' ? '进行中' : 'Happening now'}
@@ -815,7 +815,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                 </div>
               </div>
             ) : nextEvent && nextEvent.parsedTime ? (
-              <div className="card section-card rounded-2xl border-[#8fb9cc]/30 bg-gradient-to-r from-[#1a2a3a] to-[#1a1a2a] p-4 sm:p-5">
+              <div className="card section-card ds-section-panel rounded-2xl border-[#8fb9cc]/30 bg-gradient-to-r from-[#1a2a3a] to-[#1a1a2a] p-4 sm:p-5">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <div className="flex items-center gap-2 text-[#8fb9cc] text-sm font-medium mb-2">
@@ -839,7 +839,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
         )}
 
         {selectedSchedules.length === 0 ? (
-          <div className="card section-card rounded-2xl border-gray-800 p-8 sm:p-12 text-center">
+          <div className="card section-card ds-section-panel rounded-2xl border-gray-800 p-8 sm:p-12 text-center">
             <WuxiaIcon name="schedule" className="w-12 h-12 text-gray-600 mx-auto mb-4" />
             <p className="text-gray-400 text-lg">
               {language === 'ru' ? `Нет событий на ${selectedDay.labels.ru.toLowerCase()}` : language === 'zh' ? `${selectedDay.labels.zh}没有活动` : `No events for ${selectedDay.labels.en}`}
@@ -857,7 +857,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
               return (
                 <div
                   key={groupName}
-                  className="card section-card rounded-2xl border-gray-800 overflow-hidden hover:border-gray-700 transition-colors"
+                  className="card section-card ds-section-panel rounded-2xl border-gray-800 overflow-hidden hover:border-gray-700 transition-colors"
                 >
                   {/* Заголовок группы */}
                   <div 
@@ -1230,7 +1230,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                         </button>
                       </div>
 
-                      <label className="mt-4 flex items-center gap-3 text-sm rounded-2xl border border-[#223544]/60 bg-[#0c151d]/80 p-4">
+                      <label className="mt-4 flex items-center gap-3 text-sm rounded-2xl ds-section-panel-soft p-4">
                         <input
                           type="checkbox"
                           checked={editDraft.active}

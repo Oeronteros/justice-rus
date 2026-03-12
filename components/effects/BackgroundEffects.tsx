@@ -19,6 +19,8 @@ const authMeteors: Array<{
 ];
 
 export default function BackgroundEffects({ variant = 'default' }: BackgroundEffectsProps) {
+  const moonClassName = `absolute top-[-140px] right-[12%] h-[300px] w-[300px] moonfall-crescent${variant === 'auth' ? ' moonfall-parallax-slow' : ''}`;
+
   return (
     <div className="fixed inset-0 z-0 overflow-hidden">
       <div className="absolute inset-0 wuxia-backdrop"></div>
@@ -26,12 +28,14 @@ export default function BackgroundEffects({ variant = 'default' }: BackgroundEff
       <div className="absolute inset-0 wuxia-cursor-glow"></div>
       <div className="absolute inset-0 wuxia-constellation"></div>
       {variant === 'auth' ? <div className="absolute inset-0 moonfall-starfield"></div> : null}
+      {variant === 'auth' ? <div className="absolute inset-0 moonfall-fog-layer moonfall-fog-layer-far"></div> : null}
       <div className="absolute inset-0 wuxia-noise"></div>
       <div className="absolute inset-0 wuxia-smoke"></div>
       <div className="absolute inset-0 wuxia-scroll-grid opacity-30"></div>
+      {variant === 'auth' ? <div className="absolute inset-0 moonfall-fog-layer moonfall-fog-layer-near"></div> : null}
       <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full wuxia-glow"></div>
-      {variant === 'auth' ? <div className="absolute top-[7%] right-[8%] h-[360px] w-[360px] rounded-full moonfall-orbit"></div> : null}
-      <div className="absolute top-[-140px] right-[12%] h-[300px] w-[300px] moonfall-crescent"></div>
+      {variant === 'auth' ? <div className="absolute top-[7%] right-[8%] h-[360px] w-[360px] rounded-full moonfall-orbit moonfall-parallax-slow"></div> : null}
+      <div className={moonClassName}></div>
       <div className="absolute inset-0 moonfall-fall"></div>
       {variant === 'auth'
         ? authMeteors.map((meteor, index) => {
@@ -46,8 +50,8 @@ export default function BackgroundEffects({ variant = 'default' }: BackgroundEff
             return <div key={`${meteor.top}-${meteor.left}-${index}`} className="absolute moonfall-meteor" style={style}></div>;
           })
         : null}
-      <div className="absolute bottom-[-120px] right-[-80px] h-[420px] w-[420px] rounded-full wuxia-moon"></div>
-      <div className="absolute top-[18%] left-[-120px] h-[360px] w-[360px] rounded-full wuxia-ink"></div>
+      <div className={`absolute bottom-[-120px] right-[-80px] h-[420px] w-[420px] rounded-full wuxia-moon${variant === 'auth' ? ' moonfall-parallax-mid' : ''}`}></div>
+      <div className={`absolute top-[18%] left-[-120px] h-[360px] w-[360px] rounded-full wuxia-ink${variant === 'auth' ? ' moonfall-parallax-light' : ''}`}></div>
       {variant === 'auth' ? <div className="absolute bottom-[-12%] left-[8%] h-[320px] w-[520px] moonfall-horizon"></div> : null}
     </div>
   );

@@ -107,12 +107,14 @@ function GuidesSectionContent({ user }: GuidesSectionProps) {
   }, [createOpen, hideHeader, openGuideId, showHeader]);
 
   return (
-    <section className="py-12">
+    <section className="section-shell py-10 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <GuidesList
-          onGuideClick={handleGuideClick}
-          onCreateClick={handleCreateClick}
-        />
+        <div className="section-stack-lg">
+          <GuidesList
+            onGuideClick={handleGuideClick}
+            onCreateClick={handleCreateClick}
+          />
+        </div>
       </div>
 
       {openGuideId && (
