@@ -6,6 +6,8 @@ export type Section =
   | 'calendar'
   | 'analytics'
   | 'workflow'
+  | 'integrations'
+  | 'workflow'
   | 'analytics'
   | 'pvp'
   | 'guides'

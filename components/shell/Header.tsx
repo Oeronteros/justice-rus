@@ -28,7 +28,7 @@ const navItems: NavItem[] = [
   { section: 'calendar', href: '/calendar', icon: 'calendar' },
   { section: 'analytics', href: '/analytics', icon: 'analytics' },
   { section: 'workflow', href: '/workflow', icon: 'workflow' },
-  { section: 'analytics', href: '/analytics', icon: 'analytics' },
+  { section: 'integrations', href: '/integrations', icon: 'integrations' },
   { section: 'pvp', href: '/pvp', icon: 'sword' },
   { section: 'guides', href: '/guides', icon: 'guides' },
   { section: 'help', href: '/help', icon: 'help' },
