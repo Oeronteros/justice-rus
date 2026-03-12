@@ -1,0 +1,13 @@
+
+> justice-ru@2.0.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack, Cache Components)
+- Local:         http://localhost:3000
+- Network:       http://172.18.0.1:3000
+- Environments: .env.local
+- Experiments (use with caution):
+  ✓ optimizeCss
+
+✓ Starting...
+✓ Ready in 2.1s
