@@ -1,6 +1,7 @@
 // API Route: /api/discord-proxy/absences
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthToken } from '@/lib/auth/request';
+import { optionsResponse } from '@/lib/server/cors';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { createAbsenceSchema, updateAbsenceStatusSchema } from '@/lib/schemas/absence';
 import { canManageAccounts } from '@/lib/authz';
@@ -282,12 +283,5 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  });
+  return optionsResponse({ methods: ['GET', 'POST', 'PATCH'] });
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { canManageAccounts } from '@/lib/authz';
+import { optionsResponse } from '@/lib/server/cors';
 import { getReadModelState } from '@/lib/server/read-models/shared';
 import { REGISTRATION_READ_MODEL_KEY } from '@/lib/server/registration/read-model';
 import { syncRegistrationReadModel } from '@/lib/server/registration/sync';
@@ -46,12 +47,5 @@ export async function POST(request: NextRequest) {
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  });
+  return optionsResponse({ methods: ['GET', 'POST'] });
 }

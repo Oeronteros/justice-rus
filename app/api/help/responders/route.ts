@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { optionsResponse } from '@/lib/server/cors';
 import { helpRsvpSchema } from '@/lib/schemas/help';
 import {
   handleRouteError,
@@ -73,12 +74,5 @@ export async function DELETE(request: NextRequest) {
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  });
+  return optionsResponse({ methods: ['POST', 'DELETE'] });
 }

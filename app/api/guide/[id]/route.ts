@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { optionsResponse } from '@/lib/server/cors';
 import { ensureGuideSchema } from '@/lib/guides/schema';
 import { normalizeGuideTitle } from '@/lib/guides/obsidian';
 import { getPool } from '@/lib/neon';
@@ -204,14 +205,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, PATCH, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  });
+  return optionsResponse({ methods: ['GET', 'PATCH', 'DELETE'] });
 }
 
 export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {

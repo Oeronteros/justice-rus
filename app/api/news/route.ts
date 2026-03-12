@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthToken } from '@/lib/auth/request';
+import { optionsResponse } from '@/lib/server/cors';
 import { createNewsSchema } from '@/lib/schemas/news';
 import {
   handleRouteError,
@@ -57,12 +58,5 @@ export async function POST(request: NextRequest) {
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  });
+  return optionsResponse({ methods: ['GET', 'POST'] });
 }

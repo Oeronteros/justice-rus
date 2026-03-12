@@ -1,106 +1,118 @@
 # Архитектура системы
 
+## Коротко
+
+Портал больше не является только `API Proxy` для Discord-бота. Текущая архитектура гибридная:
+
+- `Next.js` обслуживает UI, аутентификацию, серверные API routes и часть бизнес-логики.
+- `Discord Bot API` остается внешним источником и интеграционным слоем для тех сценариев, где данные или события идут из Discord.
+- `PostgreSQL` используется напрямую самим порталом для read-model, административных операций, RSVP, помощи, PvP и части справочных данных.
+
 ## Схема взаимодействия
 
+```text
+┌─────────────┐         ┌──────────────┐
+│   Browser   │ ──────> │   Next.js     │
+│             │ <────── │  app/api/*    │
+└─────────────┘         └──────┬───────┘
+                                │
+                ┌───────────────┴───────────────┐
+                │                               │
+                v                               v
+         ┌──────────────┐                ┌─────────────┐
+         │ Discord Bot  │                │ PostgreSQL  │
+         │   API        │                │  / Neon     │
+         └──────────────┘                └─────────────┘
 ```
-┌─────────────┐         ┌──────────────┐         ┌─────────────┐
-│   Website   │ ──────> │ Discord Bot  │ ──────> │     DB      │
-│  (Next.js)  │ <────── │   (API)      │ <──────  │             │
-└─────────────┘         └──────────────┘         └─────────────┘
-     Port 3000              Port 3001
-```
 
-## Компоненты
+## Основные слои
 
-### 1. Website (Next.js)
-- **Порт:** 3000
-- **Роль:** Frontend + API Proxy
-- **Функции:**
-  - Отображение UI
-  - Аутентификация пользователей
-  - Проксирование запросов к Discord боту
-  - Кэширование данных
+### 1. UI и App Router
 
-### 2. Discord Bot (API Server)
-- **Порт:** 3001 (по умолчанию)
-- **Роль:** Middleware между Website и DB
-- **Функции:**
-  - Обработка Discord команд
-  - Предоставление HTTP API для веб-сайта
-  - Управление данными в БД
-  - Бизнес-логика
+- `app/` - маршруты, layout, server/client pages
+- `components/` - shell, sections, forms, shared UI
+- `lib/*/hooks.ts` - клиентский data access через React Query
 
-### 3. Database
-- **Роль:** Хранение данных
-- **Таблицы:**
-  - `registrations` - регистрации участников
-  - `schedule` - расписание событий
-  - `news` - новости
-  - `guides` - гайды
-  - `absences` - отсутствия
+### 2. API и политики доступа
 
-## Поток данных
+- `app/api/*` - transport layer для HTTP
+- `lib/server/route-helpers.ts` - общие guard-функции, same-origin проверки, DB-backed session validation, JSON parsing и error envelope
+- `lib/server/auth-session.ts` - серверная проверка JWT + активного состояния аккаунта
 
-1. **Пользователь открывает веб-сайт**
-   - Website проверяет аутентификацию
-   - Показывает UI
+### 3. Доменные серверные модули
 
-2. **Пользователь запрашивает данные**
-   - Website отправляет запрос к `/api/discord-proxy/*`
-   - Next.js API Route проксирует запрос к Discord боту
-   - Discord бот получает данные из БД
-   - Данные возвращаются через цепочку обратно
+Критичная логика вынесена из route handlers в `lib/server/*`:
 
-3. **Discord бот обновляет данные**
-   - Бот получает команды из Discord
-   - Обновляет данные в БД
-   - Веб-сайт получает актуальные данные при следующем запросе
+- `lib/server/help/*` - помощь, responders, schema bootstrap
+- `lib/server/schedule/*` - серверные операции по расписанию
+- `lib/server/news/*` - новости и Discord publish flow
+- `lib/server/analytics/*` - аналитика состава
+- `lib/server/pvp/*` - PvP очередь, матчи, рейтинги
+- `lib/server/registration/*` - registrations, read-model, sync и write-операции
 
-## Преимущества такой архитектуры
+### 4. Read-model и process-local cache
 
-✅ **Безопасность:** БД не доступна напрямую из интернета
-✅ **Централизация:** Вся бизнес-логика в одном месте (Discord бот)
-✅ **Гибкость:** Легко добавить новые источники данных
-✅ **Масштабируемость:** Можно добавить несколько веб-сайтов или клиентов
+Портал использует собственные read-model и коалесцирующий cache слой:
 
-## API Endpoints
+- `lib/server/read-models/news.ts`
+- `lib/server/read-models/schedule.ts`
+- `lib/server/registration/read-model.ts`
+- `lib/server/db-cache.ts`
 
-### Website → Discord Bot
+Это позволяет:
 
-Все запросы идут через `/api/discord-proxy/*`:
+- читать данные из БД напрямую без постоянной нагрузки на источник
+- переживать краткие ошибки sync-процесса через stale snapshot
+- обновлять read-model после write-операций
 
-- `GET /api/discord-proxy/registration` → `GET /api/registrations` (Discord Bot)
-- `GET /api/discord-proxy/schedule` → `GET /api/schedule` (Discord Bot)
-- `GET /api/discord-proxy/news` → `GET /api/news` (Discord Bot)
-- `GET /api/discord-proxy/guides` → `GET /api/guides` (Discord Bot)
-- `GET /api/discord-proxy/absences` → `GET /api/absences` (Discord Bot)
+## Где все еще используется Discord Bot API
 
-### Discord Bot должен предоставлять
+Discord-бот остается важным интеграционным звеном, но уже не единственным источником истины:
 
-- `GET /api/registrations` - список регистраций
-- `GET /api/schedule` - расписание
-- `GET /api/news` - новости
-- `GET /api/guides` - гайды
-- `GET /api/absences` - отсутствия
+- `app/api/discord-proxy/*` - прокси/совместимость для внешних bot endpoints
+- `lib/server/read-models/news.ts` и `lib/server/read-models/schedule.ts` - fallback/sync из bot API
+- `app/api/news/route.ts` / `lib/server/news/service.ts` - публикация новости в Discord
+- `app/api/integrations/discord/route.ts` - управление интеграционными настройками
 
-## Настройка
+## Потоки данных
 
-1. **Discord Bot:** Запустите HTTP сервер на порту 3001 (или другом)
-2. **Website:** Установите `DISCORD_BOT_API_URL` в `.env.local` или Vercel Environment Variables
-3. **Database:** Настройте подключение в Discord боте
+### Чтение
 
-### Если сайт на Vercel, а бот локально:
+1. Браузер вызывает `app/api/*`
+2. Route проходит через session/origin guards
+3. Route вызывает `lib/server/<domain>/*`
+4. Модуль читает из:
+   - read-model / БД напрямую, если данные локально доступны
+   - Discord Bot API, если это интеграционный или fallback-сценарий
 
-**Используйте туннелирование:**
-- **ngrok** - быстро, просто (`docs/ngrok-setup.md`)
-- **Cloudflare Tunnel** - бесплатно, стабильно (`docs/deployment-solutions.md`)
+### Запись
 
-**Или задеплойте бота:**
-- **Railway** - простой деплой (`docs/deployment-solutions.md`)
-- **Render** - бесплатный план (`docs/deployment-solutions.md`)
+1. Браузер отправляет запрос в `app/api/*`
+2. Route применяет `requireSameOrigin()` и `requireActiveSession()`
+3. Route парсит payload через общую schema
+4. Серверный доменный модуль выполняет DB write / orchestration
+5. Если нужно, обновляется read-model или вызывается Discord Bot API
 
-Подробнее см.:
-- `docs/discord-bot-integration.md` - интеграция с ботом
-- `docs/deployment-solutions.md` - решения для деплоя
-- `QUICKSTART.md` - быстрый старт
+## Почему это лучше старой proxy-only схемы
 
+✅ Меньше дублирования логики в route handlers
+✅ Быстрее чтение за счет локальных read-model
+✅ Портал умеет сам enforce-ить активность аккаунта и роль
+✅ Внешние Discord integration flows не смешаны с основным доменным transport слоем
+
+## Что считать текущим architectural baseline
+
+Если добавляется новый API endpoint, ожидаемый путь такой:
+
+1. thin route в `app/api/.../route.ts`
+2. guards и parsing через `lib/server/route-helpers.ts`
+3. orchestration в `lib/server/<domain>/*`
+4. DTO/validation в `lib/schemas/*`
+5. тесты на helper/route/service поведение
+
+## Связанные документы
+
+- `README.md` - запуск и quality gate
+- `SECURITY.md` - trust boundaries и security defaults
+- `PERFORMANCE.md` - cache и perf strategy
+- `docs/discord-bot-integration.md` - детали bot-side интеграции

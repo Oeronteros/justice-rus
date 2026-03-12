@@ -2,6 +2,7 @@
 // Прокси для получения расписания через Discord бота
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthToken } from '@/lib/auth/request';
+import { optionsResponse } from '@/lib/server/cors';
 import { hasDatabaseUrl } from '@/lib/neon';
 import { getScheduleReadModel } from '@/lib/server/read-models/schedule';
 import { handleRouteError, requireActiveSession } from '@/lib/server/route-helpers';
@@ -60,13 +61,6 @@ export async function GET(request: NextRequest) {
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  });
+  return optionsResponse({ methods: ['GET'] });
 }
 

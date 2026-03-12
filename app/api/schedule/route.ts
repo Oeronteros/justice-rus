@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { optionsResponse } from '@/lib/server/cors';
 import { createScheduleSchema, updateScheduleSchema } from '@/lib/schemas/schedule';
 import {
   handleRouteError,
@@ -78,12 +79,5 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, X-API-KEY, Authorization',
-    },
-  });
+  return optionsResponse({ methods: ['GET', 'POST', 'PATCH'], headers: ['Content-Type', 'X-API-KEY', 'Authorization'] });
 }

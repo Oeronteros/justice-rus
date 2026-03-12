@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { optionsResponse } from '@/lib/server/cors';
 import { ensureGuideSchema } from '@/lib/guides/schema';
 import { getPool } from '@/lib/neon';
 import {
@@ -85,12 +86,5 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  });
+  return optionsResponse({ methods: ['POST'] });
 }

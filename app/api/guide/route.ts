@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { optionsResponse } from '@/lib/server/cors';
 import { extractWikiReferences, normalizeGuideTitle } from '@/lib/guides/obsidian';
 import { ensureGuideSchema, seedGuidesIfEmpty } from '@/lib/guides/schema';
 import { getPool } from '@/lib/neon';
@@ -150,12 +151,5 @@ export async function POST(request: NextRequest) {
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  });
+  return optionsResponse({ methods: ['GET', 'POST'] });
 }

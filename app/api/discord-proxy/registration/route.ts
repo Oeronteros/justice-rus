@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getAuthToken } from '@/lib/auth/request';
+import { optionsResponse } from '@/lib/server/cors';
 import { hasDatabaseUrl } from '@/lib/neon';
 import { isKnownClassName } from '@/lib/classes';
 import { updateRegistrationStatsSchema } from '@/lib/server/registration/contracts';
@@ -108,12 +109,5 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, PATCH, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  });
+  return optionsResponse({ methods: ['GET', 'PATCH'] });
 }

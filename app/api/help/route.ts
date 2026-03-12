@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { optionsResponse } from '@/lib/server/cors';
 import { createHelpRequestSchema, mutateHelpRequestSchema } from '@/lib/schemas/help';
 import {
   handleRouteError,
@@ -132,12 +133,5 @@ export async function DELETE(request: NextRequest) {
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  });
+  return optionsResponse({ methods: ['GET', 'POST', 'PATCH', 'DELETE'] });
 }
