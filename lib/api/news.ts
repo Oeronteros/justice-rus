@@ -8,6 +8,8 @@ import {
   type News,
 } from '@/lib/schemas/news';
 
+export type CreateNewsPayload = CreateNewsDto;
+
 export const newsApi = {
   list: async (): Promise<News[]> => {
     const response = await getApiNews({ client: sameOriginOpenApiClient });

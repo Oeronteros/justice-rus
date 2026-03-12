@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { verifyToken } from '@/lib/auth';
-import { getAuthToken } from '@/lib/auth/request';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
-import { requireSameOrigin } from '@/lib/server/route-helpers';
+import {
+  handleRouteError,
+  parseJsonBody,
+  requireActiveSession,
+  requireDatabase,
+  requireSameOrigin,
+} from '@/lib/server/route-helpers';
 import { rsvpStatusSchema, createRsvpSchema, updateRsvpSchema } from '@/lib/schemas/rsvp';
 
 const rsvpCreateSchema = createRsvpSchema.extend({
@@ -12,15 +16,13 @@ const rsvpCreateSchema = createRsvpSchema.extend({
 
 export async function GET(request: NextRequest) {
   try {
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-    
-    if (!decoded) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
     }
 
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId') || decoded.id;
+    const userId = searchParams.get('userId') || session.value.id;
 
     if (!hasDatabaseUrl()) {
       // Return mock data for development
@@ -50,8 +52,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(rsvps);
   } catch (error) {
-    console.error('Error fetching RSVPs:', error);
-    return NextResponse.json({ error: 'Failed to fetch RSVPs' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error fetching RSVPs:',
+      fallbackMessage: 'Failed to fetch RSVPs',
+    });
   }
 }
 
@@ -62,24 +66,28 @@ export async function POST(request: NextRequest) {
       return sameOrigin.response;
     }
 
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-
-    if (!decoded) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
     }
 
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json({ error: 'Database is not configured' }, { status: 503 });
+    const db = requireDatabase('Database is not configured');
+    if (!db.ok) {
+      return db.response;
     }
 
-    const payload = rsvpCreateSchema.parse(await request.json());
+    const parsed = await parseJsonBody(request, rsvpCreateSchema);
+    if (!parsed.ok) {
+      return parsed.response;
+    }
+
+    const payload = parsed.value;
     const pool = getPool();
 
     // Check if RSVP already exists
     const existing = await pool.query(
       'SELECT id FROM rsvps WHERE user_id = $1 AND schedule_id = $2',
-      [decoded.id, payload.scheduleId]
+      [session.value.id, payload.scheduleId]
     );
 
     let result;
@@ -92,7 +100,7 @@ export async function POST(request: NextRequest) {
         WHERE user_id = $3 AND schedule_id = $4
         RETURNING id, user_id, schedule_id, status, note, created_at, updated_at
         `,
-        [payload.status, payload.note || null, decoded.id, payload.scheduleId]
+        [payload.status, payload.note || null, session.value.id, payload.scheduleId]
       );
     } else {
       // Create new
@@ -102,7 +110,7 @@ export async function POST(request: NextRequest) {
         VALUES ($1, $2, $3, $4, NOW(), NOW())
         RETURNING id, user_id, schedule_id, status, note, created_at, updated_at
         `,
-        [decoded.id, payload.scheduleId, payload.status, payload.note || null]
+        [session.value.id, payload.scheduleId, payload.status, payload.note || null]
       );
     }
 
@@ -121,12 +129,10 @@ export async function POST(request: NextRequest) {
       updatedAt: row.updated_at,
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
-    }
-
-    console.error('Error saving RSVP:', error);
-    return NextResponse.json({ error: 'Failed to save RSVP' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error saving RSVP:',
+      fallbackMessage: 'Failed to save RSVP',
+    });
   }
 }
 
@@ -137,18 +143,22 @@ export async function PATCH(request: NextRequest) {
       return sameOrigin.response;
     }
 
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-
-    if (!decoded) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
     }
 
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json({ error: 'Database is not configured' }, { status: 503 });
+    const db = requireDatabase('Database is not configured');
+    if (!db.ok) {
+      return db.response;
     }
 
-    const payload = updateRsvpSchema.parse(await request.json());
+    const parsed = await parseJsonBody(request, updateRsvpSchema);
+    if (!parsed.ok) {
+      return parsed.response;
+    }
+
+    const payload = parsed.value;
     const pool = getPool();
 
     const result = await pool.query(
@@ -158,7 +168,7 @@ export async function PATCH(request: NextRequest) {
       WHERE id = $3 AND user_id = $4
       RETURNING id, user_id, schedule_id, status, note, created_at, updated_at
       `,
-      [payload.status, payload.note || null, payload.id, decoded.id]
+      [payload.status, payload.note || null, payload.id, session.value.id]
     );
 
     const row = result.rows[0];
@@ -176,12 +186,10 @@ export async function PATCH(request: NextRequest) {
       updatedAt: row.updated_at,
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
-    }
-
-    console.error('Error updating RSVP:', error);
-    return NextResponse.json({ error: 'Failed to update RSVP' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error updating RSVP:',
+      fallbackMessage: 'Failed to update RSVP',
+    });
   }
 }
 
@@ -192,15 +200,14 @@ export async function DELETE(request: NextRequest) {
       return sameOrigin.response;
     }
 
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-
-    if (!decoded) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
     }
 
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json({ error: 'Database is not configured' }, { status: 503 });
+    const db = requireDatabase('Database is not configured');
+    if (!db.ok) {
+      return db.response;
     }
 
     const { searchParams } = new URL(request.url);
@@ -211,12 +218,14 @@ export async function DELETE(request: NextRequest) {
     }
 
     const pool = getPool();
-    await pool.query('DELETE FROM rsvps WHERE id = $1 AND user_id = $2', [id, decoded.id]);
+    await pool.query('DELETE FROM rsvps WHERE id = $1 AND user_id = $2', [id, session.value.id]);
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting RSVP:', error);
-    return NextResponse.json({ error: 'Failed to delete RSVP' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error deleting RSVP:',
+      fallbackMessage: 'Failed to delete RSVP',
+    });
   }
 }
 

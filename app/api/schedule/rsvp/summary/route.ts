@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
-import { verifyToken } from '@/lib/auth';
-import { getAuthToken } from '@/lib/auth/request';
+import { requireActiveSession } from '@/lib/server/route-helpers';
 
 export async function GET(request: NextRequest) {
   try {
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
+    }
+
+    const user = session.value;
 
     const { searchParams } = new URL(request.url);
     const scheduleId = searchParams.get('scheduleId');
@@ -49,10 +52,10 @@ export async function GET(request: NextRequest) {
 
     // Get current user's status
     let myStatus = null;
-    if (decoded) {
+    if (user.id) {
       const myResult = await pool.query(
         'SELECT status FROM rsvps WHERE schedule_id = $1 AND user_id = $2',
-        [scheduleId, decoded.id]
+        [scheduleId, user.id]
       );
       if (myResult.rows.length > 0) {
         myStatus = myResult.rows[0].status;

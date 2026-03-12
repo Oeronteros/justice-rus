@@ -1,15 +1,19 @@
 // API Route: /api/discord-proxy/news
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
 import { getAuthToken } from '@/lib/auth/request';
 import { hasDatabaseUrl } from '@/lib/neon';
 import { fetchNewsDirect, getNewsReadModel } from '@/lib/server/read-models/news';
+import { handleRouteError, requireActiveSession } from '@/lib/server/route-helpers';
 
 export async function GET(request: NextRequest) {
   try {
-    const token = getAuthToken(request);
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
+    }
 
-    if (!token || !verifyToken(token)) {
+    const token = getAuthToken(request);
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -23,14 +27,10 @@ export async function GET(request: NextRequest) {
     const news = await fetchNewsDirect(token);
     return NextResponse.json(news);
   } catch (error) {
-    console.error('Error proxying news request to Discord bot:', error);
-    return NextResponse.json(
-      {
-        error: 'Failed to connect to Discord bot',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 502 }
-    );
+    return handleRouteError(error, {
+      logLabel: 'Error proxying news request to Discord bot:',
+      fallbackMessage: 'Failed to connect to Discord bot',
+    });
   }
 }
 

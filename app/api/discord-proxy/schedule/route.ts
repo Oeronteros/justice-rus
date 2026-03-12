@@ -1,10 +1,10 @@
 // API Route: /api/discord-proxy/schedule
 // Прокси для получения расписания через Discord бота
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
 import { getAuthToken } from '@/lib/auth/request';
 import { hasDatabaseUrl } from '@/lib/neon';
 import { getScheduleReadModel } from '@/lib/server/read-models/schedule';
+import { handleRouteError, requireActiveSession } from '@/lib/server/route-helpers';
 
 const DISCORD_BOT_API_URL = process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const bypassHeader: Record<string, string> = (DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me'))
@@ -13,9 +13,13 @@ const bypassHeader: Record<string, string> = (DISCORD_BOT_API_URL.includes('.loc
 
 export async function GET(request: NextRequest) {
   try {
-    const token = getAuthToken(request);
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
+    }
 
-    if (!token || !verifyToken(token)) {
+    const token = getAuthToken(request);
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -48,14 +52,10 @@ export async function GET(request: NextRequest) {
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error proxying schedule request to Discord bot:', error);
-    return NextResponse.json(
-      {
-        error: 'Failed to connect to Discord bot',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return handleRouteError(error, {
+      logLabel: 'Error proxying schedule request to Discord bot:',
+      fallbackMessage: 'Failed to connect to Discord bot',
+    });
   }
 }
 

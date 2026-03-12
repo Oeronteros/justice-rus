@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { verifyToken } from '@/lib/auth';
-import { getAuthToken } from '@/lib/auth/request';
 import { canManageAccounts } from '@/lib/authz';
-import { requireSameOrigin } from '@/lib/server/route-helpers';
+import {
+  handleRouteError,
+  parseJsonBody,
+  requireActiveSession,
+  requirePermission,
+  requireSameOrigin,
+} from '@/lib/server/route-helpers';
 
 const BOT_API_URL = process.env.BOT_API_URL || process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const BOT_API_KEY = process.env.BOT_API_KEY || process.env.DISCORD_BOT_API_KEY;
@@ -30,11 +34,14 @@ const discordConfigSchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
+    }
 
-    if (!decoded || !canManageAccounts(decoded.role)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const permission = requirePermission(session.value, (user) => canManageAccounts(user.role));
+    if (!permission.ok) {
+      return permission.response;
     }
 
     // Return current config (from environment or database)
@@ -58,8 +65,10 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching Discord config:', error);
-    return NextResponse.json({ error: 'Failed to fetch config' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error fetching Discord config:',
+      fallbackMessage: 'Failed to fetch config',
+    });
   }
 }
 
@@ -70,14 +79,22 @@ export async function POST(request: NextRequest) {
       return sameOrigin.response;
     }
 
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-
-    if (!decoded || !canManageAccounts(decoded.role)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
     }
 
-    const payload = discordConfigSchema.parse(await request.json());
+    const permission = requirePermission(session.value, (user) => canManageAccounts(user.role));
+    if (!permission.ok) {
+      return permission.response;
+    }
+
+    const parsed = await parseJsonBody(request, discordConfigSchema);
+    if (!parsed.ok) {
+      return parsed.response;
+    }
+
+    const payload = parsed.value;
 
     // In production, save to database
     // For now, just validate and return success
@@ -85,22 +102,23 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, config: payload });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
-    }
-
-    console.error('Error updating Discord config:', error);
-    return NextResponse.json({ error: 'Failed to update config' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error updating Discord config:',
+      fallbackMessage: 'Failed to update config',
+    });
   }
 }
 
 export async function POST_test(request: NextRequest) {
   try {
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
+    }
 
-    if (!decoded || !canManageAccounts(decoded.role)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const permission = requirePermission(session.value, (user) => canManageAccounts(user.role));
+    if (!permission.ok) {
+      return permission.response;
     }
 
     // Test connection to Discord bot API
@@ -138,11 +156,14 @@ export async function POST_test(request: NextRequest) {
 
 export async function POST_sync(request: NextRequest) {
   try {
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
+    }
 
-    if (!decoded || !canManageAccounts(decoded.role)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const permission = requirePermission(session.value, (user) => canManageAccounts(user.role));
+    if (!permission.ok) {
+      return permission.response;
     }
 
     // Trigger sync with Discord bot

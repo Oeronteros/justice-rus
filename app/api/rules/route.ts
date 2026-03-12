@@ -1,15 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
-import { getAuthToken } from '@/lib/auth/request';
-import { hasRoleAtLeast } from '@/lib/authz';
+import { z } from 'zod';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { runServerTaskOnce } from '@/lib/server/db-cache';
-import { isSameOrigin } from '@/lib/auth/request';
+import {
+  handleRouteError,
+  parseJsonBody,
+  requireActiveSession,
+  requireDatabase,
+  requireMinimumRole,
+  requireSameOrigin,
+} from '@/lib/server/route-helpers';
 
 type RuleInput = {
   text_ru?: unknown;
   text_en?: unknown;
 };
+
+const ruleInputSchema = z.object({
+  text_ru: z.string().optional(),
+  text_en: z.string().optional(),
+});
+
+const rulesBatchSchema = z.object({
+  rules: z.array(ruleInputSchema),
+});
 
 async function ensureRulesTable() {
   const pool = getPool();
@@ -40,29 +54,25 @@ function sanitizeRule(rule: RuleInput) {
   };
 }
 
-function requireOfficerWrite(request: NextRequest) {
-  if (!isSameOrigin(request)) {
-    return NextResponse.json({ error: 'Forbidden origin' }, { status: 403 });
+async function requireOfficerWrite(request: NextRequest) {
+  const sameOrigin = requireSameOrigin(request);
+  if (!sameOrigin.ok) {
+    return sameOrigin;
   }
 
-  const token = getAuthToken(request);
-  const decoded = token ? verifyToken(token) : null;
-
-  if (!decoded) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const session = await requireActiveSession(request);
+  if (!session.ok) {
+    return session;
   }
 
-  if (!hasRoleAtLeast(decoded.role, 'officer')) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
-
-  return null;
+  return requireMinimumRole(session.value, 'officer');
 }
 
 export async function GET() {
   try {
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    const db = requireDatabase('Database not configured');
+    if (!db.ok) {
+      return db.response;
     }
 
     const pool = await ensureRulesTable();
@@ -72,24 +82,31 @@ export async function GET() {
 
     return NextResponse.json(result.rows);
   } catch (error) {
-    console.error('Error fetching rules:', error);
-    return NextResponse.json({ error: 'Failed to fetch rules' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error fetching rules:',
+      fallbackMessage: 'Failed to fetch rules',
+    });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const authError = requireOfficerWrite(request);
-    if (authError) {
-      return authError;
+    const guard = await requireOfficerWrite(request);
+    if (!guard.ok) {
+      return guard.response;
     }
 
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    const db = requireDatabase('Database not configured');
+    if (!db.ok) {
+      return db.response;
     }
 
-    const body = (await request.json()) as RuleInput;
-    const rule = sanitizeRule(body);
+    const parsed = await parseJsonBody(request, ruleInputSchema);
+    if (!parsed.ok) {
+      return parsed.response;
+    }
+
+    const rule = sanitizeRule(parsed.value);
 
     if (!rule.text_ru && !rule.text_en) {
       return NextResponse.json({ error: 'At least one text field is required' }, { status: 400 });
@@ -106,30 +123,31 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result.rows[0], { status: 201 });
   } catch (error) {
-    console.error('Error creating rule:', error);
-    return NextResponse.json({ error: 'Failed to create rule' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error creating rule:',
+      fallbackMessage: 'Failed to create rule',
+    });
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
-    const authError = requireOfficerWrite(request);
-    if (authError) {
-      return authError;
+    const guard = await requireOfficerWrite(request);
+    if (!guard.ok) {
+      return guard.response;
     }
 
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    const db = requireDatabase('Database not configured');
+    if (!db.ok) {
+      return db.response;
     }
 
-    const body = (await request.json()) as { rules?: RuleInput[] };
-    const rules = body.rules;
-
-    if (!Array.isArray(rules)) {
-      return NextResponse.json({ error: 'Rules array is required' }, { status: 400 });
+    const parsed = await parseJsonBody(request, rulesBatchSchema);
+    if (!parsed.ok) {
+      return parsed.response;
     }
 
-    const sanitizedRules = rules.map(sanitizeRule).filter((rule) => rule.text_ru || rule.text_en);
+    const sanitizedRules = parsed.value.rules.map(sanitizeRule).filter((rule) => rule.text_ru || rule.text_en);
     const pool = await ensureRulesTable();
 
     await pool.query('DELETE FROM rules');
@@ -148,7 +166,9 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json(result.rows);
   } catch (error) {
-    console.error('Error updating rules:', error);
-    return NextResponse.json({ error: 'Failed to update rules' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error updating rules:',
+      fallbackMessage: 'Failed to update rules',
+    });
   }
 }

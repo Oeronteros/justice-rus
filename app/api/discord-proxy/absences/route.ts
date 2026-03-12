@@ -1,12 +1,17 @@
 // API Route: /api/discord-proxy/absences
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
 import { getAuthToken } from '@/lib/auth/request';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { createAbsenceSchema, updateAbsenceStatusSchema } from '@/lib/schemas/absence';
 import { canManageAccounts } from '@/lib/authz';
 import { z } from 'zod';
 import { runServerTaskOnce } from '@/lib/server/db-cache';
+import {
+  handleRouteError,
+  parseJsonBody,
+  requireActiveSession,
+  requirePermission,
+} from '@/lib/server/route-helpers';
 
 const DISCORD_BOT_API_URL = process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const bypassHeader: Record<string, string> =
@@ -71,8 +76,13 @@ async function ensureAbsenceStatusColumn() {
 
 export async function GET(request: NextRequest) {
   try {
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
+    }
+
     const token = getAuthToken(request);
-    if (!token || !verifyToken(token)) {
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -104,27 +114,32 @@ export async function GET(request: NextRequest) {
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error proxying absences request to Discord bot:', error);
-    return NextResponse.json(
-      {
-        error: 'Failed to connect to Discord bot',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return handleRouteError(error, {
+      logLabel: 'Error proxying absences request to Discord bot:',
+      fallbackMessage: 'Failed to connect to Discord bot',
+    });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
+    }
+
     const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-    if (!decoded) {
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const payload = createAbsenceSchema.parse(await request.json());
-    const member = payload.member?.trim() || decoded.nickname || decoded.discordId || decoded.role;
+    const parsed = await parseJsonBody(request, createAbsenceSchema);
+    if (!parsed.ok) {
+      return parsed.response;
+    }
+
+    const payload = parsed.value;
+    const member = payload.member?.trim() || session.value.nickname || session.value.discordId || session.value.role;
 
     if (hasDatabaseUrl()) {
       const pool = getPool();
@@ -205,38 +220,35 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
-    }
-
-    console.error('Error creating absence:', error);
-    return NextResponse.json(
-      {
-        error: 'Failed to create absence',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return handleRouteError(error, {
+      logLabel: 'Error creating absence:',
+      fallbackMessage: 'Failed to create absence',
+    });
   }
 }
 
 export async function PATCH(request: NextRequest) {
   try {
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-    if (!decoded) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
     }
 
-    if (!canManageAccounts(decoded.role)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const permission = requirePermission(session.value, (user) => canManageAccounts(user.role));
+    if (!permission.ok) {
+      return permission.response;
     }
 
     if (!hasDatabaseUrl()) {
       return NextResponse.json({ error: 'Database is not configured' }, { status: 503 });
     }
 
-    const payload = updateAbsenceStatusSchema.parse(await request.json());
+    const parsed = await parseJsonBody(request, updateAbsenceStatusSchema);
+    if (!parsed.ok) {
+      return parsed.response;
+    }
+
+    const payload = parsed.value;
     const pool = getPool();
     await ensureAbsenceStatusColumn();
 
@@ -262,18 +274,10 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json(item);
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
-    }
-
-    console.error('Error updating absence:', error);
-    return NextResponse.json(
-      {
-        error: 'Failed to update absence',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return handleRouteError(error, {
+      logLabel: 'Error updating absence:',
+      fallbackMessage: 'Failed to update absence',
+    });
   }
 }
 

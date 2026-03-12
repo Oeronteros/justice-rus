@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
 const {
+  verifyTokenMock,
   getAuthTokenMock,
   isSameOriginMock,
   clearAuthCookieMock,
@@ -10,6 +11,7 @@ const {
   updateScheduleEntryMock,
   listScheduleMock,
 } = vi.hoisted(() => ({
+  verifyTokenMock: vi.fn(),
   getAuthTokenMock: vi.fn(),
   isSameOriginMock: vi.fn(),
   clearAuthCookieMock: vi.fn(),
@@ -17,6 +19,10 @@ const {
   createScheduleEntryMock: vi.fn(),
   updateScheduleEntryMock: vi.fn(),
   listScheduleMock: vi.fn(),
+}));
+
+vi.mock('@/lib/auth', () => ({
+  verifyToken: verifyTokenMock,
 }));
 
 vi.mock('@/lib/auth/request', () => ({

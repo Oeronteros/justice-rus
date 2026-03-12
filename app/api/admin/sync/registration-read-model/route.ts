@@ -1,35 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
-import { getAuthToken, isSameOrigin } from '@/lib/auth/request';
 import { canManageAccounts } from '@/lib/authz';
-import { hasDatabaseUrl } from '@/lib/neon';
 import { getReadModelState } from '@/lib/server/read-models/shared';
 import { REGISTRATION_READ_MODEL_KEY } from '@/lib/server/registration/read-model';
 import { syncRegistrationReadModel } from '@/lib/server/registration/sync';
-
-function requireManager(request: NextRequest) {
-  const token = getAuthToken(request);
-  const decoded = token ? verifyToken(token) : null;
-
-  if (!decoded) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  if (!canManageAccounts(decoded.role)) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
-
-  return null;
-}
+import {
+  requireActiveSession,
+  requireDatabase,
+  requirePermission,
+  requireSameOrigin,
+} from '@/lib/server/route-helpers';
 
 export async function GET(request: NextRequest) {
-  const authError = requireManager(request);
-  if (authError) {
-    return authError;
+  const session = await requireActiveSession(request);
+  if (!session.ok) {
+    return session.response;
   }
 
-  if (!hasDatabaseUrl()) {
-    return NextResponse.json({ error: 'Database is not configured' }, { status: 503 });
+  const permission = requirePermission(session.value, (user) => canManageAccounts(user.role));
+  if (!permission.ok) {
+    return permission.response;
+  }
+
+  const db = requireDatabase('Database is not configured');
+  if (!db.ok) {
+    return db.response;
   }
 
   const rows = await syncRegistrationReadModel();
@@ -43,8 +37,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  if (!isSameOrigin(request)) {
-    return NextResponse.json({ error: 'Forbidden origin' }, { status: 403 });
+  const sameOrigin = requireSameOrigin(request);
+  if (!sameOrigin.ok) {
+    return sameOrigin.response;
   }
 
   return GET(request);
