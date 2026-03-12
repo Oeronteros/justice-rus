@@ -44,15 +44,18 @@ export default function BackgroundEffects({ variant = 'default' }: BackgroundEff
   const moonClassName = `absolute top-[-140px] right-[12%] h-[300px] w-[300px] moonfall-crescent${variant === 'auth' ? ' moonfall-parallax-slow' : ''}`;
 
   return (
-    <div className="fixed inset-0 z-0 overflow-hidden">
+    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
       <div className="absolute inset-0 wuxia-backdrop"></div>
       <div className="absolute inset-0 wuxia-aurora"></div>
       <div className="absolute inset-0 wuxia-cursor-glow"></div>
       <div className="absolute inset-0 wuxia-constellation"></div>
       {variant === 'auth' ? <div className="absolute inset-0 moonfall-starfield"></div> : null}
       {variant === 'auth' ? <div className="absolute inset-0 moonfall-fog-layer moonfall-fog-layer-far"></div> : null}
+      <div className="absolute inset-0 wuxia-noise"></div>
+      <div className="absolute inset-0 wuxia-smoke"></div>
+      <div className="absolute inset-0 wuxia-scroll-grid opacity-30"></div>
       {variant === 'auth' ? (
-        <div className="auth-scene-gallery" aria-hidden="true">
+        <div className="auth-scene-gallery">
           {authSceneCards.map((scene) => (
             <div key={scene.className} className={scene.className}>
               <div className={scene.frameClassName}></div>
@@ -61,9 +64,6 @@ export default function BackgroundEffects({ variant = 'default' }: BackgroundEff
           ))}
         </div>
       ) : null}
-      <div className="absolute inset-0 wuxia-noise"></div>
-      <div className="absolute inset-0 wuxia-smoke"></div>
-      <div className="absolute inset-0 wuxia-scroll-grid opacity-30"></div>
       {variant === 'auth' ? <div className="absolute inset-0 moonfall-fog-layer moonfall-fog-layer-near"></div> : null}
       <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full wuxia-glow"></div>
       {variant === 'auth' ? <div className="absolute top-[7%] right-[8%] h-[360px] w-[360px] rounded-full moonfall-orbit moonfall-parallax-slow"></div> : null}

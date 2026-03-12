@@ -226,6 +226,8 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                 className="dc-icon-btn h-[52px] min-w-[52px] shrink-0 rounded-2xl px-3"
                 onClick={() => setShowPassword((v) => !v)}
                 title={showPassword ? t.auth.hidePassword : t.auth.showPassword}
+                aria-label={showPassword ? t.auth.hidePassword : t.auth.showPassword}
+                aria-pressed={showPassword}
               >
                 <WuxiaIcon name={showPassword ? 'x' : 'eye'} className="w-5 h-5" />
                 </button>

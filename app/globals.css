@@ -176,7 +176,17 @@ body {
 .theme-wuxia[data-input-active='true'] .wuxia-cursor-glow,
 .theme-wuxia[data-input-active='true'] .wuxia-constellation,
 .theme-wuxia[data-input-active='true'] .wuxia-smoke,
+.theme-wuxia[data-input-active='true'] .auth-scene-gallery,
+.theme-wuxia[data-input-active='true'] .auth-scene-card,
+.theme-wuxia[data-input-active='true'] .auth-scene-frame,
+.theme-wuxia[data-input-active='true'] .auth-scene-symbol,
 .theme-wuxia[data-input-active='true'] .moonfall-fall,
+.theme-wuxia[data-input-active='true'] .moonfall-starfield,
+.theme-wuxia[data-input-active='true'] .moonfall-fog-layer,
+.theme-wuxia[data-input-active='true'] .moonfall-orbit,
+.theme-wuxia[data-input-active='true'] .moonfall-horizon,
+.theme-wuxia[data-input-active='true'] .moonfall-crescent,
+.theme-wuxia[data-input-active='true'] .moonfall-meteor,
 .theme-wuxia[data-input-active='true'] .wuxia-glow,
 .theme-wuxia[data-input-active='true'] .wuxia-moon,
 .theme-wuxia[data-input-active='true'] .wuxia-ink,
@@ -3481,9 +3491,19 @@ table td, table th {
   .theme-wuxia .wuxia-cursor-glow,
   .theme-wuxia .wuxia-constellation,
   .theme-wuxia .wuxia-smoke,
+  .theme-wuxia .auth-scene-gallery,
+  .theme-wuxia .auth-scene-card,
+  .theme-wuxia .auth-scene-frame,
+  .theme-wuxia .auth-scene-symbol,
   .theme-wuxia .wuxia-glow,
   .theme-wuxia .wuxia-moon,
-  .theme-wuxia .moonfall-fall {
+  .theme-wuxia .moonfall-fall,
+  .theme-wuxia .moonfall-starfield,
+  .theme-wuxia .moonfall-fog-layer,
+  .theme-wuxia .moonfall-orbit,
+  .theme-wuxia .moonfall-horizon,
+  .theme-wuxia .moonfall-crescent,
+  .theme-wuxia .moonfall-meteor {
     opacity: 0.3 !important;
     filter: blur(24px);
   }
