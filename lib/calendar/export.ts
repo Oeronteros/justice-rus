@@ -33,7 +33,9 @@ function formatEventDescription(event: Schedule, language: Language): string {
 }
 
 export function generateGoogleCalendarLink(event: Schedule, language: Language): string {
-  const title = language === 'zh' ? event.titleZh || event.titleRu :
+  const title = (language === 'zh' ? event.titleZh || event.titleRu :
+                language === 'en' ? event.titleEn || event.titleRu :
+                event.titleRu) || 'Event';
                 language === 'en' ? event.titleEn || event.titleRu :
                 event.titleRu;
 
@@ -67,7 +69,7 @@ export function generateGoogleCalendarLink(event: Schedule, language: Language):
   
   const params = new URLSearchParams({
     action: 'TEMPLATE',
-    text: title,
+    text: title || 'Event',
     dates: `${formatDateForGoogle(start)}/${formatDateForGoogle(end)}`,
     details: description,
   });
@@ -76,7 +78,9 @@ export function generateGoogleCalendarLink(event: Schedule, language: Language):
 }
 
 export function generateOutlookCalendarLink(event: Schedule, language: Language): string {
-  const title = language === 'zh' ? event.titleZh || event.titleRu :
+  const title = (language === 'zh' ? event.titleZh || event.titleRu :
+                language === 'en' ? event.titleEn || event.titleRu :
+                event.titleRu) || 'Event';
                 language === 'en' ? event.titleEn || event.titleRu :
                 event.titleRu;
 

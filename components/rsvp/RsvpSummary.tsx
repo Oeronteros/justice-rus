@@ -9,12 +9,12 @@ interface RsvpSummaryProps {
 }
 
 export function RsvpSummaryDisplay({ scheduleId, compact = false }: RsvpSummaryProps) {
-  const { data: summary, isLoading } = useRsvpSummary(scheduleId);
+  const { data: summary, isLoading } = useRsvpSummary(scheduleId) as { data: import('@/lib/schemas/rsvp').RsvpSummary | undefined; isLoading: boolean };
 
   if (isLoading || !summary) {
     return (
       <div className="flex items-center gap-3 text-xs text-gray-400">
-        <WuxiaIcon name="clock" className="w-3 h-3 animate-pulse" />
+        <WuxiaIcon name="spinner" className="w-3 h-3 animate-pulse" />
         <span>Загрузка...</span>
       </div>
     );

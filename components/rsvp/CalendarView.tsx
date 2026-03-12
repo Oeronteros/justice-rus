@@ -229,8 +229,8 @@ export function CalendarView({ user, language }: CalendarViewProps) {
                         <WuxiaIcon
                           name={
                             event.rsvp.status === 'going' ? 'checkCircle' :
-                            event.rsvp.status === 'maybe' ? 'questionCircle' :
-                            'xCircle'
+                            event.rsvp.status === 'maybe' ? 'dots' :
+                            'calendarX'
                           }
                           className="w-3 h-3"
                         />
@@ -247,7 +247,7 @@ export function CalendarView({ user, language }: CalendarViewProps) {
                         className="p-1.5 rounded-lg text-[#8fb9cc] hover:bg-[#1a2a3a]/60 transition-colors"
                         title={language === 'ru' ? 'Добавить в Google Calendar' : language === 'zh' ? '添加到 Google 日历' : 'Add to Google Calendar'}
                       >
-                        <WuxiaIcon name="externalLink" className="w-3.5 h-3.5" />
+                        <WuxiaIcon name="link" className="w-3.5 h-3.5" />
                       </button>
                       <button
                         type="button"
@@ -263,7 +263,7 @@ export function CalendarView({ user, language }: CalendarViewProps) {
                         className="p-1.5 rounded-lg text-[#8fb9cc] hover:bg-[#1a2a3a]/60 transition-colors"
                         title={language === 'ru' ? 'Скачать .ics файл' : language === 'zh' ? '下载 .ics 文件' : 'Download .ics file'}
                       >
-                        <WuxiaIcon name="download" className="w-3.5 h-3.5" />
+                        <WuxiaIcon name="upload" className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>

@@ -43,7 +43,6 @@ export function RsvpButton({ scheduleId, currentStatus, user, onRsvpChange }: Rs
   const handleRsvp = async (status: RsvpStatus) => {
     try {
       await upsertRsvp.mutateAsync({
-        userId: user.id,
         scheduleId,
         status,
       });
@@ -67,7 +66,7 @@ export function RsvpButton({ scheduleId, currentStatus, user, onRsvpChange }: Rs
       >
         <WuxiaIcon name={currentConfig.icon as any} className="w-3.5 h-3.5" />
         <span>{currentConfig.label}</span>
-        <WuxiaIcon name="chevronDown" className="w-3 h-3 opacity-70" />
+        <WuxiaIcon name="dots" className="w-3 h-3 opacity-70" />
       </button>
 
       {isOpen && (

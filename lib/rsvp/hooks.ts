@@ -9,7 +9,7 @@ const rsvpKeys = {
 
 export function useRsvps(userId: string | null, enabled: boolean = true) {
   return useQuery<Rsvp[]>({
-    queryKey: userId ? rsvpKeys.list(userId) : undefined,
+    queryKey: rsvpKeys.list(userId!),
     queryFn: async () => {
       const response = await fetch(`/api/schedule/rsvp?userId=${userId}`);
       if (!response.ok) {
@@ -25,7 +25,7 @@ export function useRsvps(userId: string | null, enabled: boolean = true) {
 
 export function useRsvpSummary(scheduleId: string | null, enabled: boolean = true) {
   return useQuery<RsvpSummary>({
-    queryKey: scheduleId ? rsvpKeys.summary(scheduleId) : undefined,
+    queryKey: rsvpKeys.summary(scheduleId!),
     queryFn: async () => {
       const response = await fetch(`/api/schedule/rsvp/summary?scheduleId=${scheduleId}`);
       if (!response.ok) {
