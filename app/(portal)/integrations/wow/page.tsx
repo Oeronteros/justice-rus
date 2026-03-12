@@ -70,7 +70,7 @@ export default function WoWServicesPage({ language }: WoWServicesPageProps) {
             chips={['Integration', 'Officers Only']}
           />
           <div className="card section-card p-6 text-center text-gray-400">
-            <WuxiaIcon name="lock" className="w-12 h-12 mx-auto mb-3 opacity-30" />
+            <WuxiaIcon name="lockOpen" className="w-12 h-12 mx-auto mb-3 opacity-30" />
             <p>{language === 'zh' ? '此页面需要官员或更高权限' : language === 'en' ? 'This page requires officer or higher role' : 'Эта страница требует роли офицера или выше'}</p>
           </div>
         </div>

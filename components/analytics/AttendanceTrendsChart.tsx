@@ -37,7 +37,7 @@ export function AttendanceTrendsChart({ data, daysToShow = 14 }: AttendanceTrend
           trend > 0 ? 'text-[#2d5a3f]' : trend < 0 ? 'text-[#5a2d2d]' : 'text-gray-400'
         }`}>
           <WuxiaIcon
-            name={trend > 0 ? 'trendingUp' : trend < 0 ? 'trendingDown' : 'minus'}
+            name={trend > 0 ? 'redo' : trend < 0 ? 'refresh' : 'spinner'}
             className="w-3.5 h-3.5"
           />
           {trend > 0 ? '+' : ''}{trend.toFixed(1)}%
