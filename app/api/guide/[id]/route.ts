@@ -7,6 +7,7 @@ import { getPool } from '@/lib/neon';
 import { canModerateContent } from '@/lib/authz';
 import {
   handleRouteError,
+  jsonError,
   parseJsonBody,
   requireAuth,
   requireDatabase,
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
     const { id } = await context.params;
     const guideId = Number(id);
     if (!Number.isFinite(guideId)) {
-      return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
+      return jsonError('Invalid id', 400);
     }
 
     const { searchParams } = new URL(request.url);
@@ -56,7 +57,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
 
     const guideRow = guideRes.rows[0];
     if (!guideRow) {
-      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+      return jsonError('Not found', 404);
     }
 
     const votesRes = await pool.query(
@@ -143,7 +144,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 
     const payload = parsed.value;
     if (!payload.title && !payload.content && !payload.category) {
-      return NextResponse.json({ error: 'Nothing to update' }, { status: 400 });
+      return jsonError('Nothing to update', 400);
     }
 
     await ensureGuideSchema();
@@ -152,7 +153,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     const { id } = await context.params;
     const guideId = Number(id);
     if (!Number.isFinite(guideId)) {
-      return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
+      return jsonError('Invalid id', 400);
     }
 
     const existing = await pool.query(
@@ -161,13 +162,13 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     );
     const row = existing.rows[0];
     if (!row) {
-      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+      return jsonError('Not found', 404);
     }
 
     const accountId = decoded.id && Number.isFinite(Number(decoded.id)) ? Number(decoded.id) : null;
     const isOwner = accountId != null && row.owner_account_id != null && Number(row.owner_account_id) === accountId;
     if (!isModerator && !isOwner) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return jsonError('Forbidden', 403);
     }
 
     const nextTitle = payload.title ?? row.title;
@@ -223,7 +224,7 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
     const decoded = auth.value;
 
     if (!canModerateContent(decoded.role)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return jsonError('Forbidden', 403);
     }
 
     const db = requireDatabase();
@@ -236,12 +237,12 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
     const { id } = await context.params;
     const guideId = Number(id);
     if (!Number.isFinite(guideId)) {
-      return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
+      return jsonError('Invalid id', 400);
     }
 
     const deleted = await pool.query(`DELETE FROM guide WHERE id = $1 RETURNING id`, [guideId]);
     if (!deleted.rows[0]) {
-      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+      return jsonError('Not found', 404);
     }
 
     return NextResponse.json({ success: true });

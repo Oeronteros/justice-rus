@@ -11,6 +11,7 @@ import { getRegistrationReadModel, refreshRegistrationReadModelAfterWrite } from
 import { RegistrationUpdateError, updateRegistrationStats } from '@/lib/server/registration/write';
 import {
   handleRouteError,
+  jsonError,
   parseJsonBody,
   requireActiveSession,
 } from '@/lib/server/route-helpers';
@@ -30,7 +31,7 @@ export async function GET(request: NextRequest) {
 
     const token = getAuthToken(request);
     if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return jsonError('Unauthorized', 401);
     }
 
     if (hasDatabaseUrl()) {
@@ -57,13 +58,11 @@ export async function GET(request: NextRequest) {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({})) as Record<string, unknown>;
-      return NextResponse.json(
-        {
-          error: 'Failed to fetch users from Discord bot',
+      return jsonError('Failed to fetch users from Discord bot', response.status, {
+        details: {
           message: String(errorData.error || errorData.message || `HTTP ${response.status}`),
         },
-        { status: response.status }
-      );
+      });
     }
 
     const data = await response.json();
@@ -84,7 +83,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     if (!hasDatabaseUrl()) {
-      return NextResponse.json({ error: 'Database is not configured' }, { status: 503 });
+      return jsonError('Database is not configured', 503);
     }
 
     const parsed = await parseJsonBody(request, updateRegistrationStatsSchema);
@@ -98,7 +97,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ success: true, portalOnly: result.portalOnly });
   } catch (error) {
     if (error instanceof RegistrationUpdateError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
+      return jsonError(error.message, error.status);
     }
 
     return handleRouteError(error, {

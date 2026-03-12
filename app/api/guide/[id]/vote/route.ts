@@ -5,6 +5,7 @@ import { ensureGuideSchema } from '@/lib/guides/schema';
 import { getPool } from '@/lib/neon';
 import {
   handleRouteError,
+  jsonError,
   parseJsonBody,
   requireAuth,
   requireDatabase,
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     const payload = parsed.value;
     const voterKey = decoded.id ? `account:${decoded.id}` : (payload.voterKey || '').trim();
     if (!voterKey) {
-      return NextResponse.json({ error: 'Missing voter key' }, { status: 400 });
+      return jsonError('Missing voter key', 400);
     }
 
     await ensureGuideSchema();
@@ -51,12 +52,12 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     const { id } = await context.params;
     const guideId = Number(id);
     if (!Number.isFinite(guideId)) {
-      return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
+      return jsonError('Invalid id', 400);
     }
 
     const exists = await pool.query(`SELECT 1 FROM guide WHERE id = $1`, [guideId]);
     if (exists.rowCount === 0) {
-      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+      return jsonError('Not found', 404);
     }
 
     const already = await pool.query(

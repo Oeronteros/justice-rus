@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { runServerTaskOnce } from '@/lib/server/db-cache';
 import {
   handleRouteError,
+  jsonError,
   parseJsonBody,
   requireActiveSession,
   requirePermission,
@@ -84,7 +85,7 @@ export async function GET(request: NextRequest) {
 
     const token = getAuthToken(request);
     if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return jsonError('Unauthorized', 401);
     }
 
     if (hasDatabaseUrl()) {
@@ -103,13 +104,11 @@ export async function GET(request: NextRequest) {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      return NextResponse.json(
-        {
-          error: 'Failed to fetch absences from Discord bot',
+      return jsonError('Failed to fetch absences from Discord bot', response.status, {
+        details: {
           message: (errorData as any).error || (errorData as any).message || `HTTP ${response.status}`,
         },
-        { status: response.status }
-      );
+      });
     }
 
     const data = await response.json();
@@ -131,7 +130,7 @@ export async function POST(request: NextRequest) {
 
     const token = getAuthToken(request);
     if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return jsonError('Unauthorized', 401);
     }
 
     const parsed = await parseJsonBody(request, createAbsenceSchema);
@@ -210,13 +209,11 @@ export async function POST(request: NextRequest) {
 
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
-      return NextResponse.json(
-        {
-          error: 'Failed to create absence in Discord bot',
+      return jsonError('Failed to create absence in Discord bot', response.status, {
+        details: {
           message: (data as any).error || (data as any).message || `HTTP ${response.status}`,
         },
-        { status: response.status }
-      );
+      });
     }
 
     return NextResponse.json(data, { status: 201 });
@@ -241,7 +238,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     if (!hasDatabaseUrl()) {
-      return NextResponse.json({ error: 'Database is not configured' }, { status: 503 });
+      return jsonError('Database is not configured', 503);
     }
 
     const parsed = await parseJsonBody(request, updateAbsenceStatusSchema);
@@ -264,13 +261,13 @@ export async function PATCH(request: NextRequest) {
     );
 
     if ((updated.rowCount || 0) === 0) {
-      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+      return jsonError('Not found', 404);
     }
 
     const data = await getAbsencesFromDb();
     const item = data.find((absence) => absence.id === payload.id);
     if (!item) {
-      return NextResponse.json({ error: 'Updated absence not found' }, { status: 404 });
+      return jsonError('Updated absence not found', 404);
     }
 
     return NextResponse.json(item);

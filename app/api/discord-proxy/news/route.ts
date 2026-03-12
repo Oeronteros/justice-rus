@@ -4,7 +4,7 @@ import { getAuthToken } from '@/lib/auth/request';
 import { optionsResponse } from '@/lib/server/cors';
 import { hasDatabaseUrl } from '@/lib/neon';
 import { fetchNewsDirect, getNewsReadModel } from '@/lib/server/read-models/news';
-import { handleRouteError, requireActiveSession } from '@/lib/server/route-helpers';
+import { handleRouteError, jsonError, requireActiveSession } from '@/lib/server/route-helpers';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     const token = getAuthToken(request);
     if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return jsonError('Unauthorized', 401);
     }
 
     if (hasDatabaseUrl()) {

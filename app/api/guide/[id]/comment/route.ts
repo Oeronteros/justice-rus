@@ -5,6 +5,7 @@ import { ensureGuideSchema } from '@/lib/guides/schema';
 import { getPool } from '@/lib/neon';
 import {
   handleRouteError,
+  jsonError,
   parseJsonBody,
   requireAuth,
   requireDatabase,
@@ -48,12 +49,12 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     const { id } = await context.params;
     const guideId = Number(id);
     if (!Number.isFinite(guideId)) {
-      return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
+      return jsonError('Invalid id', 400);
     }
 
     const exists = await pool.query(`SELECT 1 FROM guide WHERE id = $1`, [guideId]);
     if (exists.rowCount === 0) {
-      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+      return jsonError('Not found', 404);
     }
 
     const author = payload.author || decoded.nickname || decoded.discordId || decoded.role;

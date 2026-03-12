@@ -1,8 +1,8 @@
-// API Route: /api/discord-proxy/guides
-// Прокси для получения гайдов через Discord бота
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
+import { getAuthToken } from '@/lib/auth/request';
+import { optionsResponse } from '@/lib/server/cors';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
+import { handleRouteError, jsonError, requireActiveSession } from '@/lib/server/route-helpers';
 
 const DISCORD_BOT_API_URL = process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const bypassHeader: Record<string, string> = (DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me'))
@@ -11,12 +11,14 @@ const bypassHeader: Record<string, string> = (DISCORD_BOT_API_URL.includes('.loc
 
 export async function GET(request: NextRequest) {
   try {
-    const headerToken = request.headers.get('authorization');
-    const cookieToken = request.cookies.get('auth_token')?.value;
-    const token = cookieToken || (headerToken && headerToken.startsWith('Bearer ') ? headerToken.slice(7) : null);
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
+    }
 
-    if (!token || !verifyToken(token)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const token = getAuthToken(request);
+    if (!token) {
+      return jsonError('Unauthorized', 401);
     }
 
     if (hasDatabaseUrl()) {
@@ -52,37 +54,24 @@ export async function GET(request: NextRequest) {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      return NextResponse.json(
-        {
-          error: 'Failed to fetch guides from Discord bot',
+      return jsonError('Failed to fetch guides from Discord bot', response.status, {
+        details: {
           message: errorData.error || errorData.message || `HTTP ${response.status}`,
         },
-        { status: response.status }
-      );
+      });
     }
 
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error proxying guides request to Discord bot:', error);
-    return NextResponse.json(
-      {
-        error: 'Failed to connect to Discord bot',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return handleRouteError(error, {
+      logLabel: 'Error proxying guides request to Discord bot:',
+      fallbackMessage: 'Failed to connect to Discord bot',
+    });
   }
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  });
+  return optionsResponse({ methods: ['GET'] });
 }
 

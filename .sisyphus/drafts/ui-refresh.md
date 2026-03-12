@@ -4,7 +4,7 @@
 - Participant prefixes should display nicely in the participants UI.
 - Dashboard visual quality needs improvement.
 - Menu visual quality needs improvement.
-- Redesign scope: partial restructuring, not full replacement.
+- Redesign scope: dashboard and menu may be changed freely, including strong layout/composition changes.
 
 ## Technical Decisions
 - Preserve the existing Wuxia-themed design language and shared layout/navigation foundations unless later clarified otherwise.
@@ -25,8 +25,6 @@
 
 ## Open Questions
 - Should participant prefixes be improved only in the profile participant card, or also anywhere else participants are listed?
-- For the partial redesign, should dashboard and menu keep the current information architecture or can section ordering/grouping change?
-- Should this work include automated tests as TDD, tests after implementation, or no new automated tests?
 
 ## Scope Boundaries
 - INCLUDE: participant prefix presentation, dashboard UI, menu UI.

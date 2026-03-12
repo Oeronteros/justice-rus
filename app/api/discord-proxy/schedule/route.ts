@@ -5,7 +5,7 @@ import { getAuthToken } from '@/lib/auth/request';
 import { optionsResponse } from '@/lib/server/cors';
 import { hasDatabaseUrl } from '@/lib/neon';
 import { getScheduleReadModel } from '@/lib/server/read-models/schedule';
-import { handleRouteError, requireActiveSession } from '@/lib/server/route-helpers';
+import { handleRouteError, jsonError, requireActiveSession } from '@/lib/server/route-helpers';
 
 const DISCORD_BOT_API_URL = process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const bypassHeader: Record<string, string> = (DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me'))
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
 
     const token = getAuthToken(request);
     if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return jsonError('Unauthorized', 401);
     }
 
     if (hasDatabaseUrl()) {
@@ -41,13 +41,11 @@ export async function GET(request: NextRequest) {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      return NextResponse.json(
-        {
-          error: 'Failed to fetch schedule from Discord bot',
+      return jsonError('Failed to fetch schedule from Discord bot', response.status, {
+        details: {
           message: errorData.error || errorData.message || `HTTP ${response.status}`,
         },
-        { status: response.status }
-      );
+      });
     }
 
     const data = await response.json();
@@ -63,4 +61,3 @@ export async function GET(request: NextRequest) {
 export async function OPTIONS() {
   return optionsResponse({ methods: ['GET'] });
 }
-
