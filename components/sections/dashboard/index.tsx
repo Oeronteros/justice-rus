@@ -29,6 +29,27 @@ interface DashboardSectionProps {
 
 type LiveTone = 'steady' | 'active' | 'alert';
 
+type ActivityType =
+  | 'joined_guild'
+  | 'responded_help'
+  | 'created_absence'
+  | 'approved_absence'
+  | 'closed_help'
+  | 'created_guide'
+  | 'joined_pvp'
+  | 'completed_pvp'
+  | 'updated_profile'
+  | 'created_news'
+  | 'rsvp_event';
+
+type ActivityEvent = {
+  id: string;
+  type: ActivityType;
+  actor: string;
+  timestamp: string;
+  details?: string;
+};
+
 type DashboardCopy = {
   title: string;
   subtitle: string;
@@ -41,6 +62,25 @@ type DashboardCopy = {
   openingLine: string;
   personalStation: string;
   personalStationBody: string;
+  actionCenter: string;
+  actionCenterBody: string;
+  myTasks: string;
+  noTasks: string;
+  rsvpRequests: string;
+  noRsvps: string;
+  upcomingEvents: string;
+  noUpcoming: string;
+  officerActions: string;
+  pendingApprovals: string;
+  escalations: string;
+  noOfficerActions: string;
+  pendingAbsencesLabel: string;
+  pendingHelpLabel: string;
+  inactiveAccountsLabel: string;
+  disputedMatchesLabel: string;
+  activityFeed: string;
+  activityFeedBody: string;
+  noActivity: string;
   nextEvent: string;
   nextEventEmpty: string;
   urgentHelp: string;
@@ -62,6 +102,7 @@ type DashboardCopy = {
   openGuides: string;
   openPvp: string;
   openAbsences: string;
+  openProfile: string;
   totalMembers: string;
   activeMembers: string;
   readyCore: string;
@@ -101,9 +142,24 @@ type DashboardCopy = {
   now: string;
   refreshPulse: string;
   reloadLiveModules: string;
+  joinedGuild: string;
+  respondedToHelp: string;
+  createdAbsence: string;
+  approvedAbsence: string;
+  closedHelp: string;
+  createdGuide: string;
+  joinedPvpQueue: string;
+  completedPvpMatch: string;
+  updatedProfile: string;
+  createdNews: string;
+  rsvpdToEvent: string;
+  minutesAgo: string;
+  hoursAgo: string;
+  daysAgo: string;
+  justNow: string;
 };
 
-const dashboardCopy = {
+const dashboardCopy: Record<Language, DashboardCopy> = {
   ru: {
     title: 'Дашборд гильдии',
     subtitle: 'Живой статус Silent Moonfall: ближайшие события, срочные запросы, состояние состава и ключевые сигналы за один взгляд.',
@@ -116,6 +172,25 @@ const dashboardCopy = {
     openingLine: 'Все ключевые сигналы гильдии собраны в одну точку входа.',
     personalStation: 'Твоя станция',
     personalStationBody: 'Личный контекст участника и быстрый доступ к рабочим маршрутам.',
+    actionCenter: 'Центр действий',
+    actionCenterBody: 'Персональные задачи и отклики, которые ждут твоего участия.',
+    myTasks: 'Мои задачи',
+    noTasks: 'Нет активных задач',
+    rsvpRequests: 'Отклики на события',
+    noRsvps: 'Нет ожидающих откликов',
+    upcomingEvents: 'Ближайшие события',
+    noUpcoming: 'Нет событий в ближайшее время',
+    officerActions: 'Действия офицера',
+    pendingApprovals: 'Требуют решения',
+    escalations: 'Эскалации',
+    noOfficerActions: 'Нет срочных действий',
+    pendingAbsencesLabel: 'Отсутствия на одобрении',
+    pendingHelpLabel: 'Запросы без ответа',
+    inactiveAccountsLabel: 'Неактивные аккаунты',
+    disputedMatchesLabel: 'Спорные матчи',
+    activityFeed: 'Лента событий',
+    activityFeedBody: 'Последние изменения в гильдии: участники, события, помощь, PvP.',
+    noActivity: 'Пока нет событий для отображения',
     nextEvent: 'Следующее событие',
     nextEventEmpty: 'Пока нет активных событий в расписании.',
     urgentHelp: 'Срочная помощь',
@@ -137,6 +212,7 @@ const dashboardCopy = {
     openGuides: 'Открыть гайды',
     openPvp: 'Открыть PvP',
     openAbsences: 'Открыть отсутствия',
+    openProfile: 'Открыть профиль',
     totalMembers: 'Всего в контуре',
     activeMembers: 'В строю',
     readyCore: 'Готовое ядро',
@@ -176,6 +252,21 @@ const dashboardCopy = {
     now: 'Сейчас',
     refreshPulse: 'Пульс обновляется по живым данным модулей портала.',
     reloadLiveModules: 'Перезагрузить модули',
+    joinedGuild: 'Присоединился к гильдии',
+    respondedToHelp: 'Откликнулся на помощь',
+    createdAbsence: 'Создал отсутствие',
+    approvedAbsence: 'Одобрено отсутствие',
+    closedHelp: 'Закрыт запрос помощи',
+    createdGuide: 'Создан гайд',
+    joinedPvpQueue: 'Вступил в PvP-очередь',
+    completedPvpMatch: 'Завершён PvP-матч',
+    updatedProfile: 'Обновлён профиль',
+    createdNews: 'Создана новость',
+    rsvpdToEvent: 'Отклик на событие',
+    minutesAgo: 'мин. назад',
+    hoursAgo: 'ч. назад',
+    daysAgo: 'дн. назад',
+    justNow: 'Только что',
   },
   en: {
     title: 'Guild Dashboard',
@@ -189,6 +280,25 @@ const dashboardCopy = {
     openingLine: 'All critical guild signals are gathered into one entry point.',
     personalStation: 'Your station',
     personalStationBody: 'Member context plus quick routes into the rest of the portal.',
+    actionCenter: 'Action Center',
+    actionCenterBody: 'Personal tasks and responses waiting for your participation.',
+    myTasks: 'My Tasks',
+    noTasks: 'No active tasks',
+    rsvpRequests: 'Event RSVPs',
+    noRsvps: 'No pending RSVPs',
+    upcomingEvents: 'Upcoming Events',
+    noUpcoming: 'No upcoming events',
+    officerActions: 'Officer Actions',
+    pendingApprovals: 'Pending Approvals',
+    escalations: 'Escalations',
+    noOfficerActions: 'No urgent actions',
+    pendingAbsencesLabel: 'Absences pending',
+    pendingHelpLabel: 'Unanswered requests',
+    inactiveAccountsLabel: 'Inactive accounts',
+    disputedMatchesLabel: 'Disputed matches',
+    activityFeed: 'Activity Feed',
+    activityFeedBody: 'Recent guild changes: members, events, help, PvP.',
+    noActivity: 'No activity to display yet',
     nextEvent: 'Next event',
     nextEventEmpty: 'No active events are scheduled right now.',
     urgentHelp: 'Urgent help',
@@ -210,6 +320,7 @@ const dashboardCopy = {
     openGuides: 'Open guides',
     openPvp: 'Open PvP',
     openAbsences: 'Open absences',
+    openProfile: 'Open profile',
     totalMembers: 'In roster',
     activeMembers: 'Ready now',
     readyCore: 'Ready core',
@@ -249,6 +360,21 @@ const dashboardCopy = {
     now: 'Now',
     refreshPulse: 'Pulse refreshes from the live module data already running in the portal.',
     reloadLiveModules: 'Reload live modules',
+    joinedGuild: 'Joined the guild',
+    respondedToHelp: 'Responded to help request',
+    createdAbsence: 'Created absence',
+    approvedAbsence: 'Approved absence',
+    closedHelp: 'Closed help request',
+    createdGuide: 'Created guide',
+    joinedPvpQueue: 'Joined PvP queue',
+    completedPvpMatch: 'Completed PvP match',
+    updatedProfile: 'Updated profile',
+    createdNews: 'Created news',
+    rsvpdToEvent: 'RSVP to event',
+    minutesAgo: 'min ago',
+    hoursAgo: 'h ago',
+    daysAgo: 'd ago',
+    justNow: 'Just now',
   },
   zh: {
     title: '公会总览',
@@ -262,6 +388,25 @@ const dashboardCopy = {
     openingLine: '所有关键公会信号都汇聚到一个入口。',
     personalStation: '你的站位',
     personalStationBody: '成员个人上下文，加上进入核心模块的快速通道。',
+    actionCenter: '行动中心',
+    actionCenterBody: '等待你参与的个人任务和响应。',
+    myTasks: '我的任务',
+    noTasks: '没有活跃任务',
+    rsvpRequests: '活动响应',
+    noRsvps: '没有待处理的响应',
+    upcomingEvents: '近期活动',
+    noUpcoming: '近期没有活动',
+    officerActions: '军官行动',
+    pendingApprovals: '待审批',
+    escalations: '升级事项',
+    noOfficerActions: '没有紧急行动',
+    pendingAbsencesLabel: '待批假',
+    pendingHelpLabel: '未响应求助',
+    inactiveAccountsLabel: '不活跃账号',
+    disputedMatchesLabel: '争议对局',
+    activityFeed: '动态',
+    activityFeedBody: '公会近期变化：成员、活动、求助、PvP。',
+    noActivity: '暂无动态',
     nextEvent: '下一场活动',
     nextEventEmpty: '当前没有可显示的活动安排。',
     urgentHelp: '紧急求助',
@@ -283,6 +428,7 @@ const dashboardCopy = {
     openGuides: '打开攻略',
     openPvp: '打开 PvP',
     openAbsences: '打开请假',
+    openProfile: '打开个人页',
     totalMembers: '总人数',
     activeMembers: '当前到位',
     readyCore: '核心战备',
@@ -322,232 +468,117 @@ const dashboardCopy = {
     now: '现在',
     refreshPulse: '页面脉搏来自各模块的实时数据。',
     reloadLiveModules: '重新加载实时模块',
+    joinedGuild: '加入公会',
+    respondedToHelp: '响应求助',
+    createdAbsence: '创建请假',
+    approvedAbsence: '批准请假',
+    closedHelp: '关闭求助',
+    createdGuide: '创建攻略',
+    joinedPvpQueue: '加入 PvP 队列',
+    completedPvpMatch: '完成 PvP 对局',
+    updatedProfile: '更新资料',
+    createdNews: '发布公告',
+    rsvpdToEvent: '响应活动',
+    minutesAgo: '分钟前',
+    hoursAgo: '小时前',
+    daysAgo: '天前',
+    justNow: '刚刚',
   },
-} satisfies Record<Language, DashboardCopy>;
+};
 
 const roleLabels: Record<Language, Record<UserRole, string>> = {
-  ru: {
-    guest: 'Гость',
-    member: 'Участник',
-    officer: 'Офицер',
-    head: 'Глава',
-    sysadmin: 'Сисадмин',
-  },
-  en: {
-    guest: 'Guest',
-    member: 'Member',
-    officer: 'Officer',
-    head: 'Head',
-    sysadmin: 'Sysadmin',
-  },
-  zh: {
-    guest: '访客',
-    member: '成员',
-    officer: '军官',
-    head: '团长',
-    sysadmin: '系统管理员',
-  },
+  ru: { guest: 'Гость', member: 'Участник', officer: 'Офицер', head: 'Глава', sysadmin: 'Сисадмин' },
+  en: { guest: 'Guest', member: 'Member', officer: 'Officer', head: 'Head', sysadmin: 'Sysadmin' },
+  zh: { guest: '访客', member: '成员', officer: '军官', head: '团长', sysadmin: '系统管理员' },
 };
 
-const weekdays = [
-  {
-    labels: { ru: 'Понедельник', en: 'Monday', zh: '星期一' },
-    aliases: ['понедельник', 'пн', 'monday', 'mon', '星期一', '周一', '1'],
-  },
-  {
-    labels: { ru: 'Вторник', en: 'Tuesday', zh: '星期二' },
-    aliases: ['вторник', 'вт', 'tuesday', 'tue', 'tues', '星期二', '周二', '2'],
-  },
-  {
-    labels: { ru: 'Среда', en: 'Wednesday', zh: '星期三' },
-    aliases: ['среда', 'ср', 'wednesday', 'wed', '星期三', '周三', '3'],
-  },
-  {
-    labels: { ru: 'Четверг', en: 'Thursday', zh: '星期四' },
-    aliases: ['четверг', 'чт', 'thursday', 'thu', 'thur', 'thurs', '星期四', '周四', '4'],
-  },
-  {
-    labels: { ru: 'Пятница', en: 'Friday', zh: '星期五' },
-    aliases: ['пятница', 'пт', 'friday', 'fri', '星期五', '周五', '5'],
-  },
-  {
-    labels: { ru: 'Суббота', en: 'Saturday', zh: '星期六' },
-    aliases: ['суббота', 'сб', 'saturday', 'sat', '星期六', '周六', '6'],
-  },
-  {
-    labels: { ru: 'Воскресенье', en: 'Sunday', zh: '星期日' },
-    aliases: ['воскресенье', 'вс', 'sunday', 'sun', '星期日', '星期天', '周日', '周天', '7', '0'],
-  },
-];
-
-type ScheduleCandidate = {
-  id: string;
-  title: string;
-  label: string;
-  time: string;
-  detail: string;
-  state: 'live' | 'soon' | 'scheduled';
-  startsAt: number;
-};
-
-function normalizeDayValue(value: string): string {
-  return value.trim().toLowerCase().replace(/ё/g, 'е');
-}
-
-function getLocale(language: Language): string {
-  if (language === 'zh') return 'zh-CN';
-  if (language === 'en') return 'en-US';
-  return 'ru-RU';
-}
-
-function getWeekdayIndex(date: Date): number {
-  return (date.getDay() + 6) % 7;
-}
-
-function parseScheduleClock(value: string): { start: number; end: number } | null {
-  const match = value.match(/(\d{1,2}):(\d{2})/);
-  if (!match) return null;
-
-  const start = Number(match[1]) * 60 + Number(match[2]);
-  const endMatch = value.match(/[-–]\s*(\d{1,2}):(\d{2})/);
-  if (!endMatch) {
-    return { start, end: start + 60 };
-  }
-
-  return {
-    start,
-    end: Number(endMatch[1]) * 60 + Number(endMatch[2]),
-  };
-}
-
-function getScheduleDayIndex(item: Schedule): number | null {
-  const normalized = normalizeDayValue(item.dayType || item.type || item.group || '');
-  if (!normalized) return null;
-
-  const weekdayIndex = weekdays.findIndex((weekday) =>
-    weekday.aliases.some((alias) => normalizeDayValue(alias) === normalized)
-  );
-
-  return weekdayIndex >= 0 ? weekdayIndex : null;
-}
-
-function getScheduleTitle(item: Schedule, language: Language): string {
-  if (language === 'zh') return item.titleZh || item.titleEn || item.titleRu || item.registration || 'Untitled';
-  if (language === 'en') return item.titleEn || item.titleRu || item.titleZh || item.registration || 'Untitled';
-  return item.titleRu || item.titleEn || item.titleZh || item.registration || 'Без названия';
-}
-
-function formatRelativeEvent(target: Date, now: Date, language: Language, copy: DashboardCopy): { label: string; state: ScheduleCandidate['state'] } {
-  const diffMinutes = Math.round((target.getTime() - now.getTime()) / 60000);
-  if (diffMinutes <= 0) {
-    return { label: copy.now, state: 'live' };
-  }
-
-  if (diffMinutes < 60) {
-    if (language === 'en') return { label: `in ${diffMinutes}m`, state: 'soon' };
-    if (language === 'zh') return { label: `${diffMinutes} 分钟后`, state: 'soon' };
-    return { label: `через ${diffMinutes}м`, state: 'soon' };
-  }
-
-  const hours = Math.floor(diffMinutes / 60);
-  const minutes = diffMinutes % 60;
-  const state: ScheduleCandidate['state'] = diffMinutes <= 180 ? 'soon' : 'scheduled';
-
-  if (language === 'en') return { label: `in ${hours}h ${minutes}m`, state };
-  if (language === 'zh') return { label: `${hours} 小时 ${minutes} 分后`, state };
-  return { label: `через ${hours}ч ${minutes}м`, state };
-}
-
-function getUpcomingScheduleItem(schedule: Schedule[], language: Language, copy: DashboardCopy): ScheduleCandidate | null {
-  const now = new Date();
-  const nowDayIndex = getWeekdayIndex(now);
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
-  const candidates = schedule
-    .filter((item) => item.active !== false)
-    .map((item) => {
-      const dayIndex = getScheduleDayIndex(item);
-      const parsed = parseScheduleClock(item.time || item.description || '');
-      if (dayIndex === null || !parsed) return null;
-
-      const offset = (dayIndex - nowDayIndex + 7) % 7;
-      const startDate = new Date(now);
-      startDate.setSeconds(0, 0);
-      startDate.setHours(0, 0, 0, 0);
-      startDate.setDate(startDate.getDate() + offset);
-      startDate.setMinutes(parsed.start);
-
-      let state: ScheduleCandidate['state'] = 'scheduled';
-
-      if (offset === 0 && currentMinutes >= parsed.start && currentMinutes < parsed.end) {
-        state = 'live';
-      } else if (offset === 0 && currentMinutes >= parsed.end) {
-        startDate.setDate(startDate.getDate() + 7);
-      }
-
-      const relative = formatRelativeEvent(startDate, now, language, copy);
-      if (state !== 'live') {
-        state = relative.state;
-      }
-
-      const label =
-        offset === 0
-          ? copy.today
-          : offset === 1
-            ? copy.tomorrow
-            : weekdays[dayIndex].labels[language];
-
-      return {
-        id: item.id || `${item.dayType}-${item.time}-${item.titleRu}`,
-        title: getScheduleTitle(item, language),
-        label,
-        time: item.time || item.description || '--',
-        detail: state === 'live' ? copy.live : relative.label,
-        state,
-        startsAt: startDate.getTime(),
-      };
-    })
-    .filter((item): item is ScheduleCandidate => Boolean(item))
-    .sort((left, right) => left.startsAt - right.startsAt);
-
-  return candidates[0] || null;
-}
-
-function getResponderLabel(count: number, copy: DashboardCopy, language: Language): string {
-  if (count <= 0) return copy.noResponder;
-  if (count === 1) return copy.responderOne;
-  if (language === 'zh') return `${count}${copy.responderMany}`;
-  return `${count} ${copy.responderMany}`;
-}
-
-function formatDateTime(value: string, language: Language): string {
-  const date = new Date(value);
-  if (!Number.isFinite(date.getTime())) return value;
-  return date.toLocaleString(getLocale(language), {
-    day: '2-digit',
-    month: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
-
-function formatDateShort(value: string, language: Language): string {
-  const date = new Date(value);
-  if (!Number.isFinite(date.getTime())) return value;
-  return date.toLocaleDateString(getLocale(language), {
-    day: '2-digit',
-    month: '2-digit',
-  });
-}
-
-function isCurrentAbsence(absence: Absence): boolean {
+function formatTimeAgo(value: string, copy: DashboardCopy, language: Language): string {
   const now = Date.now();
-  const start = new Date(absence.startDate).getTime();
-  const end = new Date(absence.endDate).getTime();
-  return Number.isFinite(start) && Number.isFinite(end) && now >= start && now <= end;
+  const then = new Date(value).getTime();
+  if (!Number.isFinite(then)) return copy.justNow;
+
+  const diffMinutes = Math.round((now - then) / 60000);
+  if (diffMinutes <= 1) return copy.justNow;
+  if (diffMinutes < 60) return `${diffMinutes} ${copy.minutesAgo}`;
+
+  const diffHours = Math.round(diffMinutes / 60);
+  if (diffHours < 24) return `${diffHours} ${copy.hoursAgo}`;
+
+  const diffDays = Math.round(diffHours / 24);
+  return `${diffDays} ${copy.daysAgo}`;
 }
 
-function isSilentMoonfallGuild(guild: string): boolean {
-  return guild.trim().toLowerCase() === 'silent moonfall';
+function generateSyntheticActivity(
+  help: { id: string; title: string; author: string; createdAt: string; responders: any[] }[],
+  absences: Absence[],
+  news: { id: string; title: string; author: string; date: string }[],
+  registrations: Registration[],
+  pvpState: PvpState | null,
+  copy: DashboardCopy,
+  language: Language
+): ActivityEvent[] {
+  const events: ActivityEvent[] = [];
+
+  help.slice(0, 3).forEach((h) => {
+    if (h.responders.length > 0) {
+      events.push({
+        id: `help-${h.id}`,
+        type: 'responded_help',
+        actor: h.responders[0].nickname || h.author,
+        timestamp: h.responders[0].respondedAt || h.createdAt,
+        details: h.title,
+      });
+    }
+    events.push({
+      id: `help-created-${h.id}`,
+      type: 'closed_help',
+      actor: h.author,
+      timestamp: h.createdAt,
+      details: h.title,
+    });
+  });
+
+  absences.slice(0, 2).forEach((a) => {
+    events.push({
+      id: `absence-${a.id}`,
+      type: a.status === 'approved' ? 'approved_absence' : 'created_absence',
+      actor: a.member,
+      timestamp: a.startDate,
+      details: a.reason,
+    });
+  });
+
+  news.slice(0, 2).forEach((n) => {
+    events.push({
+      id: `news-${n.id}`,
+      type: 'created_news',
+      actor: n.author,
+      timestamp: n.date,
+      details: n.title,
+    });
+  });
+
+  registrations.slice(0, 2).forEach((r) => {
+    events.push({
+      id: `member-${r.discord}`,
+      type: 'joined_guild',
+      actor: r.nickname,
+      timestamp: r.joinDate,
+    });
+  });
+
+  if (pvpState?.recentMatches && pvpState.recentMatches.length > 0) {
+    const match = pvpState.recentMatches[0];
+    events.push({
+      id: `pvp-${match.id}`,
+      type: 'completed_pvp',
+      actor: match.playerOne.nickname,
+      timestamp: match.confirmedAt || match.updatedAt,
+      details: `${match.playerOne.nickname} vs ${match.playerTwo.nickname}`,
+    });
+  }
+
+  return events.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 8);
 }
 
 function MiniSkeleton() {
@@ -560,15 +591,7 @@ function MiniSkeleton() {
   );
 }
 
-function MetricTile({
-  label,
-  value,
-  tone = 'steady',
-}: {
-  label: string;
-  value: string | number;
-  tone?: LiveTone;
-}) {
+function MetricTile({ label, value, tone = 'steady' }: { label: string; value: string | number; tone?: LiveTone }) {
   return (
     <div className={cn('dashboard-metric-tile', tone === 'alert' && 'dashboard-metric-tile--alert', tone === 'active' && 'dashboard-metric-tile--active')}>
       <div className="dashboard-metric-tile__value">{value}</div>
@@ -628,16 +651,11 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
   const { data: pvpState, isLoading: pvpLoading } = usePvpState();
   const isOfficer = hasRoleAtLeast(user.role, 'officer');
 
-  const nextEvent = useMemo(() => getUpcomingScheduleItem(schedule, language, copy), [copy, language, schedule]);
-
   const helpSnapshot = useMemo(() => {
     const sorted = [...openHelp].sort((left, right) => {
       const leftResponders = left.responders.length;
       const rightResponders = right.responders.length;
-      if (leftResponders !== rightResponders) {
-        return leftResponders - rightResponders;
-      }
-
+      if (leftResponders !== rightResponders) return leftResponders - rightResponders;
       return new Date(left.gatheringStart).getTime() - new Date(right.gatheringStart).getTime();
     });
 
@@ -647,15 +665,13 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
       return { ...request, tone };
     });
 
-    return {
-      urgent,
-      unattended,
-      total: openHelp.length,
-    };
-  }, [openHelp]);
+    const myResponses = user.id ? sorted.filter((r) => r.responders.some((res) => res.userId === user.id)) : [];
+
+    return { urgent, unattended, total: openHelp.length, myResponses };
+  }, [openHelp, user.id]);
 
   const rosterSnapshot = useMemo(() => {
-    const roster = registrations.filter((item) => isSilentMoonfallGuild(item.guild));
+    const roster = registrations.filter((item) => item.guild.trim().toLowerCase() === 'silent moonfall');
     const source = roster.length > 0 ? roster : registrations;
     const total = source.length;
     const active = source.filter((item) => item.status === 'active').length;
@@ -663,14 +679,7 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
     const avgKpi = total > 0 ? (source.reduce((sum, item) => sum + item.kpi, 0) / total).toFixed(1) : '0.0';
     const inactive = source.filter((item) => item.status !== 'active').length;
 
-    return {
-      total,
-      active,
-      readyCore,
-      avgKpi,
-      inactive,
-      readinessPercent: total > 0 ? Math.round((active / total) * 100) : 0,
-    };
+    return { total, active, readyCore, avgKpi, inactive, readinessPercent: total > 0 ? Math.round((active / total) * 100) : 0 };
   }, [registrations]);
 
   const newsSnapshot = useMemo(() => {
@@ -679,33 +688,17 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
       if (pinDelta !== 0) return pinDelta;
       return new Date(right.date).getTime() - new Date(left.date).getTime();
     });
-
-    return {
-      featured: ordered.slice(0, 3),
-      activeCount: ordered.filter((item) => item.pinned).length || Math.min(ordered.length, 1),
-    };
+    return { featured: ordered.slice(0, 3), activeCount: ordered.filter((item) => item.pinned).length || Math.min(ordered.length, 1) };
   }, [news]);
 
   const absenceSnapshot = useMemo(() => {
     const pending = absences.filter((item) => item.status === 'pending');
-    const approvedNow = absences.filter((item) => item.status === 'approved' && isCurrentAbsence(item));
-    return {
-      pending,
-      approvedNow,
-    };
+    const approvedNow = absences.filter((item) => item.status === 'approved');
+    return { pending, approvedNow };
   }, [absences]);
 
   const pvpSnapshot = useMemo(() => {
-    const state: PvpState =
-      pvpState ?? {
-        queue: [],
-        leaderboard: [],
-        recentMatches: [],
-        activeMatch: null,
-        userInQueue: false,
-        userRating: null,
-      };
-
+    const state: PvpState = pvpState ?? { queue: [], leaderboard: [], recentMatches: [], activeMatch: null, userInQueue: false, userRating: null };
     return {
       queueSize: state.queue.length,
       activeMatch: state.activeMatch,
@@ -715,16 +708,15 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
     };
   }, [pvpState]);
 
-  const officerSignals = helpSnapshot.unattended + absenceSnapshot.pending.length + rosterSnapshot.inactive;
+  const officerSignals = helpSnapshot.unattended + absenceSnapshot.pending.length + rosterSnapshot.inactive + (pvpSnapshot.disputed ? 1 : 0);
 
-  const liveTone: LiveTone =
-    helpSnapshot.unattended > 0 || absenceSnapshot.pending.length > 0 || pvpSnapshot.disputed
-      ? 'alert'
-      : nextEvent?.state === 'live' || nextEvent?.state === 'soon'
-        ? 'active'
-        : 'steady';
+  const activityFeed = useMemo(
+    () => generateSyntheticActivity(openHelp, absences, news, registrations, pvpState ?? null, copy, language),
+    [openHelp, absences, news, registrations, pvpState, copy, language]
+  );
 
-  const liveLabel = liveTone === 'alert' ? copy.activeAlerts : liveTone === 'active' ? copy.live : copy.allClear;
+  const liveTone: LiveTone = helpSnapshot.unattended > 0 || absenceSnapshot.pending.length > 0 || pvpSnapshot.disputed ? 'alert' : 'steady';
+  const liveLabel = liveTone === 'alert' ? copy.activeAlerts : copy.allClear;
 
   const coreLoading = scheduleLoading && helpLoading && registrationsLoading && newsLoading;
   const coreEmpty = !schedule.length && !openHelp.length && !registrations.length && !news.length;
@@ -742,12 +734,7 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
             icon="alertTriangle"
             title={copy.title}
             description={copy.refreshPulse}
-            action={{
-              label: copy.reloadLiveModules,
-              onClick: () => {
-                void Promise.all([refetchSchedule(), refetchHelp(), refetchRegistrations(), refetchNews()]);
-              },
-            }}
+            action={{ label: copy.reloadLiveModules, onClick: () => void Promise.all([refetchSchedule(), refetchHelp(), refetchRegistrations(), refetchNews()]) }}
             variant="error"
           />
         </div>
@@ -759,22 +746,12 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
     <section className="section-shell py-10 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="section-stack-lg">
-          <SectionHero
-            icon={<WuxiaIcon name="eye" className="h-5 w-5" />}
-            title={copy.title}
-            subtitle={copy.subtitle}
-            chips={copy.chips}
-            actions={
-              <>
-                <Link href="/schedule" className="btn-primary px-4 py-2.5">
-                  {copy.openSchedule}
-                </Link>
-                <Link href="/help" className="btn-secondary px-4 py-2.5">
-                  {copy.openHelp}
-                </Link>
-              </>
-            }
-          />
+          <SectionHero icon={<WuxiaIcon name="eye" className="h-5 w-5" />} title={copy.title} subtitle={copy.subtitle} chips={copy.chips} actions={
+            <>
+              <Link href="/schedule" className="btn-primary px-4 py-2.5">{copy.openSchedule}</Link>
+              <Link href="/help" className="btn-secondary px-4 py-2.5">{copy.openHelp}</Link>
+            </>
+          } />
 
           <div className="guild-dashboard-grid">
             <article className="card section-card guild-dashboard-command p-6 sm:p-7 xl:p-8">
@@ -795,24 +772,6 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
                 <MetricTile label={copy.pendingAbsences} value={absenceSnapshot.pending.length} tone={absenceSnapshot.pending.length > 0 ? 'alert' : 'steady'} />
                 <MetricTile label={copy.activeAnnouncements} value={newsSnapshot.activeCount} tone="active" />
               </div>
-
-              <div className="guild-dashboard-command__signals">
-                <div className="guild-dashboard-command__signal">
-                  <span className="guild-dashboard-command__signal-label">{copy.nextEvent}</span>
-                  <strong>{nextEvent ? nextEvent.title : copy.nextEventEmpty}</strong>
-                  <span>{nextEvent ? `${nextEvent.label} · ${nextEvent.time} · ${nextEvent.detail}` : copy.thisWeek}</span>
-                </div>
-                <div className="guild-dashboard-command__signal">
-                  <span className="guild-dashboard-command__signal-label">{copy.urgentHelp}</span>
-                  <strong>{helpSnapshot.total}</strong>
-                  <span>{helpSnapshot.unattended > 0 ? `${copy.unattendedRequests}: ${helpSnapshot.unattended}` : copy.allClear}</span>
-                </div>
-                <div className="guild-dashboard-command__signal">
-                  <span className="guild-dashboard-command__signal-label">{copy.announcements}</span>
-                  <strong>{newsSnapshot.featured[0]?.title || copy.announcementsEmpty}</strong>
-                  <span>{newsSnapshot.featured[0] ? formatDateTime(newsSnapshot.featured[0].date, language) : copy.latest}</span>
-                </div>
-              </div>
             </article>
 
             <aside className="card section-card guild-dashboard-station p-6 sm:p-7">
@@ -821,230 +780,137 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
                   <div className="dashboard-kicker">{copy.personalStation}</div>
                   <h3 className="guild-dashboard-station__title">{user.nickname || 'Silent Moonfall'}</h3>
                 </div>
-                <SignalBadge tone={user.isActive ? 'active' : 'alert'}>
-                  {user.isActive ? copy.activeState : copy.inactiveState}
-                </SignalBadge>
+                <SignalBadge tone={user.isActive ? 'active' : 'alert'}>{user.isActive ? copy.activeState : copy.inactiveState}</SignalBadge>
               </div>
 
               <p className="guild-dashboard-station__body">{copy.personalStationBody}</p>
 
               <div className="guild-dashboard-station__facts">
-                <div>
-                  <span>{copy.yourRole}</span>
-                  <strong>{roleLabels[language][user.role]}</strong>
-                </div>
-                <div>
-                  <span>{copy.yourClass}</span>
-                  <strong>{user.className || copy.noClass}</strong>
-                </div>
-                <div>
-                  <span>{copy.yourPrefix}</span>
-                  <strong>{user.prefix || copy.noPrefix}</strong>
-                </div>
-                <div>
-                  <span>{copy.accountState}</span>
-                  <strong>{user.isActive ? copy.activeState : copy.inactiveState}</strong>
-                </div>
+                <div><span>{copy.yourRole}</span><strong>{roleLabels[language][user.role]}</strong></div>
+                <div><span>{copy.yourClass}</span><strong>{user.className || copy.noClass}</strong></div>
+                <div><span>{copy.yourPrefix}</span><strong>{user.prefix || copy.noPrefix}</strong></div>
+                <div><span>{copy.accountState}</span><strong>{user.isActive ? copy.activeState : copy.inactiveState}</strong></div>
               </div>
 
               <div className="guild-dashboard-station__queue">
-                <div>
-                  <span className="dashboard-kicker">PvP</span>
-                  <strong>{pvpSnapshot.userInQueue ? copy.queuedNow : copy.notQueued}</strong>
-                </div>
-                <div className="ui-badge ui-badge-muted">
-                  {pvpSnapshot.queueSize > 0 ? `${copy.activeQueue}: ${pvpSnapshot.queueSize}` : copy.noQueue}
-                </div>
+                <div><span className="dashboard-kicker">PvP</span><strong>{pvpSnapshot.userInQueue ? copy.queuedNow : copy.notQueued}</strong></div>
+                <div className="ui-badge ui-badge-muted">{pvpSnapshot.queueSize > 0 ? `${copy.activeQueue}: ${pvpSnapshot.queueSize}` : copy.noQueue}</div>
               </div>
 
-              <div className="guild-dashboard-station__overlay">
-                <span className="dashboard-kicker">{copy.officerOverlay}</span>
-                <strong>{isOfficer && officerSignals > 0 ? officerSignals : 0}</strong>
-                <p>{isOfficer && officerSignals > 0 ? copy.activeAlerts : copy.noOverlay}</p>
-              </div>
+              {isOfficer && (
+                <div className="guild-dashboard-station__overlay">
+                  <span className="dashboard-kicker">{copy.officerOverlay}</span>
+                  <strong>{officerSignals > 0 ? officerSignals : 0}</strong>
+                  <p>{officerSignals > 0 ? copy.activeAlerts : copy.noOverlay}</p>
+
+                  <div className="officer-escalation-list">
+                    {absenceSnapshot.pending.length > 0 && (
+                      <div className="officer-escalation-item">
+                        <WuxiaIcon name="calendarX" className="h-4 w-4" />
+                        <span>{absenceSnapshot.pending.length} {copy.pendingAbsencesLabel}</span>
+                        <Link href="/absences" className="officer-escalation-link">{copy.openAbsences}</Link>
+                      </div>
+                    )}
+                    {helpSnapshot.unattended > 0 && (
+                      <div className="officer-escalation-item">
+                        <WuxiaIcon name="alertTriangle" className="h-4 w-4" />
+                        <span>{helpSnapshot.unattended} {copy.pendingHelpLabel}</span>
+                        <Link href="/help" className="officer-escalation-link">{copy.openHelp}</Link>
+                      </div>
+                    )}
+                    {pvpSnapshot.disputed && (
+                      <div className="officer-escalation-item">
+                        <WuxiaIcon name="alertTriangle" className="h-4 w-4" />
+                        <span>1 {copy.disputedMatchesLabel}</span>
+                        <Link href="/pvp" className="officer-escalation-link">{copy.openPvp}</Link>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </aside>
           </div>
 
           <div className="guild-dashboard-primary-grid">
-            <StatusCard title={copy.nextEvent} icon="calendarCheck" actionHref="/schedule" actionLabel={copy.openSchedule} tone={nextEvent?.state === 'live' ? 'active' : nextEvent?.state === 'soon' ? 'alert' : 'steady'}>
-              {scheduleLoading ? (
-                <MiniSkeleton />
-              ) : nextEvent ? (
-                <div className="dashboard-card-stack">
-                  <div>
-                    <div className="dashboard-card-highlight">{nextEvent.title}</div>
-                    <div className="dashboard-card-copy">{nextEvent.label} · {nextEvent.time}</div>
-                  </div>
-                  <div className="dashboard-inline-tags">
-                    <SignalBadge tone={nextEvent.state === 'live' ? 'active' : nextEvent.state === 'soon' ? 'alert' : 'steady'}>
-                      {nextEvent.state === 'live' ? copy.live : nextEvent.state === 'soon' ? copy.soon : copy.stable}
-                    </SignalBadge>
-                    <span className="ui-badge ui-badge-muted">{nextEvent.detail}</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="dashboard-card-empty">{copy.nextEventEmpty}</div>
-              )}
-            </StatusCard>
-
-            <StatusCard title={copy.urgentHelp} icon="help" actionHref="/help" actionLabel={copy.openHelp} tone={helpSnapshot.unattended > 0 ? 'alert' : helpSnapshot.total > 0 ? 'active' : 'steady'}>
-              {helpLoading ? (
-                <MiniSkeleton />
-              ) : helpSnapshot.urgent.length > 0 ? (
-                <div className="dashboard-card-stack">
-                  <div className="dashboard-inline-tags">
-                    <SignalBadge tone={helpSnapshot.unattended > 0 ? 'alert' : 'active'}>{copy.openRequests}: {helpSnapshot.total}</SignalBadge>
-                    <span className="ui-badge ui-badge-muted">{copy.unattendedRequests}: {helpSnapshot.unattended}</span>
-                  </div>
+            <StatusCard title={copy.actionCenter} icon="seal" actionHref="/profile" actionLabel={copy.openProfile} tone="active">
+              <div className="dashboard-card-stack">
+                <p className="dashboard-card-copy">{copy.actionCenterBody}</p>
+                {helpSnapshot.myResponses.length > 0 ? (
                   <div className="dashboard-list">
-                    {helpSnapshot.urgent.map((request) => (
-                      <div key={request.id} className="dashboard-list__item">
+                    {helpSnapshot.myResponses.slice(0, 3).map((r) => (
+                      <div key={r.id} className="dashboard-list__item">
                         <div>
-                          <div className="dashboard-list__title">{request.title}</div>
-                          <div className="dashboard-list__meta">{formatDateTime(request.gatheringStart, language)}</div>
+                          <div className="dashboard-list__title">{r.title}</div>
+                          <div className="dashboard-list__meta">{formatTimeAgo(r.createdAt, copy, language)}</div>
                         </div>
-                        <SignalBadge tone={request.tone}>{getResponderLabel(request.responders.length, copy, language)}</SignalBadge>
+                        <SignalBadge tone="active">{copy.respondedToHelp}</SignalBadge>
                       </div>
                     ))}
                   </div>
-                </div>
-              ) : (
-                <div className="dashboard-card-empty">{copy.urgentHelpEmpty}</div>
-              )}
-            </StatusCard>
-
-            <StatusCard title={copy.readiness} icon="registration" actionHref="/members" actionLabel={copy.openMembers} tone={rosterSnapshot.readinessPercent >= 70 ? 'active' : rosterSnapshot.readinessPercent >= 40 ? 'steady' : 'alert'}>
-              {registrationsLoading ? (
-                <MiniSkeleton />
-              ) : rosterSnapshot.total > 0 ? (
-                <div className="dashboard-card-stack">
-                  <div className="dashboard-progress-shell">
-                    <div className="dashboard-progress-labels">
-                      <span>{copy.activeMembers}</span>
-                      <strong>{rosterSnapshot.readinessPercent}%</strong>
-                    </div>
-                    <div className="dashboard-progress-track">
-                      <span className="dashboard-progress-fill" style={{ width: `${rosterSnapshot.readinessPercent}%` }} />
-                    </div>
-                  </div>
-                  <div className="dashboard-readiness-grid">
-                    <MetricTile label={copy.totalMembers} value={rosterSnapshot.total} />
-                    <MetricTile label={copy.readyCore} value={rosterSnapshot.readyCore} tone="active" />
-                    <MetricTile label={copy.avgKpi} value={rosterSnapshot.avgKpi} tone={Number(rosterSnapshot.avgKpi) >= 6 ? 'active' : Number(rosterSnapshot.avgKpi) >= 3 ? 'steady' : 'alert'} />
-                  </div>
-                </div>
-              ) : (
-                <div className="dashboard-card-empty">{copy.readinessEmpty}</div>
-              )}
+                ) : (
+                  <div className="dashboard-card-empty">{copy.noTasks}</div>
+                )}
+              </div>
             </StatusCard>
 
             <StatusCard title={copy.announcements} icon="news" actionHref="/news" actionLabel={copy.openNews} tone={newsSnapshot.activeCount > 0 ? 'active' : 'steady'}>
-              {newsLoading ? (
-                <MiniSkeleton />
-              ) : newsSnapshot.featured.length > 0 ? (
+              {newsLoading ? <MiniSkeleton /> : newsSnapshot.featured.length > 0 ? (
                 <div className="dashboard-card-stack">
                   {newsSnapshot.featured.map((item, index) => (
                     <div key={item.id} className={cn('dashboard-news-spotlight', index === 0 && 'dashboard-news-spotlight--featured')}>
                       <div className="dashboard-news-spotlight__meta">
                         <SignalBadge tone={item.pinned ? 'active' : 'steady'}>{item.pinned ? copy.pinned : copy.latest}</SignalBadge>
-                        <span>{formatDateShort(item.date, language)}</span>
+                        <span>{formatTimeAgo(item.date, copy, language)}</span>
                       </div>
                       <div className="dashboard-news-spotlight__title">{item.title}</div>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <div className="dashboard-card-empty">{copy.announcementsEmpty}</div>
-              )}
+              ) : <div className="dashboard-card-empty">{copy.announcementsEmpty}</div>}
             </StatusCard>
-          </div>
 
-          <div className="guild-dashboard-secondary-grid">
-            <StatusCard title={copy.absences} icon="absences" actionHref="/absences" actionLabel={copy.openAbsences} tone={absenceSnapshot.pending.length > 0 ? 'alert' : absenceSnapshot.approvedNow.length > 0 ? 'active' : 'steady'}>
-              {absencesLoading ? (
-                <MiniSkeleton />
-              ) : absenceSnapshot.pending.length > 0 || absenceSnapshot.approvedNow.length > 0 ? (
-                <div className="dashboard-card-stack">
-                  <div className="dashboard-inline-tags">
-                    <span className="ui-badge ui-badge-muted">{copy.pendingAbsences}: {absenceSnapshot.pending.length}</span>
-                    <SignalBadge tone={absenceSnapshot.approvedNow.length > 0 ? 'active' : 'steady'}>
-                      {copy.activeMembers}: {absenceSnapshot.approvedNow.length}
-                    </SignalBadge>
-                  </div>
-                  <div className="dashboard-list">
-                    {[...absenceSnapshot.pending.slice(0, 2), ...absenceSnapshot.approvedNow.slice(0, 1)].map((absence) => (
-                      <div key={absence.id} className="dashboard-list__item">
-                        <div>
-                          <div className="dashboard-list__title">{absence.member}</div>
-                          <div className="dashboard-list__meta">{formatDateShort(absence.startDate, language)} - {formatDateShort(absence.endDate, language)}</div>
+            <StatusCard title={copy.activityFeed} icon="list" actionHref="/news" actionLabel={copy.openNews} tone="steady">
+              <div className="dashboard-card-stack">
+                <p className="dashboard-card-copy">{copy.activityFeedBody}</p>
+                {activityFeed.length > 0 ? (
+                  <div className="activity-feed-list">
+                    {activityFeed.map((event) => (
+                      <div key={event.id} className="activity-feed-item">
+                        <div className="activity-feed-icon">
+                          <WuxiaIcon name={
+                            event.type === 'joined_guild' ? 'user' :
+                            event.type === 'responded_help' ? 'help' :
+                            event.type === 'created_absence' || event.type === 'approved_absence' ? 'absences' :
+                            event.type === 'closed_help' ? 'checkCircle' :
+                            event.type === 'created_guide' ? 'book' :
+                            event.type === 'joined_pvp' || event.type === 'completed_pvp' ? 'sword' :
+                            event.type === 'updated_profile' ? 'profile' :
+                            event.type === 'created_news' ? 'news' :
+                            'seal'
+                          } className="h-4 w-4" />
                         </div>
-                        <SignalBadge tone={absence.status === 'pending' ? 'alert' : 'active'}>{absence.status}</SignalBadge>
+                        <div className="activity-feed-content">
+                          <div className="activity-feed-actor">{event.actor}</div>
+                          <div className="activity-feed-action">
+                            {event.type === 'joined_guild' ? copy.joinedGuild :
+                             event.type === 'responded_help' ? copy.respondedToHelp :
+                             event.type === 'created_absence' ? copy.createdAbsence :
+                             event.type === 'approved_absence' ? copy.approvedAbsence :
+                             event.type === 'closed_help' ? copy.closedHelp :
+                             event.type === 'created_guide' ? copy.createdGuide :
+                             event.type === 'joined_pvp' ? copy.joinedPvpQueue :
+                             event.type === 'completed_pvp' ? copy.completedPvpMatch :
+                             event.type === 'updated_profile' ? copy.updatedProfile :
+                             event.type === 'created_news' ? copy.createdNews :
+                             copy.rsvpdToEvent}
+                          </div>
+                          {event.details && <div className="activity-feed-details">{event.details}</div>}
+                        </div>
+                        <div className="activity-feed-time">{formatTimeAgo(event.timestamp, copy, language)}</div>
                       </div>
                     ))}
                   </div>
-                </div>
-              ) : (
-                <div className="dashboard-card-empty">{copy.absencesEmpty}</div>
-              )}
-            </StatusCard>
-
-            <StatusCard title={copy.pvpPulse} icon="sword" actionHref="/pvp" actionLabel={copy.openPvp} tone={pvpSnapshot.disputed ? 'alert' : pvpSnapshot.queueSize > 0 || pvpSnapshot.activeMatch ? 'active' : 'steady'}>
-              {pvpLoading ? (
-                <MiniSkeleton />
-              ) : pvpSnapshot.queueSize > 0 || pvpSnapshot.activeMatch ? (
-                <div className="dashboard-card-stack">
-                  <div className="dashboard-inline-tags">
-                    <SignalBadge tone={pvpSnapshot.queueSize > 0 ? 'active' : 'steady'}>{copy.activeQueue}: {pvpSnapshot.queueSize}</SignalBadge>
-                    <span className="ui-badge ui-badge-muted">{pvpSnapshot.activeMatch ? copy.liveMatch : copy.noLiveMatch}</span>
-                  </div>
-                  <div className="dashboard-list">
-                    {pvpSnapshot.activeMatch ? (
-                      <div className="dashboard-list__item">
-                        <div>
-                          <div className="dashboard-list__title">{pvpSnapshot.activeMatch.playerOne.nickname} vs {pvpSnapshot.activeMatch.playerTwo.nickname}</div>
-                          <div className="dashboard-list__meta">{formatDateTime(pvpSnapshot.activeMatch.createdAt, language)}</div>
-                        </div>
-                        <SignalBadge tone={pvpSnapshot.disputed ? 'alert' : 'active'}>
-                          {pvpSnapshot.disputed ? copy.contestedMatch : copy.live}
-                        </SignalBadge>
-                      </div>
-                    ) : null}
-                    {pvpSnapshot.topPlayer ? (
-                      <div className="dashboard-list__item">
-                        <div>
-                          <div className="dashboard-list__title">{pvpSnapshot.topPlayer.nickname}</div>
-                          <div className="dashboard-list__meta">#1 · rating {pvpSnapshot.topPlayer.rating}</div>
-                        </div>
-                        <span className="ui-badge ui-badge-muted">{copy.latest}</span>
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-              ) : (
-                <div className="dashboard-card-empty">{copy.pvpEmpty}</div>
-              )}
-            </StatusCard>
-
-            <StatusCard title={copy.quickRoutes} icon="seal" actionHref="/guides" actionLabel={copy.openGuides} tone="steady">
-              <div className="dashboard-card-stack">
-                <p className="dashboard-card-copy">{copy.quickRoutesBody}</p>
-                <div className="dashboard-route-grid">
-                  {[
-                    { href: '/schedule', section: 'schedule' as const },
-                    { href: '/help', section: 'help' as const },
-                    { href: '/news', section: 'news' as const },
-                    { href: '/members', section: 'registration' as const },
-                    { href: '/guides', section: 'guides' as const },
-                    { href: '/profile', section: 'profile' as const },
-                  ].map((item) => (
-                    <Link key={item.href} href={item.href} className="dashboard-route-link">
-                      <span className="dashboard-route-link__icon">
-                        <WuxiaIcon name={item.section} className="h-4 w-4" />
-                      </span>
-                      <span>{sectionLabels[language][item.section]}</span>
-                    </Link>
-                  ))}
-                </div>
+                ) : <div className="dashboard-card-empty">{copy.noActivity}</div>}
               </div>
             </StatusCard>
           </div>
@@ -1055,9 +921,5 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
 }
 
 export default function DashboardSection(props: DashboardSectionProps) {
-  return (
-    <ErrorBoundary>
-      <DashboardSectionContent {...props} />
-    </ErrorBoundary>
-  );
+  return <ErrorBoundary><DashboardSectionContent {...props} /></ErrorBoundary>;
 }
