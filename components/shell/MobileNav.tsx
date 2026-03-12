@@ -39,7 +39,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
   const [isMoreOpen, setIsMoreOpen] = useState(false);
 
   const primaryItems = useMemo(
-    () => navItems.filter((item) => ['about', 'news', 'registration', 'schedule', 'calendar'].includes(item.section)),
+    () => navItems.filter((item) => ['about', 'news', 'registration', 'schedule'].includes(item.section)),
     []
   );
   const secondaryItems = useMemo(
@@ -78,7 +78,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
       ) : null}
 
       <div className="wuxia-dock bg-gradient-to-t from-[#0a1118]/96 to-[#111d27]/88 backdrop-blur-xl border border-[#223544]/60 shadow-2xl shadow-black/45">
-        <div className="flex items-center justify-between gap-2 no-scrollbar">
+        <div className="flex items-center justify-between gap-1.5 no-scrollbar">
           {primaryItems.map((item) => (
             <Link
               key={item.section}
@@ -97,7 +97,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
               <span className="mb-1 dc-accent">
                 <WuxiaIcon name={item.icon} className="w-5 h-5" />
               </span>
-              <span className="text-[11px] font-semibold leading-none tracking-[0.02em] whitespace-nowrap">
+              <span className="text-[10px] font-semibold leading-none tracking-[0.01em] whitespace-nowrap sm:text-[11px]">
                 {sectionLabels[language][item.section]}
               </span>
             </Link>
@@ -116,7 +116,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
             <span className="mb-1 dc-accent">
               <WuxiaIcon name="dots" className="w-5 h-5" />
             </span>
-            <span className="text-[11px] font-semibold leading-none tracking-[0.02em] whitespace-nowrap">{moreLabel}</span>
+            <span className="text-[10px] font-semibold leading-none tracking-[0.01em] whitespace-nowrap sm:text-[11px]">{moreLabel}</span>
           </button>
         </div>
       </div>
