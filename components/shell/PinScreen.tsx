@@ -162,23 +162,6 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                 {t.auth.benefitPin}
               </div>
             </div>
-
-            <div className="relative mt-7 overflow-hidden rounded-[28px] border border-[rgba(143,185,204,0.2)] bg-[linear-gradient(145deg,rgba(9,16,23,0.78),rgba(7,12,18,0.66))] p-5 shadow-[0_20px_40px_rgba(3,8,12,0.36)]">
-              <div className="absolute inset-0 moonfall-panel-glow"></div>
-              <div className="absolute inset-0 moonfall-fog-layer moonfall-fog-layer-far opacity-80"></div>
-              <div className="absolute right-[-2.5rem] top-[-2.5rem] h-32 w-32 rounded-full bg-[radial-gradient(circle,rgba(180,224,245,0.24),transparent_72%)] blur-2xl"></div>
-              <div className="absolute inset-x-0 bottom-0 h-20 bg-[linear-gradient(180deg,transparent,rgba(5,10,15,0.78))]"></div>
-              <div className="relative z-10 min-h-[12rem]">
-                <div className="absolute inset-0 moonfall-fog-layer moonfall-fog-layer-near opacity-75"></div>
-                <div className="absolute right-4 top-3 h-24 w-24 rounded-full moonfall-orbit moonfall-parallax-slow opacity-70"></div>
-                <div className="absolute right-7 top-5 h-20 w-20 moonfall-crescent moonfall-parallax-slow opacity-90"></div>
-                <div className="absolute inset-0 moonfall-starfield opacity-70"></div>
-                <div className="absolute inset-x-0 top-[22%] h-20 moonfall-fall opacity-55"></div>
-                <div className="absolute left-2 top-8 h-20 w-32 rounded-full wuxia-ink moonfall-parallax-light opacity-55"></div>
-                <div className="absolute bottom-0 left-0 h-28 w-full rounded-[24px] bg-[linear-gradient(180deg,rgba(6,12,17,0.02),rgba(6,12,17,0.82))]"></div>
-                <div className="absolute bottom-2 left-0 right-0 h-px bg-[linear-gradient(90deg,transparent,rgba(191,220,234,0.28),transparent)]"></div>
-              </div>
-            </div>
           </div>
 
           <div className="p-6 lg:p-10 xl:p-12">

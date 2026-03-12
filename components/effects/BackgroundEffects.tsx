@@ -4,6 +4,28 @@ interface BackgroundEffectsProps {
   variant?: 'default' | 'auth';
 }
 
+const authSceneCards: Array<{
+  className: string;
+  frameClassName: string;
+  symbolClassName: string;
+}> = [
+  {
+    className: 'auth-scene-card auth-scene-card-left',
+    frameClassName: 'auth-scene-frame auth-scene-frame-sigil',
+    symbolClassName: 'auth-scene-symbol auth-scene-symbol-sigil',
+  },
+  {
+    className: 'auth-scene-card auth-scene-card-right',
+    frameClassName: 'auth-scene-frame auth-scene-frame-gate',
+    symbolClassName: 'auth-scene-symbol auth-scene-symbol-gate',
+  },
+  {
+    className: 'auth-scene-card auth-scene-card-bottom',
+    frameClassName: 'auth-scene-frame auth-scene-frame-scroll',
+    symbolClassName: 'auth-scene-symbol auth-scene-symbol-scroll',
+  },
+];
+
 const authMeteors: Array<{
   top: string;
   left: string;
@@ -29,6 +51,16 @@ export default function BackgroundEffects({ variant = 'default' }: BackgroundEff
       <div className="absolute inset-0 wuxia-constellation"></div>
       {variant === 'auth' ? <div className="absolute inset-0 moonfall-starfield"></div> : null}
       {variant === 'auth' ? <div className="absolute inset-0 moonfall-fog-layer moonfall-fog-layer-far"></div> : null}
+      {variant === 'auth' ? (
+        <div className="auth-scene-gallery" aria-hidden="true">
+          {authSceneCards.map((scene) => (
+            <div key={scene.className} className={scene.className}>
+              <div className={scene.frameClassName}></div>
+              <div className={scene.symbolClassName}></div>
+            </div>
+          ))}
+        </div>
+      ) : null}
       <div className="absolute inset-0 wuxia-noise"></div>
       <div className="absolute inset-0 wuxia-smoke"></div>
       <div className="absolute inset-0 wuxia-scroll-grid opacity-30"></div>
