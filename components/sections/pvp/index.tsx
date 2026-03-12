@@ -171,8 +171,15 @@ function MatchCard({
 
 function PvpSectionContent({ user }: PvpSectionProps) {
   const { data, isLoading, error, refetch } = usePvpState();
-  const joinQueue = useJoinPvpQueue();
-  const leaveQueue = useLeavePvpQueue();
+  const joinQueue = useJoinPvpQueue({
+    playerId: user.discordId || user.id || user.nickname || 'self',
+    nickname: user.nickname || 'You',
+    className: user.className || 'Unknown',
+  });
+  const leaveQueue = useLeavePvpQueue({
+    playerId: user.discordId || user.id || user.nickname || 'self',
+    nickname: user.nickname || 'You',
+  });
   const reportResult = useReportPvpResult();
   const [actionNotice, setActionNotice] = useState<{ tone: 'error' | 'success'; message: string } | null>(null);
 
@@ -182,13 +189,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
 
   const joinQueueAction = async () => {
     try {
-      await joinQueue.mutateAsync({
-        optimisticPlayer: {
-          playerId: user.discordId || user.id || user.nickname || 'self',
-          nickname: user.nickname || 'You',
-          className: user.className || 'Unknown',
-        },
-      });
+      await joinQueue.mutateAsync();
       setActionNotice({ tone: 'success', message: 'Ты в очереди. Ждем соперника.' });
     } catch (err) {
       reportActionError(err);
@@ -197,10 +198,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
 
   const leaveQueueAction = async () => {
     try {
-      await leaveQueue.mutateAsync({
-        playerId: user.discordId || user.id || user.nickname || 'self',
-        nickname: user.nickname || 'You',
-      });
+      await leaveQueue.mutateAsync();
       setActionNotice({ tone: 'success', message: 'Активность в PvP снята.' });
     } catch (err) {
       reportActionError(err);

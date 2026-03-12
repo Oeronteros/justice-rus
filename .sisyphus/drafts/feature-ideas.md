@@ -3,6 +3,9 @@
 ## Requirements (confirmed)
 - Request: user asked what features could be added to the project.
 - Goal: identify useful next features based on current product capabilities.
+- Preference: recommendations should cover the whole product, not a single module.
+- Priority: large features with visible product impact, not quick wins.
+- Desired outcome: improvements should cover both officer operations and member experience.
 
 ## Technical Decisions
 - Approach: inspect the current codebase first, then suggest scoped feature ideas instead of generic brainstorming.
@@ -23,9 +26,7 @@
   - Product appears strong on operational modules but lighter on analytics, notifications, discovery/search, and cross-module automation.
 
 ## Open Questions
-- Which area matters most to the user: member operations, guides/content, scheduling, PvP, or admin tooling?
-- Is the priority quick wins or larger product bets?
-- Should recommendations lean more toward guild leadership workflows or regular member experience?
+- If everything is important, what is the primary constraint: time-to-value, implementation complexity, or data availability?
 
 ## Scope Boundaries
 - INCLUDE: feature discovery, prioritization suggestions, follow-up questions.

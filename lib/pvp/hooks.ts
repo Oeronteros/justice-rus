@@ -21,15 +21,14 @@ export function usePvpState() {
   });
 }
 
-export function useJoinPvpQueue() {
+export function useJoinPvpQueue(optimisticPlayer?: OptimisticQueuePlayer) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (_variables?: { optimisticPlayer: OptimisticQueuePlayer }) => pvpApi.joinQueue(),
-    onMutate: async (variables) => {
+    mutationFn: () => pvpApi.joinQueue(),
+    onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: pvpKeys.state() });
 
       const previousState = queryClient.getQueryData<PvpState>(pvpKeys.state());
-      const optimisticPlayer = variables?.optimisticPlayer;
       if (!optimisticPlayer) {
         return { previousState };
       }
@@ -67,19 +66,19 @@ export function useJoinPvpQueue() {
   });
 }
 
-export function useLeavePvpQueue() {
+export function useLeavePvpQueue(identity?: { playerId: string; nickname: string }) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (_variables?: { playerId: string; nickname: string }) => pvpApi.leaveQueue(),
-    onMutate: async (variables) => {
+    mutationFn: () => pvpApi.leaveQueue(),
+    onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: pvpKeys.state() });
 
       const previousState = queryClient.getQueryData<PvpState>(pvpKeys.state());
-      if (!variables) {
+      if (!identity) {
         return { previousState };
       }
 
-      const { playerId, nickname } = variables;
+      const { playerId, nickname } = identity;
       queryClient.setQueryData<PvpState>(pvpKeys.state(), (current) =>
         current
           ? {
