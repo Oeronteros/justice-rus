@@ -11,8 +11,13 @@ import { canAssignRoles, canManageAccounts, roleOrder } from '@/lib/authz';
 import { roleExplainerRows, roleLabels } from '@/lib/roles';
 import { useAccounts, useKnownClasses, useUpdateAccount } from '@/lib/auth/hooks';
 import { useRegistrations, useUpdateRegistrationStats } from '@/lib/registration/hooks';
-import { getKPIClass } from '@/lib/utils';
+import { getKPIClass, cn } from '@/lib/utils';
+import { useNotifications } from '@/lib/notifications/context';
 import type { UpdateRegistrationStatsPayload } from '@/lib/api/registrations';
+
+
+
+
 
 interface ProfileSectionProps {
   user: User;
@@ -110,6 +115,119 @@ const ProfileOverview = memo(function ProfileOverview({ profileRegistration, use
     </div>
   );
 });
+
+function NotificationSettingsSection() {
+  const { settings, updateSettings, requestPermission } = useNotifications();
+  const [requesting, setRequesting] = useState(false);
+
+  const handleDesktopPermission = async () => {
+    setRequesting(true);
+    try {
+      await requestPermission();
+    } finally {
+      setRequesting(false);
+    }
+  };
+
+  return (
+    <div className="card section-card p-5 sm:p-6">
+      <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-3">Уведомления</div>
+      <p className="text-gray-400 text-sm mb-5">Настройте типы уведомлений и способ доставки</p>
+
+      <div className="notification-settings-group">
+        <div className="notification-setting-item">
+          <div className="notification-setting-label">
+            <div className="notification-setting-title">Все уведомления</div>
+            <div className="notification-setting-description">Глобальное включение/выключение всех уведомлений</div>
+          </div>
+          <div className="notification-toggle">
+            <button
+              type="button"
+              className={cn('notification-toggle__switch', settings.enabled && 'notification-toggle__switch--active')}
+              onClick={() => updateSettings({ enabled: !settings.enabled })}
+              aria-pressed={settings.enabled}
+            >
+              <span className="notification-toggle__knob" />
+            </button>
+          </div>
+        </div>
+
+        <div className="notification-setting-item">
+          <div className="notification-setting-label">
+            <div className="notification-setting-title">Запросы помощи</div>
+            <div className="notification-setting-description">Уведомлять о запросах без ответа более 15 минут</div>
+          </div>
+          <div className="notification-toggle">
+            <button
+              type="button"
+              className={cn('notification-toggle__switch', settings.enabled && settings.helpRequests && 'notification-toggle__switch--active')}
+              onClick={() => updateSettings({ helpRequests: !settings.helpRequests })}
+              disabled={!settings.enabled}
+              aria-pressed={settings.helpRequests}
+            >
+              <span className="notification-toggle__knob" />
+            </button>
+          </div>
+        </div>
+
+        <div className="notification-setting-item">
+          <div className="notification-setting-label">
+            <div className="notification-setting-title">Подтверждение отсутствий</div>
+            <div className="notification-setting-description">Для офицеров: уведомления о pending absence</div>
+          </div>
+          <div className="notification-toggle">
+            <button
+              type="button"
+              className={cn('notification-toggle__switch', settings.enabled && settings.absenceApprovals && 'notification-toggle__switch--active')}
+              onClick={() => updateSettings({ absenceApprovals: !settings.absenceApprovals })}
+              disabled={!settings.enabled}
+              aria-pressed={settings.absenceApprovals}
+            >
+              <span className="notification-toggle__knob" />
+            </button>
+          </div>
+        </div>
+
+        <div className="notification-setting-item">
+          <div className="notification-setting-label">
+            <div className="notification-setting-title">PvP-матчи</div>
+            <div className="notification-setting-description">Завершение матчей и спорные ситуации</div>
+          </div>
+          <div className="notification-toggle">
+            <button
+              type="button"
+              className={cn('notification-toggle__switch', settings.enabled && settings.pvpMatches && 'notification-toggle__switch--active')}
+              onClick={() => updateSettings({ pvpMatches: !settings.pvpMatches })}
+              disabled={!settings.enabled}
+              aria-pressed={settings.pvpMatches}
+            >
+              <span className="notification-toggle__knob" />
+            </button>
+          </div>
+        </div>
+
+        <div className="notification-setting-item">
+          <div className="notification-setting-label">
+            <div className="notification-setting-title">Desktop-уведомления</div>
+            <div className="notification-setting-description">Системные уведомления браузера</div>
+          </div>
+          <div className="notification-toggle">
+            <button
+              type="button"
+              className={cn('notification-toggle__switch', settings.desktopEnabled && 'notification-toggle__switch--active')}
+              onClick={handleDesktopPermission}
+              disabled={requesting}
+              aria-pressed={settings.desktopEnabled}
+            >
+              <span className="notification-toggle__knob" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 const RoleAccessPanel = memo(function RoleAccessPanel({ currentRole }: { currentRole: UserRole }) {
   return (
@@ -676,6 +794,8 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
             })}
           </div>
         </div>
+
+        <NotificationSettingsSection />
 
         {isAdmin && (
           <AccountsPanel

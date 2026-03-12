@@ -4,6 +4,8 @@ import { useState } from 'react';
 import MainLayout from '@/components/shell/MainLayout';
 import PinScreen from '@/components/shell/PinScreen';
 import PortalVisualEffects from '@/components/effects/PortalVisualEffects';
+import { ToastContainer } from '@/components/notifications/ToastContainer';
+import { NotificationsProvider } from '@/lib/notifications/context';
 import { authApi } from '@/lib/api/auth';
 import { AuthProvider } from '@/lib/auth/context';
 import type { User } from '@/lib/schemas/auth';
@@ -36,10 +38,13 @@ export default function PortalShell({ initialUser, children }: PortalShellProps)
 
   return (
     <AuthProvider user={user}>
-      <PortalVisualEffects />
-      <MainLayout user={user} onLogout={handleLogout}>
-        {children}
-      </MainLayout>
+      <NotificationsProvider>
+        <PortalVisualEffects />
+        <ToastContainer />
+        <MainLayout user={user} onLogout={handleLogout}>
+          {children}
+        </MainLayout>
+      </NotificationsProvider>
     </AuthProvider>
   );
 }

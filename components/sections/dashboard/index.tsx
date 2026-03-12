@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import WuxiaIcon, { type IconName } from '@/components/WuxiaIcons';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -15,12 +15,15 @@ import { useNews } from '@/lib/news/hooks';
 import { usePvpState } from '@/lib/pvp/hooks';
 import { useRegistrations } from '@/lib/registration/hooks';
 import { useSchedule } from '@/lib/schedule/hooks';
+import { useHelpNotifications, useAbsenceNotifications, usePvpNotifications } from '@/lib/notifications/hooks';
 import type { User, UserRole } from '@/lib/schemas/auth';
 import type { Absence } from '@/lib/schemas/absence';
 import type { PvpState } from '@/lib/schemas/pvp';
 import type { Registration } from '@/lib/schemas/registration';
 import type { Schedule } from '@/lib/schemas/schedule';
 import { cn } from '@/lib/utils';
+
+
 
 interface DashboardSectionProps {
   user: User;
@@ -709,6 +712,10 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
   }, [pvpState]);
 
   const officerSignals = helpSnapshot.unattended + absenceSnapshot.pending.length + rosterSnapshot.inactive + (pvpSnapshot.disputed ? 1 : 0);
+
+  useHelpNotifications(openHelp, user.id ?? null, { enabled: true, unattendedThresholdMinutes: 15 });
+  useAbsenceNotifications(absences, user.role, { enabled: true });
+  usePvpNotifications(pvpSnapshot.activeMatch, pvpSnapshot.disputed, { enabled: true });
 
   const activityFeed = useMemo(
     () => generateSyntheticActivity(openHelp, absences, news, registrations, pvpState ?? null, copy, language),

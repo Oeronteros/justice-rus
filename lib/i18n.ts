@@ -6,6 +6,10 @@ export const sectionLabels: Record<Language, Record<Section, string>> = {
   ru: {
     registration: 'Участники',
     schedule: 'Расписание',
+    calendar: 'Календарь',
+    analytics: 'Аналитика',
+    workflow: 'Автоматизация',
+    analytics: 'Аналитика',
     pvp: 'PvP',
     news: 'Новости',
     guides: 'Гайды',
@@ -18,6 +22,10 @@ export const sectionLabels: Record<Language, Record<Section, string>> = {
   en: {
     registration: 'Members',
     schedule: 'Schedule',
+    calendar: 'Calendar',
+    analytics: 'Analytics',
+    workflow: 'Automation',
+    analytics: 'Analytics',
     pvp: 'PvP',
     news: 'News',
     guides: 'Guides',
@@ -30,6 +38,10 @@ export const sectionLabels: Record<Language, Record<Section, string>> = {
   zh: {
     registration: '成员',
     schedule: '日程',
+    calendar: '日历',
+    analytics: '分析',
+    workflow: '自动化',
+    analytics: '分析',
     pvp: 'PvP',
     news: '公告',
     guides: '攻略',

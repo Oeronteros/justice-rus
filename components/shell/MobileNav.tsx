@@ -23,6 +23,10 @@ const navItems: NavItem[] = [
   { section: 'news', href: '/news', icon: 'news' },
   { section: 'registration', href: '/members', icon: 'registration' },
   { section: 'schedule', href: '/schedule', icon: 'schedule' },
+  { section: 'calendar', href: '/calendar', icon: 'calendar' },
+  { section: 'analytics', href: '/analytics', icon: 'analytics' },
+  { section: 'workflow', href: '/workflow', icon: 'workflow' },
+  { section: 'analytics', href: '/analytics', icon: 'analytics' },
   { section: 'pvp', href: '/pvp', icon: 'sword' },
   { section: 'guides', href: '/guides', icon: 'guides' },
   { section: 'help', href: '/help', icon: 'help' },
@@ -35,7 +39,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
   const [isMoreOpen, setIsMoreOpen] = useState(false);
 
   const primaryItems = useMemo(
-    () => navItems.filter((item) => ['about', 'news', 'registration', 'schedule'].includes(item.section)),
+    () => navItems.filter((item) => ['about', 'news', 'registration', 'schedule', 'calendar'].includes(item.section)),
     []
   );
   const secondaryItems = useMemo(

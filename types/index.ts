@@ -3,6 +3,10 @@
 export type Section =
   | 'registration'
   | 'schedule'
+  | 'calendar'
+  | 'analytics'
+  | 'workflow'
+  | 'analytics'
   | 'pvp'
   | 'guides'
   | 'help'
