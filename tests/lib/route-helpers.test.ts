@@ -7,11 +7,15 @@ const {
   getAuthTokenMock,
   isSameOriginMock,
   hasDatabaseUrlMock,
+  resolveSessionFromTokenMock,
+  clearAuthCookieMock,
 } = vi.hoisted(() => ({
   verifyTokenMock: vi.fn(),
   getAuthTokenMock: vi.fn(),
   isSameOriginMock: vi.fn(),
   hasDatabaseUrlMock: vi.fn(),
+  resolveSessionFromTokenMock: vi.fn(),
+  clearAuthCookieMock: vi.fn(),
 }));
 
 vi.mock('@/lib/auth', () => ({
@@ -21,14 +25,20 @@ vi.mock('@/lib/auth', () => ({
 vi.mock('@/lib/auth/request', () => ({
   getAuthToken: getAuthTokenMock,
   isSameOrigin: isSameOriginMock,
+  clearAuthCookie: clearAuthCookieMock,
 }));
 
 vi.mock('@/lib/neon', () => ({
   hasDatabaseUrl: hasDatabaseUrlMock,
 }));
 
+vi.mock('@/lib/server/auth-session', () => ({
+  resolveSessionFromToken: resolveSessionFromTokenMock,
+}));
+
 import {
   handleRouteError,
+  requireActiveSession,
   parseJsonBody,
   requireAuth,
   requireDatabase,
@@ -43,6 +53,10 @@ describe('route-helpers', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     isSameOriginMock.mockReturnValue(true);
     hasDatabaseUrlMock.mockReturnValue(true);
+    resolveSessionFromTokenMock.mockResolvedValue({
+      valid: true,
+      user: { id: '1', nickname: 'Moon', role: 'officer' },
+    });
   });
 
   afterEach(() => {
@@ -110,6 +124,41 @@ describe('route-helpers', () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.response.status).toBe(503);
+    }
+  });
+
+  it('returns active session user when session resolution succeeds', async () => {
+    const result = await requireActiveSession(new Request('http://localhost/api/test'));
+
+    expect(resolveSessionFromTokenMock).toHaveBeenCalled();
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.nickname).toBe('Moon');
+    }
+  });
+
+  it('returns 401 and clears cookie for inactive session', async () => {
+    resolveSessionFromTokenMock.mockResolvedValueOnce({ valid: false, reason: 'inactive-account' });
+
+    const result = await requireActiveSession(new Request('http://localhost/api/test'));
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.response.status).toBe(401);
+      expect(clearAuthCookieMock).toHaveBeenCalledTimes(1);
+      expect(result.response.headers.get('Cache-Control')).toBe('no-store');
+    }
+  });
+
+  it('returns 401 without clearing cookie when token is missing', async () => {
+    resolveSessionFromTokenMock.mockResolvedValueOnce({ valid: false, reason: 'missing-token' });
+
+    const result = await requireActiveSession(new Request('http://localhost/api/test'));
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.response.status).toBe(401);
+      expect(clearAuthCookieMock).not.toHaveBeenCalled();
     }
   });
 

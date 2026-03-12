@@ -6,6 +6,7 @@ import "./globals.css";
 import InputPerformanceMode from "@/components/InputPerformanceMode";
 import { QueryProvider } from "@/lib/providers/QueryProvider";
 import { I18nProvider } from "@/lib/i18n/context";
+import { defaultLanguage } from "@/lib/i18n/shared";
 
 const shouldLoadVercelTelemetry = process.env.VERCEL === "1";
 
@@ -43,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru">
+    <html lang={defaultLanguage}>
       <body className="theme-wuxia">
         <InputPerformanceMode />
         <QueryProvider>

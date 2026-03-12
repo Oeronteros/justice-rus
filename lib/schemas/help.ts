@@ -30,24 +30,51 @@ export const createHelpRequestSchema = z.object({
   gatheringEnd: z.string().min(1, 'Укажи время сбора: конец'),
 });
 
+export const helpRequestIdSchema = z.union([z.string(), z.number()]);
+
 export const updateHelpRequestSchema = z.object({
-  id: z.string(),
+  id: helpRequestIdSchema,
   status: z.enum(['open', 'closed']),
 });
 
 export const updateHelpTimeRangeSchema = z.object({
-  id: z.string(),
+  id: helpRequestIdSchema,
   gatheringStart: z.string().min(1),
   gatheringEnd: z.string().min(1),
 });
 
+export const mutateHelpRequestSchema = z
+  .object({
+    id: helpRequestIdSchema,
+    status: z.enum(['open', 'closed']).optional(),
+    gatheringStart: z.string().trim().min(1).optional(),
+    gatheringEnd: z.string().trim().min(1).optional(),
+  })
+  .superRefine((value, ctx) => {
+    const hasStatus = Boolean(value.status);
+    const hasStart = Boolean(value.gatheringStart);
+    const hasEnd = Boolean(value.gatheringEnd);
+
+    if (!hasStatus && !(hasStart && hasEnd)) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Nothing to update' });
+    }
+
+    if ((hasStart || hasEnd) && !(hasStart && hasEnd)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Both gatheringStart and gatheringEnd are required',
+      });
+    }
+  });
+
 export const helpRsvpSchema = z.object({
-  id: z.string(),
+  id: helpRequestIdSchema,
 });
 
 export type HelpRequest = z.infer<typeof helpRequestSchema>;
 export type CreateHelpRequestDto = z.infer<typeof createHelpRequestSchema>;
 export type UpdateHelpRequestDto = z.infer<typeof updateHelpRequestSchema>;
 export type UpdateHelpTimeRangeDto = z.infer<typeof updateHelpTimeRangeSchema>;
+export type MutateHelpRequestDto = z.infer<typeof mutateHelpRequestSchema>;
 export type HelpRsvpDto = z.infer<typeof helpRsvpSchema>;
 export type HelpResponder = z.infer<typeof helpResponderSchema>;

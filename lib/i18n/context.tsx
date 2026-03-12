@@ -4,15 +4,16 @@ import { createContext, useContext, useState, useCallback, useEffect, type React
 import { ru, type Translations } from './translations/ru';
 import { en } from './translations/en';
 import { zh } from './translations/zh';
-import { defaultLanguage, isLanguage, type Language } from './shared';
+import { defaultLanguage, isLanguage } from './shared';
+import type { Language as AppLanguage } from './shared';
 
 export type { Language } from './shared';
 
-const translations: Record<Language, Translations> = { ru, en, zh };
+const translations: Record<AppLanguage, Translations> = { ru, en, zh };
 
 interface I18nContextValue {
-  language: Language;
-  setLanguage: (lang: Language) => void;
+  language: AppLanguage;
+  setLanguage: (lang: AppLanguage) => void;
   t: Translations;
 }
 
@@ -20,7 +21,7 @@ const I18nContext = createContext<I18nContextValue | null>(null);
 
 const STORAGE_KEY = 'guild_portal_lang';
 
-function getStoredLanguage(): Language | null {
+function getStoredLanguage(): AppLanguage | null {
   if (typeof window === 'undefined') {
     return null;
   }
@@ -31,13 +32,13 @@ function getStoredLanguage(): Language | null {
 
 interface I18nProviderProps {
   children: ReactNode;
-  defaultLanguage?: Language;
+  defaultLanguage?: AppLanguage;
 }
 
 export function I18nProvider({ children, defaultLanguage: initialLanguage = defaultLanguage }: I18nProviderProps) {
-  const [language, setLanguageState] = useState<Language>(() => getStoredLanguage() ?? initialLanguage);
+  const [language, setLanguageState] = useState<AppLanguage>(() => getStoredLanguage() ?? initialLanguage);
 
-  const setLanguage = useCallback((lang: Language) => {
+  const setLanguage = useCallback((lang: AppLanguage) => {
     setLanguageState(lang);
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, lang);

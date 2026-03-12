@@ -197,5 +197,21 @@ describe('I18n Context', () => {
 
       expect(screen.getByTestId('loading-text')).toHaveTextContent('Загрузка...');
     });
+
+    it('updates document language when the selected language changes', () => {
+      render(
+        <I18nProvider defaultLanguage="ru">
+          <TestComponent />
+        </I18nProvider>
+      );
+
+      expect(document.documentElement.lang).toBe('ru');
+
+      act(() => {
+        fireEvent.click(screen.getByTestId('set-zh'));
+      });
+
+      expect(document.documentElement.lang).toBe('zh');
+    });
   });
 });

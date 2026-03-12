@@ -1,13 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { PoolClient } from 'pg';
-import { z } from 'zod';
-import { verifyToken } from '@/lib/auth';
-import { getAuthToken } from '@/lib/auth/request';
-import { getPool, hasDatabaseUrl } from '@/lib/neon';
+import { getPool } from '@/lib/neon';
 import { pvpReportSchema } from '@/lib/schemas/pvp';
+import type { User } from '@/lib/schemas/auth';
 import { calculateRating, deriveConfirmationStatus, resolveMatchWinner } from '@/lib/server/pvp/logic';
 import { getCachedTableColumns, runServerTaskOnce } from '@/lib/server/db-cache';
-import { requireSameOrigin } from '@/lib/server/route-helpers';
+import {
+  handleRouteError,
+  parseJsonBody,
+  requireActiveSession,
+  requireDatabase,
+  requireSameOrigin,
+} from '@/lib/server/route-helpers';
 
 type Actor = {
   id: string;
@@ -40,6 +44,8 @@ const rateLimitCaps: Record<RateLimitAction, number> = {
 const rateLimitBuckets = new Map<string, { windowStartedAt: number; count: number }>();
 
 class PvpRateLimitError extends Error {
+  readonly status = 429;
+
   constructor(message: string) {
     super(message);
     this.name = 'PvpRateLimitError';
@@ -92,7 +98,7 @@ function normalizedMatchSelect(whereClause?: string, orderClause?: string, limit
   `;
 }
 
-function actorIdFromUser(user: ReturnType<typeof verifyToken>): string | null {
+function actorIdFromUser(user: User | null): string | null {
   if (!user) return null;
   return user.discordId || user.id || user.nickname || null;
 }
@@ -203,7 +209,7 @@ async function ensurePvpSchema() {
   });
 }
 
-async function resolveActor(user: NonNullable<ReturnType<typeof verifyToken>>): Promise<Actor> {
+async function resolveActor(user: User): Promise<Actor> {
   const actorId = actorIdFromUser(user);
   if (!actorId) {
     throw new Error('Player identity is unavailable');
@@ -450,19 +456,25 @@ async function completeMatch(matchId: number, winnerId: string): Promise<boolean
 
 export async function GET(request: NextRequest) {
   try {
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json({ error: 'Database is not configured (missing DATABASE_URL)' }, { status: 503 });
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
+    }
+
+    const db = requireDatabase();
+    if (!db.ok) {
+      return db.response;
     }
 
     await ensurePvpSchema();
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-    const actorId = actorIdFromUser(decoded);
+    const actorId = actorIdFromUser(session.value);
 
     return NextResponse.json(await loadState(actorId));
   } catch (error) {
-    console.error('Error loading PvP state:', error);
-    return NextResponse.json({ error: 'Failed to load PvP state' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error loading PvP state:',
+      fallbackMessage: 'Failed to load PvP state',
+    });
   }
 }
 
@@ -473,17 +485,18 @@ export async function POST(request: NextRequest) {
       return sameOrigin.response;
     }
 
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-    if (!decoded) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
     }
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json({ error: 'Database is not configured (missing DATABASE_URL)' }, { status: 503 });
+
+    const db = requireDatabase();
+    if (!db.ok) {
+      return db.response;
     }
 
     await ensurePvpSchema();
-    const actor = await resolveActor(decoded);
+    const actor = await resolveActor(session.value);
     touchRateLimit(actor.id, 'queue');
     const pool = getPool();
     const client = await pool.connect();
@@ -557,11 +570,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(await loadState(actor.id));
   } catch (error) {
-    if (error instanceof PvpRateLimitError) {
-      return NextResponse.json({ error: error.message }, { status: 429 });
-    }
-    console.error('Error joining PvP queue:', error);
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Failed to join PvP queue' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error joining PvP queue:',
+      fallbackMessage: 'Failed to join PvP queue',
+    });
   }
 }
 
@@ -572,14 +584,19 @@ export async function DELETE(request: NextRequest) {
       return sameOrigin.response;
     }
 
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-    const actorId = actorIdFromUser(decoded);
-    if (!decoded || !actorId) {
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
+    }
+
+    const actorId = actorIdFromUser(session.value);
+    if (!actorId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json({ error: 'Database is not configured (missing DATABASE_URL)' }, { status: 503 });
+
+    const db = requireDatabase();
+    if (!db.ok) {
+      return db.response;
     }
 
     await ensurePvpSchema();
@@ -589,11 +606,10 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json(await loadState(actorId));
   } catch (error) {
-    if (error instanceof PvpRateLimitError) {
-      return NextResponse.json({ error: error.message }, { status: 429 });
-    }
-    console.error('Error leaving PvP queue:', error);
-    return NextResponse.json({ error: 'Failed to leave PvP queue' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error leaving PvP queue:',
+      fallbackMessage: 'Failed to leave PvP queue',
+    });
   }
 }
 
@@ -604,18 +620,28 @@ export async function PATCH(request: NextRequest) {
       return sameOrigin.response;
     }
 
-    const token = getAuthToken(request);
-    const decoded = token ? verifyToken(token) : null;
-    const actorId = actorIdFromUser(decoded);
-    if (!decoded || !actorId) {
+    const session = await requireActiveSession(request);
+    if (!session.ok) {
+      return session.response;
+    }
+
+    const actorId = actorIdFromUser(session.value);
+    if (!actorId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json({ error: 'Database is not configured (missing DATABASE_URL)' }, { status: 503 });
+
+    const db = requireDatabase();
+    if (!db.ok) {
+      return db.response;
     }
 
     await ensurePvpSchema();
-    const payload = pvpReportSchema.parse(await request.json());
+    const parsed = await parseJsonBody(request, pvpReportSchema);
+    if (!parsed.ok) {
+      return parsed.response;
+    }
+
+    const payload = parsed.value;
     const pool = getPool();
     touchRateLimit(actorId, 'report');
 
@@ -664,13 +690,20 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json(await loadState(actorId));
   } catch (error) {
-    if (error instanceof PvpRateLimitError) {
-      return NextResponse.json({ error: error.message }, { status: 429 });
-    }
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
-    }
-    console.error('Error reporting PvP result:', error);
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Failed to report PvP result' }, { status: 500 });
+    return handleRouteError(error, {
+      logLabel: 'Error reporting PvP result:',
+      fallbackMessage: 'Failed to report PvP result',
+    });
   }
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
+  });
 }

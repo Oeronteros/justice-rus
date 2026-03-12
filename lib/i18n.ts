@@ -1,6 +1,7 @@
 import { Section } from '@/types';
+import type { Language } from '@/lib/i18n/shared';
 
-export type Language = 'ru' | 'en' | 'zh';
+export type { Language } from '@/lib/i18n/shared';
 
 export const sectionLabels: Record<Language, Record<Section, string>> = {
   ru: {
