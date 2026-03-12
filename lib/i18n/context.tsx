@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import { ru, type Translations } from './translations/ru';
 import { en } from './translations/en';
 import { zh } from './translations/zh';
@@ -34,14 +34,7 @@ interface I18nProviderProps {
 }
 
 export function I18nProvider({ children, defaultLanguage = 'ru' }: I18nProviderProps) {
-  const [language, setLanguageState] = useState<Language>(defaultLanguage);
-
-  useEffect(() => {
-    const storedLanguage = getStoredLanguage();
-    if (storedLanguage && storedLanguage !== language) {
-      setLanguageState(storedLanguage);
-    }
-  }, [language]);
+  const [language, setLanguageState] = useState<Language>(() => getStoredLanguage() ?? defaultLanguage);
 
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);

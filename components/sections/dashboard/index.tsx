@@ -631,7 +631,6 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
   const nextEvent = useMemo(() => getUpcomingScheduleItem(schedule, language, copy), [copy, language, schedule]);
 
   const helpSnapshot = useMemo(() => {
-    const now = Date.now();
     const sorted = [...openHelp].sort((left, right) => {
       const leftResponders = left.responders.length;
       const rightResponders = right.responders.length;
@@ -644,9 +643,7 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
 
     const unattended = sorted.filter((request) => request.responders.length === 0).length;
     const urgent = sorted.slice(0, 3).map((request) => {
-      const gatheringTime = new Date(request.gatheringStart).getTime();
-      const deltaMinutes = Number.isFinite(gatheringTime) ? Math.round((gatheringTime - now) / 60000) : null;
-      const tone: LiveTone = request.responders.length === 0 ? 'alert' : deltaMinutes !== null && deltaMinutes <= 60 ? 'active' : 'steady';
+      const tone: LiveTone = request.responders.length === 0 ? 'alert' : request.responders.length === 1 ? 'active' : 'steady';
       return { ...request, tone };
     });
 
