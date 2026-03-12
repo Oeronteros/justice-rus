@@ -298,9 +298,9 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
 
   if (registrations.length === 0) {
     return (
-      <div className="card section-card px-6 py-10 text-center">
+      <div className="card section-card ds-section-panel px-6 py-10 text-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-16 h-16 rounded-full bg-[#101922]/70 border border-[#223544]/60 grid place-items-center">
+          <div className="w-16 h-16 rounded-full ds-section-panel-soft grid place-items-center">
             <WuxiaIcon name="usersSlash" className="w-8 h-8 text-gray-400" />
           </div>
           <span className="ui-badge ui-badge-muted">Roster empty</span>
@@ -500,7 +500,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
                   placeholder="Класс"
                 />
                 {editDraft.className ? (
-                  <div className="rounded-2xl border border-[#2f6e8d]/35 bg-[#12202b]/55 px-4 py-3">
+                  <div className="rounded-2xl ds-section-panel-soft border-[#2f6e8d]/35 bg-[#12202b]/55 px-4 py-3">
                     <ClassBadge className={editDraft.className} badgeClassName="w-full" textClassName="text-[#e6eff5] font-medium" />
                   </div>
                 ) : null}
@@ -531,7 +531,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
             </div>
 
             {editError && (
-              <div className="mt-6 text-sm text-red-300 bg-red-900/20 border border-red-900/40 rounded-xl p-4">
+              <div className="ds-notice mt-6 border-red-900/40 bg-red-900/20 text-red-300">
                 <WuxiaIcon name="alertTriangle" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
                 {editError}
               </div>

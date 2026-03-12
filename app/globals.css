@@ -1552,6 +1552,24 @@ body {
     padding: 14px 16px;
   }
 
+  .ds-notice-success {
+    border-color: rgba(74, 163, 107, 0.42);
+    background: rgba(12, 45, 28, 0.28);
+    color: rgba(190, 241, 207, 0.96);
+  }
+
+  .ds-notice-warning {
+    border-color: rgba(201, 141, 46, 0.38);
+    background: rgba(61, 37, 8, 0.24);
+    color: rgba(248, 224, 161, 0.96);
+  }
+
+  .ds-notice-error {
+    border-color: rgba(181, 67, 67, 0.38);
+    background: rgba(70, 22, 22, 0.22);
+    color: rgba(252, 202, 202, 0.96);
+  }
+
   .ds-filter-chip {
     display: inline-flex;
     align-items: center;

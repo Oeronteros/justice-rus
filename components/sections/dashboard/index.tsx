@@ -644,6 +644,216 @@ function StatusCard({
   );
 }
 
+function DashboardHeroRegion({
+  copy,
+  liveTone,
+  liveLabel,
+  rosterSnapshot,
+  helpSnapshot,
+  absenceSnapshot,
+  newsSnapshot,
+  user,
+  language,
+  pvpSnapshot,
+  isOfficer,
+  officerSignals,
+}: {
+  copy: DashboardCopy;
+  liveTone: LiveTone;
+  liveLabel: string;
+  rosterSnapshot: { active: number };
+  helpSnapshot: { unattended: number };
+  absenceSnapshot: { pending: Absence[] };
+  newsSnapshot: { activeCount: number };
+  user: User;
+  language: Language;
+  pvpSnapshot: { userInQueue: boolean; queueSize: number; disputed: boolean };
+  isOfficer: boolean;
+  officerSignals: number;
+}) {
+  return (
+    <div className="guild-dashboard-grid">
+      <article className="card section-card guild-dashboard-command p-6 sm:p-7 xl:p-8">
+        <div className="guild-dashboard-command__header">
+          <div>
+            <div className="dashboard-kicker">{copy.liveStatus}</div>
+            <h3 className="guild-dashboard-command__title">{copy.situationRoom}</h3>
+          </div>
+          <SignalBadge tone={liveTone}>{liveLabel}</SignalBadge>
+        </div>
+
+        <p className="guild-dashboard-command__lede">{copy.openingLine}</p>
+        <p className="guild-dashboard-command__body">{copy.liveSnapshot}</p>
+
+        <div className="guild-dashboard-metric-grid">
+          <MetricTile label={copy.activeMembers} value={rosterSnapshot.active} tone={liveTone === 'steady' ? 'active' : liveTone} />
+          <MetricTile label={copy.unattendedRequests} value={helpSnapshot.unattended} tone={helpSnapshot.unattended > 0 ? 'alert' : 'steady'} />
+          <MetricTile label={copy.pendingAbsences} value={absenceSnapshot.pending.length} tone={absenceSnapshot.pending.length > 0 ? 'alert' : 'steady'} />
+          <MetricTile label={copy.activeAnnouncements} value={newsSnapshot.activeCount} tone="active" />
+        </div>
+      </article>
+
+      <aside className="card section-card guild-dashboard-station p-6 sm:p-7">
+        <div className="guild-dashboard-station__header">
+          <div>
+            <div className="dashboard-kicker">{copy.personalStation}</div>
+            <h3 className="guild-dashboard-station__title">{user.nickname || 'Silent Moonfall'}</h3>
+          </div>
+          <SignalBadge tone={user.isActive ? 'active' : 'alert'}>{user.isActive ? copy.activeState : copy.inactiveState}</SignalBadge>
+        </div>
+
+        <p className="guild-dashboard-station__body">{copy.personalStationBody}</p>
+
+        <div className="guild-dashboard-station__facts">
+          <div><span>{copy.yourRole}</span><strong>{roleLabels[language][user.role]}</strong></div>
+          <div><span>{copy.yourClass}</span><strong>{user.className || copy.noClass}</strong></div>
+          <div><span>{copy.yourPrefix}</span><strong>{user.prefix || copy.noPrefix}</strong></div>
+          <div><span>{copy.accountState}</span><strong>{user.isActive ? copy.activeState : copy.inactiveState}</strong></div>
+        </div>
+
+        <div className="guild-dashboard-station__queue">
+          <div><span className="dashboard-kicker">PvP</span><strong>{pvpSnapshot.userInQueue ? copy.queuedNow : copy.notQueued}</strong></div>
+          <div className="ui-badge ui-badge-muted">{pvpSnapshot.queueSize > 0 ? `${copy.activeQueue}: ${pvpSnapshot.queueSize}` : copy.noQueue}</div>
+        </div>
+
+        {isOfficer && (
+          <div className="guild-dashboard-station__overlay">
+            <span className="dashboard-kicker">{copy.officerOverlay}</span>
+            <strong>{officerSignals > 0 ? officerSignals : 0}</strong>
+            <p>{officerSignals > 0 ? copy.activeAlerts : copy.noOverlay}</p>
+
+            <div className="officer-escalation-list">
+              {absenceSnapshot.pending.length > 0 && (
+                <div className="officer-escalation-item">
+                  <WuxiaIcon name="calendarX" className="h-4 w-4" />
+                  <span>{absenceSnapshot.pending.length} {copy.pendingAbsencesLabel}</span>
+                  <Link href="/absences" className="officer-escalation-link">{copy.openAbsences}</Link>
+                </div>
+              )}
+              {helpSnapshot.unattended > 0 && (
+                <div className="officer-escalation-item">
+                  <WuxiaIcon name="alertTriangle" className="h-4 w-4" />
+                  <span>{helpSnapshot.unattended} {copy.pendingHelpLabel}</span>
+                  <Link href="/help" className="officer-escalation-link">{copy.openHelp}</Link>
+                </div>
+              )}
+              {pvpSnapshot.disputed && (
+                <div className="officer-escalation-item">
+                  <WuxiaIcon name="alertTriangle" className="h-4 w-4" />
+                  <span>1 {copy.disputedMatchesLabel}</span>
+                  <Link href="/pvp" className="officer-escalation-link">{copy.openPvp}</Link>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </aside>
+    </div>
+  );
+}
+
+function DashboardPrimaryRegion({
+  copy,
+  helpSnapshot,
+  newsSnapshot,
+  newsLoading,
+  activityFeed,
+  language,
+}: {
+  copy: DashboardCopy;
+  helpSnapshot: { myResponses: Array<{ id: string; title: string; createdAt: string }> };
+  newsSnapshot: { featured: Array<{ id: string; pinned?: boolean | null; date: string; title: string }>; activeCount: number };
+  newsLoading: boolean;
+  activityFeed: ActivityEvent[];
+  language: Language;
+}) {
+  return (
+    <div className="guild-dashboard-primary-grid">
+      <StatusCard title={copy.actionCenter} icon="seal" actionHref="/profile" actionLabel={copy.openProfile} tone="active">
+        <div className="dashboard-card-stack">
+          <p className="dashboard-card-copy">{copy.actionCenterBody}</p>
+          {helpSnapshot.myResponses.length > 0 ? (
+            <div className="dashboard-list">
+              {helpSnapshot.myResponses.slice(0, 3).map((r) => (
+                <div key={r.id} className="dashboard-list__item">
+                  <div>
+                    <div className="dashboard-list__title">{r.title}</div>
+                    <div className="dashboard-list__meta">{formatTimeAgo(r.createdAt, copy, language)}</div>
+                  </div>
+                  <SignalBadge tone="active">{copy.respondedToHelp}</SignalBadge>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="dashboard-card-empty">{copy.noTasks}</div>
+          )}
+        </div>
+      </StatusCard>
+
+      <StatusCard title={copy.announcements} icon="news" actionHref="/news" actionLabel={copy.openNews} tone={newsSnapshot.activeCount > 0 ? 'active' : 'steady'}>
+        {newsLoading ? <MiniSkeleton /> : newsSnapshot.featured.length > 0 ? (
+          <div className="dashboard-card-stack">
+            {newsSnapshot.featured.map((item, index) => (
+              <div key={item.id} className={cn('dashboard-news-spotlight', index === 0 && 'dashboard-news-spotlight--featured')}>
+                <div className="dashboard-news-spotlight__meta">
+                  <SignalBadge tone={item.pinned ? 'active' : 'steady'}>{item.pinned ? copy.pinned : copy.latest}</SignalBadge>
+                  <span>{formatTimeAgo(item.date, copy, language)}</span>
+                </div>
+                <div className="dashboard-news-spotlight__title">{item.title}</div>
+              </div>
+            ))}
+          </div>
+        ) : <div className="dashboard-card-empty">{copy.announcementsEmpty}</div>}
+      </StatusCard>
+
+      <StatusCard title={copy.activityFeed} icon="list" actionHref="/news" actionLabel={copy.openNews} tone="steady">
+        <div className="dashboard-card-stack">
+          <p className="dashboard-card-copy">{copy.activityFeedBody}</p>
+          {activityFeed.length > 0 ? (
+            <div className="activity-feed-list">
+              {activityFeed.map((event) => (
+                <div key={event.id} className="activity-feed-item">
+                  <div className="activity-feed-icon">
+                    <WuxiaIcon name={
+                      event.type === 'joined_guild' ? 'user' :
+                      event.type === 'responded_help' ? 'help' :
+                      event.type === 'created_absence' || event.type === 'approved_absence' ? 'absences' :
+                      event.type === 'closed_help' ? 'checkCircle' :
+                      event.type === 'created_guide' ? 'book' :
+                      event.type === 'joined_pvp' || event.type === 'completed_pvp' ? 'sword' :
+                      event.type === 'updated_profile' ? 'profile' :
+                      event.type === 'created_news' ? 'news' :
+                      'seal'
+                    } className="h-4 w-4" />
+                  </div>
+                  <div className="activity-feed-content">
+                    <div className="activity-feed-actor">{event.actor}</div>
+                    <div className="activity-feed-action">
+                      {event.type === 'joined_guild' ? copy.joinedGuild :
+                       event.type === 'responded_help' ? copy.respondedToHelp :
+                       event.type === 'created_absence' ? copy.createdAbsence :
+                       event.type === 'approved_absence' ? copy.approvedAbsence :
+                       event.type === 'closed_help' ? copy.closedHelp :
+                       event.type === 'created_guide' ? copy.createdGuide :
+                       event.type === 'joined_pvp' ? copy.joinedPvpQueue :
+                       event.type === 'completed_pvp' ? copy.completedPvpMatch :
+                       event.type === 'updated_profile' ? copy.updatedProfile :
+                       event.type === 'created_news' ? copy.createdNews :
+                       copy.rsvpdToEvent}
+                    </div>
+                    {event.details && <div className="activity-feed-details">{event.details}</div>}
+                  </div>
+                  <div className="activity-feed-time">{formatTimeAgo(event.timestamp, copy, language)}</div>
+                </div>
+              ))}
+            </div>
+          ) : <div className="dashboard-card-empty">{copy.noActivity}</div>}
+        </div>
+      </StatusCard>
+    </div>
+  );
+}
+
 function DashboardSectionContent({ user, language }: DashboardSectionProps) {
   const copy = dashboardCopy[language];
   const { data: schedule = [], isLoading: scheduleLoading, error: scheduleError, refetch: refetchSchedule } = useSchedule(language);
@@ -760,167 +970,29 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
             </>
           } />
 
-          <div className="guild-dashboard-grid">
-            <article className="card section-card guild-dashboard-command p-6 sm:p-7 xl:p-8">
-              <div className="guild-dashboard-command__header">
-                <div>
-                  <div className="dashboard-kicker">{copy.liveStatus}</div>
-                  <h3 className="guild-dashboard-command__title">{copy.situationRoom}</h3>
-                </div>
-                <SignalBadge tone={liveTone}>{liveLabel}</SignalBadge>
-              </div>
+          <DashboardHeroRegion
+            copy={copy}
+            liveTone={liveTone}
+            liveLabel={liveLabel}
+            rosterSnapshot={rosterSnapshot}
+            helpSnapshot={helpSnapshot}
+            absenceSnapshot={absenceSnapshot}
+            newsSnapshot={newsSnapshot}
+            user={user}
+            language={language}
+            pvpSnapshot={pvpSnapshot}
+            isOfficer={isOfficer}
+            officerSignals={officerSignals}
+          />
 
-              <p className="guild-dashboard-command__lede">{copy.openingLine}</p>
-              <p className="guild-dashboard-command__body">{copy.liveSnapshot}</p>
-
-              <div className="guild-dashboard-metric-grid">
-                <MetricTile label={copy.activeMembers} value={rosterSnapshot.active} tone={liveTone === 'steady' ? 'active' : liveTone} />
-                <MetricTile label={copy.unattendedRequests} value={helpSnapshot.unattended} tone={helpSnapshot.unattended > 0 ? 'alert' : 'steady'} />
-                <MetricTile label={copy.pendingAbsences} value={absenceSnapshot.pending.length} tone={absenceSnapshot.pending.length > 0 ? 'alert' : 'steady'} />
-                <MetricTile label={copy.activeAnnouncements} value={newsSnapshot.activeCount} tone="active" />
-              </div>
-            </article>
-
-            <aside className="card section-card guild-dashboard-station p-6 sm:p-7">
-              <div className="guild-dashboard-station__header">
-                <div>
-                  <div className="dashboard-kicker">{copy.personalStation}</div>
-                  <h3 className="guild-dashboard-station__title">{user.nickname || 'Silent Moonfall'}</h3>
-                </div>
-                <SignalBadge tone={user.isActive ? 'active' : 'alert'}>{user.isActive ? copy.activeState : copy.inactiveState}</SignalBadge>
-              </div>
-
-              <p className="guild-dashboard-station__body">{copy.personalStationBody}</p>
-
-              <div className="guild-dashboard-station__facts">
-                <div><span>{copy.yourRole}</span><strong>{roleLabels[language][user.role]}</strong></div>
-                <div><span>{copy.yourClass}</span><strong>{user.className || copy.noClass}</strong></div>
-                <div><span>{copy.yourPrefix}</span><strong>{user.prefix || copy.noPrefix}</strong></div>
-                <div><span>{copy.accountState}</span><strong>{user.isActive ? copy.activeState : copy.inactiveState}</strong></div>
-              </div>
-
-              <div className="guild-dashboard-station__queue">
-                <div><span className="dashboard-kicker">PvP</span><strong>{pvpSnapshot.userInQueue ? copy.queuedNow : copy.notQueued}</strong></div>
-                <div className="ui-badge ui-badge-muted">{pvpSnapshot.queueSize > 0 ? `${copy.activeQueue}: ${pvpSnapshot.queueSize}` : copy.noQueue}</div>
-              </div>
-
-              {isOfficer && (
-                <div className="guild-dashboard-station__overlay">
-                  <span className="dashboard-kicker">{copy.officerOverlay}</span>
-                  <strong>{officerSignals > 0 ? officerSignals : 0}</strong>
-                  <p>{officerSignals > 0 ? copy.activeAlerts : copy.noOverlay}</p>
-
-                  <div className="officer-escalation-list">
-                    {absenceSnapshot.pending.length > 0 && (
-                      <div className="officer-escalation-item">
-                        <WuxiaIcon name="calendarX" className="h-4 w-4" />
-                        <span>{absenceSnapshot.pending.length} {copy.pendingAbsencesLabel}</span>
-                        <Link href="/absences" className="officer-escalation-link">{copy.openAbsences}</Link>
-                      </div>
-                    )}
-                    {helpSnapshot.unattended > 0 && (
-                      <div className="officer-escalation-item">
-                        <WuxiaIcon name="alertTriangle" className="h-4 w-4" />
-                        <span>{helpSnapshot.unattended} {copy.pendingHelpLabel}</span>
-                        <Link href="/help" className="officer-escalation-link">{copy.openHelp}</Link>
-                      </div>
-                    )}
-                    {pvpSnapshot.disputed && (
-                      <div className="officer-escalation-item">
-                        <WuxiaIcon name="alertTriangle" className="h-4 w-4" />
-                        <span>1 {copy.disputedMatchesLabel}</span>
-                        <Link href="/pvp" className="officer-escalation-link">{copy.openPvp}</Link>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </aside>
-          </div>
-
-          <div className="guild-dashboard-primary-grid">
-            <StatusCard title={copy.actionCenter} icon="seal" actionHref="/profile" actionLabel={copy.openProfile} tone="active">
-              <div className="dashboard-card-stack">
-                <p className="dashboard-card-copy">{copy.actionCenterBody}</p>
-                {helpSnapshot.myResponses.length > 0 ? (
-                  <div className="dashboard-list">
-                    {helpSnapshot.myResponses.slice(0, 3).map((r) => (
-                      <div key={r.id} className="dashboard-list__item">
-                        <div>
-                          <div className="dashboard-list__title">{r.title}</div>
-                          <div className="dashboard-list__meta">{formatTimeAgo(r.createdAt, copy, language)}</div>
-                        </div>
-                        <SignalBadge tone="active">{copy.respondedToHelp}</SignalBadge>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="dashboard-card-empty">{copy.noTasks}</div>
-                )}
-              </div>
-            </StatusCard>
-
-            <StatusCard title={copy.announcements} icon="news" actionHref="/news" actionLabel={copy.openNews} tone={newsSnapshot.activeCount > 0 ? 'active' : 'steady'}>
-              {newsLoading ? <MiniSkeleton /> : newsSnapshot.featured.length > 0 ? (
-                <div className="dashboard-card-stack">
-                  {newsSnapshot.featured.map((item, index) => (
-                    <div key={item.id} className={cn('dashboard-news-spotlight', index === 0 && 'dashboard-news-spotlight--featured')}>
-                      <div className="dashboard-news-spotlight__meta">
-                        <SignalBadge tone={item.pinned ? 'active' : 'steady'}>{item.pinned ? copy.pinned : copy.latest}</SignalBadge>
-                        <span>{formatTimeAgo(item.date, copy, language)}</span>
-                      </div>
-                      <div className="dashboard-news-spotlight__title">{item.title}</div>
-                    </div>
-                  ))}
-                </div>
-              ) : <div className="dashboard-card-empty">{copy.announcementsEmpty}</div>}
-            </StatusCard>
-
-            <StatusCard title={copy.activityFeed} icon="list" actionHref="/news" actionLabel={copy.openNews} tone="steady">
-              <div className="dashboard-card-stack">
-                <p className="dashboard-card-copy">{copy.activityFeedBody}</p>
-                {activityFeed.length > 0 ? (
-                  <div className="activity-feed-list">
-                    {activityFeed.map((event) => (
-                      <div key={event.id} className="activity-feed-item">
-                        <div className="activity-feed-icon">
-                          <WuxiaIcon name={
-                            event.type === 'joined_guild' ? 'user' :
-                            event.type === 'responded_help' ? 'help' :
-                            event.type === 'created_absence' || event.type === 'approved_absence' ? 'absences' :
-                            event.type === 'closed_help' ? 'checkCircle' :
-                            event.type === 'created_guide' ? 'book' :
-                            event.type === 'joined_pvp' || event.type === 'completed_pvp' ? 'sword' :
-                            event.type === 'updated_profile' ? 'profile' :
-                            event.type === 'created_news' ? 'news' :
-                            'seal'
-                          } className="h-4 w-4" />
-                        </div>
-                        <div className="activity-feed-content">
-                          <div className="activity-feed-actor">{event.actor}</div>
-                          <div className="activity-feed-action">
-                            {event.type === 'joined_guild' ? copy.joinedGuild :
-                             event.type === 'responded_help' ? copy.respondedToHelp :
-                             event.type === 'created_absence' ? copy.createdAbsence :
-                             event.type === 'approved_absence' ? copy.approvedAbsence :
-                             event.type === 'closed_help' ? copy.closedHelp :
-                             event.type === 'created_guide' ? copy.createdGuide :
-                             event.type === 'joined_pvp' ? copy.joinedPvpQueue :
-                             event.type === 'completed_pvp' ? copy.completedPvpMatch :
-                             event.type === 'updated_profile' ? copy.updatedProfile :
-                             event.type === 'created_news' ? copy.createdNews :
-                             copy.rsvpdToEvent}
-                          </div>
-                          {event.details && <div className="activity-feed-details">{event.details}</div>}
-                        </div>
-                        <div className="activity-feed-time">{formatTimeAgo(event.timestamp, copy, language)}</div>
-                      </div>
-                    ))}
-                  </div>
-                ) : <div className="dashboard-card-empty">{copy.noActivity}</div>}
-              </div>
-            </StatusCard>
-          </div>
+          <DashboardPrimaryRegion
+            copy={copy}
+            helpSnapshot={helpSnapshot}
+            newsSnapshot={newsSnapshot}
+            newsLoading={newsLoading}
+            activityFeed={activityFeed}
+            language={language}
+          />
         </div>
       </div>
     </section>

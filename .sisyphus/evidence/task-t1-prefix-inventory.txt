@@ -1,0 +1,18 @@
+T1 Prefix Inventory
+
+Grounded repo touchpoints:
+1. components/sections/profile/index.tsx
+   - ProfileOverview renders the current prefix as an inline cyan badge next to the nickname.
+   - Profile editor includes the prefix select sourced from lib/schemas/registration.ts.
+2. components/sections/dashboard/index.tsx
+   - Personal station facts grid renders user.prefix as plain text with a no-prefix fallback.
+3. components/sections/registration/RegistrationTable.tsx
+   - RegistrationIdentity renders nickname and Discord identity only; no prefix yet.
+   - Valid future consumer for shared prefix rendering in both table and card views.
+4. components/sections/pvp/index.tsx
+   - Queue, leaderboard, and recent matches render participant nicknames only; no prefix yet.
+   - Valid future consumer for compact prefix rendering.
+5. components/ClassIcon.tsx
+   - ClassBadge is the closest existing identity badge pattern and a good reference for PrefixBadge composition.
+6. lib/schemas/registration.ts
+   - prefixOptions is the canonical option source and must remain unchanged.

@@ -364,7 +364,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
 
         {canPublish ? (
           <div className="grid gap-4 sm:gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-            <article className="card section-card p-5 sm:p-6 md:p-7">
+            <article className="card section-card ds-section-panel p-5 sm:p-6 md:p-7">
               <div className="mb-5 flex items-center justify-between gap-3">
                 <div>
                   <div className="text-xs sm:text-sm uppercase tracking-[0.18em] text-[#9ec5d8]">News console</div>
@@ -395,7 +395,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                   />
                 </label>
 
-                <label className="inline-flex items-center gap-3 rounded-2xl border border-cyan-400/15 bg-[#101821]/75 px-4 py-3 text-sm text-cyan-50">
+                <label className="inline-flex items-center gap-3 rounded-2xl ds-section-panel-soft px-4 py-3 text-sm text-cyan-50">
                   <input
                     type="checkbox"
                     checked={draftPinned}
@@ -406,7 +406,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                 </label>
 
                 {composerNotice ? (
-                  <div className="rounded-2xl border border-cyan-400/20 bg-[#11202a]/75 px-4 py-3 text-sm text-[#d9edf7]">
+                  <div className="ds-notice border-cyan-400/20 bg-[#11202a]/75 text-[#d9edf7]">
                     {composerNotice}
                   </div>
                 ) : null}
@@ -425,17 +425,17 @@ function NewsSectionContent({ user }: NewsSectionProps) {
               </div>
             </article>
 
-            <article className="card section-card p-5 sm:p-6 md:p-7">
+            <article className="card section-card ds-section-panel p-5 sm:p-6 md:p-7">
               <div className="text-xs sm:text-sm uppercase tracking-[0.18em] text-[#9ec5d8]">Discord preview</div>
               <h3 className="mt-2 text-xl font-bold font-orbitron text-cyan-100">Как это будет выглядеть</h3>
 
               {composerPreview ? (
-                <div className="mt-5 rounded-[28px] border border-cyan-400/15 bg-[#0b131b]/88 p-5 shadow-[0_24px_60px_rgba(2,8,14,0.45)]">
+                <div className="ds-section-panel mt-5 rounded-[28px] border-cyan-400/15 bg-[#0b131b]/88 p-5 shadow-[0_24px_60px_rgba(2,8,14,0.45)]">
                   <div className="mb-3 flex items-center gap-2 text-xs text-cyan-100/70">
                     <DeliveryBadge status="sent" />
                     {draftPinned ? <span className="rounded-full border border-amber-400/30 bg-amber-500/10 px-2.5 py-1 text-amber-200">Pinned</span> : null}
                   </div>
-                  <div className="rounded-3xl border border-cyan-400/12 bg-[#111b24] p-5">
+                  <div className="rounded-3xl ds-section-panel-soft border-cyan-400/12 bg-[#111b24] p-5">
                     <h4 className="text-xl font-bold text-cyan-100">{composerPreview.title}</h4>
                     <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-7 text-gray-200/90">
                       {renderNewsTextWithLinks(composerPreview.body, 'composer-preview')}
@@ -444,7 +444,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                   </div>
                 </div>
               ) : (
-                <div className="mt-5 rounded-[28px] border border-dashed border-cyan-400/20 bg-[#0b131b]/78 p-6 text-sm text-gray-400">
+                <div className="ds-section-panel mt-5 rounded-[28px] border-dashed border-cyan-400/20 bg-[#0b131b]/78 p-6 text-sm text-gray-400">
                   Заполни новость слева, и здесь появится Discord-safe превью.
                 </div>
               )}
@@ -476,7 +476,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                   const featuredPreview = canExpandFeatured && !isFeaturedExpanded ? `${trimPreviewAtSafeBoundary(preview, 757)}...` : preview;
 
                   return (
-                    <article className="card news-hero section-card p-5 sm:p-6 md:p-8">
+                    <article className="card news-hero section-card ds-section-panel p-5 sm:p-6 md:p-8">
                       <div className="flex items-center gap-2 text-xs sm:text-sm mb-4">
                         {featured.pinned ? (
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-500/10 text-yellow-300 border border-yellow-400/30">
@@ -543,7 +543,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                     const canExpand = preview.length > 320;
 
                     return (
-                      <article key={item.id} className="card news-card section-card p-5 sm:p-6 md:p-7">
+                      <article key={item.id} className="card news-card section-card ds-section-panel p-5 sm:p-6 md:p-7">
                         <div className="flex items-center gap-2 text-xs sm:text-sm mb-3">
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-300 border border-blue-400/20">
                             <WuxiaIcon name="news" className="w-3.5 h-3.5" />

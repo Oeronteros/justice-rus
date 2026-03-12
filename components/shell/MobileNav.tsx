@@ -4,36 +4,14 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Section } from '@/types';
 import { Language, sectionLabels } from '@/lib/i18n';
-import WuxiaIcon, { type IconName } from '../WuxiaIcons';
+import { navItems } from '@/lib/nav';
+import WuxiaIcon from '../WuxiaIcons';
 
 interface MobileNavProps {
   currentSection: Section;
   language: Language;
   onNavPrefetch?: (section: Section) => void;
 }
-
-type NavItem = {
-  section: Section;
-  href: string;
-  icon: IconName;
-};
-
-const navItems: NavItem[] = [
-  { section: 'about', href: '/', icon: 'eye' },
-  { section: 'news', href: '/news', icon: 'news' },
-  { section: 'registration', href: '/members', icon: 'registration' },
-  { section: 'schedule', href: '/schedule', icon: 'schedule' },
-  { section: 'calendar', href: '/calendar', icon: 'calendar' },
-  { section: 'analytics', href: '/analytics', icon: 'analytics' },
-  { section: 'workflow', href: '/workflow', icon: 'workflow' },
-  { section: 'integrations', href: '/integrations', icon: 'integrations' },
-  { section: 'pvp', href: '/pvp', icon: 'sword' },
-  { section: 'guides', href: '/guides', icon: 'guides' },
-  { section: 'help', href: '/help', icon: 'help' },
-  { section: 'absences', href: '/absences', icon: 'absences' },
-  { section: 'calculator', href: '/calculator', icon: 'calculator' },
-  { section: 'profile', href: '/profile', icon: 'profile' },
-];
 
 export default function MobileNav({ currentSection, language, onNavPrefetch }: MobileNavProps) {
   const [isMoreOpen, setIsMoreOpen] = useState(false);

@@ -167,7 +167,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
           />
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 sm:gap-6 lg:gap-8 items-start">
-            <div className="lg:col-span-2 card section-card p-5 sm:p-6 lg:p-8">
+            <div className="lg:col-span-2 card section-card ds-section-panel p-5 sm:p-6 lg:p-8">
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-gradient-to-r from-[#2f6e8d]/30 to-[#8fb9cc]/30 rounded-full flex items-center justify-center mr-4">
                 <WuxiaIcon name="plus" className="w-7 h-7 text-[#8fb9cc]" />
@@ -254,7 +254,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
               </button>
 
               {createRequest.error && (
-                <div className="text-[#bcd6e5] text-sm mt-2 p-4 bg-[#16202b]/65 rounded-xl border border-[#2f6e8d]/40">
+                <div className="ds-notice mt-2">
                   <WuxiaIcon name="alertTriangle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
                   {createRequest.error instanceof Error ? createRequest.error.message : t.help.createFailed}
                 </div>
@@ -263,7 +263,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
           </div>
 
             <div className="lg:col-span-3 section-stack-md">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="ds-toolbar flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <span className="text-sm text-gray-400">{t.help.show}</span>
                 <div className="inline-flex rounded-2xl p-1 bg-[#0b141d]/70 border border-[#223140]/70">
@@ -299,9 +299,9 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 layout="list"
               />
             ) : requests.length === 0 ? (
-              <div className="card section-card p-8 sm:p-10 text-center">
+              <div className="card section-card ds-section-panel p-8 sm:p-10 text-center">
                 <div className="flex justify-center mb-5">
-                  <div className="w-16 h-16 rounded-full bg-[#101922]/70 border border-[#223544]/60 grid place-items-center">
+                  <div className="w-16 h-16 rounded-full ds-section-panel-soft grid place-items-center">
                     <WuxiaIcon name="seal" className="w-8 h-8 text-[#8fb9cc]" />
                   </div>
                 </div>
@@ -318,16 +318,16 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                     (!req.authorUserId && user.nickname && req.author && req.author.toLowerCase() === user.nickname.toLowerCase());
 
                   return (
-                    <div key={req.id} className="card section-card p-5 sm:p-6">
+                    <div key={req.id} className="card section-card ds-section-panel p-5 sm:p-6">
                       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2 mb-3">
-                            <span className="px-3 py-1 bg-gradient-to-r from-[#142636]/60 to-[#1d3b52]/60 text-[#8fb9cc] rounded-full text-sm font-medium">
+                            <span className="ds-kicker text-sm font-medium">
                               <WuxiaIcon name="tag" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
                               {req.category}
                             </span>
                             <span
-                              className={`px-3 py-1 rounded-full text-sm font-medium ${
+                              className={`ds-kicker text-sm font-medium ${
                                 req.status === 'closed'
                                   ? 'bg-[#0f1720]/70 text-gray-400 border border-[#223140]/70'
                                   : 'bg-[#183244]/70 text-[#e6eff5] border border-[#2f6e8d]/50'
@@ -354,7 +354,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                           </div>
 
                           {editingTimeId === req.id && (
-                            <div className="mb-4 p-4 bg-[#0b141d]/70 border border-[#223140]/70 rounded-2xl">
+                            <div className="mb-4 rounded-2xl ds-section-panel-soft p-4">
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                   <div className="text-xs text-gray-400 mb-1 px-1">Сбор: начало</div>
@@ -409,7 +409,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                                 {req.responders.map((r) => (
                                   <span
                                     key={`${req.id}:${r.userId}`}
-                                    className="inline-flex items-center gap-2 px-2.5 py-1 bg-[#101922]/70 border border-[#223544]/60 text-[#d2e5ef] rounded-full text-xs"
+                                    className="ds-kicker gap-2 text-xs"
                                     title={r.respondedAt}
                                   >
                                     <span>{r.nickname}</span>

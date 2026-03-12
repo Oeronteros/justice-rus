@@ -114,7 +114,7 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
 
           <RegistrationStats registrations={registrations} user={user} />
 
-          <div className="card section-card section-filter-card p-4 sm:p-6">
+          <div className="card section-card ds-section-panel section-filter-card p-4 sm:p-6">
           <RegistrationFilters
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
@@ -127,7 +127,7 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
           />
 
           {canEditColumns && (
-            <div className="mb-4 sm:mb-6 rounded-2xl border border-[#2a3c4c]/60 bg-[#101a23]/60 p-4 sm:p-5">
+            <div className="mb-4 sm:mb-6 rounded-2xl ds-section-panel-soft p-4 sm:p-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-1">Названия столбцов</div>
