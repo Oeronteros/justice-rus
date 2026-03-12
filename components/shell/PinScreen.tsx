@@ -129,10 +129,10 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-20 overflow-y-auto bg-[linear-gradient(180deg,rgba(5,10,15,0.56),rgba(5,10,15,0.84))] px-3 pt-[max(12px,env(safe-area-inset-top))] pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-[2px] sm:px-4 sm:py-6 lg:px-6 lg:py-10">
+    <div className="fixed inset-0 z-20 overflow-y-auto bg-[linear-gradient(180deg,rgba(5,10,15,0.32),rgba(5,10,15,0.72))] px-3 pt-[max(12px,env(safe-area-inset-top))] pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-[1px] sm:px-4 sm:py-6 lg:px-6 lg:py-10">
       <div className="flex min-h-full items-start justify-center lg:items-center">
-        <div className="card grid w-full max-w-6xl grid-cols-1 overflow-hidden rounded-[32px] border-[rgba(143,185,204,0.34)] bg-[rgba(6,10,15,0.36)] p-0 shadow-[0_32px_80px_rgba(2,6,10,0.72)] backdrop-blur-xl lg:grid-cols-[minmax(0,0.94fr)_minmax(0,1.06fr)]">
-          <div className="relative border-b border-[rgba(143,185,204,0.14)] bg-[linear-gradient(160deg,rgba(11,20,28,0.72),rgba(7,12,18,0.88))] p-6 lg:border-b-0 lg:border-r lg:p-10 xl:p-12">
+        <div className="card auth-shell grid w-full max-w-[74rem] grid-cols-1 overflow-hidden rounded-[32px] border-[rgba(143,185,204,0.34)] bg-[rgba(6,10,15,0.28)] p-0 shadow-[0_32px_80px_rgba(2,6,10,0.68)] backdrop-blur-xl lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]">
+          <div className="auth-shell__aside relative mx-auto w-full max-w-[34rem] border-b border-[rgba(143,185,204,0.14)] bg-[linear-gradient(160deg,rgba(11,20,28,0.62),rgba(7,12,18,0.82))] p-6 lg:mx-0 lg:max-w-none lg:border-b-0 lg:border-r lg:p-10 xl:p-12">
             <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(143,185,204,0.28)] bg-[rgba(9,18,26,0.62)] px-3 py-1.5 text-[11px] uppercase tracking-[0.24em] text-[rgba(191,220,234,0.88)] sm:text-xs sm:tracking-[0.32em]">
               {t.common.portalEyebrow}
             </div>
@@ -164,7 +164,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
             </div>
           </div>
 
-          <div className="p-6 lg:p-10 xl:p-12">
+          <div className="auth-shell__form mx-auto w-full max-w-[38rem] p-6 lg:mx-0 lg:max-w-none lg:p-10 xl:p-12">
             <div className="mb-6 flex flex-col gap-3 sm:mb-7 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[rgba(143,185,204,0.22)] bg-[rgba(8,16,24,0.46)] px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-[rgba(170,205,223,0.88)]">

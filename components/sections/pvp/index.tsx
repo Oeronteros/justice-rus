@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { LoadingState } from '@/components/shared/LoadingState';
+import { PrefixBadge } from '@/components/PrefixBadge';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { ClassBadge } from '@/components/ClassIcon';
 import WuxiaIcon from '@/components/WuxiaIcons';
@@ -128,14 +129,20 @@ function MatchCard({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
         <div className="rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4">
           <div className="text-gray-400 mb-1">Ты</div>
-          <div className="text-[#e6eff5] font-semibold">{you.nickname}</div>
+          <div className="flex flex-wrap items-center gap-2 text-[#e6eff5] font-semibold">
+            <span>{you.nickname}</span>
+            <PrefixBadge prefix={you.prefix} variant="compact" />
+          </div>
           <div className="mt-2">
             <ClassBadge className={you.className} emptyLabel="Класс не указан" textClassName="text-green-300 text-xs" iconSizeClassName="h-7 w-7" />
           </div>
         </div>
         <div className="rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4">
           <div className="text-gray-400 mb-1">Соперник</div>
-          <div className="text-[#e6eff5] font-semibold">{opponent.nickname}</div>
+          <div className="flex flex-wrap items-center gap-2 text-[#e6eff5] font-semibold">
+            <span>{opponent.nickname}</span>
+            <PrefixBadge prefix={opponent.prefix} variant="compact" />
+          </div>
           <div className="mt-2">
             <ClassBadge className={opponent.className} emptyLabel="Класс не указан" textClassName="text-green-300 text-xs" iconSizeClassName="h-7 w-7" />
           </div>
@@ -174,6 +181,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
   const joinQueue = useJoinPvpQueue({
     playerId: user.discordId || user.id || user.nickname || 'self',
     nickname: user.nickname || 'You',
+    prefix: user.prefix || null,
     className: user.className || 'Unknown',
   });
   const leaveQueue = useLeavePvpQueue({
@@ -336,7 +344,10 @@ function PvpSectionContent({ user }: PvpSectionProps) {
                   data.queue.map((entry, index) => (
                     <div key={`${entry.playerId}-${entry.joinedAt}`} className="rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                       <div>
-                        <div className="text-[#e6eff5] font-medium">#{index + 1} {entry.nickname}</div>
+                        <div className="flex flex-wrap items-center gap-2 text-[#e6eff5] font-medium">
+                          <span>#{index + 1} {entry.nickname}</span>
+                          <PrefixBadge prefix={entry.prefix} variant="compact" />
+                        </div>
                         <div className="mt-1">
                           <ClassBadge className={entry.className} emptyLabel="Класс не указан" textClassName="text-xs text-green-300" iconSizeClassName="h-7 w-7" />
                         </div>
@@ -375,7 +386,10 @@ function PvpSectionContent({ user }: PvpSectionProps) {
                     data.leaderboard.map((entry, index) => (
                       <div key={entry.playerId} className="rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4 flex items-center justify-between gap-4">
                         <div>
-                          <div className="text-[#e6eff5] font-medium">#{index + 1} {entry.nickname}</div>
+                          <div className="flex flex-wrap items-center gap-2 text-[#e6eff5] font-medium">
+                            <span>#{index + 1} {entry.nickname}</span>
+                            <PrefixBadge prefix={entry.prefix} variant="compact" />
+                          </div>
                           <div className="text-xs text-gray-400 mt-1">W {entry.wins} / L {entry.losses}</div>
                         </div>
                         <div className="text-lg font-semibold text-green-300">{entry.rating}</div>
@@ -394,7 +408,13 @@ function PvpSectionContent({ user }: PvpSectionProps) {
                     data.recentMatches.map((match) => (
                       <div key={match.id} className="rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                          <div className="text-[#e6eff5] font-medium">{match.playerOne.nickname} vs {match.playerTwo.nickname}</div>
+                          <div className="flex flex-wrap items-center gap-2 text-[#e6eff5] font-medium">
+                            <span>{match.playerOne.nickname}</span>
+                            <PrefixBadge prefix={match.playerOne.prefix} variant="compact" />
+                            <span className="text-gray-500">vs</span>
+                            <span>{match.playerTwo.nickname}</span>
+                            <PrefixBadge prefix={match.playerTwo.prefix} variant="compact" />
+                          </div>
                           <div className="text-xs text-gray-400">{formatDateTime(match.confirmedAt || match.updatedAt)}</div>
                         </div>
                         <div className="text-xs text-green-300 mt-2">

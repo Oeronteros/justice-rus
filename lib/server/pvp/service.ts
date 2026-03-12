@@ -8,6 +8,7 @@ import { getCachedTableColumns, runServerTaskOnce } from '@/lib/server/db-cache'
 type Actor = {
   id: string;
   nickname: string;
+  prefix: string;
   className: string;
 };
 
@@ -15,9 +16,11 @@ type MatchRow = {
   id: number;
   player_one_id: string;
   player_one_nickname: string;
+  player_one_prefix: string | null;
   player_one_class: string;
   player_two_id: string;
   player_two_nickname: string;
+  player_two_prefix: string | null;
   player_two_class: string;
   status: 'pending' | 'completed';
   winner_id: string | null;
@@ -81,9 +84,11 @@ function normalizedMatchSelect(whereClause?: string, orderClause?: string, limit
       id,
       COALESCE(player_one_id, player1_id) AS player_one_id,
       COALESCE(player_one_nickname, player1_id) AS player_one_nickname,
+      player_one_prefix,
       player_one_class,
       COALESCE(player_two_id, player2_id) AS player_two_id,
       COALESCE(player_two_nickname, player2_id) AS player_two_nickname,
+      player_two_prefix,
       player_two_class,
       status,
       winner_id,
@@ -133,6 +138,7 @@ export async function ensurePvpSchema() {
     await pool.query(`ALTER TABLE duel_queue ADD COLUMN IF NOT EXISTS player_id TEXT;`);
     await pool.query(`ALTER TABLE duel_queue ADD COLUMN IF NOT EXISTS discord_id TEXT;`);
     await pool.query(`ALTER TABLE duel_queue ADD COLUMN IF NOT EXISTS nickname TEXT;`);
+    await pool.query(`ALTER TABLE duel_queue ADD COLUMN IF NOT EXISTS prefix TEXT NOT NULL DEFAULT '';`);
     await pool.query(`ALTER TABLE duel_queue ADD COLUMN IF NOT EXISTS class_name TEXT NOT NULL DEFAULT '';`);
     await pool.query(`ALTER TABLE duel_queue ADD COLUMN IF NOT EXISTS queued_at TIMESTAMP NULL;`);
     await pool.query(`ALTER TABLE duel_queue ADD COLUMN IF NOT EXISTS created_at TIMESTAMP NOT NULL DEFAULT NOW();`);
@@ -145,9 +151,11 @@ export async function ensurePvpSchema() {
         id SERIAL PRIMARY KEY,
         player_one_id TEXT NOT NULL,
         player_one_nickname TEXT NOT NULL,
+        player_one_prefix TEXT NOT NULL DEFAULT '',
         player_one_class TEXT NOT NULL DEFAULT '',
         player_two_id TEXT NOT NULL,
         player_two_nickname TEXT NOT NULL,
+        player_two_prefix TEXT NOT NULL DEFAULT '',
         player_two_class TEXT NOT NULL DEFAULT '',
         status TEXT NOT NULL DEFAULT 'pending',
         winner_id TEXT,
@@ -159,10 +167,12 @@ export async function ensurePvpSchema() {
     await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player_one_id TEXT;`);
     await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player1_id TEXT;`);
     await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player_one_nickname TEXT;`);
+    await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player_one_prefix TEXT NOT NULL DEFAULT '';`);
     await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player_one_class TEXT NOT NULL DEFAULT '';`);
     await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player_two_id TEXT;`);
     await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player2_id TEXT;`);
     await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player_two_nickname TEXT;`);
+    await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player_two_prefix TEXT NOT NULL DEFAULT '';`);
     await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS player_two_class TEXT NOT NULL DEFAULT '';`);
     await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'pending';`);
     await pool.query(`ALTER TABLE duel_matches ADD COLUMN IF NOT EXISTS winner_id TEXT;`);
@@ -200,6 +210,7 @@ export async function ensurePvpSchema() {
         id SERIAL PRIMARY KEY,
         discord_id TEXT NOT NULL UNIQUE,
         username TEXT NOT NULL DEFAULT '',
+        prefix TEXT NOT NULL DEFAULT '',
         rating INTEGER NOT NULL DEFAULT 1000,
         wins INTEGER NOT NULL DEFAULT 0,
         losses INTEGER NOT NULL DEFAULT 0,
@@ -208,6 +219,7 @@ export async function ensurePvpSchema() {
     `);
     await pool.query(`ALTER TABLE duel_ratings ADD COLUMN IF NOT EXISTS discord_id TEXT;`);
     await pool.query(`ALTER TABLE duel_ratings ADD COLUMN IF NOT EXISTS username TEXT NOT NULL DEFAULT '';`);
+    await pool.query(`ALTER TABLE duel_ratings ADD COLUMN IF NOT EXISTS prefix TEXT NOT NULL DEFAULT '';`);
     await pool.query(`ALTER TABLE duel_ratings ADD COLUMN IF NOT EXISTS rating INTEGER NOT NULL DEFAULT 1000;`);
     await pool.query(`ALTER TABLE duel_ratings ADD COLUMN IF NOT EXISTS wins INTEGER NOT NULL DEFAULT 0;`);
     await pool.query(`ALTER TABLE duel_ratings ADD COLUMN IF NOT EXISTS losses INTEGER NOT NULL DEFAULT 0;`);
@@ -220,22 +232,30 @@ async function resolveActor(user: User): Promise<Actor> {
   const actorId = requireActorId(user);
   const pool = getPool();
   let className = '';
+  let prefix = user.prefix || '';
 
   const names = await getCachedTableColumns('registrations');
   const nickCol = names.has('nick') ? 'nick' : names.has('nickname') ? 'nickname' : null;
   const classCol = names.has('class_name') ? 'class_name' : names.has('class') ? 'class' : null;
+  const prefixCol = names.has('prefix') ? 'prefix' : null;
 
-  if (nickCol && classCol && user.nickname) {
+  if (nickCol && user.nickname) {
+    const selectedColumns = [
+      classCol ? `${classCol} AS class_name` : `'' AS class_name`,
+      prefixCol ? `${prefixCol} AS prefix` : `'' AS prefix`,
+    ].join(', ');
     const registration = await pool.query(
-      `SELECT ${classCol} AS class_name FROM registrations WHERE LOWER(${nickCol}) = LOWER($1) LIMIT 1`,
+      `SELECT ${selectedColumns} FROM registrations WHERE LOWER(${nickCol}) = LOWER($1) LIMIT 1`,
       [user.nickname]
     );
     className = String(registration.rows[0]?.class_name || '');
+    prefix = String(registration.rows[0]?.prefix || prefix || '');
   }
 
   return {
     id: actorId,
     nickname: user.nickname || user.discordId || user.id || 'Unknown duelist',
+    prefix,
     className,
   };
 }
@@ -243,13 +263,14 @@ async function resolveActor(user: User): Promise<Actor> {
 async function ensureRatingRow(client: PoolClient, actor: Actor) {
   await client.query(
     `
-    INSERT INTO duel_ratings (discord_id, username, rating, wins, losses, updated_at)
-    VALUES ($1, $2, 1000, 0, 0, NOW())
+    INSERT INTO duel_ratings (discord_id, username, prefix, rating, wins, losses, updated_at)
+    VALUES ($1, $2, $3, 1000, 0, 0, NOW())
     ON CONFLICT (discord_id) DO UPDATE
     SET username = EXCLUDED.username,
+        prefix = EXCLUDED.prefix,
         updated_at = NOW()
     `,
-    [actor.id, actor.nickname]
+    [actor.id, actor.nickname, actor.prefix]
   );
 }
 
@@ -301,11 +322,13 @@ async function formatMatch(pool: Awaited<ReturnType<typeof getPool>>, row: Match
     playerOne: {
       id: row.player_one_id,
       nickname: row.player_one_nickname,
+      prefix: row.player_one_prefix || '',
       className: row.player_one_class || '',
     },
     playerTwo: {
       id: row.player_two_id,
       nickname: row.player_two_nickname,
+      prefix: row.player_two_prefix || '',
       className: row.player_two_class || '',
     },
     yourReport,
@@ -318,8 +341,8 @@ async function loadState(viewerId: string | null): Promise<PvpState> {
   const pool = getPool();
 
   const [queueResult, leaderboardResult, recentResult, activeResult] = await Promise.all([
-    pool.query(`SELECT COALESCE(player_id, discord_id) AS player_id, nickname, class_name, COALESCE(created_at, queued_at) AS created_at FROM duel_queue ORDER BY COALESCE(queued_at, created_at) ASC LIMIT 20`),
-    pool.query(`SELECT discord_id, username, rating, wins, losses FROM duel_ratings ORDER BY rating DESC, wins DESC, losses ASC LIMIT 10`),
+    pool.query(`SELECT COALESCE(player_id, discord_id) AS player_id, nickname, prefix, class_name, COALESCE(created_at, queued_at) AS created_at FROM duel_queue ORDER BY COALESCE(queued_at, created_at) ASC LIMIT 20`),
+    pool.query(`SELECT discord_id, username, prefix, rating, wins, losses FROM duel_ratings ORDER BY rating DESC, wins DESC, losses ASC LIMIT 10`),
     pool.query(normalizedMatchSelect(`WHERE status = 'completed'`, `ORDER BY COALESCE(confirmed_at, completed_at) DESC NULLS LAST, updated_at DESC NULLS LAST`, `LIMIT 8`)),
     viewerId
       ? pool.query(normalizedMatchSelect(`WHERE status = 'pending' AND (COALESCE(player_one_id, player1_id) = $1 OR COALESCE(player_two_id, player2_id) = $1)`, `ORDER BY created_at DESC`, `LIMIT 1`), [viewerId])
@@ -329,6 +352,7 @@ async function loadState(viewerId: string | null): Promise<PvpState> {
   const queue = queueResult.rows.map((row) => ({
     playerId: String(row.player_id),
     nickname: String(row.nickname || ''),
+    prefix: String(row.prefix || ''),
     className: String(row.class_name || ''),
     joinedAt: toIso(row.created_at) || new Date().toISOString(),
   }));
@@ -336,6 +360,7 @@ async function loadState(viewerId: string | null): Promise<PvpState> {
   const leaderboard = leaderboardResult.rows.map((row) => ({
     playerId: String(row.discord_id),
     nickname: String(row.username || ''),
+    prefix: String(row.prefix || ''),
     rating: Number(row.rating || 1000),
     wins: Number(row.wins || 0),
     losses: Number(row.losses || 0),
@@ -374,11 +399,13 @@ async function completeMatch(matchId: number, winnerId: string): Promise<boolean
     const playerOne: Actor = {
       id: lockedMatch.player_one_id,
       nickname: lockedMatch.player_one_nickname,
+      prefix: String(lockedMatch.player_one_prefix || ''),
       className: lockedMatch.player_one_class,
     };
     const playerTwo: Actor = {
       id: lockedMatch.player_two_id,
       nickname: lockedMatch.player_two_nickname,
+      prefix: String(lockedMatch.player_two_prefix || ''),
       className: lockedMatch.player_two_class,
     };
 
@@ -475,15 +502,15 @@ export async function joinPvpQueue(user: User): Promise<PvpState> {
     await client.query(`DELETE FROM duel_queue WHERE discord_id = $1 OR player_id = $1`, [actor.id]);
     await client.query(
       `
-      INSERT INTO duel_queue (discord_id, player_id, nickname, class_name, queued_at, created_at)
-      VALUES ($1, $1, $2, $3, NOW(), NOW())
+      INSERT INTO duel_queue (discord_id, player_id, nickname, prefix, class_name, queued_at, created_at)
+      VALUES ($1, $1, $2, $3, $4, NOW(), NOW())
       `,
-      [actor.id, actor.nickname, actor.className]
+      [actor.id, actor.nickname, actor.prefix, actor.className]
     );
 
     const opponent = await client.query(
       `
-      SELECT COALESCE(player_id, discord_id) AS player_id, nickname, class_name
+      SELECT COALESCE(player_id, discord_id) AS player_id, nickname, prefix, class_name
       FROM duel_queue
       WHERE COALESCE(player_id, discord_id) <> $1
       ORDER BY COALESCE(queued_at, created_at) ASC
@@ -502,17 +529,19 @@ export async function joinPvpQueue(user: User): Promise<PvpState> {
           player2_id,
           player_one_id,
           player_one_nickname,
+          player_one_prefix,
           player_one_class,
           player_two_id,
           player_two_nickname,
+          player_two_prefix,
           player_two_class,
           status,
           created_at,
           updated_at
         )
-        VALUES ($1, $4, $1, $2, $3, $4, $5, $6, 'pending', NOW(), NOW())
+        VALUES ($1, $5, $1, $2, $3, $4, $5, $6, $7, $8, 'pending', NOW(), NOW())
         `,
-        [rival.player_id, rival.nickname, rival.class_name || '', actor.id, actor.nickname, actor.className]
+        [rival.player_id, rival.nickname, rival.prefix || '', rival.class_name || '', actor.id, actor.nickname, actor.prefix, actor.className]
       );
       await client.query(`DELETE FROM duel_queue WHERE discord_id = ANY($1::text[]) OR player_id = ANY($1::text[])`, [[actor.id, String(rival.player_id)]]);
     }

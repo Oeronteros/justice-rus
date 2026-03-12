@@ -202,10 +202,18 @@ function useIsMobileLayout() {
     const update = () => setIsMobile(mediaQuery.matches);
 
     update();
-    mediaQuery.addEventListener('change', update);
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', update);
+    } else {
+      mediaQuery.addListener(update);
+    }
 
     return () => {
-      mediaQuery.removeEventListener('change', update);
+      if (typeof mediaQuery.removeEventListener === 'function') {
+        mediaQuery.removeEventListener('change', update);
+      } else {
+        mediaQuery.removeListener(update);
+      }
     };
   }, []);
 

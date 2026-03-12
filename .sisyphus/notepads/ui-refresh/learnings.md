@@ -17,6 +17,7 @@
 ## 2026-03-12 T6
 - A shared `components/PrefixBadge.tsx` now owns the visual prefix treatment instead of inline badge markup.
 - `profile` and `registration` can consume prefix data immediately because they already have `user.prefix` / `registration.prefix` in their local schemas.
+- PvP needed a real contract extension: queue entries, leaderboard rows, and match participants now carry `prefix`, so the same badge can render there too.
 
 ## 2026-03-12 T2/T7/T8/T9/T10
 - Shared CSS can drive major visual improvement without route logic changes because header, mobile nav, dashboard hero, and dashboard cards already expose stable class hooks.

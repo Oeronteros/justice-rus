@@ -10,6 +10,7 @@ export const pvpKeys = {
 interface OptimisticQueuePlayer {
   playerId: string;
   nickname: string;
+  prefix?: string | null;
   className: string;
 }
 
