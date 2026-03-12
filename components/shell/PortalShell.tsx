@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import BackgroundEffects from '@/components/effects/BackgroundEffects';
 import MainLayout from '@/components/shell/MainLayout';
 import PinScreen from '@/components/shell/PinScreen';
 import PortalVisualEffects from '@/components/effects/PortalVisualEffects';
@@ -33,7 +34,12 @@ export default function PortalShell({ initialUser, children }: PortalShellProps)
   };
 
   if (!user) {
-    return <PinScreen onAuthSuccess={handleAuthSuccess} />;
+    return (
+      <>
+        <BackgroundEffects variant="auth" />
+        <PinScreen onAuthSuccess={handleAuthSuccess} />
+      </>
+    );
   }
 
   return (

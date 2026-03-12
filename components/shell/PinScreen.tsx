@@ -129,55 +129,74 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-20 overflow-y-auto bg-[#070d12]/95 px-3 pt-[max(12px,env(safe-area-inset-top))] pb-[max(12px,env(safe-area-inset-bottom))] sm:px-4 sm:py-6">
+    <div className="fixed inset-0 z-20 overflow-y-auto bg-[linear-gradient(180deg,rgba(5,10,15,0.56),rgba(5,10,15,0.84))] px-3 pt-[max(12px,env(safe-area-inset-top))] pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-[2px] sm:px-4 sm:py-6 lg:px-6 lg:py-10">
       <div className="flex min-h-full items-start justify-center lg:items-center">
-        <div className="card grid w-full max-w-4xl grid-cols-1 overflow-hidden p-0 lg:grid-cols-5">
-          <div className="border-b border-[#273a49]/50 bg-gradient-to-br from-[#13202b]/78 to-[#0b141c]/92 p-6 lg:col-span-2 lg:border-b-0 lg:border-r lg:p-10">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#37556c]/65 bg-[#10202d]/75 px-3 py-1.5 text-[11px] uppercase tracking-[0.22em] text-[#9cc4d7] sm:text-xs sm:tracking-widest">
-            {t.common.portalEyebrow}
+        <div className="card grid w-full max-w-6xl grid-cols-1 overflow-hidden rounded-[32px] border-[rgba(143,185,204,0.34)] bg-[rgba(6,10,15,0.36)] p-0 shadow-[0_32px_80px_rgba(2,6,10,0.72)] backdrop-blur-xl lg:grid-cols-[minmax(0,0.94fr)_minmax(0,1.06fr)]">
+          <div className="relative border-b border-[rgba(143,185,204,0.14)] bg-[linear-gradient(160deg,rgba(11,20,28,0.72),rgba(7,12,18,0.88))] p-6 lg:border-b-0 lg:border-r lg:p-10 xl:p-12">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(143,185,204,0.28)] bg-[rgba(9,18,26,0.62)] px-3 py-1.5 text-[11px] uppercase tracking-[0.24em] text-[rgba(191,220,234,0.88)] sm:text-xs sm:tracking-[0.32em]">
+              {t.common.portalEyebrow}
             </div>
 
-            <div className="mt-5 flex justify-start sm:mt-6">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-r from-[#2f6e8d] to-[#8fb9cc] shadow-lg shadow-[#0c1a24]/40 sm:h-16 sm:w-16">
-                <WuxiaIcon name="shield" className="h-7 w-7 text-white sm:h-8 sm:w-8" />
+            <div className="mt-6 flex justify-start">
+              <div className="flex h-16 w-16 items-center justify-center rounded-[22px] border border-[rgba(190,223,237,0.18)] bg-[linear-gradient(145deg,rgba(66,136,170,0.92),rgba(151,206,231,0.78))] shadow-[0_18px_32px_rgba(5,12,18,0.45)] sm:h-[4.5rem] sm:w-[4.5rem]">
+                <WuxiaIcon name="shield" className="h-8 w-8 text-white sm:h-9 sm:w-9" />
               </div>
             </div>
 
-            <h2 className="mb-2 mt-4 font-orbitron text-[2rem] font-bold leading-tight text-[#e6eff5] sm:mt-5 sm:text-3xl">{t.auth.memberAccess}</h2>
-            <p className="text-sm leading-7 text-[#b7c9d6] sm:text-base">
-            {t.auth.accessIntro}
+            <h2 className="mb-3 mt-5 max-w-[12ch] font-orbitron text-[2.15rem] font-bold leading-[0.96] text-[#eef7fd] sm:text-[2.8rem]">{t.auth.memberAccess}</h2>
+            <p className="max-w-[34rem] text-sm leading-7 text-[rgba(191,209,220,0.92)] sm:text-base">
+              {t.auth.accessIntro}
             </p>
 
-            <div className="mt-5 grid gap-2.5 text-xs text-[#bdd5e4] sm:mt-6 sm:space-y-0 sm:text-sm">
-              <div className="inline-flex items-start gap-2.5 leading-6">
+            <div className="mt-6 grid gap-3 text-xs text-[rgba(205,225,236,0.95)] sm:text-sm">
+              <div className="inline-flex items-start gap-3 rounded-2xl border border-[rgba(143,185,204,0.16)] bg-[rgba(8,16,24,0.42)] px-4 py-3 leading-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
                 <WuxiaIcon name="checkCircle" className="mt-1 h-4 w-4 shrink-0 text-[#8fb9cc]" />
-              {t.auth.benefitAccounts}
+                {t.auth.benefitAccounts}
               </div>
-              <div className="inline-flex items-start gap-2.5 leading-6">
+              <div className="inline-flex items-start gap-3 rounded-2xl border border-[rgba(143,185,204,0.16)] bg-[rgba(8,16,24,0.42)] px-4 py-3 leading-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
                 <WuxiaIcon name="checkCircle" className="mt-1 h-4 w-4 shrink-0 text-[#8fb9cc]" />
-              {t.auth.benefitSecurity}
+                {t.auth.benefitSecurity}
               </div>
-              <div className="inline-flex items-start gap-2.5 leading-6">
+              <div className="inline-flex items-start gap-3 rounded-2xl border border-[rgba(143,185,204,0.16)] bg-[rgba(8,16,24,0.42)] px-4 py-3 leading-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
                 <WuxiaIcon name="checkCircle" className="mt-1 h-4 w-4 shrink-0 text-[#8fb9cc]" />
-              {t.auth.benefitPin}
+                {t.auth.benefitPin}
+              </div>
+            </div>
+
+            <div className="relative mt-7 overflow-hidden rounded-[28px] border border-[rgba(143,185,204,0.2)] bg-[linear-gradient(145deg,rgba(9,16,23,0.78),rgba(7,12,18,0.66))] p-5 shadow-[0_20px_40px_rgba(3,8,12,0.36)]">
+              <div className="absolute inset-0 moonfall-panel-glow"></div>
+              <div className="absolute right-[-2.5rem] top-[-2.5rem] h-32 w-32 rounded-full bg-[radial-gradient(circle,rgba(180,224,245,0.24),transparent_72%)] blur-2xl"></div>
+              <div className="absolute inset-x-0 bottom-0 h-20 bg-[linear-gradient(180deg,transparent,rgba(5,10,15,0.78))]"></div>
+              <div className="relative z-10 min-h-[12rem]">
+                <div className="absolute right-4 top-3 h-24 w-24 rounded-full moonfall-orbit opacity-70"></div>
+                <div className="absolute right-7 top-5 h-20 w-20 moonfall-crescent opacity-90"></div>
+                <div className="absolute inset-0 moonfall-starfield opacity-70"></div>
+                <div className="absolute inset-x-0 top-[22%] h-20 moonfall-fall opacity-55"></div>
+                <div className="absolute bottom-0 left-0 h-28 w-full rounded-[24px] bg-[linear-gradient(180deg,rgba(6,12,17,0.02),rgba(6,12,17,0.82))]"></div>
+                <div className="absolute bottom-2 left-0 right-0 h-px bg-[linear-gradient(90deg,transparent,rgba(191,220,234,0.28),transparent)]"></div>
               </div>
             </div>
           </div>
 
-          <div className="p-6 lg:col-span-3 lg:p-10">
-            <div className="mb-5 sm:mb-6">
-              <h3 className="mb-2 font-orbitron text-[1.75rem] font-bold leading-tight text-[#e6eff5] sm:text-2xl">{t.auth.portalTitle}</h3>
-              <p className="text-sm text-[#b7c9d6] sm:text-base">{t.auth.portalSubtitle}</p>
+          <div className="p-6 lg:p-10 xl:p-12">
+            <div className="mb-6 flex flex-col gap-3 sm:mb-7 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[rgba(143,185,204,0.22)] bg-[rgba(8,16,24,0.46)] px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-[rgba(170,205,223,0.88)]">
+                  Silent Moonfall
+                </div>
+                <h3 className="font-orbitron text-[1.95rem] font-bold leading-tight text-[#eef7fd] sm:text-[2.35rem]">{t.auth.portalTitle}</h3>
+                <p className="mt-2 max-w-[34rem] text-sm leading-6 text-[rgba(183,201,214,0.92)] sm:text-base">{t.auth.portalSubtitle}</p>
+              </div>
             </div>
 
-            <div className="mb-5 grid w-full grid-cols-2 rounded-2xl border border-[#223140]/70 bg-[#0b141d]/70 p-1 sm:mb-6 sm:inline-flex sm:w-auto">
+            <div className="mb-5 grid w-full grid-cols-2 rounded-[20px] border border-[rgba(143,185,204,0.16)] bg-[rgba(7,13,19,0.56)] p-1.5 sm:mb-6 sm:inline-flex sm:w-auto">
               <button
               type="button"
               onClick={() => {
                 setMode('login');
                 resetMessages();
               }}
-              className={`ui-chip ${mode === 'login' ? 'is-active' : ''}`}
+              className={`ui-chip min-h-[48px] rounded-2xl px-5 ${mode === 'login' ? 'is-active' : ''}`}
             >
               {t.auth.loginTab}
               </button>
@@ -187,7 +206,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                 setMode('register');
                 resetMessages();
               }}
-              className={`ui-chip ${mode === 'register' ? 'is-active' : ''}`}
+              className={`ui-chip min-h-[48px] rounded-2xl px-5 ${mode === 'register' ? 'is-active' : ''}`}
             >
               {t.auth.registerTab}
               </button>
@@ -218,7 +237,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                 />
                 <button
                 type="button"
-                className="dc-icon-btn shrink-0 rounded-xl px-3"
+                className="dc-icon-btn h-[52px] min-w-[52px] shrink-0 rounded-2xl px-3"
                 onClick={() => setShowPassword((v) => !v)}
                 title={showPassword ? t.auth.hidePassword : t.auth.showPassword}
               >
@@ -240,7 +259,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                     ))}
                   </select>
                   {className ? (
-                    <div className="rounded-2xl border border-[#2f6e8d]/35 bg-[#12202b]/55 px-4 py-3">
+                    <div className="rounded-2xl border border-[rgba(143,185,204,0.22)] bg-[rgba(12,24,34,0.58)] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
                       <ClassBadge className={className} badgeClassName="w-full" textClassName="text-[#e6eff5] font-medium" />
                     </div>
                   ) : null}
@@ -266,7 +285,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                 </>
               )}
 
-              <button type="submit" disabled={loading} className="btn-primary w-full py-4 text-base font-bold sm:text-lg">
+              <button type="submit" disabled={loading} className="btn-primary w-full py-4 text-base font-bold shadow-[0_20px_34px_rgba(7,16,24,0.42)] sm:text-lg">
               {loading ? (
                 <span className="inline-flex items-center justify-center">
                   <WuxiaIcon name="spinner" className="spinner-icon w-4 h-4 mr-3" />
@@ -284,15 +303,16 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
             <div className="mt-4">
               <button
               type="button"
-              className="text-sm text-[#8fb9cc] hover:text-[#bcd6e5] transition-colors"
+              className="inline-flex items-center gap-2 rounded-full border border-[rgba(143,185,204,0.16)] bg-[rgba(8,16,24,0.42)] px-4 py-2 text-sm text-[#9fcfe4] transition-colors hover:border-[rgba(191,220,234,0.36)] hover:text-[#d2ebf7]"
               onClick={() => setShowAdminPin((v) => !v)}
               >
+              <WuxiaIcon name="shield" className="h-4 w-4" />
               {showAdminPin ? t.auth.hidePinLogin : t.auth.showPinLogin}
               </button>
 
               {showAdminPin && (
-                <div className="mt-3 rounded-xl border border-[#2f6e8d]/35 bg-[#12202b]/55 p-4">
-                  <div className="mb-2 text-sm text-[#bcd6e5]">{t.auth.adminPinHint}</div>
+                <div className="mt-3 rounded-[22px] border border-[rgba(143,185,204,0.2)] bg-[linear-gradient(145deg,rgba(12,23,32,0.72),rgba(8,14,20,0.78))] p-4 shadow-[0_16px_30px_rgba(4,8,12,0.28)]">
+                  <div className="mb-2 text-sm text-[#c9dfeb]">{t.auth.adminPinHint}</div>
                   <div className="flex flex-col gap-2 sm:flex-row">
                     <input
                     type="password"
@@ -313,31 +333,33 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
             </div>
 
             {error && (
-              <div className="mt-4 rounded-xl border border-[#2f6e8d]/40 bg-[#16202b]/65 p-4 text-sm text-[#bcd6e5]">
+              <div className="mt-4 rounded-[22px] border border-[rgba(143,185,204,0.26)] bg-[rgba(14,24,34,0.74)] p-4 text-sm text-[#d4e9f4] shadow-[0_16px_30px_rgba(4,8,12,0.24)]">
               <WuxiaIcon name="alertTriangle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
               {error}
               </div>
             )}
 
             {notice && (
-              <div className="mt-4 rounded-xl border border-[#3d7c9d]/45 bg-[#112430]/65 p-4 text-sm text-[#bcd6e5]">
+              <div className="mt-4 rounded-[22px] border border-[rgba(143,185,204,0.28)] bg-[rgba(11,29,40,0.7)] p-4 text-sm text-[#d4e9f4] shadow-[0_16px_30px_rgba(4,8,12,0.24)]">
               <WuxiaIcon name="checkCircle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
               {notice}
               </div>
             )}
 
-            <div className="mt-6 flex flex-col gap-2 border-t border-gray-800/70 pt-4 text-xs font-medium text-gray-500 sm:mt-8 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:pt-5">
-              <span>
-              <WuxiaIcon name="shield" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
-              {t.auth.secureAccess}
-              </span>
-              <span>{t.auth.activationHelp}</span>
+            <div className="mt-6 grid gap-3 border-t border-[rgba(143,185,204,0.12)] pt-5 text-sm sm:mt-8 sm:grid-cols-2 sm:pt-6">
+              <div className="rounded-2xl border border-[rgba(143,185,204,0.16)] bg-[rgba(8,16,24,0.34)] px-4 py-3 text-[rgba(212,230,240,0.92)]">
+                <WuxiaIcon name="shield" className="mr-2 inline-block h-4 w-4 align-text-bottom text-[#8fb9cc]" />
+                {t.auth.secureAccess}
+              </div>
+              <div className="rounded-2xl border border-[rgba(143,185,204,0.16)] bg-[rgba(8,16,24,0.34)] px-4 py-3 text-[rgba(183,201,214,0.88)]">
+                {t.auth.activationHelp}
+              </div>
             </div>
           </div>
 
           {approvalModalMessage && (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#071018]/82 px-4 py-6 backdrop-blur-sm sm:px-6 sm:py-8">
-              <div className="w-full max-w-md rounded-[28px] border border-[#3d7c9d]/40 bg-gradient-to-br from-[#122433] via-[#0d1924] to-[#0a1219] p-5 shadow-2xl shadow-[#041018]/60 sm:p-6">
+              <div className="w-full max-w-md rounded-[30px] border border-[#3d7c9d]/40 bg-gradient-to-br from-[#122433] via-[#0d1924] to-[#0a1219] p-5 shadow-2xl shadow-[#041018]/60 sm:p-6">
               <div className="flex items-start gap-4">
                 <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#5e9fbe]/35 bg-[#153245]/80 text-[#9fd3ea]">
                   <WuxiaIcon name="checkCircle" className="h-7 w-7" />
