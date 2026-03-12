@@ -1,1 +1,5 @@
-// Calendar export functions temporarily disabled
+export {
+  generateGoogleCalendarLink,
+  generateOutlookCalendarLink,
+  generateICalEvent,
+} from './export';

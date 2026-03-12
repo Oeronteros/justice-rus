@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useUpsertRsvp } from './hooks';
+import { useUpsertRsvp } from '@/lib/rsvp/hooks';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { RsvpStatus } from '@/lib/schemas/rsvp';
 import type { User } from '@/lib/schemas/auth';

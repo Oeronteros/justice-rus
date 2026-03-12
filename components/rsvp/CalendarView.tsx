@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useRsvps } from './hooks';
+import { useRsvps, useUpsertRsvp, useRsvpSummary } from '@/lib/rsvp/hooks';
 import { useSchedule } from '@/lib/schedule/hooks';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -10,7 +10,8 @@ import WuxiaIcon from '@/components/WuxiaIcons';
 import { generateGoogleCalendarLink, generateOutlookCalendarLink, generateICalEvent } from '@/lib/calendar';
 import type { User } from '@/lib/schemas/auth';
 import type { Language } from '@/lib/i18n';
-import type { Rsvp, Schedule } from '@/lib/schemas/rsvp';
+import type { Rsvp } from '@/lib/schemas/rsvp';
+import type { Schedule } from '@/lib/schemas/schedule';
 
 interface CalendarViewProps {
   user: User;
@@ -45,14 +46,14 @@ function formatTime(timeStr: string): string {
 }
 
 export function CalendarView({ user, language }: CalendarViewProps) {
-  const { data: rsvps, isLoading: rsvpsLoading } = useRsvps(user.id);
+  const { data: rsvps, isLoading: rsvpsLoading } = useRsvps(user.id ?? null) as { data: Rsvp[] | undefined; isLoading: boolean };
   const { data: schedule, isLoading: scheduleLoading } = useSchedule(language);
 
   const isLoading = rsvpsLoading || scheduleLoading;
 
   const myRsvpsByScheduleId = useMemo(() => {
     const map = new Map<string, Rsvp>();
-    rsvps?.forEach((rsvp) => {
+    (rsvps || []).forEach((rsvp) => {
       map.set(rsvp.scheduleId, rsvp);
     });
     return map;
@@ -140,7 +141,7 @@ export function CalendarView({ user, language }: CalendarViewProps) {
           />
           <EmptyState
             title={copy.empty}
-            subtitle={copy.emptyHint}
+            description={copy.emptyHint}
             icon="calendar"
           />
         </div>

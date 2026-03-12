@@ -1,6 +1,6 @@
 'use client';
 
-import { useRsvpSummary } from './hooks';
+import { useRsvpSummary } from '@/lib/rsvp/hooks';
 import WuxiaIcon from '@/components/WuxiaIcons';
 
 interface RsvpSummaryProps {
