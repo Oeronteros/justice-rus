@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -346,6 +346,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
   const [editingSchedule, setEditingSchedule] = useState<ScheduleItem | null>(null);
   const [editDraft, setEditDraft] = useState<ScheduleEditDraft | null>(null);
   const [scheduleNotice, setScheduleNotice] = useState<string | null>(null);
+  const dayInputRef = useRef<HTMLInputElement | null>(null);
   const canEditSchedule = hasRoleAtLeast(user.role, 'officer');
   const selectedDay = weekdays[selectedDayIndex];
   const draftErrors = editDraft ? validateDraft(editDraft, language) : {};
@@ -577,6 +578,18 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
       window.removeEventListener('keydown', handleEscape);
     };
   }, [closeEditor, editDraft]);
+
+  useEffect(() => {
+    if (!editDraft) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      dayInputRef.current?.focus();
+    }, 40);
+
+    return () => window.clearTimeout(timer);
+  }, [editDraft]);
 
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
@@ -965,9 +978,9 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
         )}
 
         {canEditSchedule && editDraft && (
-          <div className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center px-4 py-8" onClick={closeEditor}>
+          <div className="modal-backdrop" onClick={closeEditor}>
             <div
-              className="card w-full max-w-6xl p-0 max-h-[92vh] overflow-hidden"
+              className="modal-shell w-full max-w-6xl p-0 overflow-hidden"
               onClick={(event) => event.stopPropagation()}
               role="dialog"
               aria-modal="true"
@@ -975,14 +988,14 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
             >
               <div className="grid max-h-[92vh] grid-cols-1 overflow-auto lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.95fr)]">
                 <div className="p-6 md:p-8">
-                  <div className="flex items-start justify-between gap-4 mb-6">
+                  <div className="modal-header">
                     <div>
-                      <h3 id="schedule-editor-title" className="text-2xl font-bold font-orbitron text-[#e6eff5]">
+                      <h3 id="schedule-editor-title" className="modal-title">
                         {editingSchedule
                           ? (language === 'ru' ? 'Редактировать слот' : language === 'zh' ? '编辑活动' : 'Edit schedule slot')
                           : (language === 'ru' ? 'Добавить событие' : language === 'zh' ? '添加活动' : 'Add event')}
                       </h3>
-                      <p className="text-sm text-gray-400 mt-2">
+                      <p className="modal-subtitle">
                         {editingSchedule
                           ? editingSchedule.registration || (language === 'ru' ? 'Обнови слот и проверь живой предпросмотр справа.' : language === 'zh' ? '更新活动并查看右侧实时预览。' : 'Update the slot and review the live preview on the right.')
                           : language === 'ru'
@@ -994,7 +1007,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                     </div>
                     <button
                       type="button"
-                      className="dc-icon-btn p-2.5 rounded-xl"
+                      className="dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0"
                       onClick={closeEditor}
                       disabled={updateSchedule.isPending || createSchedule.isPending}
                       aria-label={language === 'ru' ? 'Закрыть редактор расписания' : language === 'zh' ? '关闭日程编辑器' : 'Close schedule editor'}
@@ -1004,13 +1017,13 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                   </div>
 
                   <div className="mb-6 flex flex-wrap gap-2 text-xs">
-                    <span className="rounded-full border border-[#365667]/70 bg-[#11202b]/80 px-3 py-1 text-[#d8ecf7]">
+                    <span className="ui-badge ui-badge-accent">
                       {editingSchedule ? (language === 'ru' ? 'Режим: редактирование' : language === 'zh' ? '模式：编辑' : 'Mode: editing') : language === 'ru' ? 'Режим: создание' : language === 'zh' ? '模式：创建' : 'Mode: create'}
                     </span>
-                    <span className={`rounded-full border px-3 py-1 ${editDraft.active ? 'border-emerald-500/35 bg-emerald-500/10 text-emerald-300' : 'border-amber-500/30 bg-amber-500/10 text-amber-300'}`}>
+                    <span className={`ui-badge ${editDraft.active ? 'ui-badge-success' : 'ui-badge-warning'}`}>
                       {editDraft.active ? (language === 'ru' ? 'Показывается в расписании' : language === 'zh' ? '活动显示中' : 'Visible in schedule') : language === 'ru' ? 'Скрыт из расписания' : language === 'zh' ? '活动已隐藏' : 'Hidden from schedule'}
                     </span>
-                    <span className={`rounded-full border px-3 py-1 ${hasDraftErrors ? 'border-rose-500/35 bg-rose-500/10 text-rose-200' : 'border-sky-500/35 bg-sky-500/10 text-sky-200'}`}>
+                    <span className={`ui-badge ${hasDraftErrors ? 'ui-badge-danger' : 'ui-badge-accent'}`}>
                       {hasDraftErrors
                         ? (language === 'ru' ? 'Нужно поправить поля' : language === 'zh' ? '仍有字段需要修正' : 'Some fields need attention')
                         : (language === 'ru' ? 'Форма готова к сохранению' : language === 'zh' ? '表单已可保存' : 'Form is ready to save')}
@@ -1018,7 +1031,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                   </div>
 
                   <div className="space-y-5">
-                    <div className="rounded-[1.75rem] border border-[#223544]/70 bg-[#0c151d]/82 p-5">
+                    <div className="editor-panel">
                       <div className="mb-4 flex items-center justify-between gap-3">
                         <div>
                           <div className="text-sm font-semibold text-[#e6eff5]">
@@ -1040,7 +1053,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                               key={day.key}
                               type="button"
                               onClick={() => updateDraft({ dayType: day.labels[language] })}
-                              className={`rounded-2xl border px-3 py-2 text-sm transition ${isActive ? 'border-[#a9d1e4]/70 bg-[#173040] text-[#eff9ff]' : 'border-[#274152]/70 bg-[#101b24] text-[#bcd0db] hover:border-[#4c7388]/80 hover:text-white'}`}
+                              className={`ui-chip ${isActive ? 'is-active' : ''}`}
                             >
                               {day.labels[language]}
                             </button>
@@ -1057,7 +1070,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                               key={kind}
                               type="button"
                               onClick={() => updateDraft({ dayType: getRecurringAlias(kind, language) })}
-                              className={`rounded-full border px-4 py-2 text-sm transition ${isActive ? 'border-[#8fb9cc]/65 bg-[#1f3948] text-[#eff9ff]' : 'border-[#2c4556]/70 bg-[#101a22] text-[#95aebb] hover:border-[#55788d]/80 hover:text-white'}`}
+                              className={`ui-chip ${isActive ? 'is-active' : ''}`}
                             >
                               {getRecurrenceLabel(kind, language)}
                             </button>
@@ -1070,6 +1083,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                         <input
                           value={editDraft.dayType}
                           onChange={(event) => updateDraft({ dayType: event.target.value })}
+                          ref={dayInputRef}
                           className={`input-field w-full ${draftErrors.dayType ? 'border-rose-500/60' : ''}`}
                           placeholder={language === 'ru' ? 'Например: Понедельник или Еженедельные' : language === 'zh' ? '例如：星期一 或 每周' : 'For example: Monday or Weekly'}
                         />
@@ -1077,7 +1091,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                       </label>
                     </div>
 
-                    <div className="rounded-[1.75rem] border border-[#223544]/70 bg-[#0c151d]/82 p-5">
+                    <div className="editor-panel">
                       <div className="mb-4 flex items-center justify-between gap-3">
                         <div>
                           <div className="text-sm font-semibold text-[#e6eff5]">
@@ -1128,7 +1142,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                             key={minutes}
                             type="button"
                             onClick={() => applyDurationPreset(minutes)}
-                            className="rounded-full border border-[#2c4556]/70 bg-[#101a22] px-3 py-1.5 text-sm text-[#bcd0db] transition hover:border-[#55788d]/80 hover:text-white"
+                            className="ui-chip"
                           >
                             {language === 'ru' ? `${minutes} мин` : language === 'zh' ? `${minutes} 分钟` : `${minutes} min`}
                           </button>
@@ -1136,7 +1150,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                         <button
                           type="button"
                           onClick={() => updateDraft({ time: '' })}
-                          className="rounded-full border border-[#2c4556]/70 bg-[#101a22] px-3 py-1.5 text-sm text-[#bcd0db] transition hover:border-[#55788d]/80 hover:text-white"
+                          className="ui-chip"
                         >
                           {language === 'ru' ? 'Очистить время' : language === 'zh' ? '清除时间' : 'Clear time'}
                         </button>
@@ -1157,7 +1171,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                       </label>
                     </div>
 
-                    <div className="rounded-[1.75rem] border border-[#223544]/70 bg-[#0c151d]/82 p-5">
+                    <div className="editor-panel">
                       <div className="mb-4 flex items-center justify-between gap-3">
                         <div>
                           <div className="text-sm font-semibold text-[#e6eff5]">
@@ -1203,14 +1217,14 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                         <button
                           type="button"
                           onClick={() => fillDraftTitlesFrom('titleRu')}
-                          className="rounded-full border border-[#2c4556]/70 bg-[#101a22] px-3 py-1.5 text-sm text-[#bcd0db] transition hover:border-[#55788d]/80 hover:text-white"
+                          className="ui-chip"
                         >
                           {language === 'ru' ? 'Заполнить пустые из RU' : language === 'zh' ? '用 RU 填充空字段' : 'Fill empty titles from RU'}
                         </button>
                         <button
                           type="button"
                           onClick={() => fillDraftTitlesFrom('titleEn')}
-                          className="rounded-full border border-[#2c4556]/70 bg-[#101a22] px-3 py-1.5 text-sm text-[#bcd0db] transition hover:border-[#55788d]/80 hover:text-white"
+                          className="ui-chip"
                         >
                           {language === 'ru' ? 'Заполнить пустые из EN' : language === 'zh' ? '用 EN 填充空字段' : 'Fill empty titles from EN'}
                         </button>
@@ -1233,7 +1247,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                     {editingSchedule?.id && (
                       <button
                         type="button"
-                        className={`px-5 py-3 rounded-xl font-medium border transition ${editDraft.active ? 'border-red-500/40 bg-red-500/10 text-red-200 hover:bg-red-500/15' : 'border-emerald-500/35 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/15'}`}
+                      className={`px-5 py-3 rounded-xl font-medium border transition ${editDraft.active ? 'border-red-500/40 bg-red-500/10 text-red-200 hover:bg-red-500/15' : 'border-emerald-500/35 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/15'} w-full sm:w-auto`}
                         onClick={() => void archiveScheduleEdit()}
                         disabled={updateSchedule.isPending || createSchedule.isPending}
                       >
@@ -1253,7 +1267,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                     )}
                     <button
                       type="button"
-                      className="btn-secondary px-5 py-3"
+                      className="btn-secondary px-5 py-3 w-full sm:w-auto"
                       onClick={closeEditor}
                       disabled={updateSchedule.isPending || createSchedule.isPending}
                     >
@@ -1261,7 +1275,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                     </button>
                     <button
                       type="button"
-                      className="btn-primary px-5 py-3"
+                      className="btn-primary px-5 py-3 w-full sm:w-auto"
                       onClick={() => void saveScheduleEdit()}
                       disabled={updateSchedule.isPending || createSchedule.isPending || hasDraftErrors}
                     >

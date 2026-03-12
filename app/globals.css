@@ -24,6 +24,7 @@
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
+  --skeleton-duration: 1.8s;
 }
 
 @theme inline {
@@ -186,6 +187,19 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
   .theme-wuxia .wuxia-cursor-glow {
     animation: none !important;
   }
@@ -193,6 +207,14 @@ body {
   .matchmaking-banner__dot,
   .matchmaking-banner__pulse,
   .matchmaking-banner__scan {
+    animation: none !important;
+  }
+
+  .spinner-icon,
+  .loading-chip::after,
+  .loading-pill::after,
+  .loading-line::after,
+  .loading-block::after {
     animation: none !important;
   }
 }
@@ -1405,6 +1427,11 @@ body {
     box-shadow: 0 14px 28px rgba(4, 8, 12, 0.34);
   }
 
+  .ui-chip:focus-visible {
+    outline: 2px solid rgba(196, 227, 241, 0.72);
+    outline-offset: 2px;
+  }
+
   .toolbar-surface {
     display: grid;
     gap: 14px;
@@ -1474,6 +1501,29 @@ body {
     border: 1px solid rgba(73, 110, 130, 0.42);
     background: linear-gradient(145deg, rgba(10, 16, 24, 0.86), rgba(8, 12, 18, 0.9));
     box-shadow: 0 18px 34px rgba(4, 8, 12, 0.36);
+  }
+
+  .editor-panel {
+    border: 1px solid rgba(34, 53, 68, 0.7);
+    background: rgba(12, 21, 29, 0.82);
+    border-radius: 1.75rem;
+    padding: 20px;
+  }
+
+  .loading-inline {
+    display: grid;
+    gap: 14px;
+  }
+
+  .loading-inline-card {
+    border-radius: 22px;
+    border: 1px solid rgba(31, 51, 68, 0.74);
+    background: rgba(11, 20, 29, 0.82);
+    padding: 18px;
+  }
+
+  .spinner-icon {
+    animation: spinnerRotate 0.9s linear infinite;
   }
 
   .loading-shell {
@@ -1554,7 +1604,7 @@ body {
     inset: 0;
     transform: translateX(-100%);
     background: linear-gradient(90deg, transparent, rgba(210, 231, 241, 0.18), transparent);
-    animation: skeletonSweep 1.6s ease-in-out infinite;
+    animation: skeletonSweep var(--skeleton-duration) ease-in-out infinite;
   }
 
   .loading-chip {
@@ -3070,5 +3120,11 @@ table td, table th {
 @keyframes skeletonSweep {
   100% {
     transform: translateX(100%);
+  }
+}
+
+@keyframes spinnerRotate {
+  to {
+    transform: rotate(360deg);
   }
 }

@@ -26,23 +26,23 @@ export function GuideComments({
   };
 
   return (
-    <div className="mt-8">
-      <div className="flex items-center justify-between mb-4">
+    <div className="mt-8 section-stack-md">
+      <div className="flex items-center justify-between gap-3">
         <h4 className="text-lg font-bold text-[#e6eff5] inline-flex items-center gap-2">
           <WuxiaIcon name="comment" className="w-5 h-5 text-[#8fb9cc]" />
           Комментарии
         </h4>
-        <span className="text-sm text-gray-400">{comments.length}</span>
+        <span className="ui-badge ui-badge-muted">{comments.length}</span>
       </div>
 
       <div className="space-y-4">
         {comments.length === 0 ? (
-          <div className="text-gray-400 text-sm">
+          <div className="card section-card p-5 text-sm text-[#9fb5c3]">
             Пока тишина. Оставь первый комментарий.
           </div>
         ) : (
           comments.map((c) => (
-            <div key={c.id} className="card p-5">
+            <div key={c.id} className="card section-card p-5">
               <div className="flex items-center justify-between text-sm text-gray-400 mb-2">
                 <span className="inline-flex items-center gap-2">
                   <WuxiaIcon name="user" className="w-4 h-4" />

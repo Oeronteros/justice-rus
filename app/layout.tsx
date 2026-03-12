@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import InputPerformanceMode from "@/components/InputPerformanceMode";
 import { QueryProvider } from "@/lib/providers/QueryProvider";
 import { I18nProvider } from "@/lib/i18n/context";
 
-const shouldLoadVercelAnalytics = process.env.VERCEL === "1";
+const shouldLoadVercelTelemetry = process.env.VERCEL === "1";
 
 export const metadata: Metadata = {
   title: "Silent Moonfall | Guild Portal",
@@ -52,7 +53,8 @@ export default function RootLayout({
             </Suspense>
           </I18nProvider>
         </QueryProvider>
-        {shouldLoadVercelAnalytics ? <Analytics /> : null}
+        {shouldLoadVercelTelemetry ? <Analytics /> : null}
+        {shouldLoadVercelTelemetry ? <SpeedInsights /> : null}
       </body>
     </html>
   );

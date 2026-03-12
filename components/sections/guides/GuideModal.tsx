@@ -43,6 +43,7 @@ export function GuideModal({
   const [editOpen, setEditOpen] = useState(false);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const mounted = useSyncExternalStore(
     () => () => {},
     () => true,
@@ -143,6 +144,14 @@ export function GuideModal({
     document.body.removeChild(textarea);
   }, []);
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      closeButtonRef.current?.focus();
+    }, 40);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
   const handleShare = useCallback(async () => {
     if (!guideDetail) return;
     const url = stableGuideUrl;
@@ -238,12 +247,15 @@ export function GuideModal({
     <div
       className="fixed inset-0 bg-[#080c10] flex flex-col"
       style={{ zIndex: 99999 }}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="guide-modal-title"
     >
       {/* Шапка */}
       <div className="flex-shrink-0 bg-[#0a0e12] border-b border-[#1a2a38] px-4 py-3">
         <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
           <div className="min-w-0 flex-1">
-            <h3 className="text-base font-medium text-white truncate">
+            <h3 id="guide-modal-title" className="text-base font-medium text-white truncate">
               {guideDetail?.guide.title || 'Загрузка...'}
             </h3>
             <div className="text-xs text-gray-500 mt-0.5">
@@ -316,6 +328,7 @@ export function GuideModal({
               </button>
             )}
             <button
+              ref={closeButtonRef}
               type="button"
               className="dc-icon-btn h-[42px] w-[42px] rounded-xl shrink-0 text-gray-300"
               onClick={handleClose}
@@ -330,7 +343,24 @@ export function GuideModal({
       <div ref={contentRef} className="flex-1 overflow-y-auto">
         <div className="max-w-6xl mx-auto px-4 py-6">
           {isLoading && (
-            <div className="text-gray-500">Загрузка гайда...</div>
+            <div className="loading-inline" aria-live="polite">
+              <div className="loading-inline-card">
+                <div className="loading-line loading-line-title" />
+                <div className="mt-4 space-y-3">
+                  <div className="loading-line loading-line-body" />
+                  <div className="loading-line loading-line-body loading-line-body-short" />
+                  <div className="loading-block" />
+                </div>
+              </div>
+              <div className="loading-inline-card">
+                <div className="loading-line loading-line-short" />
+                <div className="mt-4 space-y-3">
+                  <div className="loading-line loading-line-body" />
+                  <div className="loading-line loading-line-body" />
+                  <div className="loading-line loading-line-body loading-line-body-short" />
+                </div>
+              </div>
+            </div>
           )}
 
           {error && (
@@ -366,7 +396,7 @@ export function GuideModal({
                   </aside>
                 )}
 
-                <div>
+                <div className="section-stack-md">
                   <MarkdownRenderer
                     content={guideDetail.guide.content}
                     guidesIndex={guides}
@@ -375,7 +405,7 @@ export function GuideModal({
                   />
 
                   {backlinks.length > 0 && (
-                    <div className="mt-10 rounded-3xl border border-[#1f3344] bg-[#0b141d]/82 p-5 shadow-[0_18px_34px_rgba(4,8,12,0.35)]">
+                    <div className="rounded-3xl border border-[#1f3344] bg-[#0b141d]/82 p-5 shadow-[0_18px_34px_rgba(4,8,12,0.35)]">
                       <div className="flex items-center gap-2 text-sm font-medium text-[#dceaf4] mb-4">
                         <WuxiaIcon name="link" className="w-4 h-4 text-[#8fb9cc]" />
                         Упоминается в гайдах
