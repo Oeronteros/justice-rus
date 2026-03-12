@@ -37,7 +37,7 @@ export const helpApi = {
   updateStatus: async (data: UpdateHelpRequestDto): Promise<HelpRequest> => {
     const response = await patchApiHelp({
       client: sameOriginOpenApiClient,
-      body: data,
+      body: { ...data, id: String(data.id) },
     });
     return helpRequestSchema.parse(response.data || {});
   },
@@ -45,7 +45,7 @@ export const helpApi = {
   updateTimeRange: async (data: UpdateHelpTimeRangeDto): Promise<HelpRequest> => {
     const response = await patchApiHelp({
       client: sameOriginOpenApiClient,
-      body: data,
+      body: { ...data, id: String(data.id) },
     });
     return helpRequestSchema.parse(response.data || {});
   },
@@ -53,7 +53,7 @@ export const helpApi = {
   rsvp: async (data: HelpRsvpDto): Promise<HelpRequest> => {
     const response = await postApiHelpResponders({
       client: sameOriginOpenApiClient,
-      body: data,
+      body: { ...data, id: String(data.id) },
     });
     return helpRequestSchema.parse(response.data || {});
   },

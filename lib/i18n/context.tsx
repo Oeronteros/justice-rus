@@ -1,11 +1,12 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 import { ru, type Translations } from './translations/ru';
 import { en } from './translations/en';
 import { zh } from './translations/zh';
+import { defaultLanguage, isLanguage, type Language } from './shared';
 
-export type Language = 'ru' | 'en' | 'zh';
+export type { Language } from './shared';
 
 const translations: Record<Language, Translations> = { ru, en, zh };
 
@@ -25,7 +26,7 @@ function getStoredLanguage(): Language | null {
   }
 
   const stored = localStorage.getItem(STORAGE_KEY);
-  return stored === 'ru' || stored === 'en' || stored === 'zh' ? stored : null;
+  return isLanguage(stored) ? stored : null;
 }
 
 interface I18nProviderProps {
@@ -33,8 +34,8 @@ interface I18nProviderProps {
   defaultLanguage?: Language;
 }
 
-export function I18nProvider({ children, defaultLanguage = 'ru' }: I18nProviderProps) {
-  const [language, setLanguageState] = useState<Language>(() => getStoredLanguage() ?? defaultLanguage);
+export function I18nProvider({ children, defaultLanguage: initialLanguage = defaultLanguage }: I18nProviderProps) {
+  const [language, setLanguageState] = useState<Language>(() => getStoredLanguage() ?? initialLanguage);
 
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
@@ -42,6 +43,12 @@ export function I18nProvider({ children, defaultLanguage = 'ru' }: I18nProviderP
       localStorage.setItem(STORAGE_KEY, lang);
     }
   }, []);
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = language;
+    }
+  }, [language]);
 
   const value: I18nContextValue = {
     language,
