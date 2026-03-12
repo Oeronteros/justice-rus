@@ -3128,3 +3128,401 @@ table td, table th {
     transform: rotate(360deg);
   }
 }
+
+.guild-dashboard-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.guild-dashboard-command {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(110, 190, 230, 0.14), transparent 36%),
+    radial-gradient(circle at 100% 0%, rgba(143, 185, 204, 0.12), transparent 30%),
+    linear-gradient(160deg, rgba(10, 16, 24, 0.96), rgba(8, 13, 20, 0.94));
+}
+
+.guild-dashboard-command__header,
+.guild-dashboard-station__header,
+.dashboard-status-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.dashboard-kicker {
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(151, 196, 218, 0.84);
+}
+
+.guild-dashboard-command__title,
+.guild-dashboard-station__title {
+  margin-top: 8px;
+  font-family: 'Rajdhani', 'Trebuchet MS', sans-serif;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  line-height: 1;
+  color: rgba(230, 239, 245, 0.98);
+}
+
+.guild-dashboard-command__lede {
+  margin-top: 18px;
+  font-size: clamp(1.05rem, 1.3vw, 1.2rem);
+  line-height: 1.5;
+  color: rgba(224, 238, 247, 0.96);
+}
+
+.guild-dashboard-command__body,
+.guild-dashboard-station__body,
+.dashboard-card-copy,
+.dashboard-card-empty {
+  color: rgba(170, 195, 210, 0.92);
+  line-height: 1.7;
+}
+
+.guild-dashboard-command__body {
+  margin-top: 10px;
+  max-width: 62ch;
+}
+
+.guild-dashboard-metric-grid,
+.dashboard-readiness-grid,
+.dashboard-route-grid,
+.guild-dashboard-station__facts {
+  display: grid;
+  gap: 12px;
+}
+
+.guild-dashboard-metric-grid {
+  margin-top: 22px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.dashboard-metric-tile {
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(82, 118, 137, 0.38);
+  background: rgba(10, 18, 26, 0.7);
+}
+
+.dashboard-metric-tile--active {
+  border-color: rgba(74, 222, 128, 0.26);
+  background: linear-gradient(160deg, rgba(12, 34, 25, 0.86), rgba(10, 18, 26, 0.84));
+}
+
+.dashboard-metric-tile--alert {
+  border-color: rgba(248, 113, 113, 0.32);
+  background: linear-gradient(160deg, rgba(54, 22, 27, 0.84), rgba(10, 18, 26, 0.84));
+}
+
+.dashboard-metric-tile__value {
+  font-family: 'Rajdhani', 'Trebuchet MS', sans-serif;
+  font-size: 1.9rem;
+  line-height: 1;
+  color: rgba(235, 243, 248, 0.98);
+}
+
+.dashboard-metric-tile__label {
+  margin-top: 6px;
+  color: rgba(159, 184, 198, 0.9);
+  font-size: 0.84rem;
+}
+
+.guild-dashboard-command__signals,
+.dashboard-card-stack,
+.dashboard-list,
+.guild-dashboard-station__overlay {
+  display: grid;
+  gap: 12px;
+}
+
+.guild-dashboard-command__signals {
+  margin-top: 20px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.guild-dashboard-command__signal,
+.guild-dashboard-station__queue,
+.guild-dashboard-station__overlay,
+.dashboard-news-spotlight,
+.dashboard-route-link,
+.dashboard-list__item {
+  border-radius: 18px;
+  border: 1px solid rgba(85, 119, 138, 0.26);
+  background: rgba(9, 16, 24, 0.72);
+}
+
+.guild-dashboard-command__signal {
+  padding: 14px 16px;
+  display: grid;
+  gap: 6px;
+}
+
+.guild-dashboard-command__signal strong,
+.dashboard-card-highlight,
+.dashboard-list__title,
+.dashboard-news-spotlight__title,
+.guild-dashboard-station__facts strong,
+.guild-dashboard-station__queue strong,
+.guild-dashboard-station__overlay strong {
+  color: rgba(230, 239, 245, 0.98);
+  font-weight: 700;
+}
+
+.guild-dashboard-command__signal span,
+.dashboard-list__meta,
+.dashboard-news-spotlight__meta,
+.guild-dashboard-station__facts span,
+.guild-dashboard-station__overlay p,
+.guild-dashboard-station__queue .ui-badge {
+  color: rgba(159, 184, 198, 0.88);
+  font-size: 0.82rem;
+}
+
+.guild-dashboard-command__signal-label {
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.guild-dashboard-station {
+  background:
+    radial-gradient(circle at 80% 0%, rgba(143, 185, 204, 0.14), transparent 36%),
+    linear-gradient(170deg, rgba(10, 16, 24, 0.96), rgba(7, 12, 18, 0.94));
+}
+
+.guild-dashboard-station__facts {
+  margin-top: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.guild-dashboard-station__facts > div,
+.guild-dashboard-station__queue,
+.guild-dashboard-station__overlay {
+  padding: 14px 16px;
+}
+
+.guild-dashboard-station__queue {
+  margin-top: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.guild-dashboard-station__overlay {
+  margin-top: 14px;
+}
+
+.guild-dashboard-primary-grid,
+.guild-dashboard-secondary-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.dashboard-status-card {
+  min-height: 100%;
+}
+
+.dashboard-status-card--active {
+  border-color: rgba(74, 222, 128, 0.18);
+}
+
+.dashboard-status-card--alert {
+  border-color: rgba(248, 113, 113, 0.24);
+}
+
+.dashboard-status-card__title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboard-status-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid rgba(143, 185, 204, 0.24);
+  background: rgba(12, 21, 30, 0.8);
+  color: rgba(191, 223, 239, 0.96);
+}
+
+.dashboard-status-card__title {
+  color: rgba(230, 239, 245, 0.98);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.dashboard-inline-link {
+  color: rgba(143, 185, 204, 0.92);
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.dashboard-inline-link:hover {
+  color: rgba(220, 238, 247, 0.98);
+}
+
+.dashboard-inline-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dashboard-list__item,
+.dashboard-news-spotlight,
+.dashboard-route-link {
+  padding: 12px 14px;
+}
+
+.dashboard-list__item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.dashboard-progress-shell {
+  display: grid;
+  gap: 10px;
+}
+
+.dashboard-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  color: rgba(165, 191, 205, 0.92);
+}
+
+.dashboard-progress-labels strong {
+  color: rgba(230, 239, 245, 0.98);
+}
+
+.dashboard-progress-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(25, 39, 51, 0.9);
+  overflow: hidden;
+}
+
+.dashboard-progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(74, 222, 128, 0.85), rgba(143, 185, 204, 0.95));
+}
+
+.dashboard-news-spotlight--featured {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(143, 185, 204, 0.1), transparent 34%),
+    rgba(9, 16, 24, 0.78);
+}
+
+.dashboard-news-spotlight__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.dashboard-route-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.dashboard-route-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(223, 236, 244, 0.96);
+  transition: border-color 0.18s ease, transform 0.18s ease, background-color 0.18s ease;
+}
+
+.dashboard-route-link:hover {
+  transform: translateY(-1px);
+  border-color: rgba(180, 221, 239, 0.45);
+  background: rgba(13, 23, 33, 0.92);
+}
+
+.dashboard-route-link__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(143, 185, 204, 0.1);
+  color: rgba(191, 223, 239, 0.96);
+}
+
+.dashboard-mini-skeleton {
+  display: grid;
+  gap: 10px;
+}
+
+.dashboard-mini-skeleton__line {
+  display: block;
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(18, 31, 42, 0.9), rgba(40, 62, 78, 0.9), rgba(18, 31, 42, 0.9));
+  background-size: 200% 100%;
+  animation: dashboardShimmer 1.8s ease-in-out infinite;
+}
+
+.dashboard-mini-skeleton__line--short {
+  width: 42%;
+}
+
+.dashboard-mini-skeleton__line--soft {
+  width: 72%;
+}
+
+@keyframes dashboardShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (min-width: 960px) {
+  .guild-dashboard-grid {
+    grid-template-columns: minmax(0, 1.65fr) minmax(320px, 0.95fr);
+  }
+
+  .guild-dashboard-primary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .guild-dashboard-secondary-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 959px) {
+  .guild-dashboard-command__signals {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 639px) {
+  .guild-dashboard-metric-grid,
+  .guild-dashboard-station__facts,
+  .dashboard-route-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-list__item,
+  .dashboard-news-spotlight__meta,
+  .dashboard-status-card__header,
+  .guild-dashboard-command__header,
+  .guild-dashboard-station__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

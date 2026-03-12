@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fc from 'fast-check';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { I18nProvider, useTranslation, type Language } from '@/lib/i18n/context';
 
 // Mock localStorage
@@ -109,13 +109,13 @@ describe('I18n Context', () => {
    * Validates: Requirements 6.4
    */
   describe('Property 12: Language Restoration', () => {
-    it('should restore language from localStorage on mount', () => {
+    it('should restore language from localStorage on mount', async () => {
       const languages: Language[] = ['ru', 'en', 'zh'];
       
-      fc.assert(
-        fc.property(
+      await fc.assert(
+        fc.asyncProperty(
           fc.constantFrom(...languages),
-          (storedLang) => {
+          async (storedLang) => {
             localStorageMock.clear();
             localStorageMock.store['guild_portal_lang'] = storedLang;
             localStorageMock.getItem.mockImplementation((key) => localStorageMock.store[key] || null);
@@ -128,7 +128,9 @@ describe('I18n Context', () => {
 
             // Should have called getItem to check stored preference
             expect(localStorageMock.getItem).toHaveBeenCalledWith('guild_portal_lang');
-            expect(screen.getByTestId('current-language')).toHaveTextContent(storedLang);
+            await waitFor(() => {
+              expect(screen.getByTestId('current-language')).toHaveTextContent(storedLang);
+            });
 
             unmount();
           }
@@ -137,7 +139,7 @@ describe('I18n Context', () => {
       );
     });
 
-    it('should use default language when localStorage is empty', () => {
+    it('should use default language when localStorage is empty', async () => {
       localStorageMock.clear();
       localStorageMock.getItem.mockReturnValue(null);
 
@@ -147,10 +149,12 @@ describe('I18n Context', () => {
         </I18nProvider>
       );
 
-      expect(screen.getByTestId('current-language')).toHaveTextContent('ru');
+      await waitFor(() => {
+        expect(screen.getByTestId('current-language')).toHaveTextContent('ru');
+      });
     });
 
-    it('should ignore invalid language values in localStorage', () => {
+    it('should ignore invalid language values in localStorage', async () => {
       localStorageMock.clear();
       localStorageMock.store['guild_portal_lang'] = 'invalid';
       localStorageMock.getItem.mockImplementation((key) => localStorageMock.store[key] || null);
@@ -162,7 +166,9 @@ describe('I18n Context', () => {
       );
 
       // Should fall back to default
-      expect(screen.getByTestId('current-language')).toHaveTextContent('ru');
+      await waitFor(() => {
+        expect(screen.getByTestId('current-language')).toHaveTextContent('ru');
+      });
     });
   });
 

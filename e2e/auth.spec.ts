@@ -50,6 +50,19 @@ test.describe('portal auth smoke', () => {
     await expect(page.locator('form').getByRole('button', { name: 'Войти' })).toBeVisible();
   });
 
+  test('supports keyboard-first auth interactions on PinScreen', async ({ page }) => {
+    await page.goto('/news');
+
+    await page.getByRole('button', { name: 'Регистрация' }).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('button', { name: 'Создать аккаунт' })).toBeVisible();
+    await expect(page.getByPlaceholder('Повтори пароль')).toBeVisible();
+
+    await page.getByRole('button', { name: 'Показать вход по служебному PIN' }).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByPlaceholder('Officer / Head / Sysadmin PIN')).toBeVisible();
+  });
+
   test('logs in from PinScreen, renders protected news route, and logs out', async ({ page }) => {
     await page.route('**/api/auth', async (route) => {
       if (route.request().method() !== 'POST') {

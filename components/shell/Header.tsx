@@ -21,7 +21,7 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  { section: 'about', href: '/', icon: 'about' },
+  { section: 'about', href: '/', icon: 'eye' },
   { section: 'news', href: '/news', icon: 'news' },
   { section: 'registration', href: '/members', icon: 'registration' },
   { section: 'schedule', href: '/schedule', icon: 'schedule' },

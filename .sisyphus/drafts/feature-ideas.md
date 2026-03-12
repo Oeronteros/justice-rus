@@ -6,9 +6,14 @@
 - Preference: recommendations should cover the whole product, not a single module.
 - Priority: large features with visible product impact, not quick wins.
 - Desired outcome: improvements should cover both officer operations and member experience.
+- Selection principle: choose the most powerful feature even if implementation is harder.
+- Chosen direction: a general system for the whole guild, not an officer-only tool.
+- Main entry point: a shared guild dashboard.
+- Primary first-screen focus: live guild status right now.
 
 ## Technical Decisions
 - Approach: inspect the current codebase first, then suggest scoped feature ideas instead of generic brainstorming.
+- Product recommendation: evolve the portal toward a guild-wide operating dashboard that unifies schedule, help, absences, roster, PvP, news, and profile signals.
 
 ## Research Findings
 - Product: guild management portal for Justice Mobile with Next.js frontend, JWT auth, and Discord-bot-backed data flow.
@@ -26,7 +31,7 @@
   - Product appears strong on operational modules but lighter on analytics, notifications, discovery/search, and cross-module automation.
 
 ## Open Questions
-- If everything is important, what is the primary constraint: time-to-value, implementation complexity, or data availability?
+- Which live-status signals are mandatory on the first screen: upcoming events, active help requests, attendance/readiness, absences, PvP queue/matches, announcements?
 
 ## Scope Boundaries
 - INCLUDE: feature discovery, prioritization suggestions, follow-up questions.

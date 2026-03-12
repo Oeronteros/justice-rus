@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Section } from '@/types';
 import { Language, sectionLabels } from '@/lib/i18n';
-import WuxiaIcon from '../WuxiaIcons';
+import WuxiaIcon, { type IconName } from '../WuxiaIcons';
 
 interface MobileNavProps {
   currentSection: Section;
@@ -15,19 +15,20 @@ interface MobileNavProps {
 type NavItem = {
   section: Section;
   href: string;
+  icon: IconName;
 };
 
 const navItems: NavItem[] = [
-  { section: 'about', href: '/' },
-  { section: 'news', href: '/news' },
-  { section: 'registration', href: '/members' },
-  { section: 'schedule', href: '/schedule' },
-  { section: 'pvp', href: '/pvp' },
-  { section: 'guides', href: '/guides' },
-  { section: 'help', href: '/help' },
-  { section: 'absences', href: '/absences' },
-  { section: 'calculator', href: '/calculator' },
-  { section: 'profile', href: '/profile' },
+  { section: 'about', href: '/', icon: 'eye' },
+  { section: 'news', href: '/news', icon: 'news' },
+  { section: 'registration', href: '/members', icon: 'registration' },
+  { section: 'schedule', href: '/schedule', icon: 'schedule' },
+  { section: 'pvp', href: '/pvp', icon: 'sword' },
+  { section: 'guides', href: '/guides', icon: 'guides' },
+  { section: 'help', href: '/help', icon: 'help' },
+  { section: 'absences', href: '/absences', icon: 'absences' },
+  { section: 'calculator', href: '/calculator', icon: 'calculator' },
+  { section: 'profile', href: '/profile', icon: 'profile' },
 ];
 
 export default function MobileNav({ currentSection, language, onNavPrefetch }: MobileNavProps) {
@@ -63,7 +64,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
                 title={sectionLabels[language][item.section]}
               >
                 <span className="mobile-nav-sheet-icon dc-accent">
-                  <WuxiaIcon name={item.section} className="h-5 w-5" />
+                  <WuxiaIcon name={item.icon} className="h-5 w-5" />
                 </span>
                 <span className="min-w-0">{sectionLabels[language][item.section]}</span>
               </Link>
@@ -90,7 +91,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
               title={sectionLabels[language][item.section]}
             >
               <span className="mb-1 dc-accent">
-                <WuxiaIcon name={item.section} className="w-5 h-5" />
+                <WuxiaIcon name={item.icon} className="w-5 h-5" />
               </span>
               <span className="text-[11px] font-semibold leading-none tracking-[0.02em] whitespace-nowrap">
                 {sectionLabels[language][item.section]}
