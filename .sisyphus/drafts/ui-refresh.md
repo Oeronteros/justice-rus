@@ -4,19 +4,30 @@
 - Participant prefixes should display nicely in the participants UI.
 - Dashboard visual quality needs improvement.
 - Menu visual quality needs improvement.
+- Redesign scope: partial restructuring, not full replacement.
 
 ## Technical Decisions
-- Pending repo analysis.
+- Preserve the existing Wuxia-themed design language and shared layout/navigation foundations unless later clarified otherwise.
+- Treat this as a UI refresh/refactor, not a net-new feature.
 
 ## Research Findings
-- Pending codebase exploration.
+- Participant prefix display currently lives in `components/sections/profile/index.tsx` as an inline cyan badge near the nickname; source options are in `lib/schemas/registration.ts`.
+- Dashboard lives in `components/sections/dashboard/index.tsx` and is routed from `app/(portal)/page.tsx`.
+- Main navigation is split between `components/shell/Header.tsx` and `components/shell/MobileNav.tsx`, coordinated by `components/shell/MainLayout.tsx`.
+- Shared visual conventions come from `app/globals.css`, `components/shared/SectionHero.tsx`, `components/WuxiaIcons.tsx`, and labels in `lib/i18n.ts`.
+- Test infrastructure exists: Vitest + Testing Library + Playwright, with full validation via `npm run validate` and CI in `.github/workflows/ci.yml`.
+
+## Test Strategy Decision
+- Infrastructure exists: YES
+- Automated tests: YES (tests after implementation)
+- Frameworks available: Vitest, Testing Library, Playwright
+- Agent-executed QA: required in final plan
 
 ## Open Questions
-- Which participant view should be updated, and what prefix style is expected?
-- Should dashboard and menu keep the current information architecture or only change visuals?
-- Is the goal a light polish within the existing design language or a broader redesign?
-- What test/verification strategy should the work plan use?
+- Should participant prefixes be improved only in the profile participant card, or also anywhere else participants are listed?
+- For the partial redesign, should dashboard and menu keep the current information architecture or can section ordering/grouping change?
+- Should this work include automated tests as TDD, tests after implementation, or no new automated tests?
 
 ## Scope Boundaries
 - INCLUDE: participant prefix presentation, dashboard UI, menu UI.
-- EXCLUDE: not yet defined.
+- EXCLUDE: full product redesign unless user expands scope.

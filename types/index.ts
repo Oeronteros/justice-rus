@@ -7,8 +7,6 @@ export type Section =
   | 'analytics'
   | 'workflow'
   | 'integrations'
-  | 'workflow'
-  | 'analytics'
   | 'pvp'
   | 'guides'
   | 'help'
@@ -49,9 +47,9 @@ export type { Registration, RegistrationRank, RegistrationStatus } from '@/lib/s
 
 export type { News } from '@/lib/schemas/news';
 
-export type { Absence } from '@/lib/schemas/absence';
+export type { Absence, CreateAbsenceDto } from '@/lib/schemas/absence';
 
-export type { HelpRequest } from '@/lib/schemas/help';
+export type { HelpRequest, CreateHelpRequestDto, UpdateHelpRequestDto } from '@/lib/schemas/help';
 
 export type {
   GuideSummary,
@@ -60,13 +58,3 @@ export type {
   CreateGuideDto,
   CreateCommentDto,
 } from '@/lib/schemas/guide';
-
-export type {
-  HelpRequest as HelpRequestSchema,
-  CreateHelpRequestDto,
-  UpdateHelpRequestDto,
-} from '@/lib/schemas/help';
-
-export type {
-  CreateAbsenceDto,
-} from '@/lib/schemas/absence';

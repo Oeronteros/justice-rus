@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureAccountsSchema, normalizeNickname, verifyPassword } from '@/lib/auth/accounts';
 import { getCachedTableColumns } from '@/lib/server/db-cache';
+import { optionsResponse } from '@/lib/server/cors';
 
 const AUTH_WINDOW_MS = 15 * 60 * 1000;
 const AUTH_MAX_ATTEMPTS = 8;
@@ -232,12 +233,5 @@ export async function POST(request: NextRequest) {
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
+  return optionsResponse({ methods: ['POST'], headers: ['Content-Type'] });
 }
