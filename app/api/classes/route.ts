@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getKnownClasses } from '@/lib/classes';
+import { jsonError } from '@/lib/server/route-helpers';
 
 export async function GET() {
   try {
@@ -11,6 +12,6 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Failed to load known classes:', error);
-    return NextResponse.json({ error: 'Failed to load class list' }, { status: 500 });
+    return jsonError('Failed to load class list', 500);
   }
 }

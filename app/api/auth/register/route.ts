@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { isSameOrigin } from '@/lib/auth/request';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureAccountsSchema, hashPassword, normalizeNickname } from '@/lib/auth/accounts';
 import { isKnownClassName } from '@/lib/classes';
+import { jsonError, parseJsonBody, requireDatabase, requireSameOrigin } from '@/lib/server/route-helpers';
 
 const registerSchema = z.object({
   nickname: z.string().trim().min(3).max(32),
@@ -14,20 +14,27 @@ const registerSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    if (!isSameOrigin(request)) {
-      return NextResponse.json({ error: 'Forbidden origin' }, { status: 403 });
+    const sameOrigin = requireSameOrigin(request);
+    if (!sameOrigin.ok) {
+      return sameOrigin.response;
     }
 
-    if (!hasDatabaseUrl()) {
-      return NextResponse.json({ error: 'Database is not configured' }, { status: 503 });
+    const db = requireDatabase('Database is not configured');
+    if (!db.ok) {
+      return db.response;
     }
 
-    const payload = registerSchema.parse(await request.json());
+    const parsed = await parseJsonBody<z.infer<typeof registerSchema>>(request, registerSchema);
+    if (!parsed.ok) {
+      return parsed.response;
+    }
+
+    const payload = parsed.value;
     const nickname = normalizeNickname(payload.nickname);
     const className = payload.className.trim();
     const discordHandle = payload.discordHandle?.trim() || null;
     if (!(await isKnownClassName(className))) {
-      return NextResponse.json({ error: 'Unknown class selected' }, { status: 400 });
+      return jsonError('Unknown class selected', 400);
     }
     const passwordHash = hashPassword(payload.password);
 
@@ -40,7 +47,7 @@ export async function POST(request: NextRequest) {
     );
 
     if ((exists.rowCount || 0) > 0) {
-      return NextResponse.json({ error: 'Nickname is already taken' }, { status: 409 });
+      return jsonError('Nickname is already taken', 409);
     }
 
     const created = await pool.query(
@@ -71,11 +78,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
-    }
-
     console.error('Register error:', error);
-    return NextResponse.json({ error: 'Failed to register account' }, { status: 500 });
+    return jsonError('Failed to register account', 500);
   }
 }

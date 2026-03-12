@@ -5,6 +5,7 @@ import { ensureAccountsSchema, toPublicAccount } from '@/lib/auth/accounts';
 import { canAssignRoles, canManageAccounts } from '@/lib/authz';
 import {
   handleRouteError,
+  jsonError,
   parseJsonBody,
   requireAuth,
   requireDatabase,
@@ -85,15 +86,15 @@ export async function PATCH(request: NextRequest) {
     const payload = parsed.value;
     const accountId = Number(payload.id);
     if (!Number.isFinite(accountId)) {
-      return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
+      return jsonError('Invalid id', 400);
     }
 
     if (guard.value.id && Number(guard.value.id) === accountId && payload.isActive === false) {
-      return NextResponse.json({ error: 'You cannot deactivate your own account' }, { status: 400 });
+      return jsonError('You cannot deactivate your own account', 400);
     }
 
     if (payload.role && !canAssignRoles(guard.value.role)) {
-      return NextResponse.json({ error: 'Only head/sysadmin can assign roles' }, { status: 403 });
+      return jsonError('Only head/sysadmin can assign roles', 403);
     }
 
     await ensureAccountsSchema();
@@ -113,7 +114,7 @@ export async function PATCH(request: NextRequest) {
 
     const row = updated.rows[0];
     if (!row) {
-      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+      return jsonError('Not found', 404);
     }
 
     return NextResponse.json(toPublicAccount(row));

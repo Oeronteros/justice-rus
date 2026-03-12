@@ -100,33 +100,27 @@ DATABASE_URL=postgresql://user:password@host:5432/database
 ## Структура проекта
 
 ```
-├── app/              # Next.js App Router
-│   ├── api/          # API routes
-│   │   ├── members/  # Получение участников из БД
-│   │   ├── activity/ # Получение активности из БД
-│   │   ├── news/     # Получение новостей из БД
-│   │   ├── guides/   # Получение гайдов из БД
-│   │   └── absences/ # Получение отсутствий из БД
-│   ├── layout.tsx    # Root layout
-│   └── page.tsx      # Главная страница
-├── components/        # React компоненты
-│   ├── sections/     # Секции приложения
-│   └── ...
-├── lib/              # Утилиты и сервисы
-│   ├── db/          # Подключение к БД
-│   ├── api.ts        # API клиент
-│   └── auth.ts       # Аутентификация
-├── types/            # TypeScript типы
-└── docs/             # Документация
-    ├── database-schema.md    # Схема БД
-    └── database-setup.md     # Инструкции по настройке
+├── app/                  # App Router pages, layouts, API routes
+│   └── api/              # Thin HTTP transport layer
+├── components/           # UI shell, sections, forms, shared components
+├── lib/
+│   ├── api/              # Typed client-side API wrappers
+│   ├── schemas/          # Zod schemas and DTOs
+│   ├── server/           # Domain services, read-models, route helpers
+│   ├── auth/             # Auth helpers and account flows
+│   ├── i18n/             # Language context and translations
+│   └── providers/        # Query/i18n/react providers
+├── tests/                # Unit/integration tests
+├── e2e/                  # Playwright scenarios
+├── docs/                 # Supplemental docs
+├── ARCHITECTURE.md       # Current hybrid architecture baseline
+├── SECURITY.md           # Security defaults and trust boundaries
+└── PERFORMANCE.md        # Read-model/cache strategy
 ```
 
 ## Поддерживаемые базы данных
 
-- **PostgreSQL** - Рекомендуется для продакшена
-- **MongoDB** - NoSQL база данных
-- **SQLite** - Для разработки и небольших проектов
+- **PostgreSQL / Neon** - основной поддерживаемый storage path для портала и read-model слоя
 
 ## Интеграция с Discord ботом
 

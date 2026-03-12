@@ -4,6 +4,7 @@ import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { runServerTaskOnce } from '@/lib/server/db-cache';
 import {
   handleRouteError,
+  jsonError,
   parseJsonBody,
   requireActiveSession,
   requireDatabase,
@@ -109,7 +110,7 @@ export async function POST(request: NextRequest) {
     const rule = sanitizeRule(parsed.value);
 
     if (!rule.text_ru && !rule.text_en) {
-      return NextResponse.json({ error: 'At least one text field is required' }, { status: 400 });
+      return jsonError('At least one text field is required', 400);
     }
 
     const pool = await ensureRulesTable();

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { optionsResponse } from '@/lib/server/cors';
-import { requireActiveSession } from '@/lib/server/route-helpers';
+import { jsonError, requireActiveSession } from '@/lib/server/route-helpers';
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     const scheduleId = searchParams.get('scheduleId');
 
     if (!scheduleId) {
-      return NextResponse.json({ error: 'scheduleId is required' }, { status: 400 });
+      return jsonError('scheduleId is required', 400);
     }
 
     if (!hasDatabaseUrl()) {
@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching RSVP summary:', error);
-    return NextResponse.json({ error: 'Failed to fetch RSVP summary' }, { status: 500 });
+    return jsonError('Failed to fetch RSVP summary', 500);
   }
 }
 

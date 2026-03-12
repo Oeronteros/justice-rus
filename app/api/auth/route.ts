@@ -1,7 +1,6 @@
 // API Route: /api/auth
 import { NextRequest, NextResponse } from 'next/server';
 import { generateToken, getClientIp, safeEqual } from '@/lib/auth';
-import { isSameOrigin } from '@/lib/auth/request';
 import { AUTH_TOKEN_MAX_AGE_SECONDS, PASSWORDS } from '@/lib/constants';
 import type { AuthResponse, UserRole } from '@/lib/schemas/auth';
 import { z } from 'zod';
@@ -9,6 +8,7 @@ import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureAccountsSchema, normalizeNickname, verifyPassword } from '@/lib/auth/accounts';
 import { getCachedTableColumns } from '@/lib/server/db-cache';
 import { optionsResponse } from '@/lib/server/cors';
+import { jsonError, parseJsonBody, requireDatabase, requireSameOrigin } from '@/lib/server/route-helpers';
 
 const AUTH_WINDOW_MS = 15 * 60 * 1000;
 const AUTH_MAX_ATTEMPTS = 8;
@@ -19,6 +19,17 @@ type AttemptState = {
   windowStartedAt: number;
   blockedUntil?: number;
 };
+
+class AuthRateLimitError extends Error {
+  readonly status = 429;
+  readonly headers: HeadersInit;
+
+  constructor(retryAfter: number) {
+    super('Too many login attempts. Try again later.');
+    this.name = 'AuthRateLimitError';
+    this.headers = { 'Retry-After': String(retryAfter || 60) };
+  }
+}
 
 const loginAttempts = new Map<string, AttemptState>();
 
@@ -104,32 +115,32 @@ export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
 
   try {
-    if (!isSameOrigin(request)) {
-      return NextResponse.json({ error: 'Forbidden origin' }, { status: 403 });
+    const sameOrigin = requireSameOrigin(request);
+    if (!sameOrigin.ok) {
+      return sameOrigin.response;
     }
 
     const rate = checkRateLimit(ip, now);
     if (!rate.allowed) {
-      return NextResponse.json(
-        { error: 'Too many login attempts. Try again later.' },
-        {
-          status: 429,
-          headers: {
-            'Retry-After': String(rate.retryAfter || 60),
-          },
-        }
-      );
+      throw new AuthRateLimitError(rate.retryAfter || 60);
     }
 
-    const payload = authSchema.parse(await request.json());
+    const parsed = await parseJsonBody<z.infer<typeof authSchema>>(request, authSchema, 'Invalid request data');
+    if (!parsed.ok) {
+      registerFailure(ip, now);
+      return parsed.response;
+    }
+
+    const payload = parsed.value;
     const password = payload.password.trim();
     const nickname = payload.nickname ? normalizeNickname(payload.nickname) : '';
 
     let user: AuthResponse['user'] | null = null;
 
     if (nickname) {
-      if (!hasDatabaseUrl()) {
-        return NextResponse.json({ error: 'Database is not configured' }, { status: 503 });
+      const db = requireDatabase('Database is not configured');
+      if (!db.ok) {
+        return db.response;
       }
 
       await ensureAccountsSchema();
@@ -148,14 +159,11 @@ export async function POST(request: NextRequest) {
       const validPassword = row ? verifyPassword(password, row.password_hash) : false;
       if (!row || !validPassword) {
         registerFailure(ip, now);
-        return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+        return jsonError('Invalid credentials', 401);
       }
 
       if (!row.is_active) {
-        return NextResponse.json(
-          { error: 'Account exists but is not active yet. Ask officer/GM to activate it.' },
-          { status: 403 }
-        );
+        return jsonError('Account exists but is not active yet. Ask officer/GM to activate it.', 403);
       }
 
       await pool.query(
@@ -177,7 +185,7 @@ export async function POST(request: NextRequest) {
       const role = legacyPinRole(password);
       if (!role) {
         registerFailure(ip, now);
-        return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+        return jsonError('Invalid credentials', 401);
       }
 
       user = {
@@ -216,19 +224,12 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     registerFailure(ip, now);
-
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
-      );
+    if (error instanceof AuthRateLimitError) {
+      return jsonError(error.message, error.status, { headers: error.headers });
     }
 
     console.error('Auth error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return jsonError('Internal server error', 500);
   }
 }
 
