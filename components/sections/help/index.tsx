@@ -242,7 +242,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
               >
                 {createRequest.isPending ? (
                   <span className="inline-flex items-center justify-center">
-                    <WuxiaIcon name="spinner" className="w-4 h-4 mr-3 animate-spin" />
+                    <WuxiaIcon name="spinner" className="spinner-icon w-4 h-4 mr-3" />
                     {t.help.submitting}
                   </span>
                 ) : (
@@ -272,9 +272,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                       key={value}
                       type="button"
                       onClick={() => setStatus(value)}
-                      className={`px-3 py-2 text-sm rounded-2xl transition-colors ${
-                        status === value ? 'bg-[#183244]/80 text-[#e6eff5]' : 'text-gray-400 hover:text-[#bcd6e5]'
-                      }`}
+                      className={`ui-chip ${status === value ? 'is-active' : ''}`}
                     >
                       {value === 'open' ? t.help.open : value === 'closed' ? t.help.closed : t.help.all}
                     </button>

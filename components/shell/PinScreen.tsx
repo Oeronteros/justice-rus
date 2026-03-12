@@ -176,9 +176,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                 setMode('login');
                 resetMessages();
               }}
-              className={`px-4 py-2 text-sm rounded-2xl transition-colors ${
-                mode === 'login' ? 'bg-[#183244]/80 text-[#e6eff5]' : 'text-gray-400 hover:text-[#bcd6e5]'
-              }`}
+              className={`ui-chip ${mode === 'login' ? 'is-active' : ''}`}
             >
               {t.auth.loginTab}
             </button>
@@ -188,9 +186,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                 setMode('register');
                 resetMessages();
               }}
-              className={`px-4 py-2 text-sm rounded-2xl transition-colors ${
-                mode === 'register' ? 'bg-[#183244]/80 text-[#e6eff5]' : 'text-gray-400 hover:text-[#bcd6e5]'
-              }`}
+              className={`ui-chip ${mode === 'register' ? 'is-active' : ''}`}
             >
               {t.auth.registerTab}
             </button>
@@ -204,6 +200,8 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
               placeholder={t.auth.nickname}
               autoFocus
               disabled={loading}
+              autoComplete="username"
+              enterKeyHint="next"
             />
 
             <div className="flex gap-2">
@@ -214,6 +212,8 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                 className="input-field w-full"
                 placeholder={t.auth.password}
                 disabled={loading}
+                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                enterKeyHint={mode === 'login' ? 'go' : 'next'}
               />
               <button
                 type="button"
@@ -249,6 +249,8 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                   className="input-field w-full"
                   placeholder={t.auth.discordHandle}
                   disabled={loading}
+                  autoComplete="off"
+                  enterKeyHint="next"
                 />
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -257,6 +259,8 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                   className="input-field w-full"
                   placeholder={t.auth.confirmPassword}
                   disabled={loading}
+                  autoComplete="new-password"
+                  enterKeyHint="done"
                 />
               </>
             )}
@@ -264,7 +268,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
             <button type="submit" disabled={loading} className="btn-primary w-full py-4 text-lg font-bold">
               {loading ? (
                 <span className="inline-flex items-center justify-center">
-                  <WuxiaIcon name="spinner" className="w-4 h-4 mr-3 animate-spin" />
+                  <WuxiaIcon name="spinner" className="spinner-icon w-4 h-4 mr-3" />
                   {mode === 'login' ? t.auth.loggingIn : t.auth.creatingAccount}
                 </span>
               ) : (
@@ -296,6 +300,8 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
                     onChange={(e) => setAdminPin(e.target.value)}
                     placeholder={t.auth.adminPinPlaceholder}
                     disabled={loading}
+                    autoComplete="one-time-code"
+                    enterKeyHint="go"
                   />
                   <button type="button" className="btn-secondary px-4" onClick={handleAdminPinLogin} disabled={loading}>
                     {t.auth.loginSubmit}

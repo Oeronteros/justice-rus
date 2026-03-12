@@ -182,7 +182,13 @@ function PvpSectionContent({ user }: PvpSectionProps) {
 
   const joinQueueAction = async () => {
     try {
-      await joinQueue.mutateAsync();
+      await joinQueue.mutateAsync({
+        optimisticPlayer: {
+          playerId: user.discordId || user.id || user.nickname || 'self',
+          nickname: user.nickname || 'You',
+          className: user.className || 'Unknown',
+        },
+      });
       setActionNotice({ tone: 'success', message: 'Ты в очереди. Ждем соперника.' });
     } catch (err) {
       reportActionError(err);
@@ -191,7 +197,10 @@ function PvpSectionContent({ user }: PvpSectionProps) {
 
   const leaveQueueAction = async () => {
     try {
-      await leaveQueue.mutateAsync();
+      await leaveQueue.mutateAsync({
+        playerId: user.discordId || user.id || user.nickname || 'self',
+        nickname: user.nickname || 'You',
+      });
       setActionNotice({ tone: 'success', message: 'Активность в PvP снята.' });
     } catch (err) {
       reportActionError(err);

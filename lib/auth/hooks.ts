@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { accountsApi, type UpdateAccountPayload } from '@/lib/api/accounts';
 import { classesApi } from '@/lib/api/classes';
+import type { PortalAccountDto } from '@/lib/schemas/account';
 
 export const accountKeys = {
   all: ['accounts'] as const,
@@ -20,7 +21,36 @@ export function useUpdateAccount() {
 
   return useMutation({
     mutationFn: (payload: UpdateAccountPayload) => accountsApi.update(payload),
-    onSuccess: () => {
+    onMutate: async (payload) => {
+      await queryClient.cancelQueries({ queryKey: accountKeys.lists() });
+
+      const previousAccounts = queryClient.getQueryData<PortalAccountDto[]>(accountKeys.lists()) ?? [];
+      queryClient.setQueryData<PortalAccountDto[]>(accountKeys.lists(), (old = []) =>
+        old.map((account) =>
+          account.id === payload.id
+            ? {
+                ...account,
+                isActive: payload.isActive,
+                role: payload.role ?? account.role,
+                prefix: payload.prefix ?? account.prefix,
+              }
+            : account
+        )
+      );
+
+      return { previousAccounts };
+    },
+    onError: (_error, _payload, context) => {
+      if (context?.previousAccounts) {
+        queryClient.setQueryData(accountKeys.lists(), context.previousAccounts);
+      }
+    },
+    onSuccess: (updatedAccount) => {
+      queryClient.setQueryData<PortalAccountDto[]>(accountKeys.lists(), (old = []) =>
+        old.map((account) => (account.id === updatedAccount.id ? updatedAccount : account))
+      );
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: accountKeys.lists() });
     },
   });

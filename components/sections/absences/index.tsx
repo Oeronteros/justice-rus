@@ -157,7 +157,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
               >
                 {createAbsence.isPending ? (
                   <span className="inline-flex items-center justify-center">
-                    <WuxiaIcon name="spinner" className="w-4 h-4 mr-3 animate-spin" />
+                    <WuxiaIcon name="spinner" className="spinner-icon w-4 h-4 mr-3" />
                     {t.absences.submitting}
                   </span>
                 ) : (

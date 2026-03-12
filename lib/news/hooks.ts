@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { newsApi, type CreateNewsPayload } from '@/lib/api/news';
+import type { News } from '@/lib/schemas/news';
 
 export const newsKeys = {
   all: ['news'] as const,
@@ -36,7 +37,36 @@ export function useCreateNews() {
 
   return useMutation({
     mutationFn: (payload: CreateNewsPayload) => newsApi.create(payload),
-    onSuccess: () => {
+    onMutate: async (payload) => {
+      await queryClient.cancelQueries({ queryKey: newsKeys.lists() });
+
+      const previousNews = queryClient.getQueryData<News[]>(newsKeys.lists()) ?? [];
+      const optimisticId = `temp-news-${Date.now()}`;
+      const optimisticNews: News = {
+        id: optimisticId,
+        title: payload.title.trim(),
+        content: payload.content.trim(),
+        author: payload.author?.trim() || 'You',
+        date: new Date().toISOString(),
+        pinned: payload.pinned ?? false,
+        discordDeliveryStatus: 'pending',
+      };
+
+      queryClient.setQueryData<News[]>(newsKeys.lists(), (old = []) => [optimisticNews, ...old]);
+
+      return { previousNews, optimisticId };
+    },
+    onError: (_error, _payload, context) => {
+      if (context?.previousNews) {
+        queryClient.setQueryData(newsKeys.lists(), context.previousNews);
+      }
+    },
+    onSuccess: (createdNews, _payload, context) => {
+      queryClient.setQueryData<News[]>(newsKeys.lists(), (old = []) =>
+        old.map((item) => (item.id === context?.optimisticId ? createdNews : item))
+      );
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: newsKeys.lists() });
     },
   });

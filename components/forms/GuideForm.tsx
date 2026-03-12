@@ -493,7 +493,7 @@ export function GuideForm({
         <button type="submit" className="btn-primary px-5 py-3" disabled={isSubmitting}>
           {isSubmitting ? (
             <span className="inline-flex items-center justify-center">
-              <WuxiaIcon name="spinner" className="w-4 h-4 mr-3 animate-spin" />
+              <WuxiaIcon name="spinner" className="spinner-icon w-4 h-4 mr-3" />
               {t.guides.saving}
             </span>
           ) : (
