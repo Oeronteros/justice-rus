@@ -17,3 +17,9 @@
 ## 2026-03-12 T6
 - A shared `components/PrefixBadge.tsx` now owns the visual prefix treatment instead of inline badge markup.
 - `profile` and `registration` can consume prefix data immediately because they already have `user.prefix` / `registration.prefix` in their local schemas.
+
+## 2026-03-12 T2/T7/T8/T9/T10
+- Shared CSS can drive major visual improvement without route logic changes because header, mobile nav, dashboard hero, and dashboard cards already expose stable class hooks.
+- The existing dashboard file had dormant signal-strip styles, so wiring those into the hero region produced a stronger above-the-fold hierarchy with minimal behavioral risk.
+- Header and mobile nav kept their accessibility labels and route behavior while gaining stronger shell wrappers for visual redesign.
+- Desktop browser QA confirmed the new dashboard hierarchy, header shell, and shared prefix badge on the personal station render together after mocked auth login.

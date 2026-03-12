@@ -1,0 +1,15 @@
+Desktop QA notes
+
+Environment:
+- webpack dev server on http://127.0.0.1:3003 with mocked auth/dashboard APIs
+- authenticated user: Smoke Member / prefix Raid Lead
+
+Observed after login:
+- Header renders brand, language switcher, refresh, logout, and the full nav rail
+- Dashboard hero renders signal strip with Readiness, Support, and Officer blocks
+- Personal station renders shared prefix badge for Raid Lead
+- Action Center, Announcements, and Activity Feed cards render with redesigned shell
+
+Limitations:
+- Detached dev processes are flaky in this environment, so mobile browser verification was unstable and should be backed by Playwright specs later
+- Console noise came from dev/HMR and unmocked proxy endpoints during early QA passes; functional route rendering was verified on the desktop pass

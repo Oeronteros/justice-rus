@@ -12,3 +12,8 @@
 
 ## 2026-03-12 T6
 - `components/sections/pvp/index.tsx` still cannot render shared prefixes for other participants without expanding the PvP data contract: `lib/schemas/pvp.ts` and `lib/server/pvp/service.ts` currently expose nickname/class only, no prefix field.
+
+## 2026-03-12 T2/T7/T8/T9/T10
+- Browser QA on webpack dev server is stable enough for a desktop dashboard/header pass, but detached dev processes are flaky in this environment; mobile visual verification is less reliable and should be backed by Playwright specs later.
+- `tsc` depends on `.next/dev/types/**`, so verification must regenerate dev types before running plain `npm run type-check` if no dev server is active.
+- A webpack dev server works around the Turbopack cache corruption seen during manual QA in this environment.
