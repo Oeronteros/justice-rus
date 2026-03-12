@@ -9,3 +9,6 @@
 
 ## 2026-03-12 T3
 - No standalone dashboard empty-state variants for individual regions were extracted yet; later redesign must preserve the current top-level loading/error gate and inline card-empty states.
+
+## 2026-03-12 T6
+- `components/sections/pvp/index.tsx` still cannot render shared prefixes for other participants without expanding the PvP data contract: `lib/schemas/pvp.ts` and `lib/server/pvp/service.ts` currently expose nickname/class only, no prefix field.

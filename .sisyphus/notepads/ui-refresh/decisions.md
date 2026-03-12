@@ -12,3 +12,7 @@
 ## 2026-03-12 T3
 - Kept all data hooks and snapshot derivation inside `DashboardSectionContent` and extracted only presentational regions first.
 - Split the rendered dashboard into `DashboardHeroRegion` and `DashboardPrimaryRegion` so later redesign work can target top-vs-lower sections independently.
+
+## 2026-03-12 T6
+- Introduced `PrefixBadge` with `default` and `compact` variants as the single shared prefix presentation primitive.
+- Replaced profile inline badge markup and added compact prefix rendering to both mobile and desktop participant views in `RegistrationTable`.

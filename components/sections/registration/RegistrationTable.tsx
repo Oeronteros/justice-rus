@@ -7,6 +7,7 @@ import { useUpdateRegistrationStats } from '@/lib/registration/hooks';
 import { getKPIClass, getKpiIndicator, getRankClass, getStatusClass } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { ClassBadge } from '@/components/ClassIcon';
+import { PrefixBadge } from '@/components/PrefixBadge';
 import type { User } from '@/lib/schemas/auth';
 import type { Registration } from '@/lib/schemas/registration';
 import { canSeeNumericKpi, hasRoleAtLeast } from '@/lib/authz';
@@ -322,7 +323,10 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
                   <RegistrationIdentity registration={registration} compact />
                   <div className="min-w-0">
                     <div className="text-xs uppercase tracking-[0.14em] text-[#9ec5d8] mb-1">#{index + 1}</div>
-                    <div className="text-lg font-semibold text-[#e6eff5]">{registration.nickname}</div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <div className="text-lg font-semibold text-[#e6eff5]">{registration.nickname}</div>
+                      <PrefixBadge prefix={registration.prefix} variant="compact" />
+                    </div>
                     <div className="text-sm text-gray-400 mt-1 truncate">{getDisplayDiscord(registration) || 'Discord не указан'}</div>
                   </div>
                 </div>
@@ -422,7 +426,12 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
                   <td className="min-w-[220px]">
                     <RegistrationIdentity registration={registration} />
                   </td>
-                  <td className="font-medium">{registration.nickname}</td>
+                  <td className="font-medium">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span>{registration.nickname}</span>
+                      <PrefixBadge prefix={registration.prefix} variant="compact" />
+                    </div>
+                  </td>
                   <td>
                     <span className={`ui-badge ${getRankClass(registration.rank)}`}>
                       {rankLabels[registration.rank] || registration.rank}

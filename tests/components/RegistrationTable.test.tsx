@@ -88,4 +88,16 @@ describe('RegistrationTable guild editing', () => {
     expect(onRefresh).toHaveBeenCalledTimes(1);
     expect((window as unknown as { prompt: ReturnType<typeof vi.fn> }).prompt).not.toHaveBeenCalled();
   });
+
+  it('renders a compact prefix badge next to the participant nickname', () => {
+    render(
+      <RegistrationTable
+        registrations={[{ ...baseRow, prefix: 'Moonborn' }]}
+        user={user}
+        columnLabels={defaultRegistrationColumnLabels}
+      />
+    );
+
+    expect(screen.getByText('Moonborn')).toBeInTheDocument();
+  });
 });

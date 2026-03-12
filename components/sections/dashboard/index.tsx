@@ -6,6 +6,7 @@ import WuxiaIcon, { type IconName } from '@/components/WuxiaIcons';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { LoadingState } from '@/components/shared/LoadingState';
+import { PrefixBadge } from '@/components/PrefixBadge';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { useAbsences } from '@/lib/absences/hooks';
 import { hasRoleAtLeast } from '@/lib/authz';
@@ -661,18 +662,18 @@ function DashboardHeroRegion({
   copy: DashboardCopy;
   liveTone: LiveTone;
   liveLabel: string;
-  rosterSnapshot: { active: number };
+  rosterSnapshot: { active: number; readinessPercent: number; readyCore: number };
   helpSnapshot: { unattended: number };
   absenceSnapshot: { pending: Absence[] };
   newsSnapshot: { activeCount: number };
   user: User;
   language: Language;
-  pvpSnapshot: { userInQueue: boolean; queueSize: number; disputed: boolean };
+  pvpSnapshot: { userInQueue: boolean; queueSize: number; disputed: boolean; topPlayer: { nickname: string; rating: number } | null };
   isOfficer: boolean;
   officerSignals: number;
 }) {
   return (
-    <div className="guild-dashboard-grid">
+    <div className="guild-dashboard-grid dashboard-hero-shell">
       <article className="card section-card guild-dashboard-command p-6 sm:p-7 xl:p-8">
         <div className="guild-dashboard-command__header">
           <div>
@@ -684,6 +685,24 @@ function DashboardHeroRegion({
 
         <p className="guild-dashboard-command__lede">{copy.openingLine}</p>
         <p className="guild-dashboard-command__body">{copy.liveSnapshot}</p>
+
+        <div className="guild-dashboard-command__signals dashboard-command-signal-strip">
+          <div className="guild-dashboard-command__signal">
+            <span className="dashboard-command__signal-label">Readiness</span>
+            <strong>{rosterSnapshot.readinessPercent}%</strong>
+            <span>{rosterSnapshot.readyCore} {copy.activeMembers.toLowerCase()}</span>
+          </div>
+          <div className="guild-dashboard-command__signal">
+            <span className="dashboard-command__signal-label">Support</span>
+            <strong>{helpSnapshot.unattended}</strong>
+            <span>{copy.unattendedRequests.toLowerCase()}</span>
+          </div>
+          <div className="guild-dashboard-command__signal">
+            <span className="dashboard-command__signal-label">Officer</span>
+            <strong>{officerSignals}</strong>
+            <span>{officerSignals > 0 ? copy.activeAlerts : copy.allClear}</span>
+          </div>
+        </div>
 
         <div className="guild-dashboard-metric-grid">
           <MetricTile label={copy.activeMembers} value={rosterSnapshot.active} tone={liveTone === 'steady' ? 'active' : liveTone} />
@@ -707,13 +726,14 @@ function DashboardHeroRegion({
         <div className="guild-dashboard-station__facts">
           <div><span>{copy.yourRole}</span><strong>{roleLabels[language][user.role]}</strong></div>
           <div><span>{copy.yourClass}</span><strong>{user.className || copy.noClass}</strong></div>
-          <div><span>{copy.yourPrefix}</span><strong>{user.prefix || copy.noPrefix}</strong></div>
+          <div><span>{copy.yourPrefix}</span><strong>{user.prefix ? <PrefixBadge prefix={user.prefix} variant="compact" /> : copy.noPrefix}</strong></div>
           <div><span>{copy.accountState}</span><strong>{user.isActive ? copy.activeState : copy.inactiveState}</strong></div>
         </div>
 
         <div className="guild-dashboard-station__queue">
           <div><span className="dashboard-kicker">PvP</span><strong>{pvpSnapshot.userInQueue ? copy.queuedNow : copy.notQueued}</strong></div>
           <div className="ui-badge ui-badge-muted">{pvpSnapshot.queueSize > 0 ? `${copy.activeQueue}: ${pvpSnapshot.queueSize}` : copy.noQueue}</div>
+          {pvpSnapshot.topPlayer ? <div className="dashboard-station-note">Top: {pvpSnapshot.topPlayer.nickname} · {pvpSnapshot.topPlayer.rating}</div> : null}
         </div>
 
         {isOfficer && (
@@ -768,7 +788,7 @@ function DashboardPrimaryRegion({
   language: Language;
 }) {
   return (
-    <div className="guild-dashboard-primary-grid">
+    <div className="guild-dashboard-primary-grid dashboard-card-cluster">
       <StatusCard title={copy.actionCenter} icon="seal" actionHref="/profile" actionLabel={copy.openProfile} tone="active">
         <div className="dashboard-card-stack">
           <p className="dashboard-card-copy">{copy.actionCenterBody}</p>

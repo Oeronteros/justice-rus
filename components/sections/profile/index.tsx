@@ -6,6 +6,7 @@ import type { User, UserRole } from '@/lib/schemas/auth';
 import { prefixOptions, type Registration } from '@/lib/schemas/registration';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { ClassBadge } from '@/components/ClassIcon';
+import { PrefixBadge } from '@/components/PrefixBadge';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { canAssignRoles, canManageAccounts, roleOrder } from '@/lib/authz';
 import { roleExplainerRows, roleLabels } from '@/lib/roles';
@@ -81,11 +82,7 @@ const ProfileOverview = memo(function ProfileOverview({ profileRegistration, use
         <div className="ds-metric-tile">
           <div className="text-gray-400 mb-1">Ник</div>
           <div className="text-[#e6eff5] font-medium">{user.nickname || '—'}</div>
-          {prefix ? (
-            <div className="mt-2 inline-flex rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-100">
-              {prefix}
-            </div>
-          ) : null}
+          <PrefixBadge prefix={prefix} className="mt-2" />
         </div>
         <div className="ds-metric-tile">
           <div className="text-gray-400 mb-1">Discord</div>

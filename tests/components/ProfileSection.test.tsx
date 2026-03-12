@@ -142,4 +142,16 @@ describe('ProfileSection role explainer and guild fields', () => {
 
     expect(resetButton).toBeDisabled();
   });
+
+  it('renders the shared prefix badge when the user has a prefix', () => {
+    render(
+      <I18nProvider>
+        <NotificationsProvider>
+          <ProfileSection user={{ ...user, prefix: 'Raid Lead' }} />
+        </NotificationsProvider>
+      </I18nProvider>
+    );
+
+    expect(screen.getAllByText('Raid Lead')[0]).toBeInTheDocument();
+  });
 });

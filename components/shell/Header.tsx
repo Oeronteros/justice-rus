@@ -64,9 +64,9 @@ export default function Header({
 
   return (
     <header className={`dc-header sticky top-0 z-40 ${headerCompact ? 'dc-header--compact' : ''}`}>
-      <div className={`max-w-7xl mx-auto px-4 sm:px-6 ${headerCompact ? 'py-2.5' : 'py-3 sm:py-3.5'}`}>
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-          <Link href="/" className="flex min-w-0 items-start gap-3 sm:items-center sm:gap-4 text-left group">
+      <div className={`dc-header-panel max-w-7xl mx-auto px-4 sm:px-6 ${headerCompact ? 'py-2.5' : 'py-3 sm:py-3.5'}`}>
+        <div className="dc-header-top flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+          <Link href="/" className="dc-brand-block flex min-w-0 items-start gap-3 sm:items-center sm:gap-4 text-left group">
             <div className="relative shrink-0">
               <div className="seal-ring">
                 <div className="seal-core">
@@ -99,7 +99,7 @@ export default function Header({
             </div>
           </Link>
 
-          <div className="flex w-full sm:w-auto flex-wrap items-center justify-between sm:justify-end gap-2">
+          <div className="dc-toolbar flex w-full sm:w-auto flex-wrap items-center justify-between sm:justify-end gap-2">
             <select
               id="langSwitch"
               value={language}
@@ -132,26 +132,28 @@ export default function Header({
           </div>
         </div>
 
-        <nav className="hidden md:block mt-2">
-          <div className={`dc-order ${headerCompact ? 'dc-order--compact' : 'dc-order--full'}`}>
-            {navItems.map((item) => (
-              <Link
-                key={item.section}
-                href={item.href}
-                onMouseEnter={() => onNavPrefetch?.(item.section)}
-                onFocus={() => onNavPrefetch?.(item.section)}
-                onTouchStart={() => onNavPrefetch?.(item.section)}
-                className={`dc-order-step ${currentSection === item.section ? 'is-active' : ''}`}
-                aria-label={orderLabels[item.section]}
-                aria-current={currentSection === item.section ? 'page' : undefined}
-                title={orderLabels[item.section]}
-              >
-                <span className="dc-order-dot dc-accent">
-                  <WuxiaIcon name={item.icon} className="w-4 h-4" />
-                </span>
-                <span className="dc-order-label">{orderLabels[item.section]}</span>
-              </Link>
-            ))}
+        <nav className="hidden md:block mt-3">
+          <div className="dc-nav-shell">
+            <div className={`dc-order dc-nav-scroll ${headerCompact ? 'dc-order--compact' : 'dc-order--full'}`}>
+              {navItems.map((item) => (
+                <Link
+                  key={item.section}
+                  href={item.href}
+                  onMouseEnter={() => onNavPrefetch?.(item.section)}
+                  onFocus={() => onNavPrefetch?.(item.section)}
+                  onTouchStart={() => onNavPrefetch?.(item.section)}
+                  className={`dc-order-step ${currentSection === item.section ? 'is-active' : ''}`}
+                  aria-label={orderLabels[item.section]}
+                  aria-current={currentSection === item.section ? 'page' : undefined}
+                  title={orderLabels[item.section]}
+                >
+                  <span className="dc-order-dot dc-accent">
+                    <WuxiaIcon name={item.icon} className="w-4 h-4" />
+                  </span>
+                  <span className="dc-order-label">{orderLabels[item.section]}</span>
+                </Link>
+              ))}
+            </div>
           </div>
         </nav>
       </div>

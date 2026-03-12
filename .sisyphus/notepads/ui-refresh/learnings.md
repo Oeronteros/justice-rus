@@ -13,3 +13,7 @@
 ## 2026-03-12 T3
 - `components/sections/dashboard/index.tsx` now has explicit composition boundaries: `DashboardHeroRegion` for the top command/station area and `DashboardPrimaryRegion` for the lower card stack.
 - Existing hook ownership, derived snapshots, loading gate, and error gate remain in `DashboardSectionContent`, which keeps behavior stable while enabling later region redesigns.
+
+## 2026-03-12 T6
+- A shared `components/PrefixBadge.tsx` now owns the visual prefix treatment instead of inline badge markup.
+- `profile` and `registration` can consume prefix data immediately because they already have `user.prefix` / `registration.prefix` in their local schemas.

@@ -30,7 +30,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
   return (
     <div className="md:hidden fixed inset-x-0 bottom-0 z-40 px-[max(12px,env(safe-area-inset-left))] pb-[max(10px,env(safe-area-inset-bottom))] pr-[max(12px,env(safe-area-inset-right))]">
       {isMoreOpen ? (
-        <div className="mobile-nav-sheet mb-3">
+        <div className="mobile-nav-sheet mobile-nav-frame mb-3">
           <div className="mobile-nav-sheet-grid">
             {secondaryItems.map((item) => (
               <Link
@@ -55,7 +55,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
         </div>
       ) : null}
 
-      <div className="wuxia-dock bg-gradient-to-t from-[#0a1118]/96 to-[#111d27]/88 backdrop-blur-xl border border-[#223544]/60 shadow-2xl shadow-black/45">
+      <div className="wuxia-dock mobile-nav-dock bg-gradient-to-t from-[#0a1118]/96 to-[#111d27]/88 backdrop-blur-xl border border-[#223544]/60 shadow-2xl shadow-black/45">
         <div className="flex items-center justify-between gap-1.5 no-scrollbar">
           {primaryItems.map((item) => (
             <Link
