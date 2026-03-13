@@ -1,32 +1,30 @@
-import { expect, test, type BrowserContext, type Page } from '@playwright/test';
-import { readFileSync } from 'node:fs';
-import path from 'node:path';
-import jwt from 'jsonwebtoken';
+import { expect, test, type BrowserContext } from '@playwright/test';
+import { addVinextAuthCookie, type VinextFixtureUser } from './utils/vinext-auth';
 
 const authResponse = {
   success: true,
   user: {
-    id: 'member-1',
+    id: '90001',
     nickname: 'Smoke Member',
     role: 'member',
     isActive: true,
     authMethod: 'account',
     discordHandle: null,
     className: 'Numina',
-  },
+  } satisfies VinextFixtureUser,
 };
 
 const officerAuthResponse = {
   success: true,
   user: {
-    id: 'officer-1',
+    id: '90002',
     nickname: 'Officer Smoke',
     role: 'officer',
     isActive: true,
     authMethod: 'account',
     discordHandle: null,
     className: 'Numina',
-  },
+  } satisfies VinextFixtureUser,
 };
 
 const newsPayload = [
@@ -48,7 +46,7 @@ const helpPayload = [
     details: 'Нужен офицер, который сможет координировать группу на вечернем событии.',
     category: 'outer_city_heroic',
     author: 'Smoke Member',
-    authorUserId: 'member-1',
+    authorUserId: authResponse.user.id,
     status: 'open',
     createdAt: '2026-03-11T16:00:00.000Z',
     gatheringStart: '2026-03-11T18:00:00.000Z',
@@ -118,52 +116,8 @@ const schedulePayload = [
   },
 ];
 
-function getJwtSecret() {
-  const envPath = path.join(process.cwd(), '.env.local');
-  const envSource = readFileSync(envPath, 'utf8');
-  const jwtSecretLine = envSource
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .find((line) => line.startsWith('JWT_SECRET='));
-
-  if (!jwtSecretLine) {
-    throw new Error('JWT_SECRET is missing in .env.local');
-  }
-
-  return jwtSecretLine.slice('JWT_SECRET='.length).trim();
-}
-
-function createAuthToken(user: typeof authResponse.user) {
-  return jwt.sign(
-    {
-      id: user.id,
-      nickname: user.nickname,
-      role: user.role,
-      isActive: user.isActive,
-      authMethod: user.authMethod,
-      discordHandle: user.discordHandle,
-      className: user.className,
-      iss: 'silent-moonfall-portal',
-      aud: 'silent-moonfall-users',
-      sub: user.id || user.nickname || user.role,
-    },
-    getJwtSecret(),
-    { expiresIn: '24h' }
-  );
-}
-
-async function addAuthCookie(context: BrowserContext, user: typeof authResponse.user) {
-  await context.addCookies([
-    {
-      name: 'auth_token',
-      value: createAuthToken(user),
-      domain: '127.0.0.1',
-      path: '/',
-      httpOnly: false,
-      secure: false,
-      sameSite: 'Lax',
-    },
-  ]);
+async function addAuthCookie(context: BrowserContext, user: VinextFixtureUser) {
+  await addVinextAuthCookie(context, user);
 }
 
 test.describe('vinext pilot smoke', () => {
