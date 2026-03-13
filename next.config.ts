@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { buildVinextCutoverRewrites } from './lib/platform/vinext-cutover';
 
 const securityHeaders = [
   {
@@ -97,12 +98,15 @@ const nextConfig: NextConfig = {
   },
   
   async rewrites() {
+    const vinextCutoverRewrites = buildVinextCutoverRewrites();
+
     return {
       beforeFiles: [
         {
           source: "/api/:path*",
           destination: "/api/:path*",
         },
+        ...vinextCutoverRewrites,
       ],
     };
   },

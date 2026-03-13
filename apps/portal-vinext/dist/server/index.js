@@ -6339,11 +6339,11 @@ function getSSRFontPreloads() {
 	return [...ssrFontPreloads];
 }
 //#endregion
-//#region app/(portal)/guides/page.tsx
-var page_exports$2 = /* @__PURE__ */ __exportAll({ default: () => page_default$2 });
-var page_default$2 = /* @__PURE__ */ registerClientReference(() => {
+//#region app/(portal)/absences/page.tsx
+var page_exports$7 = /* @__PURE__ */ __exportAll({ default: () => page_default$7 });
+var page_default$7 = /* @__PURE__ */ registerClientReference(() => {
 	throw new Error("Unexpectedly client reference export 'default' is called on server");
-}, "7346d135c2b4", "default");
+}, "de2699100888", "default");
 var Resources = ((React, deps, RemoveDuplicateServerCss, precedence) => {
 	return function Resources() {
 		return React.createElement(React.Fragment, null, [...deps.css.map((href) => React.createElement("link", {
@@ -6538,17 +6538,47 @@ async function PortalLayout({ children }) {
 	});
 }
 //#endregion
+//#region app/(portal)/calendar/page.tsx
+var page_exports$6 = /* @__PURE__ */ __exportAll({ default: () => page_default$6 });
+var page_default$6 = /* @__PURE__ */ registerClientReference(() => {
+	throw new Error("Unexpectedly client reference export 'default' is called on server");
+}, "c18db9305e40", "default");
+//#endregion
+//#region app/(portal)/guides/page.tsx
+var page_exports$5 = /* @__PURE__ */ __exportAll({ default: () => page_default$5 });
+var page_default$5 = /* @__PURE__ */ registerClientReference(() => {
+	throw new Error("Unexpectedly client reference export 'default' is called on server");
+}, "7346d135c2b4", "default");
+//#endregion
 //#region app/(portal)/help/page.tsx
-var page_exports$1 = /* @__PURE__ */ __exportAll({ default: () => page_default$1 });
-var page_default$1 = /* @__PURE__ */ registerClientReference(() => {
+var page_exports$4 = /* @__PURE__ */ __exportAll({ default: () => page_default$4 });
+var page_default$4 = /* @__PURE__ */ registerClientReference(() => {
 	throw new Error("Unexpectedly client reference export 'default' is called on server");
 }, "5f1cc293b170", "default");
 //#endregion
 //#region app/(portal)/news/page.tsx
+var page_exports$3 = /* @__PURE__ */ __exportAll({ default: () => page_default$3 });
+var page_default$3 = /* @__PURE__ */ registerClientReference(() => {
+	throw new Error("Unexpectedly client reference export 'default' is called on server");
+}, "cd3e30d9f56e", "default");
+//#endregion
+//#region app/(portal)/profile/page.tsx
+var page_exports$2 = /* @__PURE__ */ __exportAll({ default: () => page_default$2 });
+var page_default$2 = /* @__PURE__ */ registerClientReference(() => {
+	throw new Error("Unexpectedly client reference export 'default' is called on server");
+}, "809ff3c8fbc4", "default");
+//#endregion
+//#region app/(portal)/pvp/page.tsx
+var page_exports$1 = /* @__PURE__ */ __exportAll({ default: () => page_default$1 });
+var page_default$1 = /* @__PURE__ */ registerClientReference(() => {
+	throw new Error("Unexpectedly client reference export 'default' is called on server");
+}, "97c65a20db9f", "default");
+//#endregion
+//#region app/(portal)/schedule/page.tsx
 var page_exports = /* @__PURE__ */ __exportAll({ default: () => page_default });
 var page_default = /* @__PURE__ */ registerClientReference(() => {
 	throw new Error("Unexpectedly client reference export 'default' is called on server");
-}, "cd3e30d9f56e", "default");
+}, "fc255789ffde", "default");
 //#endregion
 //#region \0virtual:vinext-rsc-entry
 function _getSSRFontStyles() {
@@ -6610,7 +6640,7 @@ function __isrFnv1a64(s) {
 }
 function __isrCacheKey(pathname, suffix) {
 	const normalized = pathname === "/" ? "/" : pathname.replace(/\/$/, "");
-	const prefix = "app:fe265057-b292-495c-a309-c14e24bc24b0";
+	const prefix = "app:b42f0c20-5e82-487d-82d7-17cf036b22bd";
 	const key = prefix + ":" + normalized + ":" + suffix;
 	if (key.length <= 200) return key;
 	return prefix + ":__hash:" + __isrFnv1a64(normalized) + ":" + suffix;
@@ -6684,11 +6714,51 @@ function createRscOnErrorHandler(request, pathname, routePath) {
 }
 var routes = [
 	{
+		pattern: "/absences",
+		patternParts: ["absences"],
+		isDynamic: false,
+		params: [],
+		page: page_exports$7,
+		routeHandler: null,
+		layouts: [layout_exports$1, layout_exports],
+		routeSegments: ["(portal)", "absences"],
+		layoutTreePositions: [0, 1],
+		templates: [],
+		errors: [null, null],
+		slots: {},
+		loading: null,
+		error: null,
+		notFound: null,
+		notFounds: [null, null],
+		forbidden: null,
+		unauthorized: null
+	},
+	{
+		pattern: "/calendar",
+		patternParts: ["calendar"],
+		isDynamic: false,
+		params: [],
+		page: page_exports$6,
+		routeHandler: null,
+		layouts: [layout_exports$1, layout_exports],
+		routeSegments: ["(portal)", "calendar"],
+		layoutTreePositions: [0, 1],
+		templates: [],
+		errors: [null, null],
+		slots: {},
+		loading: null,
+		error: null,
+		notFound: null,
+		notFounds: [null, null],
+		forbidden: null,
+		unauthorized: null
+	},
+	{
 		pattern: "/guides",
 		patternParts: ["guides"],
 		isDynamic: false,
 		params: [],
-		page: page_exports$2,
+		page: page_exports$5,
 		routeHandler: null,
 		layouts: [layout_exports$1, layout_exports],
 		routeSegments: ["(portal)", "guides"],
@@ -6708,7 +6778,7 @@ var routes = [
 		patternParts: ["help"],
 		isDynamic: false,
 		params: [],
-		page: page_exports$1,
+		page: page_exports$4,
 		routeHandler: null,
 		layouts: [layout_exports$1, layout_exports],
 		routeSegments: ["(portal)", "help"],
@@ -6728,10 +6798,70 @@ var routes = [
 		patternParts: ["news"],
 		isDynamic: false,
 		params: [],
-		page: page_exports,
+		page: page_exports$3,
 		routeHandler: null,
 		layouts: [layout_exports$1, layout_exports],
 		routeSegments: ["(portal)", "news"],
+		layoutTreePositions: [0, 1],
+		templates: [],
+		errors: [null, null],
+		slots: {},
+		loading: null,
+		error: null,
+		notFound: null,
+		notFounds: [null, null],
+		forbidden: null,
+		unauthorized: null
+	},
+	{
+		pattern: "/profile",
+		patternParts: ["profile"],
+		isDynamic: false,
+		params: [],
+		page: page_exports$2,
+		routeHandler: null,
+		layouts: [layout_exports$1, layout_exports],
+		routeSegments: ["(portal)", "profile"],
+		layoutTreePositions: [0, 1],
+		templates: [],
+		errors: [null, null],
+		slots: {},
+		loading: null,
+		error: null,
+		notFound: null,
+		notFounds: [null, null],
+		forbidden: null,
+		unauthorized: null
+	},
+	{
+		pattern: "/pvp",
+		patternParts: ["pvp"],
+		isDynamic: false,
+		params: [],
+		page: page_exports$1,
+		routeHandler: null,
+		layouts: [layout_exports$1, layout_exports],
+		routeSegments: ["(portal)", "pvp"],
+		layoutTreePositions: [0, 1],
+		templates: [],
+		errors: [null, null],
+		slots: {},
+		loading: null,
+		error: null,
+		notFound: null,
+		notFounds: [null, null],
+		forbidden: null,
+		unauthorized: null
+	},
+	{
+		pattern: "/schedule",
+		patternParts: ["schedule"],
+		isDynamic: false,
+		params: [],
+		page: page_exports,
+		routeHandler: null,
+		layouts: [layout_exports$1, layout_exports],
+		routeSegments: ["(portal)", "schedule"],
 		layoutTreePositions: [0, 1],
 		templates: [],
 		errors: [null, null],

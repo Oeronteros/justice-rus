@@ -1,0 +1,49 @@
+import { describe, expect, it } from 'vitest';
+import {
+  buildVinextCutoverRewrites,
+  getVinextCutoverOrigin,
+  getVinextCutoverScope,
+  getVinextOwnedRoutes,
+} from '@/lib/platform/vinext-cutover';
+
+describe('vinext cutover helpers', () => {
+  it('defaults cutover scope to off', () => {
+    expect(getVinextCutoverScope(undefined)).toBe('off');
+    expect(getVinextOwnedRoutes('off')).toEqual([]);
+  });
+
+  it('returns pilot routes for pilot scope', () => {
+    expect(getVinextOwnedRoutes('pilot')).toEqual(['/news', '/help', '/guides']);
+  });
+
+  it('returns pilot and second-wave routes for wave2 scope', () => {
+    expect(getVinextOwnedRoutes('wave2')).toEqual([
+      '/news',
+      '/help',
+      '/guides',
+      '/profile',
+      '/absences',
+      '/pvp',
+      '/schedule',
+      '/calendar',
+    ]);
+  });
+
+  it('normalizes vinext cutover origin', () => {
+    expect(getVinextCutoverOrigin('http://127.0.0.1:3101/')).toBe('http://127.0.0.1:3101');
+    expect(getVinextCutoverOrigin('')).toBeNull();
+  });
+
+  it('builds rewrites only when origin exists', () => {
+    expect(buildVinextCutoverRewrites({ scope: 'pilot', origin: null })).toEqual([]);
+
+    expect(buildVinextCutoverRewrites({ scope: 'pilot', origin: 'http://127.0.0.1:3101' })).toEqual([
+      { source: '/news', destination: 'http://127.0.0.1:3101/news' },
+      { source: '/news/:path*', destination: 'http://127.0.0.1:3101/news/:path*' },
+      { source: '/help', destination: 'http://127.0.0.1:3101/help' },
+      { source: '/help/:path*', destination: 'http://127.0.0.1:3101/help/:path*' },
+      { source: '/guides', destination: 'http://127.0.0.1:3101/guides' },
+      { source: '/guides/:path*', destination: 'http://127.0.0.1:3101/guides/:path*' },
+    ]);
+  });
+});

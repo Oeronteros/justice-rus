@@ -73,6 +73,51 @@ const guidesPayload = [
   },
 ];
 
+const absencesPayload = [
+  {
+    id: 'absence-1',
+    member: 'Smoke Member',
+    startDate: '2026-03-15',
+    endDate: '2026-03-17',
+    reason: 'Командировка',
+    status: 'approved',
+  },
+];
+
+const pvpStatePayload = {
+  queue: [],
+  activeMatch: null,
+  recentMatches: [],
+  leaderboard: [],
+  userInQueue: false,
+  userRating: {
+    playerId: authResponse.user.id,
+    nickname: authResponse.user.nickname,
+    prefix: null,
+    rating: 1042,
+    wins: 7,
+    losses: 3,
+  },
+};
+
+const schedulePayload = [
+  {
+    id: 'schedule-1',
+    date: '2026-03-15',
+    registration: 'Evening Raid',
+    type: 'Рейды',
+    description: '20:00 - 21:00',
+    group: 'Рейды',
+    dayType: 'sunday',
+    time: '20:00 - 21:00',
+    titleRu: 'Вечерний рейд',
+    titleEn: 'Evening Raid',
+    titleZh: '晚间团本',
+    orderIndex: 1,
+    active: true,
+  },
+];
+
 function getJwtSecret() {
   const envPath = path.join(process.cwd(), '.env.local');
   const envSource = readFileSync(envPath, 'utf8');
@@ -209,6 +254,81 @@ test.describe('vinext pilot smoke', () => {
 
     await expect(page.getByText('Гайд по вечернему сбору')).toBeVisible({ timeout: 15000 });
     await expect(page.getByRole('button', { name: 'Выйти' })).toBeVisible();
+  });
+
+  test('renders authenticated vinext /absences view', async ({ page }) => {
+    await addAuthCookie(page.context(), authResponse.user);
+
+    await page.route((url) => url.pathname === '/api/discord-proxy/absences', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(absencesPayload),
+      });
+    });
+
+    await page.goto('/absences');
+
+    await expect(page.getByText('Командировка')).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Smoke Member' })).toBeVisible();
+  });
+
+  test('renders authenticated vinext /pvp view', async ({ page }) => {
+    await addAuthCookie(page.context(), authResponse.user);
+
+    await page.route((url) => url.pathname === '/api/pvp', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(pvpStatePayload),
+      });
+    });
+
+    await page.goto('/pvp');
+
+    await expect(page.getByRole('heading', { name: 'PvP-комната' })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('button', { name: 'Встать в очередь' })).toBeVisible();
+  });
+
+  test('renders authenticated vinext /schedule view', async ({ page }) => {
+    await addAuthCookie(page.context(), authResponse.user);
+
+    await page.route((url) => url.pathname === '/api/schedule', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(schedulePayload),
+      });
+    });
+
+    await page.goto('/schedule');
+
+    await expect(page.getByRole('heading', { name: /Расписание —/ })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('button', { name: /Воскресенье 1 событий/ })).toBeVisible();
+  });
+
+  test('renders authenticated vinext /calendar empty-state shell', async ({ page }) => {
+    await addAuthCookie(page.context(), authResponse.user);
+
+    await page.route((url) => url.pathname === '/api/schedule', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(schedulePayload),
+      });
+    });
+
+    await page.route((url) => url.pathname === '/api/schedule/rsvp' && url.searchParams.get('userId') === authResponse.user.id, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([]),
+      });
+    });
+
+    await page.goto('/calendar');
+
+    await expect(page.getByRole('heading', { name: 'Мой календарь' }).first()).toBeVisible({ timeout: 15000 });
   });
 
   test.fixme('supports keyboard-first auth interactions on vinext pilot route', async ({ page }) => {

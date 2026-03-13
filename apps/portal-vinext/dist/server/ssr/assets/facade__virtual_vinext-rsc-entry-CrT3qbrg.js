@@ -5,7 +5,7 @@ import { A as VFileMessage, b as asciiAlphanumeric, c as VFile, l as visit, p as
 import { n as appendSearchParamsToUrl, r as urlQueryToSearchParams } from "./query-DQfk1DxJ.js";
 import { createPortal } from "react-dom";
 import * as React$1 from "react";
-import React, { Component, Fragment, Suspense, createContext, createElement, forwardRef, lazy, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import React, { Component, Fragment, Suspense, createContext, createElement, forwardRef, lazy, memo, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { Fragment as Fragment$1, jsx, jsxs } from "react/jsx-runtime";
 //#region ../../components/WuxiaIcons.tsx
 var baseProps = {
@@ -1365,6 +1365,129 @@ var ErrorBoundary$1 = class extends Component {
 		return this.props.children;
 	}
 };
+//#endregion
+//#region ../../components/shared/LoadingState.tsx
+function LoadingState({ title, subtitle, icon = "spinner", skeletonCount, layout = "cards", cardCount = 3 }) {
+	const { t } = useTranslation();
+	const resolvedTitle = title ?? t.common.loading;
+	const resolvedSubtitle = subtitle ?? t.common.loadingDetails;
+	const count = skeletonCount ?? cardCount;
+	const renderIcon = () => {
+		if (typeof icon === "string") return /* @__PURE__ */ jsx(WuxiaIcon, {
+			name: icon,
+			className: "inline-block w-6 h-6 mr-3 text-red-400 align-text-bottom animate-spin"
+		});
+		return icon;
+	};
+	return /* @__PURE__ */ jsx("section", {
+		className: "py-10 sm:py-12",
+		children: /* @__PURE__ */ jsxs("div", {
+			className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+			children: [/* @__PURE__ */ jsxs("div", {
+				className: "loading-shell mb-8 sm:mb-10",
+				children: [/* @__PURE__ */ jsxs("div", {
+					className: "loading-shell-header",
+					children: [
+						/* @__PURE__ */ jsx("div", {
+							className: "loading-shell-kicker",
+							children: "Silent Moonfall"
+						}),
+						/* @__PURE__ */ jsxs("h2", {
+							className: "loading-shell-title",
+							children: [/* @__PURE__ */ jsx("span", {
+								className: "loading-shell-icon",
+								children: renderIcon()
+							}), /* @__PURE__ */ jsx("span", { children: resolvedTitle })]
+						}),
+						/* @__PURE__ */ jsx("p", {
+							className: "loading-shell-subtitle",
+							children: resolvedSubtitle
+						})
+					]
+				}), /* @__PURE__ */ jsxs("div", {
+					className: "loading-shell-chips",
+					"aria-hidden": "true",
+					children: [
+						/* @__PURE__ */ jsx("span", { className: "loading-chip" }),
+						/* @__PURE__ */ jsx("span", { className: "loading-chip loading-chip-wide" }),
+						/* @__PURE__ */ jsx("span", { className: "loading-chip" })
+					]
+				})]
+			}), /* @__PURE__ */ jsx("div", {
+				className: `loading-grid ${layout === "list" ? "loading-grid-list" : "loading-grid-cards"}`,
+				children: Array.from({ length: count }).map((_, i) => /* @__PURE__ */ jsxs("div", {
+					className: "loading-card card p-5 sm:p-6",
+					children: [
+						/* @__PURE__ */ jsxs("div", {
+							className: "loading-card-top",
+							children: [/* @__PURE__ */ jsx("span", { className: "loading-pill" }), /* @__PURE__ */ jsx("span", { className: "loading-line loading-line-short" })]
+						}),
+						/* @__PURE__ */ jsx("div", { className: "loading-line loading-line-title" }),
+						/* @__PURE__ */ jsx("div", { className: "loading-line loading-line-body" }),
+						/* @__PURE__ */ jsx("div", { className: "loading-line loading-line-body loading-line-body-short" }),
+						/* @__PURE__ */ jsx("div", { className: "loading-block" }),
+						/* @__PURE__ */ jsxs("div", {
+							className: "loading-card-footer",
+							children: [/* @__PURE__ */ jsx("span", { className: "loading-pill loading-pill-wide" }), /* @__PURE__ */ jsx("span", { className: "loading-pill" })]
+						})
+					]
+				}, i))
+			})]
+		})
+	});
+}
+//#endregion
+//#region ../../components/shared/EmptyState.tsx
+function EmptyState({ icon = "inbox", title, description, action, variant = "default" }) {
+	const renderIcon = () => {
+		if (typeof icon === "string") return /* @__PURE__ */ jsx(WuxiaIcon, {
+			name: icon,
+			className: "w-10 h-10 text-gray-500"
+		});
+		return icon;
+	};
+	const renderAction = () => {
+		if (!action) return null;
+		if (typeof action === "object" && action !== null && "label" in action && "onClick" in action) {
+			const btn = action;
+			return /* @__PURE__ */ jsx("button", {
+				onClick: btn.onClick,
+				className: "btn-primary",
+				children: btn.label
+			});
+		}
+		return action;
+	};
+	const badgeTone = variant === "error" ? "ui-badge ui-badge-danger" : "ui-badge ui-badge-muted";
+	return /* @__PURE__ */ jsxs("div", {
+		className: "card section-card px-6 py-10 sm:px-8 sm:py-12 text-center",
+		children: [
+			/* @__PURE__ */ jsx("div", {
+				className: "flex justify-center mb-6",
+				children: /* @__PURE__ */ jsx("div", {
+					className: `w-20 h-20 rounded-full flex items-center justify-center ${variant === "error" ? "bg-red-900/30" : "bg-gray-800/50"}`,
+					children: renderIcon()
+				})
+			}),
+			/* @__PURE__ */ jsx("div", {
+				className: "mb-3 flex justify-center",
+				children: /* @__PURE__ */ jsx("span", {
+					className: badgeTone,
+					children: variant === "error" ? "Need attention" : "No data yet"
+				})
+			}),
+			/* @__PURE__ */ jsx("h3", {
+				className: `text-xl font-bold mb-2 ${variant === "error" ? "text-red-300" : "text-[#d9e9f2]"}`,
+				children: title
+			}),
+			description && /* @__PURE__ */ jsx("p", {
+				className: "text-[#9fb5c3] max-w-md mx-auto mb-6 leading-7",
+				children: description
+			}),
+			renderAction()
+		]
+	});
+}
 //#endregion
 //#region ../../node_modules/@tanstack/query-core/build/modern/subscribable.js
 var Subscribable = class {
@@ -4499,6 +4622,76 @@ var postApiHelpResponders = (options) => (options.client ?? client).post({
 */
 var getApiClasses = (options) => (options?.client ?? client).get({
 	url: "/api/classes",
+	...options
+});
+/**
+* Получить список аккаунтов портала
+*/
+var getApiAdminAccounts = (options) => (options?.client ?? client).get({
+	security: [{
+		scheme: "bearer",
+		type: "http"
+	}],
+	url: "/api/admin/accounts",
+	...options
+});
+/**
+* Обновить аккаунт портала
+*/
+var patchApiAdminAccounts = (options) => (options.client ?? client).patch({
+	security: [{
+		scheme: "bearer",
+		type: "http"
+	}],
+	url: "/api/admin/accounts",
+	...options,
+	headers: {
+		"Content-Type": "application/json",
+		...options.headers
+	}
+});
+/**
+* Выйти из PvP очереди
+*/
+var deleteApiPvp = (options) => (options?.client ?? client).delete({
+	security: [{
+		scheme: "bearer",
+		type: "http"
+	}],
+	url: "/api/pvp",
+	...options
+});
+/**
+* Получить состояние PvP
+*/
+var getApiPvp = (options) => (options?.client ?? client).get({
+	url: "/api/pvp",
+	...options
+});
+/**
+* Отправить результат PvP матча
+*/
+var patchApiPvp = (options) => (options.client ?? client).patch({
+	security: [{
+		scheme: "bearer",
+		type: "http"
+	}],
+	url: "/api/pvp",
+	...options,
+	headers: {
+		"Content-Type": "application/json",
+		...options.headers
+	}
+});
+/**
+* Войти в PvP очередь
+*/
+var postApiPvp = (options) => (options?.client ?? client).post({
+	security: [{
+		scheme: "bearer",
+		type: "http"
+	}],
+	url: "/api/pvp",
 	...options
 });
 /**
@@ -8077,65 +8270,30 @@ ZodNullable.create;
 ZodEffects.createWithPreprocess;
 ZodPipeline.create;
 //#endregion
-//#region ../../lib/schemas/guide.ts
-var guideCategories = [
-	"general",
-	"pve",
-	"pvp",
-	"build",
-	"farm",
-	"craft",
-	"training"
+//#region ../../lib/schemas/absence.ts
+var absenceStatuses = [
+	"pending",
+	"approved",
+	"rejected"
 ];
-var guideSummarySchema = objectType({
+var absenceSchema = objectType({
 	id: stringType(),
-	slug: stringType(),
-	ownerAccountId: stringType().nullable().optional(),
-	title: stringType(),
-	category: stringType(),
-	author: stringType(),
-	createdAt: stringType(),
-	updatedAt: stringType(),
-	votes: numberType(),
-	commentsCount: numberType(),
-	linkTargets: arrayType(stringType())
+	member: stringType(),
+	startDate: stringType(),
+	endDate: stringType(),
+	reason: stringType(),
+	status: enumType(absenceStatuses)
 });
-var guideCommentSchema = objectType({
-	id: stringType(),
-	author: stringType(),
-	comment: stringType(),
-	createdAt: stringType()
+var absencesArraySchema = arrayType(absenceSchema);
+objectType({
+	member: stringType().max(120).optional(),
+	startDate: stringType().min(1, "Дата начала обязательна"),
+	endDate: stringType().min(1, "Дата окончания обязательна"),
+	reason: stringType().min(1, "Причина обязательна").max(500, "Максимум 500 символов")
 });
-var guideEntitySchema = objectType({
-	id: stringType(),
-	slug: stringType(),
-	ownerAccountId: stringType().nullable().optional(),
-	title: stringType(),
-	content: stringType(),
-	category: stringType(),
-	author: stringType(),
-	createdAt: stringType(),
-	updatedAt: stringType()
-});
-var guideDetailSchema = objectType({
-	guide: guideEntitySchema,
-	votes: numberType(),
-	voted: booleanType(),
-	comments: arrayType(guideCommentSchema)
-});
-var createGuideSchema = objectType({
-	title: stringType().min(1, "Название обязательно").max(200, "Максимум 200 символов"),
-	content: stringType().min(10, "Минимум 10 символов").max(5e5, "Слишком длинный текст"),
-	category: enumType(guideCategories),
-	author: stringType().max(100, "Максимум 100 символов").optional()
-});
-var createCommentSchema = objectType({
-	author: stringType().max(100, "Максимум 100 символов").optional(),
-	comment: stringType().min(1, "Комментарий обязателен").max(3e3, "Максимум 3000 символов")
-});
-var voteResponseSchema = objectType({
-	votes: numberType(),
-	voted: booleanType()
+objectType({
+	id: stringType().min(1),
+	status: enumType(absenceStatuses)
 });
 process.env.NEXT_PUBLIC_DISCORD_BOT_API_URL || process.env.DISCORD_BOT_API_URL;
 var sameOriginOpenApiClient = createClient({
@@ -8144,570 +8302,102 @@ var sameOriginOpenApiClient = createClient({
 	headers: { "Content-Type": "application/json" }
 });
 //#endregion
-//#region ../../lib/api/guides.ts
-var guidesApi = {
+//#region ../../lib/api/absences.ts
+var absencesApi = {
 	list: async () => {
-		const response = await getApiGuide({ client: sameOriginOpenApiClient });
-		return arrayType(guideSummarySchema).parse(response.data || []);
-	},
-	get: async (id, voterKey) => {
-		const response = await getApiGuideById({
-			client: sameOriginOpenApiClient,
-			path: { id },
-			query: voterKey ? { voterKey } : {}
-		});
-		return guideDetailSchema.parse(response.data || {});
+		const response = await getApiDiscordProxyAbsences({ client: sameOriginOpenApiClient });
+		return absencesArraySchema.parse(response.data || []);
 	},
 	create: async (data) => {
-		const response = await postApiGuide({
+		const response = await postApiDiscordProxyAbsences({
 			client: sameOriginOpenApiClient,
 			body: data
 		});
-		return guideSummarySchema.parse(response.data || {});
+		return absenceSchema.parse(response.data || {});
 	},
-	update: async (id, data) => {
-		const response = await patchApiGuideById({
+	updateStatus: async (data) => {
+		const response = await patchApiDiscordProxyAbsences({
 			client: sameOriginOpenApiClient,
-			path: { id },
 			body: data
 		});
-		return guideEntitySchema.parse(response.data || {});
-	},
-	vote: async (id, voterKey) => {
-		const response = await postApiGuideByIdVote({
-			client: sameOriginOpenApiClient,
-			path: { id },
-			body: { voterKey }
-		});
-		return voteResponseSchema.parse(response.data || {});
-	},
-	addComment: async (id, data) => {
-		const response = await postApiGuideByIdComment({
-			client: sameOriginOpenApiClient,
-			path: { id },
-			body: data
-		});
-		return guideCommentSchema.parse(response.data || {});
-	},
-	remove: async (id) => {
-		const response = await deleteApiGuideById({
-			client: sameOriginOpenApiClient,
-			path: { id }
-		});
-		return objectType({ success: booleanType() }).parse(response.data || {});
+		return absenceSchema.parse(response.data || {});
 	}
 };
 //#endregion
-//#region ../../lib/guides/hooks.ts
-var guideKeys = {
-	all: ["guides"],
-	lists: () => [...guideKeys.all, "list"],
-	details: () => [...guideKeys.all, "detail"],
-	detail: (id) => [...guideKeys.details(), id]
+//#region ../../lib/absences/hooks.ts
+var absenceKeys = {
+	all: ["absences"],
+	lists: () => [...absenceKeys.all, "list"]
 };
-function updateGuideLists(queryClient, updater) {
-	queryClient.getQueriesData({ queryKey: guideKeys.lists() }).forEach(([key, value]) => {
-		queryClient.setQueryData(key, updater(value ?? []));
-	});
-}
-function useGuides() {
+function useAbsences() {
 	return useQuery({
-		queryKey: guideKeys.lists(),
-		queryFn: guidesApi.list,
-		staleTime: 600 * 1e3
-	});
-}
-function useGuide(id, voterKey) {
-	return useQuery({
-		queryKey: guideKeys.detail(id || ""),
-		queryFn: () => guidesApi.get(id, voterKey),
-		enabled: !!id,
+		queryKey: absenceKeys.lists(),
+		queryFn: absencesApi.list,
 		staleTime: 300 * 1e3
 	});
 }
-function useCreateGuide() {
+function useCreateAbsence() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: (data) => guidesApi.create(data),
-		onMutate: async (data) => {
-			await queryClient.cancelQueries({ queryKey: guideKeys.lists() });
-			const previousLists = queryClient.getQueriesData({ queryKey: guideKeys.lists() });
-			const optimisticId = `temp-guide-${Date.now()}`;
-			const now = (/* @__PURE__ */ new Date()).toISOString();
-			const optimisticGuide = {
-				id: optimisticId,
-				slug: optimisticId,
-				ownerAccountId: null,
-				title: data.title.trim(),
-				category: data.category,
-				author: data.author?.trim() || "You",
-				createdAt: now,
-				updatedAt: now,
-				votes: 0,
-				commentsCount: 0,
-				linkTargets: []
-			};
-			updateGuideLists(queryClient, (items) => [optimisticGuide, ...items]);
-			return {
-				previousLists,
-				optimisticId
-			};
+		mutationFn: (data) => absencesApi.create(data),
+		onMutate: async (newData) => {
+			await queryClient.cancelQueries({ queryKey: absenceKeys.lists() });
+			const previousAbsences = queryClient.getQueryData(absenceKeys.lists());
+			if (previousAbsences) {
+				const optimisticAbsence = {
+					id: `temp-${Date.now()}`,
+					...newData,
+					member: newData.member || "",
+					status: "pending"
+				};
+				queryClient.setQueryData(absenceKeys.lists(), (old) => {
+					if (!old) return [optimisticAbsence];
+					return [...old, optimisticAbsence];
+				});
+			}
+			return { previousAbsences };
 		},
-		onError: (_error, _data, context) => {
-			context?.previousLists?.forEach(([key, value]) => {
-				queryClient.setQueryData(key, value);
-			});
-		},
-		onSuccess: (createdGuide, _data, context) => {
-			updateGuideLists(queryClient, (items) => items.map((item) => item.id === context?.optimisticId ? createdGuide : item));
+		onError: (err, newData, context) => {
+			if (context?.previousAbsences) queryClient.setQueryData(absenceKeys.lists(), context.previousAbsences);
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries({ queryKey: guideKeys.lists() });
+			queryClient.invalidateQueries({ queryKey: absenceKeys.lists() });
 		}
 	});
 }
-function useUpdateGuide() {
+function useUpdateAbsenceStatus() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: ({ id, data }) => guidesApi.update(id, data),
-		onMutate: async (variables) => {
-			await queryClient.cancelQueries({ queryKey: guideKeys.detail(variables.id) });
-			await queryClient.cancelQueries({ queryKey: guideKeys.lists() });
-			const previousDetail = queryClient.getQueryData(guideKeys.detail(variables.id));
-			const previousLists = queryClient.getQueriesData({ queryKey: guideKeys.lists() });
-			const now = (/* @__PURE__ */ new Date()).toISOString();
-			queryClient.setQueryData(guideKeys.detail(variables.id), (current) => current ? {
-				...current,
-				guide: {
-					...current.guide,
-					...variables.data,
-					updatedAt: now
-				}
-			} : current);
-			updateGuideLists(queryClient, (items) => items.map((item) => item.id === variables.id ? {
-				...item,
-				title: variables.data.title,
-				category: variables.data.category,
-				updatedAt: now
-			} : item));
-			return {
-				previousDetail,
-				previousLists,
-				id: variables.id
-			};
-		},
-		onError: (_error, variables, context) => {
-			if (context?.previousDetail) queryClient.setQueryData(guideKeys.detail(variables.id), context.previousDetail);
-			context?.previousLists?.forEach(([key, value]) => {
-				queryClient.setQueryData(key, value);
+		mutationFn: (data) => absencesApi.updateStatus(data),
+		onMutate: async (newData) => {
+			await queryClient.cancelQueries({ queryKey: absenceKeys.lists() });
+			const previousAbsences = queryClient.getQueryData(absenceKeys.lists());
+			if (previousAbsences) queryClient.setQueryData(absenceKeys.lists(), (old) => {
+				if (!old) return old;
+				return old.map((absence) => absence.id === newData.id ? {
+					...absence,
+					status: newData.status
+				} : absence);
 			});
+			return { previousAbsences };
 		},
-		onSuccess: (updatedGuide, variables) => {
-			queryClient.setQueryData(guideKeys.detail(variables.id), (current) => current ? {
-				...current,
-				guide: updatedGuide
-			} : current);
-			updateGuideLists(queryClient, (items) => items.map((item) => item.id === variables.id ? {
-				...item,
-				title: updatedGuide.title,
-				category: updatedGuide.category,
-				updatedAt: updatedGuide.updatedAt
-			} : item));
+		onError: (err, newData, context) => {
+			if (context?.previousAbsences) queryClient.setQueryData(absenceKeys.lists(), context.previousAbsences);
 		},
-		onSettled: (_data, _error, variables) => {
-			queryClient.invalidateQueries({ queryKey: guideKeys.detail(variables.id) });
-			queryClient.invalidateQueries({ queryKey: guideKeys.lists() });
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: absenceKeys.lists() });
 		}
 	});
 }
-function useVoteGuide() {
-	const queryClient = useQueryClient();
-	return useMutation({
-		mutationFn: ({ id, voterKey }) => guidesApi.vote(id, voterKey),
-		onMutate: async ({ id }) => {
-			await queryClient.cancelQueries({ queryKey: guideKeys.detail(id) });
-			await queryClient.cancelQueries({ queryKey: guideKeys.lists() });
-			const previousDetail = queryClient.getQueryData(guideKeys.detail(id));
-			const previousLists = queryClient.getQueriesData({ queryKey: guideKeys.lists() });
-			const nextVotes = previousDetail ? previousDetail.votes + (previousDetail.voted ? -1 : 1) : null;
-			const nextVoted = previousDetail ? !previousDetail.voted : true;
-			if (previousDetail && nextVotes !== null) queryClient.setQueryData(guideKeys.detail(id), {
-				...previousDetail,
-				votes: nextVotes,
-				voted: nextVoted
-			});
-			if (nextVotes !== null) updateGuideLists(queryClient, (items) => items.map((item) => item.id === id ? {
-				...item,
-				votes: nextVotes
-			} : item));
-			return {
-				previousDetail,
-				previousLists
-			};
-		},
-		onError: (_error, _vars, context) => {
-			if (context?.previousDetail) queryClient.setQueryData(guideKeys.detail(context.previousDetail.guide.id), context.previousDetail);
-			context?.previousLists?.forEach(([key, value]) => {
-				queryClient.setQueryData(key, value);
-			});
-		},
-		onSuccess: (voteResponse, variables) => {
-			queryClient.setQueryData(guideKeys.detail(variables.id), (current) => current ? {
-				...current,
-				votes: voteResponse.votes,
-				voted: voteResponse.voted
-			} : current);
-			updateGuideLists(queryClient, (items) => items.map((item) => item.id === variables.id ? {
-				...item,
-				votes: voteResponse.votes
-			} : item));
-		},
-		onSettled: (_data, _error, variables) => {
-			queryClient.invalidateQueries({ queryKey: guideKeys.detail(variables.id) });
-			queryClient.invalidateQueries({ queryKey: guideKeys.lists() });
-		}
-	});
-}
-function useAddComment() {
-	const queryClient = useQueryClient();
-	return useMutation({
-		mutationFn: ({ id, data }) => guidesApi.addComment(id, data),
-		onMutate: async ({ id, data }) => {
-			await queryClient.cancelQueries({ queryKey: guideKeys.detail(id) });
-			await queryClient.cancelQueries({ queryKey: guideKeys.lists() });
-			const previousDetail = queryClient.getQueryData(guideKeys.detail(id));
-			const previousLists = queryClient.getQueriesData({ queryKey: guideKeys.lists() });
-			const optimisticId = `temp-comment-${Date.now()}`;
-			const optimisticComment = {
-				id: optimisticId,
-				author: data.author?.trim() || "You",
-				comment: data.comment,
-				createdAt: (/* @__PURE__ */ new Date()).toISOString()
-			};
-			queryClient.setQueryData(guideKeys.detail(id), (current) => current ? {
-				...current,
-				comments: [...current.comments, optimisticComment]
-			} : current);
-			updateGuideLists(queryClient, (items) => items.map((item) => item.id === id ? {
-				...item,
-				commentsCount: item.commentsCount + 1
-			} : item));
-			return {
-				previousDetail,
-				previousLists,
-				optimisticId
-			};
-		},
-		onError: (_error, vars, context) => {
-			if (context?.previousDetail) queryClient.setQueryData(guideKeys.detail(vars.id), context.previousDetail);
-			context?.previousLists?.forEach(([key, value]) => {
-				queryClient.setQueryData(key, value);
-			});
-		},
-		onSuccess: (comment, vars, context) => {
-			queryClient.setQueryData(guideKeys.detail(vars.id), (current) => current ? {
-				...current,
-				comments: current.comments.map((item) => item.id === context?.optimisticId ? comment : item)
-			} : current);
-		},
-		onSettled: (_data, _error, vars) => {
-			queryClient.invalidateQueries({ queryKey: guideKeys.detail(vars.id) });
-			queryClient.invalidateQueries({ queryKey: guideKeys.lists() });
-		}
-	});
-}
-function useDeleteGuide() {
-	const queryClient = useQueryClient();
-	return useMutation({
-		mutationFn: (id) => guidesApi.remove(id),
-		onMutate: async (id) => {
-			await queryClient.cancelQueries({ queryKey: guideKeys.detail(id) });
-			await queryClient.cancelQueries({ queryKey: guideKeys.lists() });
-			const previousDetail = queryClient.getQueryData(guideKeys.detail(id));
-			const previousLists = queryClient.getQueriesData({ queryKey: guideKeys.lists() });
-			updateGuideLists(queryClient, (items) => items.filter((item) => item.id !== id));
-			queryClient.removeQueries({
-				queryKey: guideKeys.detail(id),
-				exact: true
-			});
-			return {
-				previousDetail,
-				previousLists,
-				id
-			};
-		},
-		onError: (_error, _id, context) => {
-			if (context?.previousDetail) queryClient.setQueryData(guideKeys.detail(context.id), context.previousDetail);
-			context?.previousLists?.forEach(([key, value]) => {
-				queryClient.setQueryData(key, value);
-			});
-		},
-		onSettled: (_data, _error, id) => {
-			queryClient.invalidateQueries({ queryKey: guideKeys.lists() });
-			queryClient.invalidateQueries({ queryKey: guideKeys.detail(id) });
-		}
-	});
-}
-function usePrefetchGuides() {
+function usePrefetchAbsences() {
 	const queryClient = useQueryClient();
 	return useCallback(() => {
 		queryClient.prefetchQuery({
-			queryKey: guideKeys.lists(),
-			queryFn: guidesApi.list,
-			staleTime: 600 * 1e3
+			queryKey: absenceKeys.lists(),
+			queryFn: absencesApi.list,
+			staleTime: 300 * 1e3
 		});
 	}, [queryClient]);
-}
-//#endregion
-//#region ../../lib/guides/obsidian.ts
-var CATEGORY_SET = new Set(guideCategories);
-var IMAGE_EXTENSIONS = new Set([
-	"png",
-	"jpg",
-	"jpeg",
-	"gif",
-	"webp",
-	"avif",
-	"svg",
-	"bmp"
-]);
-var ATTACHMENT_EXTENSIONS = new Set([
-	...IMAGE_EXTENSIONS,
-	"mp4",
-	"webm",
-	"pdf"
-]);
-var CALLOUT_LABELS = {
-	note: "Note",
-	abstract: "Overview",
-	summary: "Summary",
-	info: "Info",
-	todo: "Todo",
-	tip: "Tip",
-	hint: "Hint",
-	important: "Important",
-	success: "Success",
-	check: "Check",
-	done: "Done",
-	question: "Question",
-	help: "Help",
-	faq: "FAQ",
-	warning: "Warning",
-	caution: "Caution",
-	attention: "Attention",
-	failure: "Failure",
-	fail: "Failure",
-	missing: "Missing",
-	danger: "Danger",
-	error: "Error",
-	bug: "Bug",
-	example: "Example",
-	quote: "Quote"
-};
-function normalizeLineBreaks(value) {
-	return value.replace(/\r\n/g, "\n");
-}
-function stripQuotes(value) {
-	return value.replace(/^['"]|['"]$/g, "").trim();
-}
-function baseName(value) {
-	const normalized = value.replace(/\\/g, "/");
-	const parts = normalized.split("/").filter(Boolean);
-	return parts[parts.length - 1] || normalized;
-}
-function fileExtension(value) {
-	const match = baseName(value).match(/\.([a-z0-9]+)$/i);
-	return match ? match[1].toLowerCase() : "";
-}
-function isAttachmentPath(value) {
-	return ATTACHMENT_EXTENSIONS.has(fileExtension(value));
-}
-function isImagePath(value) {
-	return IMAGE_EXTENSIONS.has(fileExtension(value));
-}
-function sanitizeWikiTarget(value) {
-	return value.split("#")[0].trim();
-}
-function parseWikiReference(value) {
-	const [targetPart, labelPart] = value.split("|");
-	return {
-		target: sanitizeWikiTarget(targetPart || ""),
-		label: (labelPart || "").trim()
-	};
-}
-function normalizeFileLookupKey(value) {
-	return baseName(value).toLowerCase();
-}
-function buildFileLookup(files) {
-	const lookup = /* @__PURE__ */ new Map();
-	for (const file of files) {
-		lookup.set(normalizeFileLookupKey(file.name), file);
-		const relativePath = file.webkitRelativePath;
-		if (relativePath) lookup.set(normalizeFileLookupKey(relativePath), file);
-	}
-	return lookup;
-}
-function valueToList(value) {
-	if (!value) return [];
-	return Array.isArray(value) ? value : [value];
-}
-function resolveGuideCategory(rawCategory, tags = []) {
-	const candidates = [rawCategory, ...tags].map((value) => (value || "").trim().toLowerCase()).filter(Boolean);
-	for (const candidate of candidates) {
-		if (CATEGORY_SET.has(candidate)) return candidate;
-		if (candidate.includes("raid") || candidate.includes("boss") || candidate.includes("dungeon")) return "pve";
-		if (candidate.includes("arena") || candidate.includes("duel")) return "pvp";
-		if (candidate.includes("build")) return "build";
-		if (candidate.includes("farm")) return "farm";
-		if (candidate.includes("craft")) return "craft";
-		if (candidate.includes("train")) return "training";
-	}
-	return "general";
-}
-function parseFrontmatterValue(value) {
-	const trimmed = value.trim();
-	if (trimmed.startsWith("[") && trimmed.endsWith("]")) return trimmed.slice(1, -1).split(",").map((item) => stripQuotes(item)).filter(Boolean);
-	return stripQuotes(trimmed);
-}
-function parseGuideFrontmatter(markdown) {
-	const normalized = normalizeLineBreaks(markdown);
-	if (!normalized.startsWith("---\n")) return {
-		data: {},
-		content: normalized
-	};
-	const endIndex = normalized.indexOf("\n---\n", 4);
-	if (endIndex === -1) return {
-		data: {},
-		content: normalized
-	};
-	const frontmatterBlock = normalized.slice(4, endIndex);
-	const content = normalized.slice(endIndex + 5);
-	const data = {};
-	let currentListKey = null;
-	for (const rawLine of frontmatterBlock.split("\n")) {
-		const line = rawLine.trimEnd();
-		if (!line.trim()) continue;
-		const keyMatch = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
-		if (keyMatch) {
-			const [, rawKey, rawValue] = keyMatch;
-			const key = rawKey.toLowerCase();
-			const value = rawValue.trim();
-			if (!value) {
-				data[key] = [];
-				currentListKey = key;
-				continue;
-			}
-			data[key] = parseFrontmatterValue(value);
-			currentListKey = null;
-			continue;
-		}
-		const listMatch = line.match(/^\s*-\s+(.*)$/);
-		if (listMatch && currentListKey) {
-			const existing = valueToList(data[currentListKey]);
-			existing.push(stripQuotes(listMatch[1]));
-			data[currentListKey] = existing.filter(Boolean);
-		}
-	}
-	return {
-		data,
-		content
-	};
-}
-function normalizeGuideTitle(value) {
-	return stripQuotes(value).replace(/\.(md|markdown)$/i, "").toLowerCase().replace(/[\s_]+/g, "-").replace(/[^a-z0-9\u0400-\u04ff-]+/gi, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
-}
-function extractTitleFromMarkdown(content, fallbackFileName) {
-	const { data, content: stripped } = parseGuideFrontmatter(content);
-	const frontmatterTitle = data.title;
-	if (typeof frontmatterTitle === "string" && frontmatterTitle.trim()) return frontmatterTitle.trim().slice(0, 140);
-	const heading = stripped.split("\n").map((line) => line.trim()).find((line) => line.startsWith("# "));
-	if (heading) return heading.replace(/^#\s+/, "").trim().slice(0, 140);
-	return baseName(fallbackFileName).replace(/\.(md|markdown)$/i, "").trim().slice(0, 140) || "Imported guide";
-}
-async function readFileAsDataUrl(file) {
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.onerror = () => reject(reader.error || /* @__PURE__ */ new Error("Failed to read file"));
-		reader.onload = () => resolve(String(reader.result || ""));
-		reader.readAsDataURL(file);
-	});
-}
-async function resolveAssetLinks(markdown, files) {
-	if (files.length === 0) return markdown;
-	const lookup = buildFileLookup(files);
-	let nextMarkdown = markdown;
-	const obsidianEmbeds = [...nextMarkdown.matchAll(/!\[\[([^\]]+)\]\]/g)];
-	for (const match of obsidianEmbeds) {
-		const original = match[0];
-		const { target, label } = parseWikiReference(match[1] || "");
-		const file = lookup.get(normalizeFileLookupKey(target));
-		const safeLabel = label || baseName(target).replace(/\.[a-z0-9]+$/i, "") || "Attachment";
-		if (!file) {
-			const fallback = isImagePath(target) ? `![${safeLabel}](${target})` : `[${safeLabel}](${target})`;
-			nextMarkdown = nextMarkdown.replace(original, fallback);
-			continue;
-		}
-		const dataUrl = await readFileAsDataUrl(file);
-		const replacement = isImagePath(file.name) ? `![${safeLabel}](${dataUrl})` : `[${safeLabel}](${dataUrl})`;
-		nextMarkdown = nextMarkdown.replace(original, replacement);
-	}
-	const markdownLinks = [...nextMarkdown.matchAll(/(!?)\[([^\]]*)\]\(([^)]+)\)/g)];
-	for (const match of markdownLinks) {
-		const [original, bang, label, target] = match;
-		const trimmedTarget = target.trim();
-		if (!trimmedTarget || /^(https?:|mailto:|tel:|data:|guide:\/\/|#)/i.test(trimmedTarget)) continue;
-		const file = lookup.get(normalizeFileLookupKey(trimmedTarget));
-		if (!file || isMarkdownFile(file)) continue;
-		const dataUrl = await readFileAsDataUrl(file);
-		const safeLabel = label || baseName(file.name).replace(/\.[a-z0-9]+$/i, "") || "Attachment";
-		const replacement = bang === "!" ? `![${safeLabel}](${dataUrl})` : `[${safeLabel}](${dataUrl})`;
-		nextMarkdown = nextMarkdown.replace(original, replacement);
-	}
-	return nextMarkdown;
-}
-function normalizeObsidianCallouts(markdown) {
-	return normalizeLineBreaks(markdown).split("\n").map((line) => {
-		const match = line.match(/^>\s*\[!([^\]]+)\]([+-])?\s*(.*)$/i);
-		if (!match) return line;
-		const type = match[1].trim().toLowerCase();
-		const title = match[3].trim();
-		return `> **${CALLOUT_LABELS[type] || type.charAt(0).toUpperCase() + type.slice(1)}${title ? ` - ${title}` : ""}**`;
-	}).join("\n");
-}
-function normalizeObsidianLinks(markdown) {
-	return markdown.replace(/!\[\[([^\]]+)\]\]/g, (_match, rawReference) => {
-		const { target, label } = parseWikiReference(String(rawReference || ""));
-		if (!target) return String(rawReference || "");
-		const safeLabel = label || baseName(target).replace(/\.[a-z0-9]+$/i, "") || "Attachment";
-		return isImagePath(target) ? `![${safeLabel}](${target})` : `[${safeLabel}](${target})`;
-	}).replace(/(?<!!)\[\[([^\]]+)\]\]/g, (_match, rawReference) => {
-		const { target, label } = parseWikiReference(String(rawReference || ""));
-		if (!target) return String(rawReference || "");
-		if (isAttachmentPath(target)) return `[${label || baseName(target)}](${target})`;
-		const guideSlug = normalizeGuideTitle(target);
-		return `[${label || baseName(target).replace(/\.(md|markdown)$/i, "") || target}](guide://${encodeURIComponent(guideSlug)})`;
-	});
-}
-function prepareMarkdownForRender(markdown) {
-	const { content } = parseGuideFrontmatter(markdown || "");
-	return normalizeObsidianLinks(normalizeObsidianCallouts(content)).trim();
-}
-async function buildGuideDraftFromMarkdownFile(file, files) {
-	const raw = await file.text();
-	const { data, content } = parseGuideFrontmatter(raw);
-	const resolvedContent = (await resolveAssetLinks(content.trim(), files)).slice(0, 5e5);
-	const tags = valueToList(data.tags).map((value) => value.trim().toLowerCase());
-	const categoryValue = typeof data.category === "string" ? data.category : valueToList(data.category)[0];
-	const authorValue = typeof data.author === "string" ? data.author : valueToList(data.author)[0];
-	return {
-		title: extractTitleFromMarkdown(raw, file.name),
-		content: resolvedContent,
-		category: resolveGuideCategory(categoryValue, tags),
-		author: authorValue?.trim() || void 0
-	};
-}
-function isMarkdownFile(file) {
-	return /\.(md|markdown)$/i.test(file.name) || file.type === "text/markdown";
 }
 //#endregion
 //#region ../../node_modules/tailwind-merge/dist/bundle-mjs.mjs
@@ -10125,7 +9815,7 @@ var twMerge = /* @__PURE__ */ createTailwindMerge(getDefaultConfig);
 function cn(...inputs) {
 	return twMerge(clsx(inputs));
 }
-function formatDate(dateStr) {
+function formatDate$1(dateStr) {
 	if (!dateStr) return "N/A";
 	try {
 		return new Date(dateStr).toLocaleDateString("ru-RU", {
@@ -10137,181 +9827,11 @@ function formatDate(dateStr) {
 		return dateStr;
 	}
 }
-//#endregion
-//#region ../../components/sections/guides/GuideCard.tsx
-function GuideCard({ guide, onClick }) {
-	return /* @__PURE__ */ jsxs("button", {
-		type: "button",
-		onClick,
-		className: "card section-card ds-section-panel p-4 sm:p-5 text-left hover:transform hover:-translate-y-1 transition-all duration-300",
-		children: [
-			/* @__PURE__ */ jsxs("div", {
-				className: "flex flex-wrap items-center justify-between gap-3 mb-3",
-				children: [/* @__PURE__ */ jsxs("span", {
-					className: "ds-kicker",
-					children: [/* @__PURE__ */ jsx(WuxiaIcon, {
-						name: "tag",
-						className: "inline-block w-4 h-4 mr-2 align-text-bottom"
-					}), guide.category]
-				}), /* @__PURE__ */ jsx("span", {
-					className: "text-xs text-gray-400",
-					children: formatDate(guide.updatedAt)
-				})]
-			}),
-			/* @__PURE__ */ jsx("h3", {
-				className: "text-lg font-bold font-orbitron mb-3 text-[#e6eff5] leading-snug min-h-[3.1rem] sm:min-h-[3.5rem] tracking-[0.01em]",
-				children: guide.title
-			}),
-			/* @__PURE__ */ jsxs("div", {
-				className: "flex items-center justify-between gap-3 pt-3 border-t border-gray-700/50 text-sm text-gray-400",
-				children: [/* @__PURE__ */ jsxs("span", {
-					className: "inline-flex items-center gap-2 rounded-full bg-[#0f1720]/70 px-3 py-1 text-xs text-[#c5d9e5]",
-					children: [/* @__PURE__ */ jsx(WuxiaIcon, {
-						name: "user",
-						className: "w-4 h-4"
-					}), guide.author]
-				}), /* @__PURE__ */ jsxs("span", {
-					className: "inline-flex items-center gap-3 text-xs",
-					children: [/* @__PURE__ */ jsxs("span", {
-						className: "inline-flex items-center gap-1 rounded-full bg-[#0f1720]/70 px-2.5 py-1",
-						children: [/* @__PURE__ */ jsx(WuxiaIcon, {
-							name: "seal",
-							className: "w-4 h-4 text-[#8fb9cc]"
-						}), guide.votes]
-					}), /* @__PURE__ */ jsxs("span", {
-						className: "inline-flex items-center gap-1 rounded-full bg-[#0f1720]/70 px-2.5 py-1",
-						children: [/* @__PURE__ */ jsx(WuxiaIcon, {
-							name: "comment",
-							className: "w-4 h-4"
-						}), guide.commentsCount]
-					})]
-				})]
-			})
-		]
-	});
-}
-//#endregion
-//#region ../../components/shared/LoadingState.tsx
-function LoadingState({ title, subtitle, icon = "spinner", skeletonCount, layout = "cards", cardCount = 3 }) {
-	const { t } = useTranslation();
-	const resolvedTitle = title ?? t.common.loading;
-	const resolvedSubtitle = subtitle ?? t.common.loadingDetails;
-	const count = skeletonCount ?? cardCount;
-	const renderIcon = () => {
-		if (typeof icon === "string") return /* @__PURE__ */ jsx(WuxiaIcon, {
-			name: icon,
-			className: "inline-block w-6 h-6 mr-3 text-red-400 align-text-bottom animate-spin"
-		});
-		return icon;
-	};
-	return /* @__PURE__ */ jsx("section", {
-		className: "py-10 sm:py-12",
-		children: /* @__PURE__ */ jsxs("div", {
-			className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
-			children: [/* @__PURE__ */ jsxs("div", {
-				className: "loading-shell mb-8 sm:mb-10",
-				children: [/* @__PURE__ */ jsxs("div", {
-					className: "loading-shell-header",
-					children: [
-						/* @__PURE__ */ jsx("div", {
-							className: "loading-shell-kicker",
-							children: "Silent Moonfall"
-						}),
-						/* @__PURE__ */ jsxs("h2", {
-							className: "loading-shell-title",
-							children: [/* @__PURE__ */ jsx("span", {
-								className: "loading-shell-icon",
-								children: renderIcon()
-							}), /* @__PURE__ */ jsx("span", { children: resolvedTitle })]
-						}),
-						/* @__PURE__ */ jsx("p", {
-							className: "loading-shell-subtitle",
-							children: resolvedSubtitle
-						})
-					]
-				}), /* @__PURE__ */ jsxs("div", {
-					className: "loading-shell-chips",
-					"aria-hidden": "true",
-					children: [
-						/* @__PURE__ */ jsx("span", { className: "loading-chip" }),
-						/* @__PURE__ */ jsx("span", { className: "loading-chip loading-chip-wide" }),
-						/* @__PURE__ */ jsx("span", { className: "loading-chip" })
-					]
-				})]
-			}), /* @__PURE__ */ jsx("div", {
-				className: `loading-grid ${layout === "list" ? "loading-grid-list" : "loading-grid-cards"}`,
-				children: Array.from({ length: count }).map((_, i) => /* @__PURE__ */ jsxs("div", {
-					className: "loading-card card p-5 sm:p-6",
-					children: [
-						/* @__PURE__ */ jsxs("div", {
-							className: "loading-card-top",
-							children: [/* @__PURE__ */ jsx("span", { className: "loading-pill" }), /* @__PURE__ */ jsx("span", { className: "loading-line loading-line-short" })]
-						}),
-						/* @__PURE__ */ jsx("div", { className: "loading-line loading-line-title" }),
-						/* @__PURE__ */ jsx("div", { className: "loading-line loading-line-body" }),
-						/* @__PURE__ */ jsx("div", { className: "loading-line loading-line-body loading-line-body-short" }),
-						/* @__PURE__ */ jsx("div", { className: "loading-block" }),
-						/* @__PURE__ */ jsxs("div", {
-							className: "loading-card-footer",
-							children: [/* @__PURE__ */ jsx("span", { className: "loading-pill loading-pill-wide" }), /* @__PURE__ */ jsx("span", { className: "loading-pill" })]
-						})
-					]
-				}, i))
-			})]
-		})
-	});
-}
-//#endregion
-//#region ../../components/shared/EmptyState.tsx
-function EmptyState({ icon = "inbox", title, description, action, variant = "default" }) {
-	const renderIcon = () => {
-		if (typeof icon === "string") return /* @__PURE__ */ jsx(WuxiaIcon, {
-			name: icon,
-			className: "w-10 h-10 text-gray-500"
-		});
-		return icon;
-	};
-	const renderAction = () => {
-		if (!action) return null;
-		if (typeof action === "object" && action !== null && "label" in action && "onClick" in action) {
-			const btn = action;
-			return /* @__PURE__ */ jsx("button", {
-				onClick: btn.onClick,
-				className: "btn-primary",
-				children: btn.label
-			});
-		}
-		return action;
-	};
-	const badgeTone = variant === "error" ? "ui-badge ui-badge-danger" : "ui-badge ui-badge-muted";
-	return /* @__PURE__ */ jsxs("div", {
-		className: "card section-card px-6 py-10 sm:px-8 sm:py-12 text-center",
-		children: [
-			/* @__PURE__ */ jsx("div", {
-				className: "flex justify-center mb-6",
-				children: /* @__PURE__ */ jsx("div", {
-					className: `w-20 h-20 rounded-full flex items-center justify-center ${variant === "error" ? "bg-red-900/30" : "bg-gray-800/50"}`,
-					children: renderIcon()
-				})
-			}),
-			/* @__PURE__ */ jsx("div", {
-				className: "mb-3 flex justify-center",
-				children: /* @__PURE__ */ jsx("span", {
-					className: badgeTone,
-					children: variant === "error" ? "Need attention" : "No data yet"
-				})
-			}),
-			/* @__PURE__ */ jsx("h3", {
-				className: `text-xl font-bold mb-2 ${variant === "error" ? "text-red-300" : "text-[#d9e9f2]"}`,
-				children: title
-			}),
-			description && /* @__PURE__ */ jsx("p", {
-				className: "text-[#9fb5c3] max-w-md mx-auto mb-6 leading-7",
-				children: description
-			}),
-			renderAction()
-		]
-	});
+function getKPIClass(kpi) {
+	const kpiNum = typeof kpi === "string" ? parseInt(kpi) || 0 : kpi;
+	if (kpiNum > 6) return "kpi-good";
+	if (kpiNum >= 3) return "kpi-medium";
+	return "kpi-bad";
 }
 //#endregion
 //#region ../../components/shared/SectionHero.tsx
@@ -10349,6 +9869,1653 @@ function SectionHero({ icon, title, subtitle, eyebrow, chips, actions }) {
 			className: "portal-hero-actions",
 			children: actions
 		}) : null]
+	});
+}
+//#endregion
+//#region ../../lib/authz.ts
+var roleOrder = [
+	"guest",
+	"member",
+	"officer",
+	"head",
+	"sysadmin"
+];
+function hasRoleAtLeast(role, minimum) {
+	if (!role) return false;
+	return roleOrder.indexOf(role) >= roleOrder.indexOf(minimum);
+}
+function canManageAccounts(role) {
+	return hasRoleAtLeast(role, "officer");
+}
+function canAssignRoles(role) {
+	return hasRoleAtLeast(role, "head");
+}
+function canModerateContent(role) {
+	return hasRoleAtLeast(role, "head");
+}
+function canSeeNumericKpi(role) {
+	return hasRoleAtLeast(role, "officer");
+}
+//#endregion
+//#region ../../components/sections/absences/index.tsx
+var statusLabels$1 = {
+	pending: "На рассмотрении",
+	approved: "Одобрено",
+	rejected: "Отклонено"
+};
+var getStatusClass = (status) => {
+	return {
+		pending: "bg-gradient-to-r from-yellow-600/30 to-yellow-800/30 text-yellow-400",
+		approved: "bg-gradient-to-r from-green-600/30 to-green-800/30 text-green-400",
+		rejected: "bg-gradient-to-r from-red-600/30 to-red-800/30 text-red-400"
+	}[status] || "bg-gray-700";
+};
+function AbsencesSectionContent({ user }) {
+	const { t } = useTranslation();
+	const { data: absences = [], isLoading, error, refetch } = useAbsences();
+	const createAbsence = useCreateAbsence();
+	const updateAbsenceStatus = useUpdateAbsenceStatus();
+	const canModerateAbsences = hasRoleAtLeast(user.role, "officer");
+	const [statusFilter, setStatusFilter] = useState("all");
+	const [startDate, setStartDate] = useState("");
+	const [endDate, setEndDate] = useState("");
+	const [reason, setReason] = useState("");
+	const filteredAbsences = statusFilter === "all" ? absences : absences.filter((a) => a.status === statusFilter);
+	const handleSubmit = async (event) => {
+		event.preventDefault();
+		if (!startDate || !endDate || !reason.trim()) return;
+		await createAbsence.mutateAsync({
+			startDate,
+			endDate,
+			reason: reason.trim()
+		});
+		setStartDate("");
+		setEndDate("");
+		setReason("");
+	};
+	const handleStatusChange = async (id, status) => {
+		await updateAbsenceStatus.mutateAsync({
+			id,
+			status
+		});
+	};
+	if (isLoading) return /* @__PURE__ */ jsx(LoadingState, {
+		title: t.absences.title,
+		subtitle: t.absences.loading,
+		icon: /* @__PURE__ */ jsx(WuxiaIcon, {
+			name: "absences",
+			className: "w-6 h-6 text-red-400"
+		}),
+		skeletonCount: 3,
+		layout: "list"
+	});
+	if (error) return /* @__PURE__ */ jsx(EmptyState, {
+		icon: /* @__PURE__ */ jsx(WuxiaIcon, {
+			name: "alertTriangle",
+			className: "w-7 h-7 text-red-400"
+		}),
+		title: t.absences.error,
+		description: error instanceof Error ? error.message : t.absences.error,
+		action: /* @__PURE__ */ jsxs("button", {
+			onClick: () => refetch(),
+			className: "btn-primary",
+			children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+				name: "redo",
+				className: "inline-block w-5 h-5 mr-2 align-text-bottom"
+			}), t.errors.tryAgain]
+		}),
+		variant: "error"
+	});
+	return /* @__PURE__ */ jsx("section", {
+		className: "section-shell py-10 sm:py-12",
+		children: /* @__PURE__ */ jsx("div", {
+			className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+			children: /* @__PURE__ */ jsxs("div", {
+				className: "section-stack-lg",
+				children: [/* @__PURE__ */ jsx(SectionHero, {
+					icon: /* @__PURE__ */ jsx(WuxiaIcon, {
+						name: "absences",
+						className: "w-5 h-5"
+					}),
+					title: t.absences.title,
+					subtitle: t.absences.subtitle,
+					chips: [
+						"Roster Health",
+						"Requests",
+						"Status Tracking"
+					]
+				}), /* @__PURE__ */ jsxs("div", {
+					className: "grid grid-cols-1 lg:grid-cols-5 gap-5 sm:gap-6 lg:gap-8 items-start",
+					children: [/* @__PURE__ */ jsxs("div", {
+						className: "lg:col-span-2 card section-card p-5 sm:p-6 lg:p-8",
+						children: [/* @__PURE__ */ jsxs("div", {
+							className: "flex items-center mb-6",
+							children: [/* @__PURE__ */ jsx("div", {
+								className: "w-12 h-12 bg-gradient-to-r from-[#2f6e8d]/30 to-[#8fb9cc]/30 rounded-full flex items-center justify-center mr-4",
+								children: /* @__PURE__ */ jsx(WuxiaIcon, {
+									name: "plus",
+									className: "w-7 h-7 text-[#8fb9cc]"
+								})
+							}), /* @__PURE__ */ jsx("h3", {
+								className: "text-2xl font-bold font-orbitron text-[#e6eff5]",
+								children: t.absences.createRequest
+							})]
+						}), /* @__PURE__ */ jsxs("form", {
+							onSubmit: handleSubmit,
+							className: "space-y-4",
+							children: [
+								/* @__PURE__ */ jsxs("div", {
+									className: "text-sm text-gray-400",
+									children: [
+										t.absences.profilePrefix,
+										" ",
+										/* @__PURE__ */ jsx("span", {
+											className: "text-[#c9deea]",
+											children: user.nickname || t.absences.currentUserFallback
+										})
+									]
+								}),
+								/* @__PURE__ */ jsxs("div", {
+									className: "grid grid-cols-1 sm:grid-cols-2 gap-4",
+									children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
+										className: "block text-sm text-gray-400 mb-2",
+										children: t.absences.startDate
+									}), /* @__PURE__ */ jsx("input", {
+										type: "date",
+										value: startDate,
+										onChange: (e) => setStartDate(e.target.value),
+										className: "input-field w-full",
+										required: true
+									})] }), /* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("label", {
+										className: "block text-sm text-gray-400 mb-2",
+										children: t.absences.endDate
+									}), /* @__PURE__ */ jsx("input", {
+										type: "date",
+										value: endDate,
+										onChange: (e) => setEndDate(e.target.value),
+										className: "input-field w-full",
+										required: true
+									})] })]
+								}),
+								/* @__PURE__ */ jsx("textarea", {
+									value: reason,
+									onChange: (e) => setReason(e.target.value),
+									placeholder: t.absences.reasonPlaceholder,
+									className: "input-field min-h-[120px] w-full",
+									maxLength: 500,
+									required: true
+								}),
+								/* @__PURE__ */ jsx("button", {
+									type: "submit",
+									className: "btn-primary w-full py-3",
+									disabled: createAbsence.isPending,
+									children: createAbsence.isPending ? /* @__PURE__ */ jsxs("span", {
+										className: "inline-flex items-center justify-center",
+										children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+											name: "spinner",
+											className: "spinner-icon w-4 h-4 mr-3"
+										}), t.absences.submitting]
+									}) : /* @__PURE__ */ jsxs("span", {
+										className: "inline-flex items-center justify-center",
+										children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+											name: "seal",
+											className: "w-4 h-4 mr-3"
+										}), t.absences.submit]
+									})
+								}),
+								createAbsence.error && /* @__PURE__ */ jsxs("div", {
+									className: "text-[#bcd6e5] text-sm mt-2 p-4 bg-[#16202b]/65 rounded-xl border border-[#2f6e8d]/40",
+									children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+										name: "alertTriangle",
+										className: "w-4 h-4 mr-2 inline-block align-text-bottom"
+									}), createAbsence.error instanceof Error ? createAbsence.error.message : t.absences.createFailed]
+								})
+							]
+						})]
+					}), /* @__PURE__ */ jsxs("div", {
+						className: "lg:col-span-3 section-stack-md",
+						children: [/* @__PURE__ */ jsxs("div", {
+							className: "flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3",
+							children: [/* @__PURE__ */ jsxs("div", {
+								className: "flex items-center gap-3",
+								children: [/* @__PURE__ */ jsx("span", {
+									className: "text-sm text-gray-400",
+									children: t.absences.filter
+								}), /* @__PURE__ */ jsxs("select", {
+									value: statusFilter,
+									onChange: (e) => setStatusFilter(e.target.value),
+									className: "select-field w-full max-w-xs",
+									children: [
+										/* @__PURE__ */ jsx("option", {
+											value: "all",
+											children: t.absences.allStatuses
+										}),
+										/* @__PURE__ */ jsx("option", {
+											value: "pending",
+											children: t.absences.statuses.pending
+										}),
+										/* @__PURE__ */ jsx("option", {
+											value: "approved",
+											children: t.absences.statuses.approved
+										}),
+										/* @__PURE__ */ jsx("option", {
+											value: "rejected",
+											children: t.absences.statuses.rejected
+										})
+									]
+								})]
+							}), /* @__PURE__ */ jsx("button", {
+								type: "button",
+								className: "dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0",
+								onClick: () => refetch(),
+								title: t.common.refresh,
+								children: /* @__PURE__ */ jsx(WuxiaIcon, {
+									name: "refresh",
+									className: "w-5 h-5"
+								})
+							})]
+						}), /* @__PURE__ */ jsx("div", {
+							className: "section-stack-md",
+							children: filteredAbsences.length === 0 ? /* @__PURE__ */ jsx(EmptyState, {
+								icon: /* @__PURE__ */ jsx(WuxiaIcon, {
+									name: "calendarX",
+									className: "w-10 h-10 text-gray-500"
+								}),
+								title: t.absences.emptyFiltered,
+								description: t.absences.emptyFilteredDescription
+							}) : filteredAbsences.map((absence) => /* @__PURE__ */ jsxs("div", {
+								className: "card section-card p-5 sm:p-6 hover:transform hover:-translate-y-1 transition-all duration-300",
+								children: [
+									/* @__PURE__ */ jsxs("div", {
+										className: "flex justify-between items-start mb-4",
+										children: [/* @__PURE__ */ jsx("h3", {
+											className: "text-xl font-bold font-orbitron text-red-400",
+											children: absence.member
+										}), /* @__PURE__ */ jsxs("span", {
+											className: `px-3 py-1 rounded-full text-sm font-medium ${getStatusClass(absence.status)}`,
+											children: [/* @__PURE__ */ jsx("span", { className: "inline-block w-2 h-2 rounded-full bg-current mr-2 opacity-80" }), statusLabels$1[absence.status] || absence.status]
+										})]
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 mb-4",
+										children: [/* @__PURE__ */ jsxs("div", {
+											className: "bg-gray-800/50 p-4 rounded-xl",
+											children: [/* @__PURE__ */ jsx("div", {
+												className: "text-sm text-gray-400 mb-1",
+												children: t.absences.start
+											}), /* @__PURE__ */ jsx("div", {
+												className: "font-bold text-lg",
+												children: formatDate$1(absence.startDate)
+											})]
+										}), /* @__PURE__ */ jsxs("div", {
+											className: "bg-gray-800/50 p-4 rounded-xl",
+											children: [/* @__PURE__ */ jsx("div", {
+												className: "text-sm text-gray-400 mb-1",
+												children: t.absences.end
+											}), /* @__PURE__ */ jsx("div", {
+												className: "font-bold text-lg",
+												children: formatDate$1(absence.endDate)
+											})]
+										})]
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "bg-gray-800/50 p-4 rounded-xl",
+										children: [/* @__PURE__ */ jsx("div", {
+											className: "text-sm text-gray-400 mb-1",
+											children: t.absences.reason
+										}), /* @__PURE__ */ jsx("div", {
+											className: "text-gray-300",
+											children: absence.reason
+										})]
+									}),
+									/* @__PURE__ */ jsx("div", {
+										className: "flex flex-col sm:flex-row sm:justify-end gap-3 mt-6",
+										children: canModerateAbsences && absence.status === "pending" && /* @__PURE__ */ jsxs(Fragment$1, { children: [/* @__PURE__ */ jsxs("button", {
+											type: "button",
+											className: "btn-primary px-4 py-2 text-sm disabled:opacity-60 w-full sm:w-auto",
+											onClick: () => void handleStatusChange(absence.id, "approved"),
+											disabled: updateAbsenceStatus.isPending,
+											children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+												name: "check",
+												className: "inline-block w-4 h-4 mr-2 align-text-bottom"
+											}), updateAbsenceStatus.isPending && updateAbsenceStatus.variables?.id === absence.id && updateAbsenceStatus.variables?.status === "approved" ? t.absences.approving : t.absences.approve]
+										}), /* @__PURE__ */ jsxs("button", {
+											type: "button",
+											className: "btn-secondary px-4 py-2 text-sm disabled:opacity-60 w-full sm:w-auto",
+											onClick: () => void handleStatusChange(absence.id, "rejected"),
+											disabled: updateAbsenceStatus.isPending,
+											children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+												name: "x",
+												className: "inline-block w-4 h-4 mr-2 align-text-bottom"
+											}), updateAbsenceStatus.isPending && updateAbsenceStatus.variables?.id === absence.id && updateAbsenceStatus.variables?.status === "rejected" ? t.absences.rejecting : t.absences.reject]
+										})] })
+									})
+								]
+							}, absence.id))
+						})]
+					})]
+				})]
+			})
+		})
+	});
+}
+function AbsencesSection(props) {
+	return /* @__PURE__ */ jsx(ErrorBoundary$1, { children: /* @__PURE__ */ jsx(AbsencesSectionContent, { ...props }) });
+}
+//#endregion
+//#region ../../lib/auth/context.tsx
+var AuthContext = createContext(void 0);
+function AuthProvider({ user, children }) {
+	return /* @__PURE__ */ jsx(AuthContext.Provider, {
+		value: { user },
+		children
+	});
+}
+function useAuth() {
+	const context = useContext(AuthContext);
+	if (context === void 0) throw new Error("useAuth must be used within an AuthProvider");
+	return context;
+}
+function useUser() {
+	const { user } = useAuth();
+	if (!user) return {
+		id: "",
+		nickname: "",
+		role: "guest",
+		isActive: false
+	};
+	return user;
+}
+//#endregion
+//#region app/(portal)/absences/page.tsx
+function AbsencesPage() {
+	return /* @__PURE__ */ jsx(AbsencesSection, { user: useUser() });
+}
+//#endregion
+//#region ../../lib/rsvp/hooks.ts
+var rsvpKeys = {
+	all: ["rsvps"],
+	list: (userId) => [
+		...rsvpKeys.all,
+		"list",
+		userId
+	],
+	summary: (scheduleId) => [
+		...rsvpKeys.all,
+		"summary",
+		scheduleId
+	]
+};
+function useRsvps(userId, enabled = true) {
+	return useQuery({
+		queryKey: rsvpKeys.list(userId),
+		queryFn: async () => {
+			const response = await fetch(`/api/schedule/rsvp?userId=${userId}`);
+			if (!response.ok) {
+				const error = await response.text();
+				throw new Error(error || "Failed to fetch RSVPs");
+			}
+			return response.json();
+		},
+		enabled: enabled && !!userId,
+		staleTime: 30 * 1e3
+	});
+}
+//#endregion
+//#region ../../lib/schemas/schedule.ts
+var scheduleSchema = objectType({
+	id: stringType().optional(),
+	date: stringType().default(""),
+	registration: stringType().default(""),
+	type: stringType().default(""),
+	description: stringType().default(""),
+	group: stringType().default(""),
+	dayType: stringType().optional(),
+	time: stringType().optional(),
+	titleRu: stringType().optional(),
+	titleEn: stringType().optional(),
+	titleZh: stringType().optional(),
+	orderIndex: numberType().optional(),
+	active: booleanType().optional()
+});
+var schedulesArraySchema = arrayType(scheduleSchema);
+var createScheduleSchema = objectType({
+	dayType: stringType().trim().min(1).max(60),
+	time: stringType().trim().max(60),
+	titleRu: stringType().trim().min(1).max(160),
+	titleEn: stringType().trim().min(1).max(255),
+	titleZh: stringType().trim().max(160).optional(),
+	orderIndex: numberType().int().min(0).max(999).default(0),
+	active: booleanType().default(true)
+});
+var updateScheduleSchema = objectType({
+	id: stringType().min(1),
+	dayType: stringType().trim().min(1).max(60),
+	time: stringType().trim().max(60),
+	titleRu: stringType().trim().min(1).max(160),
+	titleEn: stringType().trim().min(1).max(255),
+	titleZh: stringType().trim().max(160).optional(),
+	orderIndex: numberType().int().min(0).max(999).default(0),
+	active: booleanType().default(true)
+});
+//#endregion
+//#region ../../lib/api/schedule.ts
+var scheduleApi = {
+	list: async (language = "ru") => {
+		const response = await getApiSchedule({
+			client: sameOriginOpenApiClient,
+			query: { language: language === "en" || language === "zh" ? language : "ru" }
+		});
+		return schedulesArraySchema.parse(response.data || []).map((item) => ({
+			date: item.date || "",
+			registration: item.registration || "",
+			type: item.type || "",
+			description: item.description || "",
+			group: item.group || "",
+			id: item.id,
+			dayType: item.dayType,
+			time: item.time,
+			titleRu: item.titleRu,
+			titleEn: item.titleEn,
+			titleZh: item.titleZh,
+			orderIndex: item.orderIndex,
+			active: item.active
+		}));
+	},
+	update: async (payload) => {
+		const response = await patchApiSchedule({
+			client: sameOriginOpenApiClient,
+			body: updateScheduleSchema.parse(payload)
+		});
+		const item = scheduleSchema.parse(response.data || {});
+		return {
+			date: item.date || "",
+			registration: item.registration || "",
+			type: item.type || "",
+			description: item.description || "",
+			group: item.group || "",
+			id: item.id,
+			dayType: item.dayType,
+			time: item.time,
+			titleRu: item.titleRu,
+			titleEn: item.titleEn,
+			titleZh: item.titleZh,
+			orderIndex: item.orderIndex,
+			active: item.active
+		};
+	},
+	create: async (payload) => {
+		const response = await postApiSchedule({
+			client: sameOriginOpenApiClient,
+			body: createScheduleSchema.parse(payload)
+		});
+		const item = scheduleSchema.parse(response.data || {});
+		return {
+			date: item.date || "",
+			registration: item.registration || "",
+			type: item.type || "",
+			description: item.description || "",
+			group: item.group || "",
+			id: item.id,
+			dayType: item.dayType,
+			time: item.time,
+			titleRu: item.titleRu,
+			titleEn: item.titleEn,
+			titleZh: item.titleZh,
+			orderIndex: item.orderIndex,
+			active: item.active
+		};
+	}
+};
+//#endregion
+//#region ../../lib/schedule/hooks.ts
+var scheduleKeys = {
+	all: ["schedule"],
+	lists: () => [...scheduleKeys.all, "list"],
+	list: (language) => [...scheduleKeys.lists(), { language }]
+};
+function useSchedule(language = "ru") {
+	return useQuery({
+		queryKey: scheduleKeys.list(language),
+		queryFn: () => scheduleApi.list(language),
+		staleTime: 120 * 1e3
+	});
+}
+function useUpdateSchedule() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (payload) => scheduleApi.update(payload),
+		onMutate: async (newData) => {
+			await queryClient.cancelQueries({ queryKey: scheduleKeys.all });
+			const previousSchedule = queryClient.getQueryData(scheduleKeys.lists());
+			if (previousSchedule) queryClient.setQueryData(scheduleKeys.lists(), (old) => {
+				if (!old) return old;
+				return old.map((item) => item.id === newData.id ? {
+					...item,
+					...newData
+				} : item);
+			});
+			return { previousSchedule };
+		},
+		onError: (_err, _newData, context) => {
+			if (context?.previousSchedule) queryClient.setQueryData(scheduleKeys.lists(), context.previousSchedule);
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: scheduleKeys.all });
+		}
+	});
+}
+function useCreateSchedule() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (payload) => scheduleApi.create(payload),
+		onMutate: async (newData) => {
+			await queryClient.cancelQueries({ queryKey: scheduleKeys.all });
+			const previousSchedule = queryClient.getQueryData(scheduleKeys.lists());
+			if (previousSchedule) queryClient.setQueryData(scheduleKeys.lists(), (old) => {
+				if (!old) return [newData];
+				return [...old, newData];
+			});
+			return { previousSchedule };
+		},
+		onError: (_err, _newData, context) => {
+			if (context?.previousSchedule) queryClient.setQueryData(scheduleKeys.lists(), context.previousSchedule);
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: scheduleKeys.all });
+		}
+	});
+}
+function usePrefetchSchedule() {
+	const queryClient = useQueryClient();
+	return useCallback((language = "ru") => {
+		queryClient.prefetchQuery({
+			queryKey: scheduleKeys.list(language),
+			queryFn: () => scheduleApi.list(language),
+			staleTime: 120 * 1e3
+		});
+	}, [queryClient]);
+}
+//#endregion
+//#region ../../lib/calendar/export.ts
+function formatDateForGoogle(date) {
+	return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+}
+function formatDateForOutlook(date) {
+	return date.toISOString().replace(/[-]/g, "").split(".")[0] + "Z";
+}
+function formatEventDescription(event, language) {
+	return [
+		language === "zh" ? event.titleZh || event.titleRu : language === "en" ? event.titleEn || event.titleRu : event.titleRu,
+		event.dayType && `Тип: ${event.dayType}`,
+		event.time && `Время: ${event.time}`,
+		event.group && `Группа: ${event.group}`
+	].filter(Boolean).join("\n");
+}
+function generateGoogleCalendarLink(event, language) {
+	const title = (language === "zh" ? event.titleZh || event.titleRu : language === "en" ? event.titleEn || event.titleRu : event.titleRu) || "Event";
+	language === "en" ? event.titleEn || event.titleRu : event.titleRu;
+	const baseDate = event.date ? new Date(event.date) : /* @__PURE__ */ new Date();
+	const timeParts = event.time?.match(/(\d{1,2}):(\d{2})/);
+	const start = new Date(baseDate);
+	const end = new Date(baseDate);
+	if (timeParts) {
+		const hours = parseInt(timeParts[1], 10);
+		const minutes = parseInt(timeParts[2], 10);
+		start.setHours(hours, minutes, 0, 0);
+		const endTimeMatch = event.time?.match(/[-–]\s*(\d{1,2}):(\d{2})/);
+		if (endTimeMatch) {
+			const endHours = parseInt(endTimeMatch[1], 10);
+			const endMinutes = parseInt(endTimeMatch[2], 10);
+			end.setHours(endHours, endMinutes, 0, 0);
+		} else end.setHours(hours + 2, minutes, 0, 0);
+	} else {
+		start.setHours(0, 0, 0, 0);
+		end.setHours(23, 59, 59, 0);
+	}
+	const description = formatEventDescription(event, language);
+	return `https://calendar.google.com/calendar/render?${new URLSearchParams({
+		action: "TEMPLATE",
+		text: title || "Event",
+		dates: `${formatDateForGoogle(start)}/${formatDateForGoogle(end)}`,
+		details: description
+	}).toString()}`;
+}
+function generateOutlookCalendarLink(event, language) {
+	const title = (language === "zh" ? event.titleZh || event.titleRu : language === "en" ? event.titleEn || event.titleRu : event.titleRu) || "Event";
+	language === "en" ? event.titleEn || event.titleRu : event.titleRu;
+	const baseDate = event.date ? new Date(event.date) : /* @__PURE__ */ new Date();
+	const timeParts = event.time?.match(/(\d{1,2}):(\d{2})/);
+	const start = new Date(baseDate);
+	const end = new Date(baseDate);
+	if (timeParts) {
+		const hours = parseInt(timeParts[1], 10);
+		const minutes = parseInt(timeParts[2], 10);
+		start.setHours(hours, minutes, 0, 0);
+		const endTimeMatch = event.time?.match(/[-–]\s*(\d{1,2}):(\d{2})/);
+		if (endTimeMatch) {
+			const endHours = parseInt(endTimeMatch[1], 10);
+			const endMinutes = parseInt(endTimeMatch[2], 10);
+			end.setHours(endHours, endMinutes, 0, 0);
+		} else end.setHours(hours + 2, minutes, 0, 0);
+	} else {
+		start.setHours(0, 0, 0, 0);
+		end.setHours(23, 59, 59, 0);
+	}
+	const description = formatEventDescription(event, language);
+	return `https://outlook.live.com/calendar/0/deeplink/compose?${new URLSearchParams({
+		path: "/calendar/action/compose",
+		rru: "addevent",
+		startdt: formatDateForOutlook(start),
+		enddt: formatDateForOutlook(end),
+		subject: title,
+		body: description
+	}).toString()}`;
+}
+function generateICalEvent(event, language) {
+	const title = language === "zh" ? event.titleZh || event.titleRu : language === "en" ? event.titleEn || event.titleRu : event.titleRu;
+	const baseDate = event.date ? new Date(event.date) : /* @__PURE__ */ new Date();
+	const timeParts = event.time?.match(/(\d{1,2}):(\d{2})/);
+	const start = new Date(baseDate);
+	const end = new Date(baseDate);
+	if (timeParts) {
+		const hours = parseInt(timeParts[1], 10);
+		const minutes = parseInt(timeParts[2], 10);
+		start.setHours(hours, minutes, 0, 0);
+		const endTimeMatch = event.time?.match(/[-–]\s*(\d{1,2}):(\d{2})/);
+		if (endTimeMatch) {
+			const endHours = parseInt(endTimeMatch[1], 10);
+			const endMinutes = parseInt(endTimeMatch[2], 10);
+			end.setHours(endHours, endMinutes, 0, 0);
+		} else end.setHours(hours + 2, minutes, 0, 0);
+	}
+	const description = formatEventDescription(event, language).replace(/\n/g, "\\n");
+	const uid = `${event.id || Date.now()}@silentmoonfall`;
+	const dtstamp = (/* @__PURE__ */ new Date()).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+	return [
+		"BEGIN:VCALENDAR",
+		"VERSION:2.0",
+		"PRODID:-//Silent Moonfall Guild//RSVP Calendar//EN",
+		"BEGIN:VEVENT",
+		`UID:${uid}`,
+		`DTSTAMP:${dtstamp}`,
+		`DTSTART:${formatDateForGoogle(start)}`,
+		`DTEND:${formatDateForGoogle(end)}`,
+		`SUMMARY:${title}`,
+		`DESCRIPTION:${description}`,
+		"END:VEVENT",
+		"END:VCALENDAR"
+	].join("\r\n");
+}
+//#endregion
+//#region ../../components/rsvp/CalendarView.tsx
+var statusLabels = {
+	going: {
+		ru: "Иду",
+		en: "Going",
+		zh: "参加"
+	},
+	not_going: {
+		ru: "Не иду",
+		en: "Not Going",
+		zh: "不参加"
+	},
+	maybe: {
+		ru: "Возможно",
+		en: "Maybe",
+		zh: "可能"
+	},
+	pending: {
+		ru: "Нет ответа",
+		en: "No Response",
+		zh: "无回复"
+	}
+};
+function formatDate(dateStr, language) {
+	const date = new Date(dateStr);
+	const options = {
+		weekday: "short",
+		year: "numeric",
+		month: "short",
+		day: "numeric"
+	};
+	const locale = language === "zh" ? "zh-CN" : language === "en" ? "en-US" : "ru-RU";
+	return date.toLocaleDateString(locale, options);
+}
+function formatTime(timeStr) {
+	if (!timeStr) return "";
+	const match = timeStr.match(/(\d{1,2}):(\d{2})/);
+	if (!match) return timeStr;
+	return `${match[1]}:${match[2]}`;
+}
+function CalendarView({ user, language }) {
+	const { data: rsvps, isLoading: rsvpsLoading } = useRsvps(user.id ?? null);
+	const { data: schedule, isLoading: scheduleLoading } = useSchedule(language);
+	const isLoading = rsvpsLoading || scheduleLoading;
+	const myRsvpsByScheduleId = useMemo(() => {
+		const map = /* @__PURE__ */ new Map();
+		(rsvps || []).forEach((rsvp) => {
+			map.set(rsvp.scheduleId, rsvp);
+		});
+		return map;
+	}, [rsvps]);
+	const upcomingEvents = useMemo(() => {
+		if (!schedule) return [];
+		const now = /* @__PURE__ */ new Date();
+		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+		return schedule.filter((event) => {
+			if (!event.date || !event.active) return false;
+			return new Date(event.date) >= today;
+		}).map((event) => ({
+			...event,
+			rsvp: myRsvpsByScheduleId.get(event.id) || null
+		})).sort((a, b) => {
+			return new Date(a.date).getTime() - new Date(b.date).getTime();
+		}).slice(0, 10);
+	}, [schedule, myRsvpsByScheduleId]);
+	const groupedEvents = useMemo(() => {
+		const groups = {
+			going: [],
+			maybe: [],
+			not_going: [],
+			pending: []
+		};
+		upcomingEvents.forEach((event) => {
+			groups[event.rsvp?.status || "pending"].push(event);
+		});
+		return groups;
+	}, [upcomingEvents]);
+	const copy = {
+		title: language === "zh" ? "我的日历" : language === "en" ? "My Calendar" : "Мой календарь",
+		subtitle: language === "zh" ? "你的活动回复和计划" : language === "en" ? "Your event responses and schedule" : "Твои ответы на мероприятия и расписание",
+		empty: language === "zh" ? "还没有回复任何活动" : language === "en" ? "No event responses yet" : "Пока нет ответов на мероприятия",
+		emptyHint: language === "zh" ? "在时间表中选择活动并标记你的状态" : language === "en" ? "Go to Schedule and mark your status for events" : "Перейди в Расписание и отметь свой статус",
+		going: statusLabels.going[language],
+		maybe: statusLabels.maybe[language],
+		notGoing: statusLabels.not_going[language],
+		pending: statusLabels.pending[language],
+		noEvents: language === "zh" ? "这个类别没有活动" : language === "en" ? "No events in this category" : "Нет мероприятий в этой категории"
+	};
+	const totalRsvps = upcomingEvents.filter((e) => e.rsvp && e.rsvp.status !== "pending").length;
+	if (isLoading) return /* @__PURE__ */ jsx("section", {
+		className: "section-shell py-10 sm:py-12",
+		children: /* @__PURE__ */ jsxs("div", {
+			className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+			children: [/* @__PURE__ */ jsx(SectionHero, {
+				icon: /* @__PURE__ */ jsx(WuxiaIcon, {
+					name: "calendar",
+					className: "w-5 h-5"
+				}),
+				title: copy.title,
+				subtitle: copy.subtitle,
+				chips: ["Personal", "Schedule"]
+			}), /* @__PURE__ */ jsx(LoadingState, {
+				title: copy.title,
+				subtitle: copy.subtitle,
+				icon: "calendar"
+			})]
+		})
+	});
+	if (totalRsvps === 0) return /* @__PURE__ */ jsx("section", {
+		className: "section-shell py-10 sm:py-12",
+		children: /* @__PURE__ */ jsxs("div", {
+			className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+			children: [/* @__PURE__ */ jsx(SectionHero, {
+				icon: /* @__PURE__ */ jsx(WuxiaIcon, {
+					name: "calendar",
+					className: "w-5 h-5"
+				}),
+				title: copy.title,
+				subtitle: copy.subtitle,
+				chips: ["Personal", "Schedule"]
+			}), /* @__PURE__ */ jsx(EmptyState, {
+				title: copy.empty,
+				description: copy.emptyHint,
+				icon: "calendar"
+			})]
+		})
+	});
+	const renderEventList = (events, statusKey) => {
+		if (events.length === 0) return null;
+		const statusLabel = copy[statusKey];
+		return /* @__PURE__ */ jsxs("div", {
+			className: "space-y-3",
+			children: [/* @__PURE__ */ jsxs("div", {
+				className: "flex items-center gap-2",
+				children: [
+					/* @__PURE__ */ jsx("div", { className: `w-2 h-2 rounded-full ${statusKey === "going" ? "bg-[#2d5a3f]" : statusKey === "maybe" ? "bg-[#5a4a2d]" : statusKey === "not_going" ? "bg-[#5a2d2d]" : "bg-[#2d3a5a]"}` }),
+					/* @__PURE__ */ jsx("h3", {
+						className: "text-sm font-semibold text-[#bcd6e5]",
+						children: statusLabel
+					}),
+					/* @__PURE__ */ jsxs("span", {
+						className: "text-xs text-gray-400",
+						children: [
+							"(",
+							events.length,
+							")"
+						]
+					})
+				]
+			}), /* @__PURE__ */ jsx("div", {
+				className: "space-y-2",
+				children: events.map((event) => {
+					const handleExport = (platform) => {
+						const scheduleEvent = event;
+						if (platform === "google") {
+							const url = generateGoogleCalendarLink(scheduleEvent, language);
+							window.open(url, "_blank");
+						} else if (platform === "outlook") {
+							const url = generateOutlookCalendarLink(scheduleEvent, language);
+							window.open(url, "_blank");
+						} else if (platform === "ical") {
+							const icalData = generateICalEvent(scheduleEvent, language);
+							const blob = new Blob([icalData], { type: "text/calendar" });
+							const url = URL.createObjectURL(blob);
+							const link = document.createElement("a");
+							link.href = url;
+							link.download = `event-${event.id || "calendar"}.ics`;
+							link.click();
+							URL.revokeObjectURL(url);
+						}
+					};
+					return /* @__PURE__ */ jsx("article", {
+						className: "rounded-xl border border-[#2a3c4c]/60 bg-[#101a23]/65 p-4 hover:border-[#2f6e8d]/50 transition-colors",
+						children: /* @__PURE__ */ jsxs("div", {
+							className: "flex items-start justify-between gap-3",
+							children: [/* @__PURE__ */ jsxs("div", {
+								className: "flex-1 min-w-0",
+								children: [
+									/* @__PURE__ */ jsxs("div", {
+										className: "flex items-center gap-2 mb-1",
+										children: [/* @__PURE__ */ jsx("span", {
+											className: "text-xs font-medium text-[#2d5a3f]",
+											children: event.dayType
+										}), event.time && /* @__PURE__ */ jsxs(Fragment$1, { children: [/* @__PURE__ */ jsx("span", {
+											className: "text-gray-500",
+											children: "•"
+										}), /* @__PURE__ */ jsx("span", {
+											className: "text-xs text-gray-400",
+											children: formatTime(event.time)
+										})] })]
+									}),
+									/* @__PURE__ */ jsx("h4", {
+										className: "text-sm font-medium text-[#e6eff5] truncate",
+										children: language === "zh" ? event.titleZh || event.titleRu : language === "en" ? event.titleEn || event.titleRu : event.titleRu
+									}),
+									event.date && /* @__PURE__ */ jsx("p", {
+										className: "text-xs text-gray-400 mt-1",
+										children: formatDate(event.date, language)
+									})
+								]
+							}), /* @__PURE__ */ jsxs("div", {
+								className: "flex flex-col items-end gap-2",
+								children: [event.rsvp && event.rsvp.status !== "pending" && /* @__PURE__ */ jsxs("div", {
+									className: `inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs ${event.rsvp.status === "going" ? "bg-[#2d5a3f]/30 text-[#6fb98f]" : event.rsvp.status === "maybe" ? "bg-[#5a4a2d]/30 text-[#b9a56f]" : "bg-[#5a2d2d]/30 text-[#b96f6f]"}`,
+									children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+										name: event.rsvp.status === "going" ? "checkCircle" : event.rsvp.status === "maybe" ? "dots" : "calendarX",
+										className: "w-3 h-3"
+									}), /* @__PURE__ */ jsx("span", {
+										className: "hidden sm:inline",
+										children: statusLabels[event.rsvp.status][language]
+									})]
+								}), /* @__PURE__ */ jsxs("div", {
+									className: "flex items-center gap-1",
+									children: [
+										/* @__PURE__ */ jsx("button", {
+											type: "button",
+											onClick: () => handleExport("google"),
+											className: "p-1.5 rounded-lg text-[#8fb9cc] hover:bg-[#1a2a3a]/60 transition-colors",
+											title: language === "ru" ? "Добавить в Google Calendar" : language === "zh" ? "添加到 Google 日历" : "Add to Google Calendar",
+											children: /* @__PURE__ */ jsx(WuxiaIcon, {
+												name: "link",
+												className: "w-3.5 h-3.5"
+											})
+										}),
+										/* @__PURE__ */ jsx("button", {
+											type: "button",
+											onClick: () => handleExport("outlook"),
+											className: "p-1.5 rounded-lg text-[#8fb9cc] hover:bg-[#1a2a3a]/60 transition-colors",
+											title: language === "ru" ? "Добавить в Outlook" : language === "zh" ? "添加到 Outlook" : "Add to Outlook",
+											children: /* @__PURE__ */ jsx(WuxiaIcon, {
+												name: "calendar",
+												className: "w-3.5 h-3.5"
+											})
+										}),
+										/* @__PURE__ */ jsx("button", {
+											type: "button",
+											onClick: () => handleExport("ical"),
+											className: "p-1.5 rounded-lg text-[#8fb9cc] hover:bg-[#1a2a3a]/60 transition-colors",
+											title: language === "ru" ? "Скачать .ics файл" : language === "zh" ? "下载 .ics 文件" : "Download .ics file",
+											children: /* @__PURE__ */ jsx(WuxiaIcon, {
+												name: "upload",
+												className: "w-3.5 h-3.5"
+											})
+										})
+									]
+								})]
+							})]
+						})
+					}, event.id);
+				})
+			})]
+		});
+	};
+	return /* @__PURE__ */ jsx("section", {
+		className: "section-shell py-10 sm:py-12",
+		children: /* @__PURE__ */ jsxs("div", {
+			className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+			children: [/* @__PURE__ */ jsx(SectionHero, {
+				icon: /* @__PURE__ */ jsx(WuxiaIcon, {
+					name: "calendar",
+					className: "w-5 h-5"
+				}),
+				title: copy.title,
+				subtitle: copy.subtitle,
+				chips: [
+					"Personal",
+					"Schedule",
+					`${totalRsvps} events`
+				]
+			}), /* @__PURE__ */ jsxs("div", {
+				className: "space-y-8",
+				children: [
+					renderEventList(groupedEvents.going, "going"),
+					renderEventList(groupedEvents.maybe, "maybe"),
+					renderEventList(groupedEvents.not_going, "notGoing"),
+					renderEventList(groupedEvents.pending, "pending")
+				]
+			})]
+		})
+	});
+}
+//#endregion
+//#region app/(portal)/calendar/page.tsx
+function CalendarPage() {
+	const { language } = useLanguage();
+	return /* @__PURE__ */ jsx(CalendarView, {
+		user: useUser(),
+		language
+	});
+}
+//#endregion
+//#region ../../lib/schemas/guide.ts
+var guideCategories = [
+	"general",
+	"pve",
+	"pvp",
+	"build",
+	"farm",
+	"craft",
+	"training"
+];
+var guideSummarySchema = objectType({
+	id: stringType(),
+	slug: stringType(),
+	ownerAccountId: stringType().nullable().optional(),
+	title: stringType(),
+	category: stringType(),
+	author: stringType(),
+	createdAt: stringType(),
+	updatedAt: stringType(),
+	votes: numberType(),
+	commentsCount: numberType(),
+	linkTargets: arrayType(stringType())
+});
+var guideCommentSchema = objectType({
+	id: stringType(),
+	author: stringType(),
+	comment: stringType(),
+	createdAt: stringType()
+});
+var guideEntitySchema = objectType({
+	id: stringType(),
+	slug: stringType(),
+	ownerAccountId: stringType().nullable().optional(),
+	title: stringType(),
+	content: stringType(),
+	category: stringType(),
+	author: stringType(),
+	createdAt: stringType(),
+	updatedAt: stringType()
+});
+var guideDetailSchema = objectType({
+	guide: guideEntitySchema,
+	votes: numberType(),
+	voted: booleanType(),
+	comments: arrayType(guideCommentSchema)
+});
+var createGuideSchema = objectType({
+	title: stringType().min(1, "Название обязательно").max(200, "Максимум 200 символов"),
+	content: stringType().min(10, "Минимум 10 символов").max(5e5, "Слишком длинный текст"),
+	category: enumType(guideCategories),
+	author: stringType().max(100, "Максимум 100 символов").optional()
+});
+var createCommentSchema = objectType({
+	author: stringType().max(100, "Максимум 100 символов").optional(),
+	comment: stringType().min(1, "Комментарий обязателен").max(3e3, "Максимум 3000 символов")
+});
+var voteResponseSchema = objectType({
+	votes: numberType(),
+	voted: booleanType()
+});
+//#endregion
+//#region ../../lib/api/guides.ts
+var guidesApi = {
+	list: async () => {
+		const response = await getApiGuide({ client: sameOriginOpenApiClient });
+		return arrayType(guideSummarySchema).parse(response.data || []);
+	},
+	get: async (id, voterKey) => {
+		const response = await getApiGuideById({
+			client: sameOriginOpenApiClient,
+			path: { id },
+			query: voterKey ? { voterKey } : {}
+		});
+		return guideDetailSchema.parse(response.data || {});
+	},
+	create: async (data) => {
+		const response = await postApiGuide({
+			client: sameOriginOpenApiClient,
+			body: data
+		});
+		return guideSummarySchema.parse(response.data || {});
+	},
+	update: async (id, data) => {
+		const response = await patchApiGuideById({
+			client: sameOriginOpenApiClient,
+			path: { id },
+			body: data
+		});
+		return guideEntitySchema.parse(response.data || {});
+	},
+	vote: async (id, voterKey) => {
+		const response = await postApiGuideByIdVote({
+			client: sameOriginOpenApiClient,
+			path: { id },
+			body: { voterKey }
+		});
+		return voteResponseSchema.parse(response.data || {});
+	},
+	addComment: async (id, data) => {
+		const response = await postApiGuideByIdComment({
+			client: sameOriginOpenApiClient,
+			path: { id },
+			body: data
+		});
+		return guideCommentSchema.parse(response.data || {});
+	},
+	remove: async (id) => {
+		const response = await deleteApiGuideById({
+			client: sameOriginOpenApiClient,
+			path: { id }
+		});
+		return objectType({ success: booleanType() }).parse(response.data || {});
+	}
+};
+//#endregion
+//#region ../../lib/guides/hooks.ts
+var guideKeys = {
+	all: ["guides"],
+	lists: () => [...guideKeys.all, "list"],
+	details: () => [...guideKeys.all, "detail"],
+	detail: (id) => [...guideKeys.details(), id]
+};
+function updateGuideLists(queryClient, updater) {
+	queryClient.getQueriesData({ queryKey: guideKeys.lists() }).forEach(([key, value]) => {
+		queryClient.setQueryData(key, updater(value ?? []));
+	});
+}
+function useGuides() {
+	return useQuery({
+		queryKey: guideKeys.lists(),
+		queryFn: guidesApi.list,
+		staleTime: 600 * 1e3
+	});
+}
+function useGuide(id, voterKey) {
+	return useQuery({
+		queryKey: guideKeys.detail(id || ""),
+		queryFn: () => guidesApi.get(id, voterKey),
+		enabled: !!id,
+		staleTime: 300 * 1e3
+	});
+}
+function useCreateGuide() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (data) => guidesApi.create(data),
+		onMutate: async (data) => {
+			await queryClient.cancelQueries({ queryKey: guideKeys.lists() });
+			const previousLists = queryClient.getQueriesData({ queryKey: guideKeys.lists() });
+			const optimisticId = `temp-guide-${Date.now()}`;
+			const now = (/* @__PURE__ */ new Date()).toISOString();
+			const optimisticGuide = {
+				id: optimisticId,
+				slug: optimisticId,
+				ownerAccountId: null,
+				title: data.title.trim(),
+				category: data.category,
+				author: data.author?.trim() || "You",
+				createdAt: now,
+				updatedAt: now,
+				votes: 0,
+				commentsCount: 0,
+				linkTargets: []
+			};
+			updateGuideLists(queryClient, (items) => [optimisticGuide, ...items]);
+			return {
+				previousLists,
+				optimisticId
+			};
+		},
+		onError: (_error, _data, context) => {
+			context?.previousLists?.forEach(([key, value]) => {
+				queryClient.setQueryData(key, value);
+			});
+		},
+		onSuccess: (createdGuide, _data, context) => {
+			updateGuideLists(queryClient, (items) => items.map((item) => item.id === context?.optimisticId ? createdGuide : item));
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: guideKeys.lists() });
+		}
+	});
+}
+function useUpdateGuide() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: ({ id, data }) => guidesApi.update(id, data),
+		onMutate: async (variables) => {
+			await queryClient.cancelQueries({ queryKey: guideKeys.detail(variables.id) });
+			await queryClient.cancelQueries({ queryKey: guideKeys.lists() });
+			const previousDetail = queryClient.getQueryData(guideKeys.detail(variables.id));
+			const previousLists = queryClient.getQueriesData({ queryKey: guideKeys.lists() });
+			const now = (/* @__PURE__ */ new Date()).toISOString();
+			queryClient.setQueryData(guideKeys.detail(variables.id), (current) => current ? {
+				...current,
+				guide: {
+					...current.guide,
+					...variables.data,
+					updatedAt: now
+				}
+			} : current);
+			updateGuideLists(queryClient, (items) => items.map((item) => item.id === variables.id ? {
+				...item,
+				title: variables.data.title,
+				category: variables.data.category,
+				updatedAt: now
+			} : item));
+			return {
+				previousDetail,
+				previousLists,
+				id: variables.id
+			};
+		},
+		onError: (_error, variables, context) => {
+			if (context?.previousDetail) queryClient.setQueryData(guideKeys.detail(variables.id), context.previousDetail);
+			context?.previousLists?.forEach(([key, value]) => {
+				queryClient.setQueryData(key, value);
+			});
+		},
+		onSuccess: (updatedGuide, variables) => {
+			queryClient.setQueryData(guideKeys.detail(variables.id), (current) => current ? {
+				...current,
+				guide: updatedGuide
+			} : current);
+			updateGuideLists(queryClient, (items) => items.map((item) => item.id === variables.id ? {
+				...item,
+				title: updatedGuide.title,
+				category: updatedGuide.category,
+				updatedAt: updatedGuide.updatedAt
+			} : item));
+		},
+		onSettled: (_data, _error, variables) => {
+			queryClient.invalidateQueries({ queryKey: guideKeys.detail(variables.id) });
+			queryClient.invalidateQueries({ queryKey: guideKeys.lists() });
+		}
+	});
+}
+function useVoteGuide() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: ({ id, voterKey }) => guidesApi.vote(id, voterKey),
+		onMutate: async ({ id }) => {
+			await queryClient.cancelQueries({ queryKey: guideKeys.detail(id) });
+			await queryClient.cancelQueries({ queryKey: guideKeys.lists() });
+			const previousDetail = queryClient.getQueryData(guideKeys.detail(id));
+			const previousLists = queryClient.getQueriesData({ queryKey: guideKeys.lists() });
+			const nextVotes = previousDetail ? previousDetail.votes + (previousDetail.voted ? -1 : 1) : null;
+			const nextVoted = previousDetail ? !previousDetail.voted : true;
+			if (previousDetail && nextVotes !== null) queryClient.setQueryData(guideKeys.detail(id), {
+				...previousDetail,
+				votes: nextVotes,
+				voted: nextVoted
+			});
+			if (nextVotes !== null) updateGuideLists(queryClient, (items) => items.map((item) => item.id === id ? {
+				...item,
+				votes: nextVotes
+			} : item));
+			return {
+				previousDetail,
+				previousLists
+			};
+		},
+		onError: (_error, _vars, context) => {
+			if (context?.previousDetail) queryClient.setQueryData(guideKeys.detail(context.previousDetail.guide.id), context.previousDetail);
+			context?.previousLists?.forEach(([key, value]) => {
+				queryClient.setQueryData(key, value);
+			});
+		},
+		onSuccess: (voteResponse, variables) => {
+			queryClient.setQueryData(guideKeys.detail(variables.id), (current) => current ? {
+				...current,
+				votes: voteResponse.votes,
+				voted: voteResponse.voted
+			} : current);
+			updateGuideLists(queryClient, (items) => items.map((item) => item.id === variables.id ? {
+				...item,
+				votes: voteResponse.votes
+			} : item));
+		},
+		onSettled: (_data, _error, variables) => {
+			queryClient.invalidateQueries({ queryKey: guideKeys.detail(variables.id) });
+			queryClient.invalidateQueries({ queryKey: guideKeys.lists() });
+		}
+	});
+}
+function useAddComment() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: ({ id, data }) => guidesApi.addComment(id, data),
+		onMutate: async ({ id, data }) => {
+			await queryClient.cancelQueries({ queryKey: guideKeys.detail(id) });
+			await queryClient.cancelQueries({ queryKey: guideKeys.lists() });
+			const previousDetail = queryClient.getQueryData(guideKeys.detail(id));
+			const previousLists = queryClient.getQueriesData({ queryKey: guideKeys.lists() });
+			const optimisticId = `temp-comment-${Date.now()}`;
+			const optimisticComment = {
+				id: optimisticId,
+				author: data.author?.trim() || "You",
+				comment: data.comment,
+				createdAt: (/* @__PURE__ */ new Date()).toISOString()
+			};
+			queryClient.setQueryData(guideKeys.detail(id), (current) => current ? {
+				...current,
+				comments: [...current.comments, optimisticComment]
+			} : current);
+			updateGuideLists(queryClient, (items) => items.map((item) => item.id === id ? {
+				...item,
+				commentsCount: item.commentsCount + 1
+			} : item));
+			return {
+				previousDetail,
+				previousLists,
+				optimisticId
+			};
+		},
+		onError: (_error, vars, context) => {
+			if (context?.previousDetail) queryClient.setQueryData(guideKeys.detail(vars.id), context.previousDetail);
+			context?.previousLists?.forEach(([key, value]) => {
+				queryClient.setQueryData(key, value);
+			});
+		},
+		onSuccess: (comment, vars, context) => {
+			queryClient.setQueryData(guideKeys.detail(vars.id), (current) => current ? {
+				...current,
+				comments: current.comments.map((item) => item.id === context?.optimisticId ? comment : item)
+			} : current);
+		},
+		onSettled: (_data, _error, vars) => {
+			queryClient.invalidateQueries({ queryKey: guideKeys.detail(vars.id) });
+			queryClient.invalidateQueries({ queryKey: guideKeys.lists() });
+		}
+	});
+}
+function useDeleteGuide() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (id) => guidesApi.remove(id),
+		onMutate: async (id) => {
+			await queryClient.cancelQueries({ queryKey: guideKeys.detail(id) });
+			await queryClient.cancelQueries({ queryKey: guideKeys.lists() });
+			const previousDetail = queryClient.getQueryData(guideKeys.detail(id));
+			const previousLists = queryClient.getQueriesData({ queryKey: guideKeys.lists() });
+			updateGuideLists(queryClient, (items) => items.filter((item) => item.id !== id));
+			queryClient.removeQueries({
+				queryKey: guideKeys.detail(id),
+				exact: true
+			});
+			return {
+				previousDetail,
+				previousLists,
+				id
+			};
+		},
+		onError: (_error, _id, context) => {
+			if (context?.previousDetail) queryClient.setQueryData(guideKeys.detail(context.id), context.previousDetail);
+			context?.previousLists?.forEach(([key, value]) => {
+				queryClient.setQueryData(key, value);
+			});
+		},
+		onSettled: (_data, _error, id) => {
+			queryClient.invalidateQueries({ queryKey: guideKeys.lists() });
+			queryClient.invalidateQueries({ queryKey: guideKeys.detail(id) });
+		}
+	});
+}
+function usePrefetchGuides() {
+	const queryClient = useQueryClient();
+	return useCallback(() => {
+		queryClient.prefetchQuery({
+			queryKey: guideKeys.lists(),
+			queryFn: guidesApi.list,
+			staleTime: 600 * 1e3
+		});
+	}, [queryClient]);
+}
+//#endregion
+//#region ../../lib/guides/obsidian.ts
+var CATEGORY_SET = new Set(guideCategories);
+var IMAGE_EXTENSIONS = new Set([
+	"png",
+	"jpg",
+	"jpeg",
+	"gif",
+	"webp",
+	"avif",
+	"svg",
+	"bmp"
+]);
+var ATTACHMENT_EXTENSIONS = new Set([
+	...IMAGE_EXTENSIONS,
+	"mp4",
+	"webm",
+	"pdf"
+]);
+var CALLOUT_LABELS = {
+	note: "Note",
+	abstract: "Overview",
+	summary: "Summary",
+	info: "Info",
+	todo: "Todo",
+	tip: "Tip",
+	hint: "Hint",
+	important: "Important",
+	success: "Success",
+	check: "Check",
+	done: "Done",
+	question: "Question",
+	help: "Help",
+	faq: "FAQ",
+	warning: "Warning",
+	caution: "Caution",
+	attention: "Attention",
+	failure: "Failure",
+	fail: "Failure",
+	missing: "Missing",
+	danger: "Danger",
+	error: "Error",
+	bug: "Bug",
+	example: "Example",
+	quote: "Quote"
+};
+function normalizeLineBreaks(value) {
+	return value.replace(/\r\n/g, "\n");
+}
+function stripQuotes(value) {
+	return value.replace(/^['"]|['"]$/g, "").trim();
+}
+function baseName(value) {
+	const normalized = value.replace(/\\/g, "/");
+	const parts = normalized.split("/").filter(Boolean);
+	return parts[parts.length - 1] || normalized;
+}
+function fileExtension(value) {
+	const match = baseName(value).match(/\.([a-z0-9]+)$/i);
+	return match ? match[1].toLowerCase() : "";
+}
+function isAttachmentPath(value) {
+	return ATTACHMENT_EXTENSIONS.has(fileExtension(value));
+}
+function isImagePath(value) {
+	return IMAGE_EXTENSIONS.has(fileExtension(value));
+}
+function sanitizeWikiTarget(value) {
+	return value.split("#")[0].trim();
+}
+function parseWikiReference(value) {
+	const [targetPart, labelPart] = value.split("|");
+	return {
+		target: sanitizeWikiTarget(targetPart || ""),
+		label: (labelPart || "").trim()
+	};
+}
+function normalizeFileLookupKey(value) {
+	return baseName(value).toLowerCase();
+}
+function buildFileLookup(files) {
+	const lookup = /* @__PURE__ */ new Map();
+	for (const file of files) {
+		lookup.set(normalizeFileLookupKey(file.name), file);
+		const relativePath = file.webkitRelativePath;
+		if (relativePath) lookup.set(normalizeFileLookupKey(relativePath), file);
+	}
+	return lookup;
+}
+function valueToList(value) {
+	if (!value) return [];
+	return Array.isArray(value) ? value : [value];
+}
+function resolveGuideCategory(rawCategory, tags = []) {
+	const candidates = [rawCategory, ...tags].map((value) => (value || "").trim().toLowerCase()).filter(Boolean);
+	for (const candidate of candidates) {
+		if (CATEGORY_SET.has(candidate)) return candidate;
+		if (candidate.includes("raid") || candidate.includes("boss") || candidate.includes("dungeon")) return "pve";
+		if (candidate.includes("arena") || candidate.includes("duel")) return "pvp";
+		if (candidate.includes("build")) return "build";
+		if (candidate.includes("farm")) return "farm";
+		if (candidate.includes("craft")) return "craft";
+		if (candidate.includes("train")) return "training";
+	}
+	return "general";
+}
+function parseFrontmatterValue(value) {
+	const trimmed = value.trim();
+	if (trimmed.startsWith("[") && trimmed.endsWith("]")) return trimmed.slice(1, -1).split(",").map((item) => stripQuotes(item)).filter(Boolean);
+	return stripQuotes(trimmed);
+}
+function parseGuideFrontmatter(markdown) {
+	const normalized = normalizeLineBreaks(markdown);
+	if (!normalized.startsWith("---\n")) return {
+		data: {},
+		content: normalized
+	};
+	const endIndex = normalized.indexOf("\n---\n", 4);
+	if (endIndex === -1) return {
+		data: {},
+		content: normalized
+	};
+	const frontmatterBlock = normalized.slice(4, endIndex);
+	const content = normalized.slice(endIndex + 5);
+	const data = {};
+	let currentListKey = null;
+	for (const rawLine of frontmatterBlock.split("\n")) {
+		const line = rawLine.trimEnd();
+		if (!line.trim()) continue;
+		const keyMatch = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+		if (keyMatch) {
+			const [, rawKey, rawValue] = keyMatch;
+			const key = rawKey.toLowerCase();
+			const value = rawValue.trim();
+			if (!value) {
+				data[key] = [];
+				currentListKey = key;
+				continue;
+			}
+			data[key] = parseFrontmatterValue(value);
+			currentListKey = null;
+			continue;
+		}
+		const listMatch = line.match(/^\s*-\s+(.*)$/);
+		if (listMatch && currentListKey) {
+			const existing = valueToList(data[currentListKey]);
+			existing.push(stripQuotes(listMatch[1]));
+			data[currentListKey] = existing.filter(Boolean);
+		}
+	}
+	return {
+		data,
+		content
+	};
+}
+function normalizeGuideTitle(value) {
+	return stripQuotes(value).replace(/\.(md|markdown)$/i, "").toLowerCase().replace(/[\s_]+/g, "-").replace(/[^a-z0-9\u0400-\u04ff-]+/gi, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+}
+function extractTitleFromMarkdown(content, fallbackFileName) {
+	const { data, content: stripped } = parseGuideFrontmatter(content);
+	const frontmatterTitle = data.title;
+	if (typeof frontmatterTitle === "string" && frontmatterTitle.trim()) return frontmatterTitle.trim().slice(0, 140);
+	const heading = stripped.split("\n").map((line) => line.trim()).find((line) => line.startsWith("# "));
+	if (heading) return heading.replace(/^#\s+/, "").trim().slice(0, 140);
+	return baseName(fallbackFileName).replace(/\.(md|markdown)$/i, "").trim().slice(0, 140) || "Imported guide";
+}
+async function readFileAsDataUrl(file) {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onerror = () => reject(reader.error || /* @__PURE__ */ new Error("Failed to read file"));
+		reader.onload = () => resolve(String(reader.result || ""));
+		reader.readAsDataURL(file);
+	});
+}
+async function resolveAssetLinks(markdown, files) {
+	if (files.length === 0) return markdown;
+	const lookup = buildFileLookup(files);
+	let nextMarkdown = markdown;
+	const obsidianEmbeds = [...nextMarkdown.matchAll(/!\[\[([^\]]+)\]\]/g)];
+	for (const match of obsidianEmbeds) {
+		const original = match[0];
+		const { target, label } = parseWikiReference(match[1] || "");
+		const file = lookup.get(normalizeFileLookupKey(target));
+		const safeLabel = label || baseName(target).replace(/\.[a-z0-9]+$/i, "") || "Attachment";
+		if (!file) {
+			const fallback = isImagePath(target) ? `![${safeLabel}](${target})` : `[${safeLabel}](${target})`;
+			nextMarkdown = nextMarkdown.replace(original, fallback);
+			continue;
+		}
+		const dataUrl = await readFileAsDataUrl(file);
+		const replacement = isImagePath(file.name) ? `![${safeLabel}](${dataUrl})` : `[${safeLabel}](${dataUrl})`;
+		nextMarkdown = nextMarkdown.replace(original, replacement);
+	}
+	const markdownLinks = [...nextMarkdown.matchAll(/(!?)\[([^\]]*)\]\(([^)]+)\)/g)];
+	for (const match of markdownLinks) {
+		const [original, bang, label, target] = match;
+		const trimmedTarget = target.trim();
+		if (!trimmedTarget || /^(https?:|mailto:|tel:|data:|guide:\/\/|#)/i.test(trimmedTarget)) continue;
+		const file = lookup.get(normalizeFileLookupKey(trimmedTarget));
+		if (!file || isMarkdownFile(file)) continue;
+		const dataUrl = await readFileAsDataUrl(file);
+		const safeLabel = label || baseName(file.name).replace(/\.[a-z0-9]+$/i, "") || "Attachment";
+		const replacement = bang === "!" ? `![${safeLabel}](${dataUrl})` : `[${safeLabel}](${dataUrl})`;
+		nextMarkdown = nextMarkdown.replace(original, replacement);
+	}
+	return nextMarkdown;
+}
+function normalizeObsidianCallouts(markdown) {
+	return normalizeLineBreaks(markdown).split("\n").map((line) => {
+		const match = line.match(/^>\s*\[!([^\]]+)\]([+-])?\s*(.*)$/i);
+		if (!match) return line;
+		const type = match[1].trim().toLowerCase();
+		const title = match[3].trim();
+		return `> **${CALLOUT_LABELS[type] || type.charAt(0).toUpperCase() + type.slice(1)}${title ? ` - ${title}` : ""}**`;
+	}).join("\n");
+}
+function normalizeObsidianLinks(markdown) {
+	return markdown.replace(/!\[\[([^\]]+)\]\]/g, (_match, rawReference) => {
+		const { target, label } = parseWikiReference(String(rawReference || ""));
+		if (!target) return String(rawReference || "");
+		const safeLabel = label || baseName(target).replace(/\.[a-z0-9]+$/i, "") || "Attachment";
+		return isImagePath(target) ? `![${safeLabel}](${target})` : `[${safeLabel}](${target})`;
+	}).replace(/(?<!!)\[\[([^\]]+)\]\]/g, (_match, rawReference) => {
+		const { target, label } = parseWikiReference(String(rawReference || ""));
+		if (!target) return String(rawReference || "");
+		if (isAttachmentPath(target)) return `[${label || baseName(target)}](${target})`;
+		const guideSlug = normalizeGuideTitle(target);
+		return `[${label || baseName(target).replace(/\.(md|markdown)$/i, "") || target}](guide://${encodeURIComponent(guideSlug)})`;
+	});
+}
+function prepareMarkdownForRender(markdown) {
+	const { content } = parseGuideFrontmatter(markdown || "");
+	return normalizeObsidianLinks(normalizeObsidianCallouts(content)).trim();
+}
+async function buildGuideDraftFromMarkdownFile(file, files) {
+	const raw = await file.text();
+	const { data, content } = parseGuideFrontmatter(raw);
+	const resolvedContent = (await resolveAssetLinks(content.trim(), files)).slice(0, 5e5);
+	const tags = valueToList(data.tags).map((value) => value.trim().toLowerCase());
+	const categoryValue = typeof data.category === "string" ? data.category : valueToList(data.category)[0];
+	const authorValue = typeof data.author === "string" ? data.author : valueToList(data.author)[0];
+	return {
+		title: extractTitleFromMarkdown(raw, file.name),
+		content: resolvedContent,
+		category: resolveGuideCategory(categoryValue, tags),
+		author: authorValue?.trim() || void 0
+	};
+}
+function isMarkdownFile(file) {
+	return /\.(md|markdown)$/i.test(file.name) || file.type === "text/markdown";
+}
+//#endregion
+//#region ../../components/sections/guides/GuideCard.tsx
+function GuideCard({ guide, onClick }) {
+	return /* @__PURE__ */ jsxs("button", {
+		type: "button",
+		onClick,
+		className: "card section-card ds-section-panel p-4 sm:p-5 text-left hover:transform hover:-translate-y-1 transition-all duration-300",
+		children: [
+			/* @__PURE__ */ jsxs("div", {
+				className: "flex flex-wrap items-center justify-between gap-3 mb-3",
+				children: [/* @__PURE__ */ jsxs("span", {
+					className: "ds-kicker",
+					children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+						name: "tag",
+						className: "inline-block w-4 h-4 mr-2 align-text-bottom"
+					}), guide.category]
+				}), /* @__PURE__ */ jsx("span", {
+					className: "text-xs text-gray-400",
+					children: formatDate$1(guide.updatedAt)
+				})]
+			}),
+			/* @__PURE__ */ jsx("h3", {
+				className: "text-lg font-bold font-orbitron mb-3 text-[#e6eff5] leading-snug min-h-[3.1rem] sm:min-h-[3.5rem] tracking-[0.01em]",
+				children: guide.title
+			}),
+			/* @__PURE__ */ jsxs("div", {
+				className: "flex items-center justify-between gap-3 pt-3 border-t border-gray-700/50 text-sm text-gray-400",
+				children: [/* @__PURE__ */ jsxs("span", {
+					className: "inline-flex items-center gap-2 rounded-full bg-[#0f1720]/70 px-3 py-1 text-xs text-[#c5d9e5]",
+					children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+						name: "user",
+						className: "w-4 h-4"
+					}), guide.author]
+				}), /* @__PURE__ */ jsxs("span", {
+					className: "inline-flex items-center gap-3 text-xs",
+					children: [/* @__PURE__ */ jsxs("span", {
+						className: "inline-flex items-center gap-1 rounded-full bg-[#0f1720]/70 px-2.5 py-1",
+						children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+							name: "seal",
+							className: "w-4 h-4 text-[#8fb9cc]"
+						}), guide.votes]
+					}), /* @__PURE__ */ jsxs("span", {
+						className: "inline-flex items-center gap-1 rounded-full bg-[#0f1720]/70 px-2.5 py-1",
+						children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+							name: "comment",
+							className: "w-4 h-4"
+						}), guide.commentsCount]
+					})]
+				})]
+			})
+		]
 	});
 }
 //#endregion
@@ -17470,7 +18637,7 @@ function GuideComments({ guideId, comments, canModerate = false, userRole }) {
 							children: [/* @__PURE__ */ jsx(WuxiaIcon, {
 								name: "calendar",
 								className: "w-4 h-4"
-							}), formatDate(c.createdAt)]
+							}), formatDate$1(c.createdAt)]
 						})]
 					}), /* @__PURE__ */ jsx("div", {
 						className: "text-gray-300 whitespace-pre-wrap leading-relaxed",
@@ -18570,22 +19737,6 @@ function useHeader() {
 	return context;
 }
 //#endregion
-//#region ../../lib/authz.ts
-var roleOrder = [
-	"guest",
-	"member",
-	"officer",
-	"head",
-	"sysadmin"
-];
-function hasRoleAtLeast(role, minimum) {
-	if (!role) return false;
-	return roleOrder.indexOf(role) >= roleOrder.indexOf(minimum);
-}
-function canModerateContent(role) {
-	return hasRoleAtLeast(role, "head");
-}
-//#endregion
 //#region ../../components/sections/guides/index.tsx
 function GuidesSectionContent({ user }) {
 	const [createOpen, setCreateOpen] = useState(false);
@@ -18688,30 +19839,6 @@ function GuidesSectionContent({ user }) {
 }
 function GuidesSection({ user }) {
 	return /* @__PURE__ */ jsx(ErrorBoundary$1, { children: /* @__PURE__ */ jsx(GuidesSectionContent, { user }) });
-}
-//#endregion
-//#region ../../lib/auth/context.tsx
-var AuthContext = createContext(void 0);
-function AuthProvider({ user, children }) {
-	return /* @__PURE__ */ jsx(AuthContext.Provider, {
-		value: { user },
-		children
-	});
-}
-function useAuth() {
-	const context = useContext(AuthContext);
-	if (context === void 0) throw new Error("useAuth must be used within an AuthProvider");
-	return context;
-}
-function useUser() {
-	const { user } = useAuth();
-	if (!user) return {
-		id: "",
-		nickname: "",
-		role: "guest",
-		isActive: false
-	};
-	return user;
 }
 //#endregion
 //#region app/(portal)/guides/page.tsx
@@ -19912,7 +21039,7 @@ function HelpSectionContent({ user }) {
 												children: [/* @__PURE__ */ jsx(WuxiaIcon, {
 													name: "calendar",
 													className: "w-4 h-4"
-												}), /* @__PURE__ */ jsx("span", { children: formatDate(req.createdAt) })]
+												}), /* @__PURE__ */ jsx("span", { children: formatDate$1(req.createdAt) })]
 											})] }), (canModerate || canDelete) && /* @__PURE__ */ jsxs("div", {
 												className: "flex flex-wrap items-center gap-3 sm:justify-end",
 												children: [canModerate && /* @__PURE__ */ jsxs("button", {
@@ -20450,7 +21577,7 @@ function NewsSectionContent({ user }) {
 									}),
 									/* @__PURE__ */ jsx("p", {
 										className: "news-meta mb-4",
-										children: formatDate(featured.date)
+										children: formatDate$1(featured.date)
 									}),
 									/* @__PURE__ */ jsx("p", {
 										className: "text-gray-200/95 mb-6 text-base sm:text-lg leading-relaxed break-words",
@@ -20510,7 +21637,7 @@ function NewsSectionContent({ user }) {
 										}),
 										/* @__PURE__ */ jsx("p", {
 											className: "news-meta mb-4",
-											children: formatDate(item.date)
+											children: formatDate$1(item.date)
 										}),
 										/* @__PURE__ */ jsx("p", {
 											className: `news-card-preview text-gray-200/95 mb-4 text-sm sm:text-base leading-relaxed break-words${isExpanded ? " is-expanded" : ""}`,
@@ -20558,6 +21685,3356 @@ function NewsSection(props) {
 //#region app/(portal)/news/page.tsx
 function NewsPage() {
 	return /* @__PURE__ */ jsx(NewsSection, { user: useUser() });
+}
+//#endregion
+//#region ../../lib/schemas/registration.ts
+var prefixOptions = [
+	"Чертила",
+	"VIP",
+	"Boobs",
+	"Moonborn",
+	"Raid Lead",
+	"PvP Ace",
+	"Abyss Walker"
+];
+var prefixOptionSchema = enumType(prefixOptions);
+var registrationsArraySchema = arrayType(objectType({
+	discord: stringType(),
+	discordHandle: stringType().nullable().optional(),
+	avatarUrl: stringType().nullable().optional(),
+	prefix: stringType().nullable().optional(),
+	nickname: stringType(),
+	rank: enumType([
+		"guest",
+		"member",
+		"officer",
+		"head",
+		"sysadmin"
+	]),
+	class: stringType(),
+	guild: stringType(),
+	joinDate: stringType(),
+	kpi: numberType(),
+	elo: numberType().default(0),
+	mmr20: numberType().default(0),
+	bounty: numberType().default(0),
+	marks: numberType().default(0),
+	outerHeroic: numberType().default(0),
+	innerHeroic: numberType().default(0),
+	crimsonSands: numberType().default(0),
+	abyss: numberType().default(0),
+	gvg: numberType().default(0),
+	secretRealm: numberType().default(0),
+	duelWins: numberType().default(0),
+	duelLosses: numberType().default(0),
+	status: enumType([
+		"active",
+		"inactive",
+		"pending",
+		"leave"
+	])
+}));
+//#endregion
+//#region ../../components/PrefixBadge.tsx
+var variantClasses = {
+	default: "px-2.5 py-1 text-[11px] tracking-[0.2em]",
+	compact: "px-2 py-0.5 text-[10px] tracking-[0.16em]"
+};
+function PrefixBadge({ prefix, variant = "default", className }) {
+	const value = prefix?.trim();
+	if (!value) return null;
+	return /* @__PURE__ */ jsx("span", {
+		className: cn("inline-flex rounded-full border border-cyan-400/30 bg-cyan-500/10 font-semibold uppercase text-cyan-100", variantClasses[variant], className),
+		children: value
+	});
+}
+//#endregion
+//#region ../../lib/roles.ts
+var roleLabels = {
+	guest: "Гость",
+	member: "Член",
+	officer: "Офицер",
+	head: "Глава",
+	sysadmin: "Сис.Админ"
+};
+var roleSummaries = {
+	guest: "Базовый доступ без административных действий.",
+	member: "Обычный участник гильдии без прав модерации и управления.",
+	officer: "Операционный уровень: управление учетками и рабочими разделами.",
+	head: "Руководящий уровень: все права офицера плюс роли и модерация.",
+	sysadmin: "Максимальный уровень в иерархии ролей (поверх head)."
+};
+function roleCapabilities(role) {
+	const capabilities = ["Доступ к основным разделам портала и личному кабинету."];
+	if (hasRoleAtLeast(role, "officer")) capabilities.push("Может управлять правилами и менять статус help-запросов.");
+	if (canManageAccounts(role)) capabilities.push("Может активировать/деактивировать учетные записи.");
+	if (canSeeNumericKpi(role)) capabilities.push("Видит числовой KPI участников в реестре.");
+	if (canAssignRoles(role)) capabilities.push("Может назначать роли пользователям.");
+	if (canModerateContent(role)) capabilities.push("Может модерировать и удалять контент (гайды и запросы помощи).");
+	if (role === "member") capabilities.push("Видит неполный KPI (индикатор), но не числовые значения других участников.");
+	if (role === "guest") capabilities.push("Не получает офицерских/руководящих полномочий.");
+	return capabilities;
+}
+var roleExplainerRows = roleOrder.map((role) => ({
+	role,
+	label: roleLabels[role],
+	summary: roleSummaries[role],
+	capabilities: roleCapabilities(role)
+}));
+//#endregion
+//#region ../../lib/schemas/auth.ts
+var userRoleSchema = enumType([
+	"guest",
+	"member",
+	"officer",
+	"head",
+	"sysadmin"
+]);
+var authMethodSchema = enumType(["account", "pin"]);
+var authUserSchema = objectType({
+	id: stringType().optional(),
+	nickname: stringType().optional(),
+	role: userRoleSchema,
+	isActive: booleanType().optional(),
+	authMethod: authMethodSchema.optional(),
+	discordId: stringType().nullable().optional(),
+	discordHandle: stringType().nullable().optional(),
+	className: stringType().nullable().optional(),
+	prefix: stringType().nullable().optional(),
+	exp: numberType().optional()
+});
+var authResponseSchema = objectType({
+	success: booleanType(),
+	user: authUserSchema
+});
+var registerAuthUserSchema = authUserSchema.extend({ createdAt: stringType().optional() });
+var registerResponseSchema = objectType({
+	success: booleanType(),
+	pendingApproval: booleanType().optional(),
+	message: stringType().optional(),
+	user: registerAuthUserSchema
+});
+var verifyAuthResponseSchema = objectType({
+	valid: booleanType(),
+	user: authUserSchema
+});
+var logoutResponseSchema = objectType({ success: booleanType() });
+//#endregion
+//#region ../../lib/schemas/account.ts
+var portalAccountSchema = objectType({
+	id: stringType(),
+	nickname: stringType(),
+	role: userRoleSchema,
+	isActive: booleanType(),
+	discordHandle: stringType().nullable().optional(),
+	prefix: stringType().nullable().optional(),
+	createdAt: stringType(),
+	lastLoginAt: stringType().nullable()
+});
+var portalAccountsSchema = arrayType(portalAccountSchema);
+//#endregion
+//#region ../../lib/api/accounts.ts
+var updateAccountPayloadSchema = objectType({
+	id: stringType(),
+	isActive: booleanType(),
+	role: userRoleSchema.optional(),
+	prefix: stringType().trim().max(40).nullable().optional()
+});
+var accountsApi = {
+	list: async () => {
+		const response = await getApiAdminAccounts({ client: sameOriginOpenApiClient });
+		return portalAccountsSchema.parse(response.data || []);
+	},
+	update: async (payload) => {
+		const response = await patchApiAdminAccounts({
+			client: sameOriginOpenApiClient,
+			body: updateAccountPayloadSchema.parse(payload)
+		});
+		return portalAccountSchema.parse(response.data || {});
+	}
+};
+//#endregion
+//#region ../../lib/api/classes.ts
+var classesSchema = arrayType(stringType());
+var classesApi = { list: async () => {
+	const response = await getApiClasses({ client: sameOriginOpenApiClient });
+	return classesSchema.parse(response.data || []);
+} };
+//#endregion
+//#region ../../lib/auth/hooks.ts
+var accountKeys = {
+	all: ["accounts"],
+	lists: () => [...accountKeys.all, "list"]
+};
+function useAccounts(enabled = true) {
+	return useQuery({
+		queryKey: accountKeys.lists(),
+		queryFn: accountsApi.list,
+		enabled
+	});
+}
+function useUpdateAccount() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (payload) => accountsApi.update(payload),
+		onMutate: async (payload) => {
+			await queryClient.cancelQueries({ queryKey: accountKeys.lists() });
+			const previousAccounts = queryClient.getQueryData(accountKeys.lists()) ?? [];
+			queryClient.setQueryData(accountKeys.lists(), (old = []) => old.map((account) => account.id === payload.id ? {
+				...account,
+				isActive: payload.isActive,
+				role: payload.role ?? account.role,
+				prefix: payload.prefix ?? account.prefix
+			} : account));
+			return { previousAccounts };
+		},
+		onError: (_error, _payload, context) => {
+			if (context?.previousAccounts) queryClient.setQueryData(accountKeys.lists(), context.previousAccounts);
+		},
+		onSuccess: (updatedAccount) => {
+			queryClient.setQueryData(accountKeys.lists(), (old = []) => old.map((account) => account.id === updatedAccount.id ? updatedAccount : account));
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: accountKeys.lists() });
+		}
+	});
+}
+var knownClassesKeys = {
+	all: ["known-classes"],
+	lists: () => [...knownClassesKeys.all, "list"]
+};
+function useKnownClasses({ enabled = true } = {}) {
+	return useQuery({
+		queryKey: knownClassesKeys.lists(),
+		queryFn: classesApi.list,
+		staleTime: 300 * 1e3,
+		enabled
+	});
+}
+//#endregion
+//#region ../../lib/registration/column-labels.ts
+var registrationColumnLabelValueSchema = stringType().trim().min(1).max(80);
+var registrationColumnLabelsSchema = objectType({
+	index: registrationColumnLabelValueSchema,
+	discord: registrationColumnLabelValueSchema,
+	nickname: registrationColumnLabelValueSchema,
+	rank: registrationColumnLabelValueSchema,
+	class: registrationColumnLabelValueSchema,
+	guild: registrationColumnLabelValueSchema,
+	elo: registrationColumnLabelValueSchema,
+	mmr20: registrationColumnLabelValueSchema,
+	bounty: registrationColumnLabelValueSchema,
+	outerHeroic: registrationColumnLabelValueSchema,
+	innerHeroic: registrationColumnLabelValueSchema,
+	crimsonSands: registrationColumnLabelValueSchema,
+	abyss: registrationColumnLabelValueSchema,
+	gvg: registrationColumnLabelValueSchema,
+	secretRealm: registrationColumnLabelValueSchema,
+	marks: registrationColumnLabelValueSchema,
+	kpi: registrationColumnLabelValueSchema,
+	status: registrationColumnLabelValueSchema,
+	actions: registrationColumnLabelValueSchema
+});
+registrationColumnLabelsSchema.partial();
+//#endregion
+//#region ../../lib/api/registrations.ts
+var updateRegistrationStatsPayloadSchema = objectType({
+	nickname: stringType().trim().min(1),
+	className: stringType().trim().min(1).max(100).optional(),
+	guild: stringType().trim().max(120).optional(),
+	discordHandle: stringType().trim().max(120).optional(),
+	prefix: prefixOptionSchema.nullable().optional(),
+	elo: numberType().optional(),
+	mmr20: numberType().optional(),
+	bounty: numberType().optional(),
+	outerHeroic: numberType().optional(),
+	innerHeroic: numberType().optional(),
+	crimsonSands: numberType().optional(),
+	abyss: numberType().optional(),
+	gvg: numberType().optional(),
+	secretRealm: numberType().optional()
+});
+var updateRegistrationStatsResponseSchema = objectType({
+	success: booleanType(),
+	portalOnly: booleanType()
+});
+async function readApiError(response, fallbackMessage) {
+	const payload = await response.json().catch(() => null);
+	throw new Error(payload?.error || fallbackMessage);
+}
+var registrationsApi = {
+	list: async () => {
+		const response = await getApiDiscordProxyRegistration({ client: sameOriginOpenApiClient });
+		return registrationsArraySchema.parse(response.data || []).map((item) => ({
+			...item,
+			elo: (item.elo ?? 0) > 0 ? item.elo ?? 0 : 1e3,
+			mmr20: item.mmr20 || 0,
+			bounty: item.bounty || 0,
+			marks: item.marks || 0,
+			outerHeroic: item.outerHeroic || 0,
+			innerHeroic: item.innerHeroic || 0,
+			crimsonSands: item.crimsonSands || 0,
+			abyss: item.abyss || 0,
+			gvg: item.gvg || 0,
+			secretRealm: item.secretRealm || 0,
+			duelWins: item.duelWins || 0,
+			duelLosses: item.duelLosses || 0
+		}));
+	},
+	updateStats: async (payload) => {
+		const response = await patchApiDiscordProxyRegistration({
+			client: sameOriginOpenApiClient,
+			body: updateRegistrationStatsPayloadSchema.parse(payload)
+		});
+		return updateRegistrationStatsResponseSchema.parse(response.data || {});
+	},
+	getColumnLabels: async () => {
+		const response = await fetch("/api/registration/column-labels", {
+			method: "GET",
+			credentials: "same-origin"
+		});
+		if (!response.ok) await readApiError(response, "Failed to load registration column labels");
+		const data = await response.json();
+		return registrationColumnLabelsSchema.parse(data);
+	},
+	updateColumnLabels: async (payload) => {
+		const response = await fetch("/api/registration/column-labels", {
+			method: "PATCH",
+			credentials: "same-origin",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(payload)
+		});
+		if (!response.ok) await readApiError(response, "Failed to update registration column labels");
+		const data = await response.json();
+		return registrationColumnLabelsSchema.parse(data);
+	}
+};
+//#endregion
+//#region ../../lib/registration/hooks.ts
+var registrationKeys = {
+	all: ["registrations"],
+	lists: () => [...registrationKeys.all, "list"],
+	detail: (nickname) => [
+		...registrationKeys.all,
+		"detail",
+		nickname
+	],
+	columnLabels: () => [...registrationKeys.all, "column-labels"]
+};
+function useRegistrations() {
+	return useQuery({
+		queryKey: registrationKeys.lists(),
+		queryFn: registrationsApi.list
+	});
+}
+function useUpdateRegistrationStats() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (payload) => registrationsApi.updateStats(payload),
+		onMutate: async (newData) => {
+			await queryClient.cancelQueries({ queryKey: registrationKeys.lists() });
+			const previousRegistrations = queryClient.getQueryData(registrationKeys.lists());
+			if (previousRegistrations) queryClient.setQueryData(registrationKeys.lists(), (old) => {
+				if (!old) return old;
+				return old.map((reg) => {
+					if (reg.nickname === newData.nickname) return {
+						...reg,
+						...newData.className !== void 0 && { class: newData.className },
+						...newData.guild !== void 0 && { guild: newData.guild },
+						...newData.discordHandle !== void 0 && { discordHandle: newData.discordHandle },
+						...newData.elo !== void 0 && { elo: newData.elo },
+						...newData.mmr20 !== void 0 && { mmr20: newData.mmr20 },
+						...newData.bounty !== void 0 && { bounty: newData.bounty },
+						...newData.outerHeroic !== void 0 && { outerHeroic: newData.outerHeroic },
+						...newData.innerHeroic !== void 0 && { innerHeroic: newData.innerHeroic },
+						...newData.crimsonSands !== void 0 && { crimsonSands: newData.crimsonSands },
+						...newData.abyss !== void 0 && { abyss: newData.abyss },
+						...newData.gvg !== void 0 && { gvg: newData.gvg },
+						...newData.secretRealm !== void 0 && { secretRealm: newData.secretRealm }
+					};
+					return reg;
+				});
+			});
+			return { previousRegistrations };
+		},
+		onError: (err, newData, context) => {
+			if (context?.previousRegistrations) queryClient.setQueryData(registrationKeys.lists(), context.previousRegistrations);
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: registrationKeys.lists() });
+		}
+	});
+}
+function usePrefetchRegistrations() {
+	const queryClient = useQueryClient();
+	return useCallback(() => {
+		queryClient.prefetchQuery({
+			queryKey: registrationKeys.lists(),
+			queryFn: registrationsApi.list,
+			staleTime: 300 * 1e3
+		});
+	}, [queryClient]);
+}
+//#endregion
+//#region ../../lib/notifications/context.tsx
+var defaultSettings = {
+	enabled: true,
+	helpRequests: true,
+	absenceApprovals: true,
+	pvpMatches: true,
+	eventReminders: true,
+	officerAlerts: true,
+	soundEnabled: false,
+	desktopEnabled: false
+};
+var SETTINGS_KEY = "guild_notification_settings";
+function getStoredSettings() {
+	if (typeof window === "undefined") return defaultSettings;
+	try {
+		const stored = localStorage.getItem(SETTINGS_KEY);
+		if (stored) {
+			const parsed = JSON.parse(stored);
+			return {
+				...defaultSettings,
+				...parsed
+			};
+		}
+	} catch {}
+	return defaultSettings;
+}
+var NotificationsContext = createContext(null);
+function NotificationsProvider({ children }) {
+	const [toasts, setToasts] = useState([]);
+	const [settings, setSettings] = useState(getStoredSettings);
+	const addToast = useCallback((toast) => {
+		const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+		const newToast = {
+			id,
+			...toast
+		};
+		setToasts((prev) => [...prev, newToast]);
+		if (toast.type === "error" || toast.type === "warning") console.warn(`[${toast.type.toUpperCase()}] ${toast.title}: ${toast.message || ""}`);
+		return id;
+	}, []);
+	const dismissToast = useCallback((id) => {
+		setToasts((prev) => prev.filter((t) => t.id !== id));
+	}, []);
+	const clearAllToasts = useCallback(() => {
+		setToasts([]);
+	}, []);
+	const updateSettings = useCallback((newSettings) => {
+		setSettings((prev) => {
+			const updated = {
+				...prev,
+				...newSettings
+			};
+			if (typeof window !== "undefined") localStorage.setItem(SETTINGS_KEY, JSON.stringify(updated));
+			return updated;
+		});
+	}, []);
+	const requestPermission = useCallback(async () => {
+		if (!("Notification" in window)) return "denied";
+		if (Notification.permission === "granted") return "granted";
+		try {
+			const permission = await Notification.requestPermission();
+			if (permission === "granted") updateSettings({ desktopEnabled: true });
+			return permission;
+		} catch {
+			return "denied";
+		}
+	}, [updateSettings]);
+	const value = useMemo(() => ({
+		toasts,
+		addToast,
+		dismissToast,
+		clearAllToasts,
+		settings,
+		updateSettings,
+		requestPermission
+	}), [
+		toasts,
+		addToast,
+		dismissToast,
+		clearAllToasts,
+		settings,
+		updateSettings,
+		requestPermission
+	]);
+	return /* @__PURE__ */ jsx(NotificationsContext.Provider, {
+		value,
+		children
+	});
+}
+function useNotifications() {
+	const context = useContext(NotificationsContext);
+	if (!context) throw new Error("useNotifications must be used within a NotificationsProvider");
+	return context;
+}
+//#endregion
+//#region ../../components/sections/profile/index.tsx
+var activityKeys = [
+	"outerHeroic",
+	"innerHeroic",
+	"crimsonSands",
+	"abyss",
+	"gvg",
+	"secretRealm"
+];
+var activityLabels = [
+	{
+		key: "outerHeroic",
+		label: "Outer Heroic"
+	},
+	{
+		key: "innerHeroic",
+		label: "Inner Heroic"
+	},
+	{
+		key: "crimsonSands",
+		label: "Crimson Sands"
+	},
+	{
+		key: "abyss",
+		label: "Abyss"
+	},
+	{
+		key: "gvg",
+		label: "GVG"
+	},
+	{
+		key: "secretRealm",
+		label: "Secret Realm"
+	}
+];
+var resetActivityDraft = (draft) => ({
+	...draft,
+	outerHeroic: 0,
+	innerHeroic: 0,
+	crimsonSands: 0,
+	abyss: 0,
+	gvg: 0,
+	secretRealm: 0
+});
+var roleOptions = [...roleOrder];
+function isPrefixOption(value) {
+	return prefixOptions.includes(value);
+}
+var ProfileOverview = memo(function ProfileOverview({ profileRegistration, user }) {
+	const prefix = profileRegistration?.prefix ?? user.prefix ?? null;
+	return /* @__PURE__ */ jsxs("div", {
+		className: "card section-card p-5 sm:p-6",
+		children: [/* @__PURE__ */ jsx("div", {
+			className: "text-sm uppercase tracking-widest text-[#9ec5d8] mb-2",
+			children: "Профиль"
+		}), /* @__PURE__ */ jsxs("div", {
+			className: "grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4 text-sm",
+			children: [
+				/* @__PURE__ */ jsxs("div", {
+					className: "ds-metric-tile",
+					children: [
+						/* @__PURE__ */ jsx("div", {
+							className: "text-gray-400 mb-1",
+							children: "Ник"
+						}),
+						/* @__PURE__ */ jsx("div", {
+							className: "text-[#e6eff5] font-medium",
+							children: user.nickname || "—"
+						}),
+						/* @__PURE__ */ jsx(PrefixBadge, {
+							prefix,
+							className: "mt-2"
+						})
+					]
+				}),
+				/* @__PURE__ */ jsxs("div", {
+					className: "ds-metric-tile",
+					children: [/* @__PURE__ */ jsx("div", {
+						className: "text-gray-400 mb-1",
+						children: "Discord"
+					}), /* @__PURE__ */ jsx("div", {
+						className: "text-[#e6eff5] font-medium",
+						children: profileRegistration?.discordHandle || user.discordHandle || "—"
+					})]
+				}),
+				/* @__PURE__ */ jsxs("div", {
+					className: "ds-metric-tile",
+					children: [/* @__PURE__ */ jsx("div", {
+						className: "text-gray-400 mb-1",
+						children: "Класс"
+					}), /* @__PURE__ */ jsx(ClassBadge, {
+						className: profileRegistration?.class || user.className,
+						textClassName: "text-[#e6eff5] font-medium",
+						iconSizeClassName: "h-8 w-8"
+					})]
+				}),
+				/* @__PURE__ */ jsxs("div", {
+					className: "ds-metric-tile",
+					children: [/* @__PURE__ */ jsx("div", {
+						className: "text-gray-400 mb-1",
+						children: "Клан"
+					}), /* @__PURE__ */ jsx("div", {
+						className: "text-[#e6eff5] font-medium",
+						children: profileRegistration?.guild || "—"
+					})]
+				}),
+				/* @__PURE__ */ jsxs("div", {
+					className: "ds-metric-tile",
+					children: [/* @__PURE__ */ jsx("div", {
+						className: "text-gray-400 mb-1",
+						children: "Роль"
+					}), /* @__PURE__ */ jsx("div", {
+						className: "text-[#e6eff5] font-medium",
+						children: roleLabels[user.role]
+					})]
+				}),
+				/* @__PURE__ */ jsxs("div", {
+					className: "ds-metric-tile",
+					children: [/* @__PURE__ */ jsx("div", {
+						className: "text-gray-400 mb-1",
+						children: "Статус"
+					}), /* @__PURE__ */ jsx("div", {
+						className: "text-[#e6eff5] font-medium",
+						children: user.isActive ? "active" : "inactive"
+					})]
+				})
+			]
+		})]
+	});
+});
+function NotificationSettingsSection() {
+	const { settings, updateSettings, requestPermission } = useNotifications();
+	const [requesting, setRequesting] = useState(false);
+	const handleDesktopPermission = async () => {
+		setRequesting(true);
+		try {
+			await requestPermission();
+		} finally {
+			setRequesting(false);
+		}
+	};
+	return /* @__PURE__ */ jsxs("div", {
+		className: "card section-card p-5 sm:p-6",
+		children: [
+			/* @__PURE__ */ jsx("div", {
+				className: "text-sm uppercase tracking-widest text-[#9ec5d8] mb-3",
+				children: "Уведомления"
+			}),
+			/* @__PURE__ */ jsx("p", {
+				className: "text-gray-400 text-sm mb-5",
+				children: "Настройте типы уведомлений и способ доставки"
+			}),
+			/* @__PURE__ */ jsxs("div", {
+				className: "notification-settings-group",
+				children: [
+					/* @__PURE__ */ jsxs("div", {
+						className: "notification-setting-item",
+						children: [/* @__PURE__ */ jsxs("div", {
+							className: "notification-setting-label",
+							children: [/* @__PURE__ */ jsx("div", {
+								className: "notification-setting-title",
+								children: "Все уведомления"
+							}), /* @__PURE__ */ jsx("div", {
+								className: "notification-setting-description",
+								children: "Глобальное включение/выключение всех уведомлений"
+							})]
+						}), /* @__PURE__ */ jsx("div", {
+							className: "notification-toggle",
+							children: /* @__PURE__ */ jsx("button", {
+								type: "button",
+								className: cn("notification-toggle__switch", settings.enabled && "notification-toggle__switch--active"),
+								onClick: () => updateSettings({ enabled: !settings.enabled }),
+								"aria-pressed": settings.enabled,
+								children: /* @__PURE__ */ jsx("span", { className: "notification-toggle__knob" })
+							})
+						})]
+					}),
+					/* @__PURE__ */ jsxs("div", {
+						className: "notification-setting-item",
+						children: [/* @__PURE__ */ jsxs("div", {
+							className: "notification-setting-label",
+							children: [/* @__PURE__ */ jsx("div", {
+								className: "notification-setting-title",
+								children: "Запросы помощи"
+							}), /* @__PURE__ */ jsx("div", {
+								className: "notification-setting-description",
+								children: "Уведомлять о запросах без ответа более 15 минут"
+							})]
+						}), /* @__PURE__ */ jsx("div", {
+							className: "notification-toggle",
+							children: /* @__PURE__ */ jsx("button", {
+								type: "button",
+								className: cn("notification-toggle__switch", settings.enabled && settings.helpRequests && "notification-toggle__switch--active"),
+								onClick: () => updateSettings({ helpRequests: !settings.helpRequests }),
+								disabled: !settings.enabled,
+								"aria-pressed": settings.helpRequests,
+								children: /* @__PURE__ */ jsx("span", { className: "notification-toggle__knob" })
+							})
+						})]
+					}),
+					/* @__PURE__ */ jsxs("div", {
+						className: "notification-setting-item",
+						children: [/* @__PURE__ */ jsxs("div", {
+							className: "notification-setting-label",
+							children: [/* @__PURE__ */ jsx("div", {
+								className: "notification-setting-title",
+								children: "Подтверждение отсутствий"
+							}), /* @__PURE__ */ jsx("div", {
+								className: "notification-setting-description",
+								children: "Для офицеров: уведомления о pending absence"
+							})]
+						}), /* @__PURE__ */ jsx("div", {
+							className: "notification-toggle",
+							children: /* @__PURE__ */ jsx("button", {
+								type: "button",
+								className: cn("notification-toggle__switch", settings.enabled && settings.absenceApprovals && "notification-toggle__switch--active"),
+								onClick: () => updateSettings({ absenceApprovals: !settings.absenceApprovals }),
+								disabled: !settings.enabled,
+								"aria-pressed": settings.absenceApprovals,
+								children: /* @__PURE__ */ jsx("span", { className: "notification-toggle__knob" })
+							})
+						})]
+					}),
+					/* @__PURE__ */ jsxs("div", {
+						className: "notification-setting-item",
+						children: [/* @__PURE__ */ jsxs("div", {
+							className: "notification-setting-label",
+							children: [/* @__PURE__ */ jsx("div", {
+								className: "notification-setting-title",
+								children: "PvP-матчи"
+							}), /* @__PURE__ */ jsx("div", {
+								className: "notification-setting-description",
+								children: "Завершение матчей и спорные ситуации"
+							})]
+						}), /* @__PURE__ */ jsx("div", {
+							className: "notification-toggle",
+							children: /* @__PURE__ */ jsx("button", {
+								type: "button",
+								className: cn("notification-toggle__switch", settings.enabled && settings.pvpMatches && "notification-toggle__switch--active"),
+								onClick: () => updateSettings({ pvpMatches: !settings.pvpMatches }),
+								disabled: !settings.enabled,
+								"aria-pressed": settings.pvpMatches,
+								children: /* @__PURE__ */ jsx("span", { className: "notification-toggle__knob" })
+							})
+						})]
+					}),
+					/* @__PURE__ */ jsxs("div", {
+						className: "notification-setting-item",
+						children: [/* @__PURE__ */ jsxs("div", {
+							className: "notification-setting-label",
+							children: [/* @__PURE__ */ jsx("div", {
+								className: "notification-setting-title",
+								children: "Desktop-уведомления"
+							}), /* @__PURE__ */ jsx("div", {
+								className: "notification-setting-description",
+								children: "Системные уведомления браузера"
+							})]
+						}), /* @__PURE__ */ jsx("div", {
+							className: "notification-toggle",
+							children: /* @__PURE__ */ jsx("button", {
+								type: "button",
+								className: cn("notification-toggle__switch", settings.desktopEnabled && "notification-toggle__switch--active"),
+								onClick: handleDesktopPermission,
+								disabled: requesting,
+								"aria-pressed": settings.desktopEnabled,
+								children: /* @__PURE__ */ jsx("span", { className: "notification-toggle__knob" })
+							})
+						})]
+					})
+				]
+			})
+		]
+	});
+}
+var RoleAccessPanel = memo(function RoleAccessPanel({ currentRole }) {
+	return /* @__PURE__ */ jsxs("div", {
+		className: "card section-card p-5 sm:p-6 space-y-5",
+		children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
+			className: "text-sm uppercase tracking-widest text-[#9ec5d8] mb-2",
+			children: "Роли и доступ"
+		}), /* @__PURE__ */ jsx("div", {
+			className: "text-gray-400 text-sm",
+			children: "Актуальные права по текущей иерархии: guest - member - officer - head - sysadmin."
+		})] }), /* @__PURE__ */ jsx("div", {
+			className: "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 text-sm",
+			children: roleExplainerRows.map((entry) => {
+				const isCurrentRole = entry.role === currentRole;
+				return /* @__PURE__ */ jsxs("article", {
+					className: `rounded-2xl border p-4 space-y-3 ${isCurrentRole ? "border-[#2f6e8d]/70 bg-[#163042]/45" : "ds-section-panel-soft"}`,
+					children: [
+						/* @__PURE__ */ jsxs("div", {
+							className: "flex items-center justify-between gap-2",
+							children: [/* @__PURE__ */ jsx("span", {
+								className: "text-[#e6eff5] font-semibold",
+								children: entry.label
+							}), isCurrentRole && /* @__PURE__ */ jsx("span", {
+								className: "text-[10px] uppercase tracking-[0.2em] text-[#8fb9cc]",
+								children: "Твоя роль"
+							})]
+						}),
+						/* @__PURE__ */ jsx("p", {
+							className: "text-gray-300 text-xs leading-relaxed",
+							children: entry.summary
+						}),
+						/* @__PURE__ */ jsx("div", {
+							className: "space-y-2",
+							children: entry.capabilities.map((capability) => /* @__PURE__ */ jsxs("div", {
+								className: "flex items-start gap-2 text-xs text-[#c8dce8]",
+								children: [/* @__PURE__ */ jsx("span", { className: "mt-1 inline-flex h-1.5 w-1.5 rounded-full bg-[#8fb9cc] shrink-0" }), /* @__PURE__ */ jsx("span", { children: capability })]
+							}, capability))
+						})
+					]
+				}, entry.role);
+			})
+		})]
+	});
+});
+var ActivityToggleCard = memo(function ActivityToggleCard({ activityKey, isMarked, label, onToggle }) {
+	const hintId = `profile-activity-${activityKey}-hint`;
+	const labelId = `profile-activity-${activityKey}-label`;
+	return /* @__PURE__ */ jsxs("div", {
+		className: "rounded-2xl ds-section-panel-soft p-4",
+		children: [/* @__PURE__ */ jsxs("div", {
+			className: "flex items-start justify-between gap-4",
+			children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
+				id: labelId,
+				className: "text-[#e6eff5] font-medium",
+				children: label
+			}), /* @__PURE__ */ jsx("div", {
+				id: hintId,
+				className: "mt-1 text-xs text-gray-400",
+				children: "Переключатель отметки: красный - нет, зелёный - да."
+			})] }), /* @__PURE__ */ jsx("button", {
+				type: "button",
+				role: "switch",
+				"aria-checked": isMarked,
+				"aria-labelledby": labelId,
+				"aria-describedby": hintId,
+				onClick: () => onToggle(activityKey),
+				className: `relative inline-flex h-8 w-16 shrink-0 rounded-full border ${isMarked ? "border-green-400/60 bg-green-500/80" : "border-red-400/50 bg-red-500/75"}`,
+				children: /* @__PURE__ */ jsx("span", { className: `absolute left-1 top-1 inline-flex h-6 w-6 rounded-full bg-white/95 shadow-[0_6px_14px_rgba(0,0,0,0.28)] transition-transform duration-200 ${isMarked ? "translate-x-8" : "translate-x-0"}` })
+			})]
+		}), /* @__PURE__ */ jsx("div", {
+			className: `mt-4 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${isMarked ? "bg-green-500/15 text-green-300" : "bg-red-500/15 text-red-200"}`,
+			children: isMarked ? "Отмечено" : "Не отмечено"
+		})]
+	});
+});
+var AccountsPanel = memo(function AccountsPanel({ accounts, accountsError, accountsLoading, canChangeRoles, loadAccounts, rosterByNickname, togglingId, updateAccount }) {
+	return /* @__PURE__ */ jsxs("div", {
+		className: "card section-card p-5 sm:p-6",
+		children: [
+			/* @__PURE__ */ jsxs("div", {
+				className: "flex items-center justify-between mb-4 gap-3",
+				children: [/* @__PURE__ */ jsx("h3", {
+					className: "text-xl font-bold font-orbitron text-[#e6eff5]",
+					children: "Валидность учеток"
+				}), /* @__PURE__ */ jsx("button", {
+					type: "button",
+					className: "dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0",
+					onClick: loadAccounts,
+					title: "Обновить",
+					"aria-label": "Обновить",
+					children: /* @__PURE__ */ jsx(WuxiaIcon, {
+						name: "refresh",
+						className: "w-5 h-5"
+					})
+				})]
+			}),
+			accountsError && /* @__PURE__ */ jsxs("div", {
+				className: "ds-notice mb-4",
+				children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+					name: "alertTriangle",
+					className: "w-4 h-4 mr-2 inline-block align-text-bottom"
+				}), accountsError]
+			}),
+			accountsLoading ? /* @__PURE__ */ jsx("div", {
+				className: "text-sm text-gray-400",
+				children: "Загрузка аккаунтов..."
+			}) : /* @__PURE__ */ jsx("div", {
+				className: "table-frame overflow-x-auto",
+				children: /* @__PURE__ */ jsxs("table", {
+					className: "table-modern",
+					children: [/* @__PURE__ */ jsx("thead", { children: /* @__PURE__ */ jsxs("tr", { children: [
+						/* @__PURE__ */ jsx("th", { children: "Ник" }),
+						/* @__PURE__ */ jsx("th", { children: "Роль" }),
+						/* @__PURE__ */ jsx("th", { children: "Статус" }),
+						/* @__PURE__ */ jsx("th", { children: "Класс" }),
+						/* @__PURE__ */ jsx("th", { children: "Создан" }),
+						/* @__PURE__ */ jsx("th", { children: "Последний вход" }),
+						/* @__PURE__ */ jsx("th", { children: "Действие" })
+					] }) }), /* @__PURE__ */ jsx("tbody", { children: accounts.map((account) => /* @__PURE__ */ jsxs("tr", { children: [
+						/* @__PURE__ */ jsx("td", {
+							className: "font-medium",
+							children: account.nickname
+						}),
+						/* @__PURE__ */ jsx("td", { children: canChangeRoles ? /* @__PURE__ */ jsx("select", {
+							className: "select-field text-xs min-w-[120px]",
+							value: account.role,
+							onChange: (e) => updateAccount(account, { role: e.target.value }),
+							disabled: togglingId === account.id,
+							children: roleOptions.map((role) => /* @__PURE__ */ jsx("option", {
+								value: role,
+								children: roleLabels[role]
+							}, role))
+						}) : roleLabels[account.role] }),
+						/* @__PURE__ */ jsx("td", { children: /* @__PURE__ */ jsx("span", {
+							className: `px-3 py-1 rounded-full text-xs ${account.isActive ? "bg-green-600/20 text-green-300 border border-green-600/30" : "bg-yellow-600/20 text-yellow-300 border border-yellow-600/30"}`,
+							children: account.isActive ? "active" : "inactive"
+						}) }),
+						/* @__PURE__ */ jsx("td", { children: /* @__PURE__ */ jsx(ClassBadge, {
+							className: rosterByNickname.get(account.nickname.toLowerCase())?.class,
+							textClassName: "text-[#e6eff5]",
+							iconSizeClassName: "h-8 w-8"
+						}) }),
+						/* @__PURE__ */ jsx("td", { children: new Date(account.createdAt).toLocaleDateString() }),
+						/* @__PURE__ */ jsx("td", { children: account.lastLoginAt ? new Date(account.lastLoginAt).toLocaleString() : "—" }),
+						/* @__PURE__ */ jsx("td", { children: /* @__PURE__ */ jsx("button", {
+							type: "button",
+							className: "btn-secondary px-3 py-2 text-xs",
+							disabled: togglingId === account.id,
+							onClick: () => updateAccount(account, { isActive: !account.isActive }),
+							children: togglingId === account.id ? "..." : account.isActive ? "Выключить" : "Включить"
+						}) })
+					] }, account.id)) })]
+				})
+			})
+		]
+	});
+});
+function ProfileSection({ user }) {
+	const isAdmin = canManageAccounts(user.role);
+	const canChangeRoles = canAssignRoles(user.role);
+	const { data: knownClasses = [] } = useKnownClasses();
+	const { data: accounts = [], isLoading: accountsLoading, error: accountsQueryError, refetch: refetchAccounts } = useAccounts(isAdmin);
+	const { data: roster = [] } = useRegistrations();
+	const updateAccountMutation = useUpdateAccount();
+	const updateRegistrationStatsMutation = useUpdateRegistrationStats();
+	const [togglingId, setTogglingId] = useState(null);
+	const [profileDraft, setProfileDraft] = useState({
+		discordHandle: "",
+		prefix: "",
+		className: "",
+		guild: "",
+		mmr20: 0,
+		outerHeroic: 0,
+		innerHeroic: 0,
+		crimsonSands: 0,
+		abyss: 0,
+		gvg: 0,
+		secretRealm: 0
+	});
+	const [profileNotice, setProfileNotice] = useState(null);
+	const rosterByNickname = useMemo(() => {
+		const next = /* @__PURE__ */ new Map();
+		for (const item of roster) next.set(item.nickname.toLowerCase(), item);
+		return next;
+	}, [roster]);
+	const profileRegistration = useMemo(() => rosterByNickname.get((user.nickname || "").toLowerCase()), [rosterByNickname, user.nickname]);
+	const classOptions = useMemo(() => {
+		const values = new Set(knownClasses);
+		if (profileDraft.className) values.add(profileDraft.className);
+		return [...values].sort((a, b) => a.localeCompare(b, "ru"));
+	}, [knownClasses, profileDraft.className]);
+	const profileKpiClass = useMemo(() => getKPIClass(profileRegistration?.kpi ?? 0), [profileRegistration?.kpi]);
+	const profileKpiTone = useMemo(() => {
+		if (profileKpiClass === "kpi-good") return "border-green-500/35 bg-green-500/12 text-green-300";
+		if (profileKpiClass === "kpi-medium") return "border-yellow-500/35 bg-yellow-500/12 text-yellow-300";
+		return "border-red-500/35 bg-red-500/12 text-red-300";
+	}, [profileKpiClass]);
+	const accountsError = useMemo(() => {
+		if (updateAccountMutation.error instanceof Error) return updateAccountMutation.error.message;
+		if (accountsQueryError instanceof Error) return accountsQueryError.message;
+		return null;
+	}, [accountsQueryError, updateAccountMutation.error]);
+	useEffect(() => {
+		setProfileDraft({
+			discordHandle: profileRegistration?.discordHandle || user.discordHandle || "",
+			prefix: profileRegistration?.prefix ?? user.prefix ?? "",
+			className: profileRegistration?.class || user.className || "",
+			guild: profileRegistration?.guild || "",
+			mmr20: profileRegistration?.mmr20 || 0,
+			outerHeroic: profileRegistration?.outerHeroic || 0,
+			innerHeroic: profileRegistration?.innerHeroic || 0,
+			crimsonSands: profileRegistration?.crimsonSands || 0,
+			abyss: profileRegistration?.abyss || 0,
+			gvg: profileRegistration?.gvg || 0,
+			secretRealm: profileRegistration?.secretRealm || 0
+		});
+	}, [
+		profileRegistration,
+		user.className,
+		user.discordHandle,
+		user.prefix
+	]);
+	const loadAccounts = useCallback(() => {
+		if (!isAdmin) return;
+		refetchAccounts();
+	}, [isAdmin, refetchAccounts]);
+	const updateAccount = useCallback(async (account, next) => {
+		try {
+			setTogglingId(account.id);
+			await updateAccountMutation.mutateAsync({
+				id: account.id,
+				isActive: next.isActive ?? account.isActive,
+				role: next.role
+			});
+		} finally {
+			setTogglingId(null);
+		}
+	}, [updateAccountMutation]);
+	const handleActivityToggle = useCallback((activityKey) => {
+		setProfileDraft((prev) => ({
+			...prev,
+			[activityKey]: prev[activityKey] > 0 ? 0 : 1
+		}));
+	}, []);
+	const resetActivities = useCallback(() => {
+		setProfileDraft((prev) => resetActivityDraft(prev));
+	}, []);
+	const hasMarkedActivities = useMemo(() => activityKeys.some((activityKey) => profileDraft[activityKey] > 0), [profileDraft]);
+	const saveProfileStats = async () => {
+		if (!user.nickname) {
+			setProfileNotice("Ник не найден для сохранения профиля");
+			return;
+		}
+		const payload = { nickname: user.nickname };
+		const nextDiscordHandle = profileDraft.discordHandle.trim();
+		const nextPrefix = profileDraft.prefix.trim();
+		const nextClassName = profileDraft.className.trim();
+		const nextGuild = profileDraft.guild.trim();
+		if (nextDiscordHandle !== (profileRegistration?.discordHandle || user.discordHandle || "")) payload.discordHandle = nextDiscordHandle;
+		if (nextPrefix !== (profileRegistration?.prefix || user.prefix || "")) payload.prefix = nextPrefix ? isPrefixOption(nextPrefix) ? nextPrefix : null : null;
+		if (nextClassName && nextClassName !== (profileRegistration?.class || user.className || "")) payload.className = nextClassName;
+		if (nextGuild !== (profileRegistration?.guild || "")) payload.guild = nextGuild;
+		if ((profileDraft.mmr20 || 0) !== (profileRegistration?.mmr20 || 0)) payload.mmr20 = Number(profileDraft.mmr20) || 0;
+		if ((profileDraft.outerHeroic || 0) !== (profileRegistration?.outerHeroic || 0)) payload.outerHeroic = Number(profileDraft.outerHeroic) || 0;
+		if ((profileDraft.innerHeroic || 0) !== (profileRegistration?.innerHeroic || 0)) payload.innerHeroic = Number(profileDraft.innerHeroic) || 0;
+		if ((profileDraft.crimsonSands || 0) !== (profileRegistration?.crimsonSands || 0)) payload.crimsonSands = Number(profileDraft.crimsonSands) || 0;
+		if ((profileDraft.abyss || 0) !== (profileRegistration?.abyss || 0)) payload.abyss = Number(profileDraft.abyss) || 0;
+		if ((profileDraft.gvg || 0) !== (profileRegistration?.gvg || 0)) payload.gvg = Number(profileDraft.gvg) || 0;
+		if ((profileDraft.secretRealm || 0) !== (profileRegistration?.secretRealm || 0)) payload.secretRealm = Number(profileDraft.secretRealm) || 0;
+		if (Object.keys(payload).length === 1) {
+			setProfileNotice("Изменений нет");
+			return;
+		}
+		try {
+			setProfileNotice(null);
+			await updateRegistrationStatsMutation.mutateAsync(payload);
+			setProfileNotice("Профиль обновлён");
+		} catch (error) {
+			setProfileNotice(error instanceof Error ? error.message : "Не удалось сохранить профиль");
+		}
+	};
+	return /* @__PURE__ */ jsx("section", {
+		className: "section-shell py-10 sm:py-12",
+		children: /* @__PURE__ */ jsx("div", {
+			className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+			children: /* @__PURE__ */ jsxs("div", {
+				className: "section-stack-lg",
+				children: [
+					/* @__PURE__ */ jsx(SectionHero, {
+						icon: /* @__PURE__ */ jsx(WuxiaIcon, {
+							name: "profile",
+							className: "w-5 h-5"
+						}),
+						title: "Личный кабинет",
+						subtitle: "Твой профиль и управление учетками. Новые участники создаются неактивными и включаются админом.",
+						chips: [
+							"Account",
+							"Security",
+							"Admin Control"
+						]
+					}),
+					/* @__PURE__ */ jsx(ProfileOverview, {
+						profileRegistration,
+						user
+					}),
+					/* @__PURE__ */ jsx(RoleAccessPanel, { currentRole: user.role }),
+					/* @__PURE__ */ jsxs("div", {
+						className: "card section-card p-5 sm:p-6 space-y-6",
+						children: [
+							/* @__PURE__ */ jsxs("div", {
+								className: "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between",
+								children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
+									className: "text-sm uppercase tracking-widest text-[#9ec5d8] mb-2",
+									children: "Статистика"
+								}), /* @__PURE__ */ jsx("div", {
+									className: "text-gray-400 text-sm",
+									children: "Данные из Neon: отметки, дуэли, Best MMR и расчётный KPI."
+								})] }), /* @__PURE__ */ jsxs("div", {
+									className: "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end",
+									children: [/* @__PURE__ */ jsx("button", {
+										type: "button",
+										className: "btn-secondary px-4 py-2 text-sm",
+										onClick: resetActivities,
+										disabled: updateRegistrationStatsMutation.isPending || !hasMarkedActivities,
+										children: "Сбросить отметки"
+									}), /* @__PURE__ */ jsx("button", {
+										type: "button",
+										className: "btn-secondary px-4 py-2 text-sm",
+										onClick: saveProfileStats,
+										disabled: updateRegistrationStatsMutation.isPending,
+										children: updateRegistrationStatsMutation.isPending ? "Сохраняем..." : "Сохранить профиль"
+									})]
+								})]
+							}),
+							profileNotice && /* @__PURE__ */ jsxs("div", {
+								className: "ds-notice",
+								children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+									name: "checkCircle",
+									className: "w-4 h-4 mr-2 inline-block align-text-bottom"
+								}), profileNotice]
+							}),
+							/* @__PURE__ */ jsxs("div", {
+								className: "grid grid-cols-2 lg:grid-cols-5 gap-4 text-sm",
+								children: [
+									/* @__PURE__ */ jsxs("div", {
+										className: `ds-metric-tile border ${profileKpiTone}`,
+										children: [/* @__PURE__ */ jsx("div", {
+											className: "text-gray-400 mb-1",
+											children: "KPI"
+										}), /* @__PURE__ */ jsx("div", {
+											className: `font-medium ${profileKpiClass}`,
+											children: profileRegistration?.kpi ?? 0
+										})]
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "ds-metric-tile",
+										children: [/* @__PURE__ */ jsx("div", {
+											className: "text-gray-400 mb-1",
+											children: "ELO"
+										}), /* @__PURE__ */ jsx("div", {
+											className: "text-[#e6eff5] font-medium",
+											children: profileRegistration?.elo ?? 0
+										})]
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "ds-metric-tile",
+										children: [/* @__PURE__ */ jsx("div", {
+											className: "text-gray-400 mb-1",
+											children: "Best MMR"
+										}), /* @__PURE__ */ jsx("div", {
+											className: "text-[#e6eff5] font-medium",
+											children: profileRegistration?.mmr20 ?? 0
+										})]
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "ds-metric-tile",
+										children: [/* @__PURE__ */ jsx("div", {
+											className: "text-gray-400 mb-1",
+											children: "Всего отметок"
+										}), /* @__PURE__ */ jsx("div", {
+											className: "text-[#e6eff5] font-medium",
+											children: profileRegistration?.marks ?? 0
+										})]
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "ds-metric-tile",
+										children: [/* @__PURE__ */ jsx("div", {
+											className: "text-gray-400 mb-1",
+											children: "Bounty"
+										}), /* @__PURE__ */ jsx("div", {
+											className: "text-[#e6eff5] font-medium",
+											children: profileRegistration?.bounty ?? 0
+										})]
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "ds-metric-tile",
+										children: [/* @__PURE__ */ jsx("div", {
+											className: "text-gray-400 mb-1",
+											children: "Победы в дуэлях"
+										}), /* @__PURE__ */ jsx("div", {
+											className: "text-[#e6eff5] font-medium",
+											children: profileRegistration?.duelWins ?? 0
+										})]
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "ds-metric-tile",
+										children: [/* @__PURE__ */ jsx("div", {
+											className: "text-gray-400 mb-1",
+											children: "Поражения в дуэлях"
+										}), /* @__PURE__ */ jsx("div", {
+											className: "text-[#e6eff5] font-medium",
+											children: profileRegistration?.duelLosses ?? 0
+										})]
+									})
+								]
+							}),
+							/* @__PURE__ */ jsxs("div", {
+								className: "grid grid-cols-1 md:grid-cols-3 gap-4 text-sm",
+								children: [
+									/* @__PURE__ */ jsxs("label", {
+										className: "space-y-2",
+										children: [/* @__PURE__ */ jsx("span", {
+											className: "text-gray-400",
+											children: "Discord"
+										}), /* @__PURE__ */ jsx("input", {
+											type: "text",
+											value: profileDraft.discordHandle,
+											onChange: (e) => setProfileDraft((prev) => ({
+												...prev,
+												discordHandle: e.target.value
+											})),
+											className: "input-field w-full",
+											placeholder: "@example"
+										})]
+									}),
+									/* @__PURE__ */ jsxs("label", {
+										className: "space-y-2",
+										children: [/* @__PURE__ */ jsx("span", {
+											className: "text-gray-400",
+											children: "Титул / префикс"
+										}), /* @__PURE__ */ jsxs("select", {
+											value: profileDraft.prefix,
+											onChange: (e) => setProfileDraft((prev) => ({
+												...prev,
+												prefix: e.target.value
+											})),
+											className: "select-field w-full",
+											children: [/* @__PURE__ */ jsx("option", {
+												value: "",
+												children: "Без префикса"
+											}), prefixOptions.map((prefix) => /* @__PURE__ */ jsx("option", {
+												value: prefix,
+												children: prefix
+											}, prefix))]
+										})]
+									}),
+									/* @__PURE__ */ jsxs("label", {
+										className: "space-y-2",
+										children: [
+											/* @__PURE__ */ jsx("span", {
+												className: "text-gray-400",
+												children: "Класс"
+											}),
+											/* @__PURE__ */ jsxs("select", {
+												value: profileDraft.className,
+												onChange: (e) => setProfileDraft((prev) => ({
+													...prev,
+													className: e.target.value
+												})),
+												className: "select-field w-full",
+												children: [/* @__PURE__ */ jsx("option", {
+													value: "",
+													children: "Выбери класс"
+												}), classOptions.map((className) => /* @__PURE__ */ jsx("option", {
+													value: className,
+													children: className
+												}, className))]
+											}),
+											profileDraft.className ? /* @__PURE__ */ jsx("div", {
+												className: "rounded-2xl border border-[#2f6e8d]/35 bg-[#12202b]/55 px-4 py-3",
+												children: /* @__PURE__ */ jsx(ClassBadge, {
+													className: profileDraft.className,
+													badgeClassName: "w-full",
+													textClassName: "text-[#e6eff5] font-medium"
+												})
+											}) : null
+										]
+									}),
+									/* @__PURE__ */ jsxs("label", {
+										className: "space-y-2",
+										children: [/* @__PURE__ */ jsx("span", {
+											className: "text-gray-400",
+											children: "Клан"
+										}), /* @__PURE__ */ jsx("input", {
+											type: "text",
+											value: profileDraft.guild,
+											onChange: (e) => setProfileDraft((prev) => ({
+												...prev,
+												guild: e.target.value
+											})),
+											className: "input-field w-full",
+											placeholder: "Название клана"
+										})]
+									}),
+									/* @__PURE__ */ jsxs("label", {
+										className: "space-y-2",
+										children: [/* @__PURE__ */ jsx("span", {
+											className: "text-gray-400",
+											children: "Best MMR"
+										}), /* @__PURE__ */ jsx("input", {
+											type: "number",
+											value: profileDraft.mmr20,
+											onChange: (e) => setProfileDraft((prev) => ({
+												...prev,
+												mmr20: Number(e.target.value) || 0
+											})),
+											className: "input-field w-full"
+										})]
+									})
+								]
+							}),
+							/* @__PURE__ */ jsx("div", {
+								className: "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 text-sm",
+								children: activityLabels.map(({ key, label }) => {
+									return /* @__PURE__ */ jsx(ActivityToggleCard, {
+										activityKey: key,
+										isMarked: profileDraft[key] > 0,
+										label,
+										onToggle: handleActivityToggle
+									}, key);
+								})
+							})
+						]
+					}),
+					/* @__PURE__ */ jsx(NotificationSettingsSection, {}),
+					isAdmin && /* @__PURE__ */ jsx(AccountsPanel, {
+						accounts,
+						accountsError,
+						accountsLoading,
+						canChangeRoles,
+						loadAccounts,
+						rosterByNickname,
+						togglingId,
+						updateAccount
+					})
+				]
+			})
+		})
+	});
+}
+//#endregion
+//#region app/(portal)/profile/page.tsx
+function ProfilePage() {
+	return /* @__PURE__ */ jsx(ProfileSection, { user: useUser() });
+}
+//#endregion
+//#region ../../lib/schemas/pvp.ts
+var pvpQueueEntrySchema = objectType({
+	playerId: stringType(),
+	nickname: stringType(),
+	prefix: stringType().nullable().optional(),
+	className: stringType(),
+	joinedAt: stringType()
+});
+var pvpRatingSchema = objectType({
+	playerId: stringType(),
+	nickname: stringType(),
+	prefix: stringType().nullable().optional(),
+	rating: numberType(),
+	wins: numberType(),
+	losses: numberType()
+});
+var pvpMatchSchema = objectType({
+	id: stringType(),
+	status: enumType(["pending", "completed"]),
+	createdAt: stringType(),
+	updatedAt: stringType(),
+	confirmedAt: stringType().nullable(),
+	winnerId: stringType().nullable(),
+	playerOne: objectType({
+		id: stringType(),
+		nickname: stringType(),
+		prefix: stringType().nullable().optional(),
+		className: stringType()
+	}),
+	playerTwo: objectType({
+		id: stringType(),
+		nickname: stringType(),
+		prefix: stringType().nullable().optional(),
+		className: stringType()
+	}),
+	yourReport: enumType(["win", "loss"]).nullable(),
+	opponentReport: enumType(["win", "loss"]).nullable(),
+	confirmationStatus: enumType([
+		"unreported",
+		"waiting",
+		"disputed",
+		"confirmed"
+	])
+});
+var pvpStateSchema = objectType({
+	queue: arrayType(pvpQueueEntrySchema),
+	leaderboard: arrayType(pvpRatingSchema),
+	recentMatches: arrayType(pvpMatchSchema),
+	activeMatch: pvpMatchSchema.nullable(),
+	userInQueue: booleanType(),
+	userRating: pvpRatingSchema.nullable()
+});
+var pvpReportSchema = objectType({
+	matchId: stringType().min(1),
+	result: enumType(["win", "loss"])
+});
+//#endregion
+//#region ../../lib/api/pvp.ts
+var pvpApi = {
+	getState: async () => {
+		const response = await getApiPvp({ client: sameOriginOpenApiClient });
+		return pvpStateSchema.parse(response.data || {});
+	},
+	joinQueue: async () => {
+		const response = await postApiPvp({ client: sameOriginOpenApiClient });
+		return pvpStateSchema.parse(response.data || {});
+	},
+	leaveQueue: async () => {
+		const response = await deleteApiPvp({ client: sameOriginOpenApiClient });
+		return pvpStateSchema.parse(response.data || {});
+	},
+	reportResult: async (data) => {
+		const response = await patchApiPvp({
+			client: sameOriginOpenApiClient,
+			body: pvpReportSchema.parse(data)
+		});
+		return pvpStateSchema.parse(response.data || {});
+	}
+};
+//#endregion
+//#region ../../lib/pvp/hooks.ts
+var pvpKeys = {
+	all: ["pvp"],
+	state: () => [...pvpKeys.all, "state"]
+};
+function usePvpState() {
+	return useQuery({
+		queryKey: pvpKeys.state(),
+		queryFn: pvpApi.getState,
+		refetchInterval: 15e3
+	});
+}
+function useJoinPvpQueue(optimisticPlayer) {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: () => pvpApi.joinQueue(),
+		onMutate: async () => {
+			await queryClient.cancelQueries({ queryKey: pvpKeys.state() });
+			const previousState = queryClient.getQueryData(pvpKeys.state());
+			if (!optimisticPlayer) return { previousState };
+			const optimisticEntry = {
+				...optimisticPlayer,
+				joinedAt: (/* @__PURE__ */ new Date()).toISOString()
+			};
+			queryClient.setQueryData(pvpKeys.state(), (current) => current ? {
+				...current,
+				userInQueue: true,
+				queue: current.queue.some((entry) => entry.playerId === optimisticPlayer.playerId) ? current.queue : [...current.queue, optimisticEntry]
+			} : current);
+			return { previousState };
+		},
+		onError: (_error, _vars, context) => {
+			if (context?.previousState) queryClient.setQueryData(pvpKeys.state(), context.previousState);
+		},
+		onSuccess: (nextState) => {
+			queryClient.setQueryData(pvpKeys.state(), nextState);
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: pvpKeys.state() });
+		}
+	});
+}
+function useLeavePvpQueue(identity) {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: () => pvpApi.leaveQueue(),
+		onMutate: async () => {
+			await queryClient.cancelQueries({ queryKey: pvpKeys.state() });
+			const previousState = queryClient.getQueryData(pvpKeys.state());
+			if (!identity) return { previousState };
+			const { playerId, nickname } = identity;
+			queryClient.setQueryData(pvpKeys.state(), (current) => current ? {
+				...current,
+				userInQueue: false,
+				activeMatch: null,
+				queue: current.queue.filter((entry) => entry.playerId !== playerId && entry.nickname !== nickname)
+			} : current);
+			return { previousState };
+		},
+		onError: (_error, _vars, context) => {
+			if (context?.previousState) queryClient.setQueryData(pvpKeys.state(), context.previousState);
+		},
+		onSuccess: (nextState) => {
+			queryClient.setQueryData(pvpKeys.state(), nextState);
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: pvpKeys.state() });
+		}
+	});
+}
+function useReportPvpResult() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (data) => pvpApi.reportResult(data),
+		onMutate: async (data) => {
+			await queryClient.cancelQueries({ queryKey: pvpKeys.state() });
+			const previousState = queryClient.getQueryData(pvpKeys.state());
+			queryClient.setQueryData(pvpKeys.state(), (current) => {
+				if (!current?.activeMatch || current.activeMatch.id !== data.matchId) return current;
+				const nextOpponentReport = current.activeMatch.opponentReport;
+				const confirmationStatus = nextOpponentReport ? nextOpponentReport === data.result ? "confirmed" : "disputed" : "waiting";
+				return {
+					...current,
+					activeMatch: {
+						...current.activeMatch,
+						yourReport: data.result,
+						confirmationStatus
+					}
+				};
+			});
+			return { previousState };
+		},
+		onError: (_error, _vars, context) => {
+			if (context?.previousState) queryClient.setQueryData(pvpKeys.state(), context.previousState);
+		},
+		onSuccess: (nextState) => {
+			queryClient.setQueryData(pvpKeys.state(), nextState);
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: pvpKeys.state() });
+		}
+	});
+}
+//#endregion
+//#region ../../components/sections/pvp/index.tsx
+function formatDateTime(value) {
+	if (!value) return "—";
+	const date = new Date(value);
+	if (!Number.isFinite(date.getTime())) return value;
+	return date.toLocaleString("ru-RU", {
+		day: "2-digit",
+		month: "2-digit",
+		hour: "2-digit",
+		minute: "2-digit"
+	});
+}
+function formatDuration(totalSeconds) {
+	const safeSeconds = Math.max(0, totalSeconds);
+	const minutes = Math.floor(safeSeconds / 60);
+	const seconds = safeSeconds % 60;
+	const hours = Math.floor(minutes / 60);
+	if (hours > 0) return `${String(hours).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+	return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+function getQueueElapsed(joinedAt, now) {
+	if (!joinedAt) return 0;
+	const startedAt = new Date(joinedAt).getTime();
+	if (!Number.isFinite(startedAt)) return 0;
+	return Math.max(0, Math.floor((now - startedAt) / 1e3));
+}
+function QueueSearchBanner({ joinedAt, queueSize }) {
+	const [now, setNow] = useState(() => Date.now());
+	useEffect(() => {
+		const timer = window.setInterval(() => {
+			setNow(Date.now());
+		}, 1e3);
+		return () => {
+			window.clearInterval(timer);
+		};
+	}, []);
+	const elapsed = getQueueElapsed(joinedAt, now);
+	return /* @__PURE__ */ jsxs("div", {
+		className: "matchmaking-banner",
+		children: [/* @__PURE__ */ jsxs("div", {
+			className: "matchmaking-banner__fx",
+			"aria-hidden": "true",
+			children: [
+				/* @__PURE__ */ jsx("span", { className: "matchmaking-banner__pulse" }),
+				/* @__PURE__ */ jsx("span", { className: "matchmaking-banner__pulse matchmaking-banner__pulse--delay" }),
+				/* @__PURE__ */ jsx("span", { className: "matchmaking-banner__scan" })
+			]
+		}), /* @__PURE__ */ jsxs("div", {
+			className: "matchmaking-banner__content",
+			children: [
+				/* @__PURE__ */ jsxs("div", {
+					className: "matchmaking-banner__status",
+					children: [/* @__PURE__ */ jsx("span", { className: "matchmaking-banner__dot" }), "Поиск матча"]
+				}),
+				/* @__PURE__ */ jsx("div", {
+					className: "matchmaking-banner__timer",
+					children: formatDuration(elapsed)
+				}),
+				/* @__PURE__ */ jsxs("div", {
+					className: "matchmaking-banner__meta",
+					children: [/* @__PURE__ */ jsx("span", { children: "Плашка подбора активна" }), /* @__PURE__ */ jsxs("span", { children: ["Игроков в очереди: ", queueSize] })]
+				})
+			]
+		})]
+	});
+}
+function MatchCard({ match, user, onReport, isReporting }) {
+	const isPlayerOne = (user.discordId || user.id || user.nickname || "") === match.playerOne.id;
+	const you = isPlayerOne ? match.playerOne : match.playerTwo;
+	const opponent = isPlayerOne ? match.playerTwo : match.playerOne;
+	const hasReported = Boolean(match.yourReport);
+	return /* @__PURE__ */ jsxs("div", {
+		className: "card section-card ds-section-panel p-5 sm:p-6 space-y-5",
+		children: [
+			/* @__PURE__ */ jsxs("div", {
+				className: "flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3",
+				children: [/* @__PURE__ */ jsxs("div", { children: [
+					/* @__PURE__ */ jsx("div", {
+						className: "text-sm uppercase tracking-widest text-green-300 mb-2",
+						children: "Текущий матч"
+					}),
+					/* @__PURE__ */ jsxs("div", {
+						className: "text-2xl font-bold font-orbitron text-[#e6eff5]",
+						children: [
+							you.nickname,
+							" vs ",
+							opponent.nickname
+						]
+					}),
+					/* @__PURE__ */ jsxs("div", {
+						className: "text-sm text-gray-400 mt-2",
+						children: ["Создан: ", formatDateTime(match.createdAt)]
+					})
+				] }), /* @__PURE__ */ jsxs("div", {
+					className: "ds-kicker border-green-700/45 bg-green-900/30 py-2 text-xs text-green-300",
+					children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+						name: "sword",
+						className: "w-4 h-4"
+					}), match.confirmationStatus === "confirmed" ? "Подтверждено" : match.confirmationStatus === "disputed" ? "Есть спор" : match.confirmationStatus === "waiting" ? "Ждем второго игрока" : "Результат не отправлен"]
+				})]
+			}),
+			/* @__PURE__ */ jsxs("div", {
+				className: "grid grid-cols-1 md:grid-cols-2 gap-4 text-sm",
+				children: [/* @__PURE__ */ jsxs("div", {
+					className: "rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4",
+					children: [
+						/* @__PURE__ */ jsx("div", {
+							className: "text-gray-400 mb-1",
+							children: "Ты"
+						}),
+						/* @__PURE__ */ jsxs("div", {
+							className: "flex flex-wrap items-center gap-2 text-[#e6eff5] font-semibold",
+							children: [/* @__PURE__ */ jsx("span", { children: you.nickname }), /* @__PURE__ */ jsx(PrefixBadge, {
+								prefix: you.prefix,
+								variant: "compact"
+							})]
+						}),
+						/* @__PURE__ */ jsx("div", {
+							className: "mt-2",
+							children: /* @__PURE__ */ jsx(ClassBadge, {
+								className: you.className,
+								emptyLabel: "Класс не указан",
+								textClassName: "text-green-300 text-xs",
+								iconSizeClassName: "h-7 w-7"
+							})
+						})
+					]
+				}), /* @__PURE__ */ jsxs("div", {
+					className: "rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4",
+					children: [
+						/* @__PURE__ */ jsx("div", {
+							className: "text-gray-400 mb-1",
+							children: "Соперник"
+						}),
+						/* @__PURE__ */ jsxs("div", {
+							className: "flex flex-wrap items-center gap-2 text-[#e6eff5] font-semibold",
+							children: [/* @__PURE__ */ jsx("span", { children: opponent.nickname }), /* @__PURE__ */ jsx(PrefixBadge, {
+								prefix: opponent.prefix,
+								variant: "compact"
+							})]
+						}),
+						/* @__PURE__ */ jsx("div", {
+							className: "mt-2",
+							children: /* @__PURE__ */ jsx(ClassBadge, {
+								className: opponent.className,
+								emptyLabel: "Класс не указан",
+								textClassName: "text-green-300 text-xs",
+								iconSizeClassName: "h-7 w-7"
+							})
+						})
+					]
+				})]
+			}),
+			/* @__PURE__ */ jsxs("div", {
+				className: "flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between",
+				children: [/* @__PURE__ */ jsxs("div", {
+					className: "text-sm text-gray-400",
+					children: [
+						"Твой отчет: ",
+						/* @__PURE__ */ jsx("span", {
+							className: "text-[#e6eff5]",
+							children: match.yourReport ? match.yourReport === "win" ? "Победа" : "Поражение" : "не отправлен"
+						}),
+						" · ",
+						"Отчет соперника: ",
+						/* @__PURE__ */ jsx("span", {
+							className: "text-[#e6eff5]",
+							children: match.opponentReport ? match.opponentReport === "win" ? "Победа" : "Поражение" : "нет"
+						})
+					]
+				}), match.status === "pending" && /* @__PURE__ */ jsxs("div", {
+					className: "flex flex-col sm:flex-row gap-3",
+					children: [/* @__PURE__ */ jsx("button", {
+						type: "button",
+						className: "btn-primary px-4 py-2 w-full sm:w-auto",
+						disabled: isReporting,
+						onClick: () => onReport("win"),
+						children: hasReported ? "Обновить: победа" : "Сообщить победу"
+					}), /* @__PURE__ */ jsx("button", {
+						type: "button",
+						className: "btn-secondary px-4 py-2 w-full sm:w-auto",
+						disabled: isReporting,
+						onClick: () => onReport("loss"),
+						children: hasReported ? "Обновить: поражение" : "Сообщить поражение"
+					})]
+				})]
+			}),
+			match.status === "pending" && hasReported && /* @__PURE__ */ jsx("div", {
+				className: "rounded-2xl ds-section-panel-soft border-green-700/45 bg-green-950/35 px-4 py-3 text-xs text-green-300",
+				children: "Твой отчет уже отправлен. При необходимости его можно обновить до подтверждения матча."
+			})
+		]
+	});
+}
+function PvpSectionContent({ user }) {
+	const { data, isLoading, error, refetch } = usePvpState();
+	const joinQueue = useJoinPvpQueue({
+		playerId: user.discordId || user.id || user.nickname || "self",
+		nickname: user.nickname || "You",
+		prefix: user.prefix || null,
+		className: user.className || "Unknown"
+	});
+	const leaveQueue = useLeavePvpQueue({
+		playerId: user.discordId || user.id || user.nickname || "self",
+		nickname: user.nickname || "You"
+	});
+	const reportResult = useReportPvpResult();
+	const [actionNotice, setActionNotice] = useState(null);
+	const reportActionError = (err) => {
+		setActionNotice({
+			tone: "error",
+			message: handleApiError(err)
+		});
+	};
+	const joinQueueAction = async () => {
+		try {
+			await joinQueue.mutateAsync();
+			setActionNotice({
+				tone: "success",
+				message: "Ты в очереди. Ждем соперника."
+			});
+		} catch (err) {
+			reportActionError(err);
+		}
+	};
+	const leaveQueueAction = async () => {
+		try {
+			await leaveQueue.mutateAsync();
+			setActionNotice({
+				tone: "success",
+				message: "Активность в PvP снята."
+			});
+		} catch (err) {
+			reportActionError(err);
+		}
+	};
+	const reportMatchResult = async (matchId, result) => {
+		try {
+			await reportResult.mutateAsync({
+				matchId,
+				result
+			});
+			setActionNotice({
+				tone: "success",
+				message: "Результат отправлен. Ждем подтверждение второго игрока."
+			});
+		} catch (err) {
+			reportActionError(err);
+		}
+	};
+	if (isLoading) return /* @__PURE__ */ jsx(LoadingState, {
+		title: "PvP-комната",
+		subtitle: "Ищем соперников и обновляем таблицу дуэлей...",
+		icon: /* @__PURE__ */ jsx(WuxiaIcon, {
+			name: "sword",
+			className: "w-6 h-6 text-green-300"
+		}),
+		skeletonCount: 3,
+		layout: "list"
+	});
+	if (error || !data) return /* @__PURE__ */ jsx(EmptyState, {
+		icon: /* @__PURE__ */ jsx(WuxiaIcon, {
+			name: "alertTriangle",
+			className: "w-7 h-7 text-red-400"
+		}),
+		title: "PvP недоступно",
+		description: error instanceof Error ? error.message : "Не удалось загрузить PvP-секцию",
+		action: /* @__PURE__ */ jsx("button", {
+			onClick: () => refetch(),
+			className: "btn-primary",
+			children: "Повторить"
+		}),
+		variant: "error"
+	});
+	const canJoinQueue = !data.userInQueue && !data.activeMatch;
+	const viewerId = user.discordId || user.id || user.nickname || "";
+	const currentQueueEntry = data.queue.find((entry) => entry.playerId === viewerId || entry.nickname === user.nickname);
+	return /* @__PURE__ */ jsx("section", {
+		className: "section-shell py-10 sm:py-12",
+		children: /* @__PURE__ */ jsx("div", {
+			className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8",
+			children: /* @__PURE__ */ jsxs("div", {
+				className: "section-stack-lg",
+				children: [
+					/* @__PURE__ */ jsx(SectionHero, {
+						icon: /* @__PURE__ */ jsx(WuxiaIcon, {
+							name: "sword",
+							className: "w-5 h-5"
+						}),
+						title: "PvP-комната",
+						subtitle: "Очередь дуэлей по модели DiscordBot2: встаешь в очередь, получаешь соперника, оба подтверждают итог — рейтинг обновляется только после совпадения отчетов.",
+						chips: [
+							"Queue",
+							"Matchmaking",
+							"ELO"
+						]
+					}),
+					actionNotice && /* @__PURE__ */ jsxs("div", {
+						className: `ds-notice ${actionNotice.tone === "error" ? "ds-notice-error" : "ds-notice-success"}`,
+						children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+							name: actionNotice.tone === "error" ? "alertTriangle" : "checkCircle",
+							className: "inline-block w-4 h-4 mr-2 align-text-bottom"
+						}), actionNotice.message]
+					}),
+					/* @__PURE__ */ jsxs("div", {
+						className: "grid grid-cols-1 lg:grid-cols-5 gap-5 sm:gap-6 lg:gap-8 items-start",
+						children: [/* @__PURE__ */ jsxs("div", {
+							className: "lg:col-span-2 section-stack-md",
+							children: [/* @__PURE__ */ jsxs("div", {
+								className: "card section-card ds-section-panel p-5 sm:p-6 space-y-5",
+								children: [
+									data.userInQueue && currentQueueEntry?.joinedAt && !data.activeMatch && /* @__PURE__ */ jsx(QueueSearchBanner, {
+										joinedAt: currentQueueEntry.joinedAt,
+										queueSize: data.queue.length
+									}),
+									/* @__PURE__ */ jsxs("div", { children: [
+										/* @__PURE__ */ jsx("div", {
+											className: "text-sm uppercase tracking-widest text-green-300 mb-2",
+											children: "Твой статус"
+										}),
+										/* @__PURE__ */ jsx("div", {
+											className: "text-2xl font-bold font-orbitron text-[#e6eff5]",
+											children: data.activeMatch ? "Матч найден" : data.userInQueue ? "В очереди" : "Готов к подбору"
+										}),
+										/* @__PURE__ */ jsxs("div", {
+											className: "text-sm text-gray-400 mt-2",
+											children: [
+												"Очередь сейчас: ",
+												data.queue.length,
+												" ",
+												data.queue.length === 1 ? "игрок" : "игроков"
+											]
+										})
+									] }),
+									/* @__PURE__ */ jsxs("div", {
+										className: "grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm",
+										children: [/* @__PURE__ */ jsxs("div", {
+											className: "rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4",
+											children: [/* @__PURE__ */ jsx("div", {
+												className: "text-gray-400 mb-1",
+												children: "Рейтинг"
+											}), /* @__PURE__ */ jsx("div", {
+												className: "text-[#e6eff5] font-semibold",
+												children: data.userRating?.rating ?? 1e3
+											})]
+										}), /* @__PURE__ */ jsxs("div", {
+											className: "rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4",
+											children: [/* @__PURE__ */ jsx("div", {
+												className: "text-gray-400 mb-1",
+												children: "W / L"
+											}), /* @__PURE__ */ jsxs("div", {
+												className: "text-[#e6eff5] font-semibold",
+												children: [
+													data.userRating?.wins ?? 0,
+													" / ",
+													data.userRating?.losses ?? 0
+												]
+											})]
+										})]
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "flex flex-col sm:flex-row gap-3",
+										children: [/* @__PURE__ */ jsx("button", {
+											type: "button",
+											className: "btn-primary flex-1 py-3",
+											disabled: !canJoinQueue || joinQueue.isPending,
+											onClick: () => void joinQueueAction(),
+											children: joinQueue.isPending ? "Ставим в очередь..." : "Встать в очередь"
+										}), /* @__PURE__ */ jsx("button", {
+											type: "button",
+											className: "btn-secondary flex-1 py-3",
+											disabled: !data.userInQueue && !data.activeMatch || leaveQueue.isPending,
+											onClick: () => void leaveQueueAction(),
+											children: leaveQueue.isPending ? "Выходим..." : data.activeMatch ? "Снять активность" : "Покинуть очередь"
+										})]
+									}),
+									data.activeMatch && /* @__PURE__ */ jsx("div", {
+										className: "rounded-2xl ds-section-panel-soft ds-notice-warning border-yellow-700/40 bg-yellow-900/15 p-4 text-xs",
+										children: "Новый вход в очередь временно заблокирован, пока активный матч не будет подтвержден или закрыт."
+									}),
+									/* @__PURE__ */ jsx("div", {
+										className: "rounded-2xl ds-section-panel-soft border-dashed border-green-700/45 bg-green-950/30 p-4 text-sm text-gray-300",
+										children: "Если второй игрок уже ждет, матч появится сразу. Если оба игрока отправят одинаковый результат, ELO обновится автоматически."
+									})
+								]
+							}), /* @__PURE__ */ jsxs("div", {
+								className: "card section-card ds-section-panel p-5 sm:p-6",
+								children: [/* @__PURE__ */ jsx("div", {
+									className: "text-sm uppercase tracking-widest text-green-300 mb-4",
+									children: "Очередь"
+								}), /* @__PURE__ */ jsx("div", {
+									className: "space-y-3",
+									children: data.queue.length === 0 ? /* @__PURE__ */ jsx("div", {
+										className: "text-sm text-gray-400",
+										children: "Очередь пуста — можно стартовать первым."
+									}) : data.queue.map((entry, index) => /* @__PURE__ */ jsxs("div", {
+										className: "rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4",
+										children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsxs("div", {
+											className: "flex flex-wrap items-center gap-2 text-[#e6eff5] font-medium",
+											children: [/* @__PURE__ */ jsxs("span", { children: [
+												"#",
+												index + 1,
+												" ",
+												entry.nickname
+											] }), /* @__PURE__ */ jsx(PrefixBadge, {
+												prefix: entry.prefix,
+												variant: "compact"
+											})]
+										}), /* @__PURE__ */ jsx("div", {
+											className: "mt-1",
+											children: /* @__PURE__ */ jsx(ClassBadge, {
+												className: entry.className,
+												emptyLabel: "Класс не указан",
+												textClassName: "text-xs text-green-300",
+												iconSizeClassName: "h-7 w-7"
+											})
+										})] }), /* @__PURE__ */ jsx("div", {
+											className: "text-xs text-gray-400 whitespace-nowrap",
+											children: formatDateTime(entry.joinedAt)
+										})]
+									}, `${entry.playerId}-${entry.joinedAt}`))
+								})]
+							})]
+						}), /* @__PURE__ */ jsxs("div", {
+							className: "lg:col-span-3 section-stack-md",
+							children: [data.activeMatch ? /* @__PURE__ */ jsx(MatchCard, {
+								match: data.activeMatch,
+								user,
+								isReporting: reportResult.isPending,
+								onReport: async (result) => {
+									await reportMatchResult(data.activeMatch.id, result);
+								}
+							}) : /* @__PURE__ */ jsx("div", {
+								className: "card section-card ds-section-panel p-5 sm:p-6 text-sm text-gray-400",
+								children: "Активного матча нет. Вставай в очередь, чтобы система подобрала ближайшего соперника по FIFO."
+							}), /* @__PURE__ */ jsxs("div", {
+								className: "grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6",
+								children: [/* @__PURE__ */ jsxs("div", {
+									className: "card section-card ds-section-panel p-5 sm:p-6",
+									children: [/* @__PURE__ */ jsx("div", {
+										className: "text-sm uppercase tracking-widest text-green-300 mb-4",
+										children: "Топ рейтинга"
+									}), /* @__PURE__ */ jsx("div", {
+										className: "space-y-3",
+										children: data.leaderboard.length === 0 ? /* @__PURE__ */ jsx("div", {
+											className: "text-sm text-gray-400",
+											children: "Рейтинг еще не заполнен."
+										}) : data.leaderboard.map((entry, index) => /* @__PURE__ */ jsxs("div", {
+											className: "rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4 flex items-center justify-between gap-4",
+											children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsxs("div", {
+												className: "flex flex-wrap items-center gap-2 text-[#e6eff5] font-medium",
+												children: [/* @__PURE__ */ jsxs("span", { children: [
+													"#",
+													index + 1,
+													" ",
+													entry.nickname
+												] }), /* @__PURE__ */ jsx(PrefixBadge, {
+													prefix: entry.prefix,
+													variant: "compact"
+												})]
+											}), /* @__PURE__ */ jsxs("div", {
+												className: "text-xs text-gray-400 mt-1",
+												children: [
+													"W ",
+													entry.wins,
+													" / L ",
+													entry.losses
+												]
+											})] }), /* @__PURE__ */ jsx("div", {
+												className: "text-lg font-semibold text-green-300",
+												children: entry.rating
+											})]
+										}, entry.playerId))
+									})]
+								}), /* @__PURE__ */ jsxs("div", {
+									className: "card section-card ds-section-panel p-5 sm:p-6",
+									children: [/* @__PURE__ */ jsx("div", {
+										className: "text-sm uppercase tracking-widest text-green-300 mb-4",
+										children: "Последние подтвержденные матчи"
+									}), /* @__PURE__ */ jsx("div", {
+										className: "space-y-3",
+										children: data.recentMatches.length === 0 ? /* @__PURE__ */ jsx("div", {
+											className: "text-sm text-gray-400",
+											children: "Пока нет завершенных дуэлей."
+										}) : data.recentMatches.map((match) => /* @__PURE__ */ jsxs("div", {
+											className: "rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4",
+											children: [/* @__PURE__ */ jsxs("div", {
+												className: "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2",
+												children: [/* @__PURE__ */ jsxs("div", {
+													className: "flex flex-wrap items-center gap-2 text-[#e6eff5] font-medium",
+													children: [
+														/* @__PURE__ */ jsx("span", { children: match.playerOne.nickname }),
+														/* @__PURE__ */ jsx(PrefixBadge, {
+															prefix: match.playerOne.prefix,
+															variant: "compact"
+														}),
+														/* @__PURE__ */ jsx("span", {
+															className: "text-gray-500",
+															children: "vs"
+														}),
+														/* @__PURE__ */ jsx("span", { children: match.playerTwo.nickname }),
+														/* @__PURE__ */ jsx(PrefixBadge, {
+															prefix: match.playerTwo.prefix,
+															variant: "compact"
+														})
+													]
+												}), /* @__PURE__ */ jsx("div", {
+													className: "text-xs text-gray-400",
+													children: formatDateTime(match.confirmedAt || match.updatedAt)
+												})]
+											}), /* @__PURE__ */ jsxs("div", {
+												className: "text-xs text-green-300 mt-2",
+												children: ["Победитель: ", match.winnerId === match.playerOne.id ? match.playerOne.nickname : match.winnerId === match.playerTwo.id ? match.playerTwo.nickname : "—"]
+											})]
+										}, match.id))
+									})]
+								})]
+							})]
+						})]
+					})
+				]
+			})
+		})
+	});
+}
+function PvpSection(props) {
+	return /* @__PURE__ */ jsx(ErrorBoundary$1, { children: /* @__PURE__ */ jsx(PvpSectionContent, { ...props }) });
+}
+//#endregion
+//#region app/(portal)/pvp/page.tsx
+function PvpPage() {
+	return /* @__PURE__ */ jsx(PvpSection, { user: useUser() });
+}
+//#endregion
+//#region ../../components/sections/schedule/index.tsx
+function parseTime(timeStr) {
+	if (!timeStr) return null;
+	const match = timeStr.match(/(\d{1,2}):(\d{2})/);
+	if (!match) return null;
+	const hours = parseInt(match[1], 10);
+	const minutes = parseInt(match[2], 10);
+	const start = hours * 60 + minutes;
+	const endMatch = timeStr.match(/[-–]\s*(\d{1,2}):(\d{2})/);
+	if (endMatch) {
+		const endHours = parseInt(endMatch[1], 10);
+		const endMinutes = parseInt(endMatch[2], 10);
+		return {
+			start,
+			end: endHours * 60 + endMinutes
+		};
+	}
+	return {
+		start,
+		end: start + 60
+	};
+}
+function formatCountdown(minutes, language) {
+	if (minutes < 0) return "";
+	const hours = Math.floor(minutes / 60);
+	const mins = minutes % 60;
+	const isRu = language === "ru";
+	const isZh = language === "zh";
+	if (hours > 0) {
+		if (isRu) return `через ${hours}ч ${mins}м`;
+		if (isZh) return `${hours}小时 ${mins}分后`;
+		return `in ${hours}h ${mins}m`;
+	}
+	if (isRu) return `через ${mins}м`;
+	if (isZh) return `${mins}分后`;
+	return `in ${mins}m`;
+}
+var recurringGroupAliases = {
+	daily: [
+		"daily",
+		"ежедневные",
+		"每日"
+	],
+	weekly: [
+		"weekly",
+		"еженедельные",
+		"每周"
+	]
+};
+var weekdays = [
+	{
+		key: "monday",
+		labels: {
+			ru: "Понедельник",
+			en: "Monday",
+			zh: "星期一"
+		},
+		aliases: [
+			"понедельник",
+			"пн",
+			"monday",
+			"mon",
+			"星期一",
+			"周一",
+			"1"
+		]
+	},
+	{
+		key: "tuesday",
+		labels: {
+			ru: "Вторник",
+			en: "Tuesday",
+			zh: "星期二"
+		},
+		aliases: [
+			"вторник",
+			"вт",
+			"tuesday",
+			"tue",
+			"tues",
+			"星期二",
+			"周二",
+			"2"
+		]
+	},
+	{
+		key: "wednesday",
+		labels: {
+			ru: "Среда",
+			en: "Wednesday",
+			zh: "星期三"
+		},
+		aliases: [
+			"среда",
+			"ср",
+			"wednesday",
+			"wed",
+			"星期三",
+			"周三",
+			"3"
+		]
+	},
+	{
+		key: "thursday",
+		labels: {
+			ru: "Четверг",
+			en: "Thursday",
+			zh: "星期四"
+		},
+		aliases: [
+			"четверг",
+			"чт",
+			"thursday",
+			"thu",
+			"thur",
+			"thurs",
+			"星期四",
+			"周四",
+			"4"
+		]
+	},
+	{
+		key: "friday",
+		labels: {
+			ru: "Пятница",
+			en: "Friday",
+			zh: "星期五"
+		},
+		aliases: [
+			"пятница",
+			"пт",
+			"friday",
+			"fri",
+			"星期五",
+			"周五",
+			"5"
+		]
+	},
+	{
+		key: "saturday",
+		labels: {
+			ru: "Суббота",
+			en: "Saturday",
+			zh: "星期六"
+		},
+		aliases: [
+			"суббота",
+			"сб",
+			"saturday",
+			"sat",
+			"星期六",
+			"周六",
+			"6"
+		]
+	},
+	{
+		key: "sunday",
+		labels: {
+			ru: "Воскресенье",
+			en: "Sunday",
+			zh: "星期日"
+		},
+		aliases: [
+			"воскресенье",
+			"вс",
+			"sunday",
+			"sun",
+			"星期日",
+			"星期天",
+			"周日",
+			"周天",
+			"7",
+			"0"
+		]
+	}
+];
+function normalizeDayValue(value) {
+	return value.trim().toLowerCase().replace(/\u0451/g, "е");
+}
+function getWeekdayIndex(date) {
+	return (date.getDay() + 6) % 7;
+}
+function getScheduleDayIndex(item) {
+	const normalized = normalizeDayValue(item.dayType || item.type || item.group || "");
+	if (!normalized) return null;
+	const matchIndex = weekdays.findIndex((weekday) => weekday.aliases.some((alias) => normalized === normalizeDayValue(alias)));
+	return matchIndex >= 0 ? matchIndex : null;
+}
+function isRecurringScheduleItem(item, kind) {
+	return [
+		item.group,
+		item.type,
+		item.dayType
+	].filter((value) => Boolean(value)).map((value) => normalizeDayValue(value)).some((value) => recurringGroupAliases[kind].some((alias) => value === normalizeDayValue(alias)));
+}
+function getDisplayTitle(item, language) {
+	if (language === "zh") return item.titleZh || item.titleEn || item.titleRu || item.registration || "";
+	if (language === "en") return item.titleEn || item.titleRu || item.titleZh || item.registration || "";
+	return item.titleRu || item.titleEn || item.titleZh || item.registration || "";
+}
+function getDisplayTime(item) {
+	return item.time || item.description || "—";
+}
+var groupColors = {
+	"Общее": "#8fb9cc",
+	"General": "#8fb9cc",
+	"PvP": "#e57373",
+	"PvE": "#81c784",
+	"Рейды": "#ffb74d",
+	"Raids": "#ffb74d",
+	"Ивенты": "#ba68c8",
+	"Events": "#ba68c8"
+};
+function getGroupColor(groupName) {
+	return groupColors[groupName] || "#8fb9cc";
+}
+function toEditDraft(item) {
+	return {
+		dayType: item.dayType || item.type || "",
+		time: item.time || item.description || "",
+		titleRu: item.titleRu || item.registration || "",
+		titleEn: item.titleEn || item.registration || "",
+		titleZh: item.titleZh || "",
+		orderIndex: String(item.orderIndex ?? 0),
+		active: item.active ?? true
+	};
+}
+function createDefaultDraft() {
+	return {
+		dayType: "",
+		time: "",
+		titleRu: "",
+		titleEn: "",
+		titleZh: "",
+		orderIndex: "0",
+		active: true
+	};
+}
+function normalizeClockValue(value) {
+	const match = value.trim().match(/^(\d{1,2}):(\d{2})$/);
+	if (!match) return value.trim();
+	return `${match[1].padStart(2, "0")}:${match[2]}`;
+}
+function isValidClockValue(value) {
+	return /^([01]\d|2[0-3]):([0-5]\d)$/.test(value);
+}
+function extractTimeParts(value) {
+	const matches = [...value.matchAll(/(\d{1,2}:\d{2})/g)].map((match) => normalizeClockValue(match[1]));
+	return {
+		start: matches[0] || "",
+		end: matches[1] || ""
+	};
+}
+function buildTimeValue(start, end) {
+	const normalizedStart = normalizeClockValue(start);
+	const normalizedEnd = normalizeClockValue(end);
+	if (normalizedStart && normalizedEnd) return `${normalizedStart} - ${normalizedEnd}`;
+	return normalizedStart;
+}
+function addMinutesToTime(start, minutes) {
+	if (!isValidClockValue(start)) return "";
+	const [hoursString, minutesString] = start.split(":");
+	const normalizedMinutes = ((Number(hoursString) * 60 + Number(minutesString) + minutes) % 1440 + 1440) % 1440;
+	const hours = Math.floor(normalizedMinutes / 60);
+	const mins = normalizedMinutes % 60;
+	return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
+}
+function getDraftTimeError(time, language) {
+	const trimmedTime = time.trim();
+	if (!trimmedTime) return null;
+	const { start, end } = extractTimeParts(trimmedTime);
+	if (!start || !isValidClockValue(start)) return language === "ru" ? "Укажи время в формате HH:MM" : language === "zh" ? "请使用 HH:MM 时间格式" : "Use HH:MM time format";
+	if (end) {
+		if (!isValidClockValue(end)) return language === "ru" ? "Время окончания должно быть в формате HH:MM" : language === "zh" ? "结束时间必须使用 HH:MM 格式" : "End time must use HH:MM format";
+		const parsed = parseTime(buildTimeValue(start, end));
+		if (!parsed || parsed.end <= parsed.start) return language === "ru" ? "Время окончания должно быть позже времени начала" : language === "zh" ? "结束时间必须晚于开始时间" : "End time must be later than start time";
+	}
+	return null;
+}
+function validateDraft(draft, language) {
+	const errors = {};
+	if (!draft.dayType.trim()) errors.dayType = language === "ru" ? "Выбери день или тип повтора" : language === "zh" ? "请选择日期或重复类型" : "Choose a day or recurrence type";
+	const timeError = getDraftTimeError(draft.time, language);
+	if (timeError) errors.time = timeError;
+	if (!draft.titleRu.trim()) errors.titleRu = language === "ru" ? "Добавь русское название" : language === "zh" ? "请填写俄文标题" : "Add a Russian title";
+	if (!draft.titleEn.trim()) errors.titleEn = language === "ru" ? "Добавь английское название" : language === "zh" ? "请填写英文标题" : "Add an English title";
+	return errors;
+}
+function getRecurringAlias(kind, language) {
+	if (language === "ru") return recurringGroupAliases[kind][1];
+	if (language === "zh") return recurringGroupAliases[kind][2];
+	return recurringGroupAliases[kind][0];
+}
+function getRecurrenceLabel(kind, language) {
+	if (kind === "daily") return language === "ru" ? "Каждый день" : language === "zh" ? "每天" : "Daily";
+	return language === "ru" ? "Каждую неделю" : language === "zh" ? "每周" : "Weekly";
+}
+function ScheduleSectionContent({ user, language }) {
+	const { data: schedules = [], isLoading, error, refetch } = useSchedule(language);
+	const updateSchedule = useUpdateSchedule();
+	const createSchedule = useCreateSchedule();
+	const [now, setNow] = useState(() => /* @__PURE__ */ new Date());
+	const [selectedDayIndex, setSelectedDayIndex] = useState(() => getWeekdayIndex(/* @__PURE__ */ new Date()));
+	const [editingSchedule, setEditingSchedule] = useState(null);
+	const [editDraft, setEditDraft] = useState(null);
+	const [scheduleNotice, setScheduleNotice] = useState(null);
+	const dayInputRef = useRef(null);
+	const canEditSchedule = hasRoleAtLeast(user.role, "officer");
+	const selectedDay = weekdays[selectedDayIndex];
+	const draftErrors = editDraft ? validateDraft(editDraft, language) : {};
+	const hasDraftErrors = Object.keys(draftErrors).length > 0;
+	const updateDraft = (patch) => {
+		setEditDraft((current) => current ? {
+			...current,
+			...patch
+		} : current);
+	};
+	const updateDraftTime = (part, value) => {
+		setEditDraft((current) => {
+			if (!current) return current;
+			const nextParts = {
+				...extractTimeParts(current.time),
+				[part]: value
+			};
+			return {
+				...current,
+				time: buildTimeValue(nextParts.start, nextParts.end)
+			};
+		});
+	};
+	const applyDurationPreset = (minutes) => {
+		setEditDraft((current) => {
+			if (!current) return current;
+			const { start } = extractTimeParts(current.time);
+			if (!isValidClockValue(start)) return current;
+			return {
+				...current,
+				time: buildTimeValue(start, addMinutesToTime(start, minutes))
+			};
+		});
+	};
+	const fillDraftTitlesFrom = (source) => {
+		setEditDraft((current) => {
+			if (!current) return current;
+			const sourceValue = current[source].trim();
+			if (!sourceValue) return current;
+			return {
+				...current,
+				titleRu: current.titleRu.trim() ? current.titleRu : sourceValue,
+				titleEn: current.titleEn.trim() ? current.titleEn : sourceValue,
+				titleZh: current.titleZh.trim() ? current.titleZh : sourceValue
+			};
+		});
+	};
+	const openEditor = (item) => {
+		if (!item.id) return;
+		setEditingSchedule(item);
+		setEditDraft(toEditDraft(item));
+		setScheduleNotice(null);
+	};
+	const openCreator = () => {
+		const exactDayItemsCount = schedules.filter((item) => getScheduleDayIndex(item) === selectedDayIndex).length;
+		setEditingSchedule(null);
+		setEditDraft({
+			...createDefaultDraft(),
+			dayType: selectedDay.labels[language],
+			orderIndex: String(exactDayItemsCount)
+		});
+		setScheduleNotice(null);
+	};
+	const closeEditor = useCallback(() => {
+		if (updateSchedule.isPending || createSchedule.isPending) return;
+		setEditingSchedule(null);
+		setEditDraft(null);
+	}, [createSchedule.isPending, updateSchedule.isPending]);
+	const archiveScheduleEdit = async () => {
+		if (!editingSchedule?.id || !editDraft || updateSchedule.isPending || createSchedule.isPending) return;
+		const shouldArchive = editDraft.active;
+		if (!window.confirm(shouldArchive ? language === "ru" ? "Архивировать это событие? Оно исчезнет из расписания, но данные сохранятся." : language === "zh" ? "要归档这个活动吗？它会从日程中隐藏，但数据会保留。" : "Archive this event? It will disappear from the schedule, but the data will be kept." : language === "ru" ? "Вернуть это событие в расписание?" : language === "zh" ? "要将这个活动恢复到日程中吗？" : "Restore this event to the schedule?")) return;
+		try {
+			setScheduleNotice(null);
+			await updateSchedule.mutateAsync({
+				id: editingSchedule.id,
+				dayType: editDraft.dayType.trim(),
+				time: editDraft.time.trim(),
+				titleRu: editDraft.titleRu.trim(),
+				titleEn: editDraft.titleEn.trim(),
+				titleZh: editDraft.titleZh.trim() || void 0,
+				orderIndex: Math.max(0, Number(editDraft.orderIndex) || 0),
+				active: !shouldArchive
+			});
+			setScheduleNotice(shouldArchive ? language === "ru" ? "Событие отправлено в архив" : language === "zh" ? "活动已归档" : "Event archived" : language === "ru" ? "Событие возвращено в расписание" : language === "zh" ? "活动已恢复到日程" : "Event restored to the schedule");
+			closeEditor();
+			refetch();
+		} catch (archiveError) {
+			setScheduleNotice(archiveError instanceof Error ? archiveError.message : shouldArchive ? language === "ru" ? "Не удалось архивировать событие" : language === "zh" ? "无法归档活动" : "Failed to archive the event" : language === "ru" ? "Не удалось вернуть событие" : language === "zh" ? "无法恢复活动" : "Failed to restore the event");
+		}
+	};
+	const saveScheduleEdit = async () => {
+		if (!editDraft) return;
+		const errors = validateDraft(editDraft, language);
+		if (Object.keys(errors).length > 0) {
+			setScheduleNotice(language === "ru" ? "Заполни обязательные поля перед сохранением" : language === "zh" ? "请先填写必填字段" : "Fill in the required fields before saving");
+			return;
+		}
+		try {
+			setScheduleNotice(null);
+			const basePayload = {
+				dayType: editDraft.dayType.trim(),
+				time: editDraft.time.trim(),
+				titleRu: editDraft.titleRu.trim(),
+				titleEn: editDraft.titleEn.trim(),
+				titleZh: editDraft.titleZh.trim() || void 0,
+				orderIndex: Math.max(0, Number(editDraft.orderIndex) || 0),
+				active: editDraft.active
+			};
+			if (editingSchedule?.id) {
+				await updateSchedule.mutateAsync({
+					id: editingSchedule.id,
+					...basePayload
+				});
+				setScheduleNotice(language === "ru" ? "Расписание обновлено" : language === "zh" ? "日程已更新" : "Schedule updated");
+			} else {
+				await createSchedule.mutateAsync(basePayload);
+				setScheduleNotice(language === "ru" ? "Событие добавлено" : language === "zh" ? "活动已添加" : "Event added");
+			}
+			closeEditor();
+			refetch();
+		} catch (saveError) {
+			setScheduleNotice(saveError instanceof Error ? saveError.message : language === "ru" ? "Не удалось обновить расписание" : "Failed to update schedule");
+		}
+	};
+	useEffect(() => {
+		const interval = setInterval(() => setNow(/* @__PURE__ */ new Date()), 6e4);
+		return () => clearInterval(interval);
+	}, []);
+	useEffect(() => {
+		if (!editDraft) return;
+		const previousOverflow = document.body.style.overflow;
+		document.body.style.overflow = "hidden";
+		const handleEscape = (event) => {
+			if (event.key === "Escape") closeEditor();
+		};
+		window.addEventListener("keydown", handleEscape);
+		return () => {
+			document.body.style.overflow = previousOverflow;
+			window.removeEventListener("keydown", handleEscape);
+		};
+	}, [closeEditor, editDraft]);
+	useEffect(() => {
+		if (!editDraft) return;
+		const timer = window.setTimeout(() => {
+			dayInputRef.current?.focus();
+		}, 40);
+		return () => window.clearTimeout(timer);
+	}, [editDraft]);
+	const currentMinutes = now.getHours() * 60 + now.getMinutes();
+	const todayIndex = getWeekdayIndex(now);
+	const isSelectedToday = selectedDayIndex === todayIndex;
+	const selectedSchedules = schedules.filter((item) => {
+		if (getScheduleDayIndex(item) === selectedDayIndex) return true;
+		return isRecurringScheduleItem(item, "daily") || isRecurringScheduleItem(item, "weekly");
+	}).sort((a, b) => {
+		const orderDelta = (a.orderIndex ?? 999) - (b.orderIndex ?? 999);
+		if (orderDelta !== 0) return orderDelta;
+		const timeA = parseTime(getDisplayTime(a))?.start ?? 9999;
+		const timeB = parseTime(getDisplayTime(b))?.start ?? 9999;
+		if (timeA !== timeB) return timeA - timeB;
+		return getDisplayTitle(a, language).localeCompare(getDisplayTitle(b, language));
+	});
+	const draftTimeParts = editDraft ? extractTimeParts(editDraft.time) : {
+		start: "",
+		end: ""
+	};
+	const draftPreviewItem = editDraft ? {
+		dayType: editDraft.dayType,
+		time: editDraft.time,
+		titleRu: editDraft.titleRu,
+		titleEn: editDraft.titleEn,
+		titleZh: editDraft.titleZh,
+		registration: editingSchedule?.registration || "",
+		description: editDraft.time,
+		group: editingSchedule?.group || (language === "ru" ? "Общее" : language === "zh" ? "综合" : "General"),
+		orderIndex: Number(editDraft.orderIndex) || 0,
+		active: editDraft.active,
+		date: editingSchedule?.date || "",
+		type: editingSchedule?.type || editDraft.dayType
+	} : null;
+	const groupedByGroup = selectedSchedules.reduce((acc, item) => {
+		const groupName = item.group || (language === "ru" ? "Общее" : language === "zh" ? "综合" : "General");
+		if (!acc[groupName]) acc[groupName] = [];
+		acc[groupName].push(item);
+		return acc;
+	}, {});
+	const sortedGroups = Object.keys(groupedByGroup).sort((a, b) => {
+		if (a === "Общее" || a === "General") return -1;
+		if (b === "Общее" || b === "General") return 1;
+		return a.localeCompare(b);
+	});
+	const nextEvent = isSelectedToday ? selectedSchedules.map((item) => ({
+		...item,
+		parsedTime: parseTime(getDisplayTime(item))
+	})).filter((item) => item.parsedTime && item.parsedTime.start > currentMinutes).sort((a, b) => (a.parsedTime?.start || 0) - (b.parsedTime?.start || 0))[0] : void 0;
+	const currentEvent = isSelectedToday ? selectedSchedules.map((item) => ({
+		...item,
+		parsedTime: parseTime(getDisplayTime(item))
+	})).find((item) => item.parsedTime && item.parsedTime.start <= currentMinutes && item.parsedTime.end > currentMinutes) : void 0;
+	if (isLoading) return /* @__PURE__ */ jsx(LoadingState, {
+		title: language === "ru" ? "Расписание" : language === "zh" ? "日程" : "Schedule",
+		subtitle: language === "ru" ? "Собираем слоты дня..." : language === "zh" ? "正在整理当天活动..." : "Organizing the day slots...",
+		icon: /* @__PURE__ */ jsx(WuxiaIcon, {
+			name: "schedule",
+			className: "w-6 h-6 text-[#8fb9cc]"
+		}),
+		skeletonCount: 4,
+		layout: "list"
+	});
+	if (error) return /* @__PURE__ */ jsx(EmptyState, {
+		icon: /* @__PURE__ */ jsx(WuxiaIcon, {
+			name: "alertTriangle",
+			className: "w-8 h-8 text-red-400"
+		}),
+		title: language === "ru" ? "Расписание недоступно" : language === "zh" ? "日程暂时不可用" : "Schedule is unavailable",
+		description: error instanceof Error ? error.message : language === "ru" ? "Не удалось загрузить" : language === "zh" ? "加载失败" : "Failed to load",
+		action: /* @__PURE__ */ jsxs("button", {
+			onClick: () => refetch(),
+			className: "btn-primary",
+			children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+				name: "refresh",
+				className: "w-4 h-4 mr-2"
+			}), language === "ru" ? "Повторить" : language === "zh" ? "重试" : "Retry"]
+		}),
+		variant: "error"
+	});
+	return /* @__PURE__ */ jsx("section", {
+		className: "section-shell py-8 sm:py-10",
+		children: /* @__PURE__ */ jsx("div", {
+			className: "max-w-4xl mx-auto px-4",
+			children: /* @__PURE__ */ jsxs("div", {
+				className: "section-stack-lg",
+				children: [
+					/* @__PURE__ */ jsx(SectionHero, {
+						icon: /* @__PURE__ */ jsx(WuxiaIcon, {
+							name: "schedule",
+							className: "w-5 h-5"
+						}),
+						title: language === "ru" ? `Расписание — ${selectedDay.labels.ru}` : language === "zh" ? `日程 - ${selectedDay.labels.zh}` : `Schedule - ${selectedDay.labels.en}`,
+						subtitle: language === "ru" ? "Один день за раз" : language === "zh" ? "一次只看一天" : "One day at a time",
+						chips: [language === "ru" ? `День: ${selectedDayIndex + 1}/7` : language === "zh" ? `日期: ${selectedDayIndex + 1}/7` : `Day: ${selectedDayIndex + 1}/7`, language === "ru" ? `Событий: ${selectedSchedules.length}` : language === "zh" ? `事件: ${selectedSchedules.length}` : `Events: ${selectedSchedules.length}`],
+						actions: /* @__PURE__ */ jsxs(Fragment$1, { children: [
+							/* @__PURE__ */ jsxs("div", {
+								className: "ds-toolbar w-full sm:w-auto",
+								children: [
+									/* @__PURE__ */ jsx("button", {
+										type: "button",
+										className: "dc-icon-btn h-10 w-10 rounded-lg text-[#8fb9cc]",
+										onClick: () => setSelectedDayIndex((current) => (current + weekdays.length - 1) % weekdays.length),
+										title: language === "ru" ? "Предыдущий день" : language === "zh" ? "上一天" : "Previous day",
+										"aria-label": language === "ru" ? "Предыдущий день" : language === "zh" ? "上一天" : "Previous day",
+										children: /* @__PURE__ */ jsx("span", {
+											"aria-hidden": "true",
+											className: "text-lg leading-none",
+											children: "<"
+										})
+									}),
+									/* @__PURE__ */ jsx("div", {
+										className: "min-w-0 flex-1 px-2 text-center text-sm font-semibold text-[#e6eff5]",
+										children: selectedDay.labels[language]
+									}),
+									/* @__PURE__ */ jsx("button", {
+										type: "button",
+										className: "dc-icon-btn h-10 w-10 rounded-lg text-[#8fb9cc]",
+										onClick: () => setSelectedDayIndex((current) => (current + 1) % weekdays.length),
+										title: language === "ru" ? "Следующий день" : language === "zh" ? "下一天" : "Next day",
+										"aria-label": language === "ru" ? "Следующий день" : language === "zh" ? "下一天" : "Next day",
+										children: /* @__PURE__ */ jsx("span", {
+											"aria-hidden": "true",
+											className: "text-lg leading-none",
+											children: ">"
+										})
+									})
+								]
+							}),
+							canEditSchedule && /* @__PURE__ */ jsxs("button", {
+								type: "button",
+								onClick: openCreator,
+								className: "btn-secondary w-full sm:w-auto",
+								children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+									name: "plus",
+									className: "inline-block w-4 h-4 mr-2 align-text-bottom"
+								}), language === "ru" ? "Добавить событие" : language === "zh" ? "添加活动" : "Add event"]
+							}),
+							/* @__PURE__ */ jsx("button", {
+								onClick: () => refetch(),
+								className: "dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0",
+								title: language === "ru" ? "Обновить" : language === "zh" ? "刷新" : "Refresh",
+								"aria-label": language === "ru" ? "Обновить расписание" : language === "zh" ? "刷新日程" : "Refresh schedule",
+								children: /* @__PURE__ */ jsx(WuxiaIcon, {
+									name: "refresh",
+									className: "w-5 h-5"
+								})
+							})
+						] })
+					}),
+					scheduleNotice && /* @__PURE__ */ jsxs("div", {
+						className: "ds-notice mt-4 mb-6",
+						children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+							name: "checkCircle",
+							className: "inline-block w-4 h-4 mr-2 align-text-bottom"
+						}), scheduleNotice]
+					}),
+					/* @__PURE__ */ jsx("div", {
+						className: "overflow-x-auto pb-1 no-scrollbar",
+						children: /* @__PURE__ */ jsx("div", {
+							className: "flex min-w-max gap-2",
+							children: weekdays.map((day, index) => {
+								const dayEventsCount = schedules.filter((item) => {
+									return getScheduleDayIndex(item) === index || isRecurringScheduleItem(item, "daily") || isRecurringScheduleItem(item, "weekly");
+								}).length;
+								const isActive = index === selectedDayIndex;
+								const isToday = index === todayIndex;
+								return /* @__PURE__ */ jsxs("button", {
+									type: "button",
+									onClick: () => setSelectedDayIndex(index),
+									className: `min-w-[8rem] sm:min-w-[8.75rem] rounded-2xl border px-3.5 py-3 text-left transition-all ${isActive ? "border-[#a9d1e4]/65 bg-[linear-gradient(135deg,rgba(37,79,103,0.95),rgba(18,36,48,0.98))] shadow-[0_18px_30px_rgba(5,10,15,0.42)]" : "border-[#223544]/70 bg-[#0c151d]/85 hover:border-[#4b6f84]/80 hover:bg-[#101d27]/95"}`,
+									children: [/* @__PURE__ */ jsxs("div", {
+										className: "flex items-center justify-between gap-3",
+										children: [/* @__PURE__ */ jsx("span", {
+											className: `text-sm font-semibold ${isActive ? "text-[#f3fbff]" : "text-[#d3e3ec]"}`,
+											children: day.labels[language]
+										}), isToday && /* @__PURE__ */ jsx("span", {
+											className: "rounded-full border border-emerald-400/35 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300",
+											children: language === "ru" ? "Сегодня" : language === "zh" ? "今天" : "Today"
+										})]
+									}), /* @__PURE__ */ jsxs("div", {
+										className: "mt-2 text-xs text-[#8aa4b3]",
+										children: [
+											dayEventsCount,
+											" ",
+											language === "ru" ? "событий" : language === "zh" ? "活动" : "events"
+										]
+									})]
+								}, day.key);
+							})
+						})
+					}),
+					(currentEvent || nextEvent) && /* @__PURE__ */ jsx("div", { children: currentEvent ? /* @__PURE__ */ jsxs("div", {
+						className: "card section-card ds-section-panel rounded-2xl border-green-700/50 bg-gradient-to-r from-green-900/30 to-green-800/20 p-4 sm:p-5",
+						children: [
+							/* @__PURE__ */ jsxs("div", {
+								className: "flex items-center gap-2 text-green-400 text-sm font-medium mb-2",
+								children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 bg-green-400 rounded-full animate-pulse" }), language === "ru" ? "Сейчас идёт" : language === "zh" ? "进行中" : "Happening now"]
+							}),
+							/* @__PURE__ */ jsx("div", {
+								className: "text-white font-semibold text-lg",
+								children: getDisplayTitle(currentEvent, language)
+							}),
+							/* @__PURE__ */ jsxs("div", {
+								className: "text-gray-400 text-sm mt-1",
+								children: [
+									getDisplayTime(currentEvent),
+									" • ",
+									currentEvent.group || (language === "ru" ? "Общее" : language === "zh" ? "综合" : "General")
+								]
+							})
+						]
+					}) : nextEvent && nextEvent.parsedTime ? /* @__PURE__ */ jsx("div", {
+						className: "card section-card ds-section-panel rounded-2xl border-[#8fb9cc]/30 bg-gradient-to-r from-[#1a2a3a] to-[#1a1a2a] p-4 sm:p-5",
+						children: /* @__PURE__ */ jsxs("div", {
+							className: "flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between",
+							children: [/* @__PURE__ */ jsxs("div", { children: [
+								/* @__PURE__ */ jsxs("div", {
+									className: "flex items-center gap-2 text-[#8fb9cc] text-sm font-medium mb-2",
+									children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+										name: "schedule",
+										className: "w-4 h-4"
+									}), language === "ru" ? "Следующее событие" : language === "zh" ? "下一场活动" : "Next event"]
+								}),
+								/* @__PURE__ */ jsx("div", {
+									className: "text-white font-semibold text-lg",
+									children: getDisplayTitle(nextEvent, language)
+								}),
+								/* @__PURE__ */ jsxs("div", {
+									className: "text-gray-400 text-sm mt-1",
+									children: [
+										getDisplayTime(nextEvent),
+										" • ",
+										nextEvent.group || (language === "ru" ? "Общее" : language === "zh" ? "综合" : "General")
+									]
+								})
+							] }), /* @__PURE__ */ jsx("div", {
+								className: "text-right",
+								children: /* @__PURE__ */ jsx("div", {
+									className: "text-2xl font-bold text-[#8fb9cc]",
+									children: formatCountdown(nextEvent.parsedTime.start - currentMinutes, language)
+								})
+							})]
+						})
+					}) : null }),
+					selectedSchedules.length === 0 ? /* @__PURE__ */ jsxs("div", {
+						className: "card section-card ds-section-panel rounded-2xl border-gray-800 p-8 sm:p-12 text-center",
+						children: [
+							/* @__PURE__ */ jsx(WuxiaIcon, {
+								name: "schedule",
+								className: "w-12 h-12 text-gray-600 mx-auto mb-4"
+							}),
+							/* @__PURE__ */ jsx("p", {
+								className: "text-gray-400 text-lg",
+								children: language === "ru" ? `Нет событий на ${selectedDay.labels.ru.toLowerCase()}` : language === "zh" ? `${selectedDay.labels.zh}没有活动` : `No events for ${selectedDay.labels.en}`
+							}),
+							/* @__PURE__ */ jsx("p", {
+								className: "text-gray-500 text-sm mt-2",
+								children: language === "ru" ? "Отдыхай, воин!" : language === "zh" ? "好好休息，勇士！" : "Rest well, warrior!"
+							})
+						]
+					}) : /* @__PURE__ */ jsx("div", {
+						className: "grid gap-4 sm:gap-5 md:grid-cols-2",
+						children: sortedGroups.map((groupName) => {
+							const items = groupedByGroup[groupName];
+							return /* @__PURE__ */ jsxs("div", {
+								className: "card section-card ds-section-panel rounded-2xl border-gray-800 overflow-hidden hover:border-gray-700 transition-colors",
+								children: [/* @__PURE__ */ jsx("div", {
+									className: "px-4 py-3 border-b border-gray-800",
+									style: {
+										borderLeftWidth: 3,
+										borderLeftColor: getGroupColor(groupName)
+									},
+									children: /* @__PURE__ */ jsxs("div", {
+										className: "flex items-center justify-between",
+										children: [/* @__PURE__ */ jsx("span", {
+											className: "font-semibold text-white",
+											children: groupName
+										}), /* @__PURE__ */ jsxs("span", {
+											className: "text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded-full",
+											children: [
+												items.length,
+												" ",
+												language === "ru" ? "событий" : language === "zh" ? "项活动" : "events"
+											]
+										})]
+									})
+								}), /* @__PURE__ */ jsx("div", {
+									className: "divide-y divide-gray-800/50",
+									children: items.map((item, idx) => {
+										const timeLabel = getDisplayTime(item);
+										const time = parseTime(timeLabel);
+										const isNow = isSelectedToday && Boolean(time && time.start <= currentMinutes && time.end > currentMinutes);
+										const isPast = isSelectedToday && Boolean(time && time.end <= currentMinutes);
+										const isNext = nextEvent && item.id === nextEvent.id;
+										const isRecurring = isRecurringScheduleItem(item, "daily") || isRecurringScheduleItem(item, "weekly");
+										return /* @__PURE__ */ jsxs("div", {
+											className: `px-4 py-3.5 flex items-start gap-3 transition-colors ${isNow ? "bg-green-900/20" : isNext ? "bg-[#8fb9cc]/10" : isPast ? "opacity-50" : "hover:bg-gray-800/30"}`,
+											children: [
+												/* @__PURE__ */ jsx("div", {
+													className: `font-mono text-sm w-[4.5rem] flex-shrink-0 ${isNow ? "text-green-400" : isNext ? "text-[#8fb9cc]" : "text-gray-500"}`,
+													children: timeLabel
+												}),
+												/* @__PURE__ */ jsxs("div", {
+													className: "flex-1 min-w-0",
+													children: [
+														/* @__PURE__ */ jsx("div", {
+															className: `${isPast ? "text-gray-500" : "text-gray-200"} ${isNow ? "font-medium" : ""}`,
+															children: getDisplayTitle(item, language)
+														}),
+														/* @__PURE__ */ jsxs("div", {
+															className: "mt-1 flex flex-wrap items-center gap-2 text-xs text-[#7f97a6]",
+															children: [
+																typeof item.orderIndex === "number" && /* @__PURE__ */ jsxs("span", {
+																	className: "rounded-full border border-[#294454]/70 bg-[#0f1c25]/80 px-2 py-0.5",
+																	children: ["#", item.orderIndex]
+																}),
+																isRecurring && /* @__PURE__ */ jsx("span", {
+																	className: "rounded-full border border-[#35596a]/70 bg-[#10202a]/80 px-2 py-0.5 text-[#9dc5d7]",
+																	children: isRecurringScheduleItem(item, "daily") ? getRecurrenceLabel("daily", language) : getRecurrenceLabel("weekly", language)
+																}),
+																item.active === false && /* @__PURE__ */ jsx("span", {
+																	className: "rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-amber-300",
+																	children: language === "ru" ? "Скрыто" : language === "zh" ? "隐藏" : "Hidden"
+																})
+															]
+														}),
+														isNow && /* @__PURE__ */ jsxs("span", {
+															className: "inline-flex items-center gap-1 text-xs text-green-400 mt-1",
+															children: [/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" }), language === "ru" ? "Сейчас" : language === "zh" ? "进行中" : "Now"]
+														})
+													]
+												}),
+												canEditSchedule && item.id && /* @__PURE__ */ jsx("button", {
+													type: "button",
+													className: "dc-icon-btn p-2 rounded-lg text-[#8fb9cc]",
+													onClick: () => openEditor(item),
+													title: language === "ru" ? "Редактировать слот" : language === "zh" ? "编辑活动" : "Edit slot",
+													"aria-label": language === "ru" ? "Редактировать событие" : language === "zh" ? "编辑活动" : "Edit event",
+													children: /* @__PURE__ */ jsx(WuxiaIcon, {
+														name: "edit",
+														className: "w-4 h-4"
+													})
+												}),
+												isPast && /* @__PURE__ */ jsx(WuxiaIcon, {
+													name: "check",
+													className: "w-4 h-4 text-gray-600 flex-shrink-0"
+												})
+											]
+										}, item.id || `${groupName}-${timeLabel}-${idx}`);
+									})
+								})]
+							}, groupName);
+						})
+					}),
+					selectedSchedules.length > 0 && /* @__PURE__ */ jsxs("div", {
+						className: "flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-sm text-gray-500",
+						children: [
+							/* @__PURE__ */ jsx("span", { children: selectedDay.labels[language] }),
+							/* @__PURE__ */ jsx("span", { children: "•" }),
+							/* @__PURE__ */ jsxs("span", { children: [
+								selectedSchedules.length,
+								" ",
+								language === "ru" ? "событий" : language === "zh" ? "活动" : "events"
+							] }),
+							nextEvent && nextEvent.parsedTime && /* @__PURE__ */ jsxs(Fragment$1, { children: [/* @__PURE__ */ jsx("span", { children: "•" }), /* @__PURE__ */ jsxs("span", {
+								className: "text-[#8fb9cc]",
+								children: [
+									language === "ru" ? "След." : language === "zh" ? "下一个" : "Next",
+									": ",
+									formatCountdown(nextEvent.parsedTime.start - currentMinutes, language)
+								]
+							})] })
+						]
+					}),
+					canEditSchedule && editDraft && /* @__PURE__ */ jsx("div", {
+						className: "modal-backdrop",
+						onClick: closeEditor,
+						children: /* @__PURE__ */ jsx("div", {
+							className: "modal-shell w-full max-w-6xl p-0 overflow-hidden",
+							onClick: (event) => event.stopPropagation(),
+							role: "dialog",
+							"aria-modal": "true",
+							"aria-labelledby": "schedule-editor-title",
+							children: /* @__PURE__ */ jsxs("div", {
+								className: "grid max-h-[92vh] grid-cols-1 overflow-auto lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.95fr)]",
+								children: [/* @__PURE__ */ jsxs("div", {
+									className: "p-6 md:p-8",
+									children: [
+										/* @__PURE__ */ jsxs("div", {
+											className: "modal-header",
+											children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("h3", {
+												id: "schedule-editor-title",
+												className: "modal-title",
+												children: editingSchedule ? language === "ru" ? "Редактировать слот" : language === "zh" ? "编辑活动" : "Edit schedule slot" : language === "ru" ? "Добавить событие" : language === "zh" ? "添加活动" : "Add event"
+											}), /* @__PURE__ */ jsx("p", {
+												className: "modal-subtitle",
+												children: editingSchedule ? editingSchedule.registration || (language === "ru" ? "Обнови слот и проверь живой предпросмотр справа." : language === "zh" ? "更新活动并查看右侧实时预览。" : "Update the slot and review the live preview on the right.") : language === "ru" ? "Собери новый слот быстрее: выбери день, время и сразу проверь, как он выглядит в расписании." : language === "zh" ? "更快创建活动：选择日期、时间，并立即查看右侧预览。" : "Create a new slot faster: pick a day, set the time, and review the preview instantly."
+											})] }), /* @__PURE__ */ jsx("button", {
+												type: "button",
+												className: "dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0",
+												onClick: closeEditor,
+												disabled: updateSchedule.isPending || createSchedule.isPending,
+												"aria-label": language === "ru" ? "Закрыть редактор расписания" : language === "zh" ? "关闭日程编辑器" : "Close schedule editor",
+												children: /* @__PURE__ */ jsx(WuxiaIcon, {
+													name: "x",
+													className: "w-5 h-5"
+												})
+											})]
+										}),
+										/* @__PURE__ */ jsxs("div", {
+											className: "mb-6 flex flex-wrap gap-2 text-xs",
+											children: [
+												/* @__PURE__ */ jsx("span", {
+													className: "ui-badge ui-badge-accent",
+													children: editingSchedule ? language === "ru" ? "Режим: редактирование" : language === "zh" ? "模式：编辑" : "Mode: editing" : language === "ru" ? "Режим: создание" : language === "zh" ? "模式：创建" : "Mode: create"
+												}),
+												/* @__PURE__ */ jsx("span", {
+													className: `ui-badge ${editDraft.active ? "ui-badge-success" : "ui-badge-warning"}`,
+													children: editDraft.active ? language === "ru" ? "Показывается в расписании" : language === "zh" ? "活动显示中" : "Visible in schedule" : language === "ru" ? "Скрыт из расписания" : language === "zh" ? "活动已隐藏" : "Hidden from schedule"
+												}),
+												/* @__PURE__ */ jsx("span", {
+													className: `ui-badge ${hasDraftErrors ? "ui-badge-danger" : "ui-badge-accent"}`,
+													children: hasDraftErrors ? language === "ru" ? "Нужно поправить поля" : language === "zh" ? "仍有字段需要修正" : "Some fields need attention" : language === "ru" ? "Форма готова к сохранению" : language === "zh" ? "表单已可保存" : "Form is ready to save"
+												})
+											]
+										}),
+										/* @__PURE__ */ jsxs("div", {
+											className: "space-y-5",
+											children: [
+												/* @__PURE__ */ jsxs("div", {
+													className: "editor-panel",
+													children: [
+														/* @__PURE__ */ jsxs("div", {
+															className: "mb-4 flex items-center justify-between gap-3",
+															children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
+																className: "text-sm font-semibold text-[#e6eff5]",
+																children: language === "ru" ? "День и повтор" : language === "zh" ? "日期与重复" : "Day and recurrence"
+															}), /* @__PURE__ */ jsx("p", {
+																className: "mt-1 text-xs text-[#7f97a6]",
+																children: language === "ru" ? "Выбери конкретный день недели или быстро переключись на повторяющийся слот." : language === "zh" ? "选择具体星期，或一键切换到重复活动。" : "Pick a specific weekday or switch to a recurring slot in one tap."
+															})] }), /* @__PURE__ */ jsx(WuxiaIcon, {
+																name: "calendar",
+																className: "h-5 w-5 text-[#8fb9cc]"
+															})]
+														}),
+														/* @__PURE__ */ jsx("div", {
+															className: "mb-3 grid grid-cols-2 gap-2 md:grid-cols-4 xl:grid-cols-7",
+															children: weekdays.map((day) => {
+																return /* @__PURE__ */ jsx("button", {
+																	type: "button",
+																	onClick: () => updateDraft({ dayType: day.labels[language] }),
+																	className: `ui-chip ${day.aliases.some((alias) => normalizeDayValue(alias) === normalizeDayValue(editDraft.dayType)) ? "is-active" : ""}`,
+																	children: day.labels[language]
+																}, day.key);
+															})
+														}),
+														/* @__PURE__ */ jsx("div", {
+															className: "mb-4 flex flex-wrap gap-2",
+															children: ["daily", "weekly"].map((kind) => {
+																return /* @__PURE__ */ jsx("button", {
+																	type: "button",
+																	onClick: () => updateDraft({ dayType: getRecurringAlias(kind, language) }),
+																	className: `ui-chip ${isRecurringScheduleItem({ dayType: editDraft.dayType }, kind) ? "is-active" : ""}`,
+																	children: getRecurrenceLabel(kind, language)
+																}, kind);
+															})
+														}),
+														/* @__PURE__ */ jsxs("label", {
+															className: "space-y-2 text-sm block",
+															children: [
+																/* @__PURE__ */ jsx("span", {
+																	className: "text-gray-400",
+																	children: language === "ru" ? "Свободное значение" : language === "zh" ? "自定义值" : "Custom value"
+																}),
+																/* @__PURE__ */ jsx("input", {
+																	value: editDraft.dayType,
+																	onChange: (event) => updateDraft({ dayType: event.target.value }),
+																	ref: dayInputRef,
+																	className: `input-field w-full ${draftErrors.dayType ? "border-rose-500/60" : ""}`,
+																	placeholder: language === "ru" ? "Например: Понедельник или Еженедельные" : language === "zh" ? "例如：星期一 或 每周" : "For example: Monday or Weekly"
+																}),
+																draftErrors.dayType && /* @__PURE__ */ jsx("p", {
+																	className: "text-xs text-rose-300",
+																	children: draftErrors.dayType
+																})
+															]
+														})
+													]
+												}),
+												/* @__PURE__ */ jsxs("div", {
+													className: "editor-panel",
+													children: [
+														/* @__PURE__ */ jsxs("div", {
+															className: "mb-4 flex items-center justify-between gap-3",
+															children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
+																className: "text-sm font-semibold text-[#e6eff5]",
+																children: language === "ru" ? "Время и порядок" : language === "zh" ? "时间与顺序" : "Time and order"
+															}), /* @__PURE__ */ jsx("p", {
+																className: "mt-1 text-xs text-[#7f97a6]",
+																children: language === "ru" ? "Структурированный ввод ускоряет создание слота и снижает риск ошибки в диапазоне." : language === "zh" ? "结构化输入可加快创建活动并减少时间范围错误。" : "Structured inputs make slot creation faster and reduce range mistakes."
+															})] }), /* @__PURE__ */ jsx(WuxiaIcon, {
+																name: "schedule",
+																className: "h-5 w-5 text-[#8fb9cc]"
+															})]
+														}),
+														/* @__PURE__ */ jsxs("div", {
+															className: "grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_140px]",
+															children: [
+																/* @__PURE__ */ jsxs("label", {
+																	className: "space-y-2 text-sm",
+																	children: [/* @__PURE__ */ jsx("span", {
+																		className: "text-gray-400",
+																		children: language === "ru" ? "Начало" : language === "zh" ? "开始" : "Start"
+																	}), /* @__PURE__ */ jsx("input", {
+																		type: "time",
+																		value: draftTimeParts.start,
+																		onChange: (event) => updateDraftTime("start", event.target.value),
+																		className: `input-field w-full ${draftErrors.time ? "border-rose-500/60" : ""}`
+																	})]
+																}),
+																/* @__PURE__ */ jsxs("label", {
+																	className: "space-y-2 text-sm",
+																	children: [/* @__PURE__ */ jsx("span", {
+																		className: "text-gray-400",
+																		children: language === "ru" ? "Конец" : language === "zh" ? "结束" : "End"
+																	}), /* @__PURE__ */ jsx("input", {
+																		type: "time",
+																		value: draftTimeParts.end,
+																		onChange: (event) => updateDraftTime("end", event.target.value),
+																		className: `input-field w-full ${draftErrors.time ? "border-rose-500/60" : ""}`
+																	})]
+																}),
+																/* @__PURE__ */ jsxs("label", {
+																	className: "space-y-2 text-sm",
+																	children: [/* @__PURE__ */ jsx("span", {
+																		className: "text-gray-400",
+																		children: language === "ru" ? "Порядок" : language === "zh" ? "排序" : "Order"
+																	}), /* @__PURE__ */ jsx("input", {
+																		type: "number",
+																		min: 0,
+																		max: 999,
+																		value: editDraft.orderIndex,
+																		onChange: (event) => updateDraft({ orderIndex: event.target.value }),
+																		className: "input-field w-full"
+																	})]
+																})
+															]
+														}),
+														/* @__PURE__ */ jsxs("div", {
+															className: "mt-4 flex flex-wrap gap-2",
+															children: [[
+																60,
+																90,
+																120
+															].map((minutes) => /* @__PURE__ */ jsx("button", {
+																type: "button",
+																onClick: () => applyDurationPreset(minutes),
+																className: "ui-chip",
+																children: language === "ru" ? `${minutes} мин` : language === "zh" ? `${minutes} 分钟` : `${minutes} min`
+															}, minutes)), /* @__PURE__ */ jsx("button", {
+																type: "button",
+																onClick: () => updateDraft({ time: "" }),
+																className: "ui-chip",
+																children: language === "ru" ? "Очистить время" : language === "zh" ? "清除时间" : "Clear time"
+															})]
+														}),
+														/* @__PURE__ */ jsxs("label", {
+															className: "mt-4 block space-y-2 text-sm",
+															children: [
+																/* @__PURE__ */ jsx("span", {
+																	className: "text-gray-400",
+																	children: language === "ru" ? "Текстовое значение" : language === "zh" ? "文本值" : "Text value"
+																}),
+																/* @__PURE__ */ jsx("input", {
+																	value: editDraft.time,
+																	onChange: (event) => updateDraft({ time: event.target.value }),
+																	className: `input-field w-full ${draftErrors.time ? "border-rose-500/60" : ""}`,
+																	placeholder: "19:30 - 20:30"
+																}),
+																/* @__PURE__ */ jsx("p", {
+																	className: "text-xs text-[#7f97a6]",
+																	children: language === "ru" ? "Можно оставить только начало или указать полный диапазон." : language === "zh" ? "可以只填写开始时间，也可以填写完整时间范围。" : "You can keep only the start time or set the full range."
+																}),
+																draftErrors.time && /* @__PURE__ */ jsx("p", {
+																	className: "text-xs text-rose-300",
+																	children: draftErrors.time
+																})
+															]
+														})
+													]
+												}),
+												/* @__PURE__ */ jsxs("div", {
+													className: "editor-panel",
+													children: [
+														/* @__PURE__ */ jsxs("div", {
+															className: "mb-4 flex items-center justify-between gap-3",
+															children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
+																className: "text-sm font-semibold text-[#e6eff5]",
+																children: language === "ru" ? "Названия и доступность" : language === "zh" ? "标题与可见性" : "Titles and visibility"
+															}), /* @__PURE__ */ jsx("p", {
+																className: "mt-1 text-xs text-[#7f97a6]",
+																children: language === "ru" ? "RU и EN обязательны, а китайский вариант можно быстро заполнить из готового текста." : language === "zh" ? "RU 和 EN 为必填，中文标题可快速从现有内容补全。" : "RU and EN are required, and the Chinese title can be quickly filled from existing text."
+															})] }), /* @__PURE__ */ jsx(WuxiaIcon, {
+																name: "bookOpen",
+																className: "h-5 w-5 text-[#8fb9cc]"
+															})]
+														}),
+														/* @__PURE__ */ jsxs("div", {
+															className: "grid grid-cols-1 gap-4 md:grid-cols-2",
+															children: [
+																/* @__PURE__ */ jsxs("label", {
+																	className: "space-y-2 text-sm",
+																	children: [
+																		/* @__PURE__ */ jsx("span", {
+																			className: "text-gray-400",
+																			children: "Title RU"
+																		}),
+																		/* @__PURE__ */ jsx("input", {
+																			value: editDraft.titleRu,
+																			onChange: (event) => updateDraft({ titleRu: event.target.value }),
+																			className: `input-field w-full ${draftErrors.titleRu ? "border-rose-500/60" : ""}`
+																		}),
+																		draftErrors.titleRu && /* @__PURE__ */ jsx("p", {
+																			className: "text-xs text-rose-300",
+																			children: draftErrors.titleRu
+																		})
+																	]
+																}),
+																/* @__PURE__ */ jsxs("label", {
+																	className: "space-y-2 text-sm",
+																	children: [
+																		/* @__PURE__ */ jsx("span", {
+																			className: "text-gray-400",
+																			children: "Title EN"
+																		}),
+																		/* @__PURE__ */ jsx("input", {
+																			value: editDraft.titleEn,
+																			onChange: (event) => updateDraft({ titleEn: event.target.value }),
+																			className: `input-field w-full ${draftErrors.titleEn ? "border-rose-500/60" : ""}`
+																		}),
+																		draftErrors.titleEn && /* @__PURE__ */ jsx("p", {
+																			className: "text-xs text-rose-300",
+																			children: draftErrors.titleEn
+																		})
+																	]
+																}),
+																/* @__PURE__ */ jsxs("label", {
+																	className: "space-y-2 text-sm md:col-span-2",
+																	children: [/* @__PURE__ */ jsx("span", {
+																		className: "text-gray-400",
+																		children: "Title ZH"
+																	}), /* @__PURE__ */ jsx("input", {
+																		value: editDraft.titleZh,
+																		onChange: (event) => updateDraft({ titleZh: event.target.value }),
+																		className: "input-field w-full"
+																	})]
+																})
+															]
+														}),
+														/* @__PURE__ */ jsxs("div", {
+															className: "mt-4 flex flex-wrap gap-2",
+															children: [/* @__PURE__ */ jsx("button", {
+																type: "button",
+																onClick: () => fillDraftTitlesFrom("titleRu"),
+																className: "ui-chip",
+																children: language === "ru" ? "Заполнить пустые из RU" : language === "zh" ? "用 RU 填充空字段" : "Fill empty titles from RU"
+															}), /* @__PURE__ */ jsx("button", {
+																type: "button",
+																onClick: () => fillDraftTitlesFrom("titleEn"),
+																className: "ui-chip",
+																children: language === "ru" ? "Заполнить пустые из EN" : language === "zh" ? "用 EN 填充空字段" : "Fill empty titles from EN"
+															})]
+														}),
+														/* @__PURE__ */ jsxs("label", {
+															className: "mt-4 flex items-center gap-3 text-sm rounded-2xl ds-section-panel-soft p-4",
+															children: [/* @__PURE__ */ jsx("input", {
+																type: "checkbox",
+																checked: editDraft.active,
+																onChange: (event) => updateDraft({ active: event.target.checked })
+															}), /* @__PURE__ */ jsx("span", {
+																className: "text-gray-300",
+																children: language === "ru" ? "Активно в расписании" : language === "zh" ? "显示在日程中" : "Visible in the schedule"
+															})]
+														})
+													]
+												})
+											]
+										}),
+										/* @__PURE__ */ jsxs("div", {
+											className: "flex flex-col sm:flex-row gap-3 sm:justify-end mt-6",
+											children: [
+												editingSchedule?.id && /* @__PURE__ */ jsxs("button", {
+													type: "button",
+													className: `px-5 py-3 rounded-xl font-medium border transition ${editDraft.active ? "border-red-500/40 bg-red-500/10 text-red-200 hover:bg-red-500/15" : "border-emerald-500/35 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/15"} w-full sm:w-auto`,
+													onClick: () => void archiveScheduleEdit(),
+													disabled: updateSchedule.isPending || createSchedule.isPending,
+													children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+														name: editDraft.active ? "trash" : "redo",
+														className: "inline-block w-4 h-4 mr-2 align-text-bottom"
+													}), editDraft.active ? language === "ru" ? "Архивировать" : language === "zh" ? "归档" : "Archive" : language === "ru" ? "Восстановить" : language === "zh" ? "恢复" : "Restore"]
+												}),
+												/* @__PURE__ */ jsx("button", {
+													type: "button",
+													className: "btn-secondary px-5 py-3 w-full sm:w-auto",
+													onClick: closeEditor,
+													disabled: updateSchedule.isPending || createSchedule.isPending,
+													children: language === "ru" ? "Отмена" : language === "zh" ? "取消" : "Cancel"
+												}),
+												/* @__PURE__ */ jsx("button", {
+													type: "button",
+													className: "btn-primary px-5 py-3 w-full sm:w-auto",
+													onClick: () => void saveScheduleEdit(),
+													disabled: updateSchedule.isPending || createSchedule.isPending || hasDraftErrors,
+													children: updateSchedule.isPending || createSchedule.isPending ? language === "ru" ? "Сохраняем..." : language === "zh" ? "保存中..." : "Saving..." : editingSchedule ? language === "ru" ? "Сохранить" : language === "zh" ? "保存" : "Save" : language === "ru" ? "Добавить" : language === "zh" ? "添加" : "Add"
+												})
+											]
+										})
+									]
+								}), /* @__PURE__ */ jsxs("aside", {
+									className: "border-t border-[#203342]/80 bg-[radial-gradient(circle_at_top,rgba(47,111,144,0.22),transparent_45%),linear-gradient(180deg,#0d151c,#091017)] p-6 md:p-8 lg:border-l lg:border-t-0",
+									children: [
+										/* @__PURE__ */ jsxs("div", {
+											className: "mb-6 flex items-center justify-between gap-3",
+											children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("h4", {
+												className: "text-lg font-semibold text-[#eff8fd]",
+												children: language === "ru" ? "Живой предпросмотр" : language === "zh" ? "实时预览" : "Live preview"
+											}), /* @__PURE__ */ jsx("p", {
+												className: "mt-1 text-sm text-[#8ba4b4]",
+												children: language === "ru" ? "Так слот будет выглядеть в карточке дня." : language === "zh" ? "活动将在日程卡片中这样显示。" : "This is how the slot will appear inside the day card."
+											})] }), /* @__PURE__ */ jsx(WuxiaIcon, {
+												name: "sparkle",
+												className: "h-5 w-5 text-[#8fb9cc]"
+											})]
+										}),
+										draftPreviewItem && /* @__PURE__ */ jsxs("div", {
+											className: "rounded-[1.75rem] border border-[#2a4454]/75 bg-[#0c151d]/92 p-5 shadow-[0_20px_40px_rgba(3,8,12,0.45)]",
+											children: [/* @__PURE__ */ jsxs("div", {
+												className: "mb-4 flex items-start justify-between gap-3",
+												children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
+													className: "text-xs uppercase tracking-[0.24em] text-[#7d99aa]",
+													children: editDraft.dayType || (language === "ru" ? "Новый слот" : language === "zh" ? "新活动" : "New slot")
+												}), /* @__PURE__ */ jsx("div", {
+													className: "mt-2 text-lg font-semibold text-[#f1f8fd]",
+													children: getDisplayTitle(draftPreviewItem, language) || (language === "ru" ? "Название появится здесь" : language === "zh" ? "标题会显示在这里" : "The title will appear here")
+												})] }), /* @__PURE__ */ jsxs("div", {
+													className: "rounded-full border border-[#35596a]/70 bg-[#10202a]/80 px-3 py-1 text-xs text-[#9dc5d7]",
+													children: ["#", Number(editDraft.orderIndex) || 0]
+												})]
+											}), /* @__PURE__ */ jsxs("div", {
+												className: "space-y-3 text-sm text-[#c8d9e3]",
+												children: [
+													/* @__PURE__ */ jsxs("div", {
+														className: "flex items-center justify-between gap-3 rounded-2xl border border-[#223544]/70 bg-[#111c24]/85 px-4 py-3",
+														children: [/* @__PURE__ */ jsx("span", {
+															className: "text-[#86a4b5]",
+															children: language === "ru" ? "Время" : language === "zh" ? "时间" : "Time"
+														}), /* @__PURE__ */ jsx("span", {
+															className: "font-mono text-[#eef9ff]",
+															children: draftPreviewItem.time || "--:--"
+														})]
+													}),
+													/* @__PURE__ */ jsxs("div", {
+														className: "flex items-center justify-between gap-3 rounded-2xl border border-[#223544]/70 bg-[#111c24]/85 px-4 py-3",
+														children: [/* @__PURE__ */ jsx("span", {
+															className: "text-[#86a4b5]",
+															children: language === "ru" ? "Группа" : language === "zh" ? "分组" : "Group"
+														}), /* @__PURE__ */ jsx("span", {
+															className: "text-right text-[#eef9ff]",
+															children: draftPreviewItem.group
+														})]
+													}),
+													/* @__PURE__ */ jsxs("div", {
+														className: "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2",
+														children: [
+															/* @__PURE__ */ jsxs("div", {
+																className: "rounded-2xl border border-[#223544]/70 bg-[#111c24]/85 px-4 py-3",
+																children: [/* @__PURE__ */ jsx("div", {
+																	className: "text-xs uppercase tracking-[0.18em] text-[#6f8b9b]",
+																	children: "RU"
+																}), /* @__PURE__ */ jsx("div", {
+																	className: "mt-2 text-sm text-[#eef9ff]",
+																	children: editDraft.titleRu || "—"
+																})]
+															}),
+															/* @__PURE__ */ jsxs("div", {
+																className: "rounded-2xl border border-[#223544]/70 bg-[#111c24]/85 px-4 py-3",
+																children: [/* @__PURE__ */ jsx("div", {
+																	className: "text-xs uppercase tracking-[0.18em] text-[#6f8b9b]",
+																	children: "EN"
+																}), /* @__PURE__ */ jsx("div", {
+																	className: "mt-2 text-sm text-[#eef9ff]",
+																	children: editDraft.titleEn || "—"
+																})]
+															}),
+															/* @__PURE__ */ jsxs("div", {
+																className: "rounded-2xl border border-[#223544]/70 bg-[#111c24]/85 px-4 py-3 sm:col-span-2 lg:col-span-1 xl:col-span-2",
+																children: [/* @__PURE__ */ jsx("div", {
+																	className: "text-xs uppercase tracking-[0.18em] text-[#6f8b9b]",
+																	children: "ZH"
+																}), /* @__PURE__ */ jsx("div", {
+																	className: "mt-2 text-sm text-[#eef9ff]",
+																	children: editDraft.titleZh || "—"
+																})]
+															})
+														]
+													})
+												]
+											})]
+										}),
+										/* @__PURE__ */ jsxs("div", {
+											className: "mt-6 rounded-[1.5rem] border border-[#223544]/70 bg-[#0c151d]/82 p-5",
+											children: [/* @__PURE__ */ jsx("div", {
+												className: "text-sm font-semibold text-[#e6eff5]",
+												children: language === "ru" ? "Быстрые подсказки" : language === "zh" ? "快速提示" : "Quick tips"
+											}), /* @__PURE__ */ jsxs("div", {
+												className: "mt-3 space-y-3 text-sm text-[#9db3c1]",
+												children: [
+													/* @__PURE__ */ jsxs("div", {
+														className: "flex gap-3",
+														children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+															name: "checkCircle",
+															className: "mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-300"
+														}), /* @__PURE__ */ jsx("span", { children: language === "ru" ? "Повторяющиеся события лучше помечать как Daily или Weekly, чтобы они автоматически появлялись в нужных днях." : language === "zh" ? "重复活动最好标记为 Daily 或 Weekly，这样它们会自动出现在对应日期。" : "Recurring events work best when marked as Daily or Weekly so they appear automatically on the right days." })]
+													}),
+													/* @__PURE__ */ jsxs("div", {
+														className: "flex gap-3",
+														children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+															name: "checkCircle",
+															className: "mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-300"
+														}), /* @__PURE__ */ jsx("span", { children: language === "ru" ? "Порядок помогает вручную расставить карточки, если время у нескольких слотов совпадает." : language === "zh" ? "如果多个活动时间相同，排序字段可以帮助你手动调整顺序。" : "The order field helps you manually arrange cards when several slots share the same time." })]
+													}),
+													/* @__PURE__ */ jsxs("div", {
+														className: "flex gap-3",
+														children: [/* @__PURE__ */ jsx(WuxiaIcon, {
+															name: "checkCircle",
+															className: "mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-300"
+														}), /* @__PURE__ */ jsx("span", { children: language === "ru" ? "Если событие временно не нужно показывать, его можно скрыть, не теряя данные." : language === "zh" ? "如果活动暂时不需要显示，可以隐藏而不必丢失数据。" : "If an event is temporarily inactive, hide it without losing the data." })]
+													})
+												]
+											})]
+										})
+									]
+								})]
+							})
+						})
+					})
+				]
+			})
+		})
+	});
+}
+function ScheduleSection(props) {
+	return /* @__PURE__ */ jsx(ErrorBoundary$1, { children: /* @__PURE__ */ jsx(ScheduleSectionContent, { ...props }) });
+}
+//#endregion
+//#region app/(portal)/schedule/page.tsx
+function SchedulePage() {
+	const { language } = useLanguage();
+	return /* @__PURE__ */ jsx(ScheduleSection, {
+		user: useUser(),
+		language
+	});
 }
 //#endregion
 //#region node_modules/vinext/dist/shims/error-boundary.js
@@ -21871,358 +26348,6 @@ function MobileNav({ currentSection, language, onNavPrefetch }) {
 	});
 }
 //#endregion
-//#region ../../lib/schemas/absence.ts
-var absenceStatuses = [
-	"pending",
-	"approved",
-	"rejected"
-];
-var absenceSchema = objectType({
-	id: stringType(),
-	member: stringType(),
-	startDate: stringType(),
-	endDate: stringType(),
-	reason: stringType(),
-	status: enumType(absenceStatuses)
-});
-var absencesArraySchema = arrayType(absenceSchema);
-objectType({
-	member: stringType().max(120).optional(),
-	startDate: stringType().min(1, "Дата начала обязательна"),
-	endDate: stringType().min(1, "Дата окончания обязательна"),
-	reason: stringType().min(1, "Причина обязательна").max(500, "Максимум 500 символов")
-});
-objectType({
-	id: stringType().min(1),
-	status: enumType(absenceStatuses)
-});
-//#endregion
-//#region ../../lib/api/absences.ts
-var absencesApi = {
-	list: async () => {
-		const response = await getApiDiscordProxyAbsences({ client: sameOriginOpenApiClient });
-		return absencesArraySchema.parse(response.data || []);
-	},
-	create: async (data) => {
-		const response = await postApiDiscordProxyAbsences({
-			client: sameOriginOpenApiClient,
-			body: data
-		});
-		return absenceSchema.parse(response.data || {});
-	},
-	updateStatus: async (data) => {
-		const response = await patchApiDiscordProxyAbsences({
-			client: sameOriginOpenApiClient,
-			body: data
-		});
-		return absenceSchema.parse(response.data || {});
-	}
-};
-//#endregion
-//#region ../../lib/absences/hooks.ts
-var absenceKeys = {
-	all: ["absences"],
-	lists: () => [...absenceKeys.all, "list"]
-};
-function usePrefetchAbsences() {
-	const queryClient = useQueryClient();
-	return useCallback(() => {
-		queryClient.prefetchQuery({
-			queryKey: absenceKeys.lists(),
-			queryFn: absencesApi.list,
-			staleTime: 300 * 1e3
-		});
-	}, [queryClient]);
-}
-var prefixOptionSchema = enumType([
-	"Чертила",
-	"VIP",
-	"Boobs",
-	"Moonborn",
-	"Raid Lead",
-	"PvP Ace",
-	"Abyss Walker"
-]);
-var registrationsArraySchema = arrayType(objectType({
-	discord: stringType(),
-	discordHandle: stringType().nullable().optional(),
-	avatarUrl: stringType().nullable().optional(),
-	prefix: stringType().nullable().optional(),
-	nickname: stringType(),
-	rank: enumType([
-		"guest",
-		"member",
-		"officer",
-		"head",
-		"sysadmin"
-	]),
-	class: stringType(),
-	guild: stringType(),
-	joinDate: stringType(),
-	kpi: numberType(),
-	elo: numberType().default(0),
-	mmr20: numberType().default(0),
-	bounty: numberType().default(0),
-	marks: numberType().default(0),
-	outerHeroic: numberType().default(0),
-	innerHeroic: numberType().default(0),
-	crimsonSands: numberType().default(0),
-	abyss: numberType().default(0),
-	gvg: numberType().default(0),
-	secretRealm: numberType().default(0),
-	duelWins: numberType().default(0),
-	duelLosses: numberType().default(0),
-	status: enumType([
-		"active",
-		"inactive",
-		"pending",
-		"leave"
-	])
-}));
-//#endregion
-//#region ../../lib/registration/column-labels.ts
-var registrationColumnLabelValueSchema = stringType().trim().min(1).max(80);
-var registrationColumnLabelsSchema = objectType({
-	index: registrationColumnLabelValueSchema,
-	discord: registrationColumnLabelValueSchema,
-	nickname: registrationColumnLabelValueSchema,
-	rank: registrationColumnLabelValueSchema,
-	class: registrationColumnLabelValueSchema,
-	guild: registrationColumnLabelValueSchema,
-	elo: registrationColumnLabelValueSchema,
-	mmr20: registrationColumnLabelValueSchema,
-	bounty: registrationColumnLabelValueSchema,
-	outerHeroic: registrationColumnLabelValueSchema,
-	innerHeroic: registrationColumnLabelValueSchema,
-	crimsonSands: registrationColumnLabelValueSchema,
-	abyss: registrationColumnLabelValueSchema,
-	gvg: registrationColumnLabelValueSchema,
-	secretRealm: registrationColumnLabelValueSchema,
-	marks: registrationColumnLabelValueSchema,
-	kpi: registrationColumnLabelValueSchema,
-	status: registrationColumnLabelValueSchema,
-	actions: registrationColumnLabelValueSchema
-});
-registrationColumnLabelsSchema.partial();
-//#endregion
-//#region ../../lib/api/registrations.ts
-var updateRegistrationStatsPayloadSchema = objectType({
-	nickname: stringType().trim().min(1),
-	className: stringType().trim().min(1).max(100).optional(),
-	guild: stringType().trim().max(120).optional(),
-	discordHandle: stringType().trim().max(120).optional(),
-	prefix: prefixOptionSchema.nullable().optional(),
-	elo: numberType().optional(),
-	mmr20: numberType().optional(),
-	bounty: numberType().optional(),
-	outerHeroic: numberType().optional(),
-	innerHeroic: numberType().optional(),
-	crimsonSands: numberType().optional(),
-	abyss: numberType().optional(),
-	gvg: numberType().optional(),
-	secretRealm: numberType().optional()
-});
-var updateRegistrationStatsResponseSchema = objectType({
-	success: booleanType(),
-	portalOnly: booleanType()
-});
-async function readApiError(response, fallbackMessage) {
-	const payload = await response.json().catch(() => null);
-	throw new Error(payload?.error || fallbackMessage);
-}
-var registrationsApi = {
-	list: async () => {
-		const response = await getApiDiscordProxyRegistration({ client: sameOriginOpenApiClient });
-		return registrationsArraySchema.parse(response.data || []).map((item) => ({
-			...item,
-			elo: (item.elo ?? 0) > 0 ? item.elo ?? 0 : 1e3,
-			mmr20: item.mmr20 || 0,
-			bounty: item.bounty || 0,
-			marks: item.marks || 0,
-			outerHeroic: item.outerHeroic || 0,
-			innerHeroic: item.innerHeroic || 0,
-			crimsonSands: item.crimsonSands || 0,
-			abyss: item.abyss || 0,
-			gvg: item.gvg || 0,
-			secretRealm: item.secretRealm || 0,
-			duelWins: item.duelWins || 0,
-			duelLosses: item.duelLosses || 0
-		}));
-	},
-	updateStats: async (payload) => {
-		const response = await patchApiDiscordProxyRegistration({
-			client: sameOriginOpenApiClient,
-			body: updateRegistrationStatsPayloadSchema.parse(payload)
-		});
-		return updateRegistrationStatsResponseSchema.parse(response.data || {});
-	},
-	getColumnLabels: async () => {
-		const response = await fetch("/api/registration/column-labels", {
-			method: "GET",
-			credentials: "same-origin"
-		});
-		if (!response.ok) await readApiError(response, "Failed to load registration column labels");
-		const data = await response.json();
-		return registrationColumnLabelsSchema.parse(data);
-	},
-	updateColumnLabels: async (payload) => {
-		const response = await fetch("/api/registration/column-labels", {
-			method: "PATCH",
-			credentials: "same-origin",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(payload)
-		});
-		if (!response.ok) await readApiError(response, "Failed to update registration column labels");
-		const data = await response.json();
-		return registrationColumnLabelsSchema.parse(data);
-	}
-};
-//#endregion
-//#region ../../lib/registration/hooks.ts
-var registrationKeys = {
-	all: ["registrations"],
-	lists: () => [...registrationKeys.all, "list"],
-	detail: (nickname) => [
-		...registrationKeys.all,
-		"detail",
-		nickname
-	],
-	columnLabels: () => [...registrationKeys.all, "column-labels"]
-};
-function usePrefetchRegistrations() {
-	const queryClient = useQueryClient();
-	return useCallback(() => {
-		queryClient.prefetchQuery({
-			queryKey: registrationKeys.lists(),
-			queryFn: registrationsApi.list,
-			staleTime: 300 * 1e3
-		});
-	}, [queryClient]);
-}
-//#endregion
-//#region ../../lib/schemas/schedule.ts
-var scheduleSchema = objectType({
-	id: stringType().optional(),
-	date: stringType().default(""),
-	registration: stringType().default(""),
-	type: stringType().default(""),
-	description: stringType().default(""),
-	group: stringType().default(""),
-	dayType: stringType().optional(),
-	time: stringType().optional(),
-	titleRu: stringType().optional(),
-	titleEn: stringType().optional(),
-	titleZh: stringType().optional(),
-	orderIndex: numberType().optional(),
-	active: booleanType().optional()
-});
-var schedulesArraySchema = arrayType(scheduleSchema);
-var createScheduleSchema = objectType({
-	dayType: stringType().trim().min(1).max(60),
-	time: stringType().trim().max(60),
-	titleRu: stringType().trim().min(1).max(160),
-	titleEn: stringType().trim().min(1).max(255),
-	titleZh: stringType().trim().max(160).optional(),
-	orderIndex: numberType().int().min(0).max(999).default(0),
-	active: booleanType().default(true)
-});
-var updateScheduleSchema = objectType({
-	id: stringType().min(1),
-	dayType: stringType().trim().min(1).max(60),
-	time: stringType().trim().max(60),
-	titleRu: stringType().trim().min(1).max(160),
-	titleEn: stringType().trim().min(1).max(255),
-	titleZh: stringType().trim().max(160).optional(),
-	orderIndex: numberType().int().min(0).max(999).default(0),
-	active: booleanType().default(true)
-});
-//#endregion
-//#region ../../lib/api/schedule.ts
-var scheduleApi = {
-	list: async (language = "ru") => {
-		const response = await getApiSchedule({
-			client: sameOriginOpenApiClient,
-			query: { language: language === "en" || language === "zh" ? language : "ru" }
-		});
-		return schedulesArraySchema.parse(response.data || []).map((item) => ({
-			date: item.date || "",
-			registration: item.registration || "",
-			type: item.type || "",
-			description: item.description || "",
-			group: item.group || "",
-			id: item.id,
-			dayType: item.dayType,
-			time: item.time,
-			titleRu: item.titleRu,
-			titleEn: item.titleEn,
-			titleZh: item.titleZh,
-			orderIndex: item.orderIndex,
-			active: item.active
-		}));
-	},
-	update: async (payload) => {
-		const response = await patchApiSchedule({
-			client: sameOriginOpenApiClient,
-			body: updateScheduleSchema.parse(payload)
-		});
-		const item = scheduleSchema.parse(response.data || {});
-		return {
-			date: item.date || "",
-			registration: item.registration || "",
-			type: item.type || "",
-			description: item.description || "",
-			group: item.group || "",
-			id: item.id,
-			dayType: item.dayType,
-			time: item.time,
-			titleRu: item.titleRu,
-			titleEn: item.titleEn,
-			titleZh: item.titleZh,
-			orderIndex: item.orderIndex,
-			active: item.active
-		};
-	},
-	create: async (payload) => {
-		const response = await postApiSchedule({
-			client: sameOriginOpenApiClient,
-			body: createScheduleSchema.parse(payload)
-		});
-		const item = scheduleSchema.parse(response.data || {});
-		return {
-			date: item.date || "",
-			registration: item.registration || "",
-			type: item.type || "",
-			description: item.description || "",
-			group: item.group || "",
-			id: item.id,
-			dayType: item.dayType,
-			time: item.time,
-			titleRu: item.titleRu,
-			titleEn: item.titleEn,
-			titleZh: item.titleZh,
-			orderIndex: item.orderIndex,
-			active: item.active
-		};
-	}
-};
-//#endregion
-//#region ../../lib/schedule/hooks.ts
-var scheduleKeys = {
-	all: ["schedule"],
-	lists: () => [...scheduleKeys.all, "list"],
-	list: (language) => [...scheduleKeys.lists(), { language }]
-};
-function usePrefetchSchedule() {
-	const queryClient = useQueryClient();
-	return useCallback((language = "ru") => {
-		queryClient.prefetchQuery({
-			queryKey: scheduleKeys.list(language),
-			queryFn: () => scheduleApi.list(language),
-			staleTime: 120 * 1e3
-		});
-	}, [queryClient]);
-}
-//#endregion
 //#region ../../components/shell/MainLayout.tsx
 var pathToSection = {
 	"/": "about",
@@ -22320,44 +26445,6 @@ function MainLayout(props) {
 	return /* @__PURE__ */ jsx(HeaderProvider, { children: /* @__PURE__ */ jsx(MainLayoutContent, { ...props }) });
 }
 //#endregion
-//#region ../../lib/schemas/auth.ts
-var userRoleSchema = enumType([
-	"guest",
-	"member",
-	"officer",
-	"head",
-	"sysadmin"
-]);
-var authMethodSchema = enumType(["account", "pin"]);
-var authUserSchema = objectType({
-	id: stringType().optional(),
-	nickname: stringType().optional(),
-	role: userRoleSchema,
-	isActive: booleanType().optional(),
-	authMethod: authMethodSchema.optional(),
-	discordId: stringType().nullable().optional(),
-	discordHandle: stringType().nullable().optional(),
-	className: stringType().nullable().optional(),
-	prefix: stringType().nullable().optional(),
-	exp: numberType().optional()
-});
-var authResponseSchema = objectType({
-	success: booleanType(),
-	user: authUserSchema
-});
-var registerAuthUserSchema = authUserSchema.extend({ createdAt: stringType().optional() });
-var registerResponseSchema = objectType({
-	success: booleanType(),
-	pendingApproval: booleanType().optional(),
-	message: stringType().optional(),
-	user: registerAuthUserSchema
-});
-var verifyAuthResponseSchema = objectType({
-	valid: booleanType(),
-	user: authUserSchema
-});
-var logoutResponseSchema = objectType({ success: booleanType() });
-//#endregion
 //#region ../../lib/api/auth.ts
 var loginPayloadSchema = objectType({
 	nickname: stringType().trim().min(1).optional(),
@@ -22393,43 +26480,6 @@ var authApi = {
 		logoutResponseSchema.parse(response.data || {});
 	}
 };
-arrayType(objectType({
-	id: stringType(),
-	nickname: stringType(),
-	role: userRoleSchema,
-	isActive: booleanType(),
-	discordHandle: stringType().nullable().optional(),
-	prefix: stringType().nullable().optional(),
-	createdAt: stringType(),
-	lastLoginAt: stringType().nullable()
-}));
-objectType({
-	id: stringType(),
-	isActive: booleanType(),
-	role: userRoleSchema.optional(),
-	prefix: stringType().trim().max(40).nullable().optional()
-});
-//#endregion
-//#region ../../lib/api/classes.ts
-var classesSchema = arrayType(stringType());
-var classesApi = { list: async () => {
-	const response = await getApiClasses({ client: sameOriginOpenApiClient });
-	return classesSchema.parse(response.data || []);
-} };
-//#endregion
-//#region ../../lib/auth/hooks.ts
-var knownClassesKeys = {
-	all: ["known-classes"],
-	lists: () => [...knownClassesKeys.all, "list"]
-};
-function useKnownClasses({ enabled = true } = {}) {
-	return useQuery({
-		queryKey: knownClassesKeys.lists(),
-		queryFn: classesApi.list,
-		staleTime: 300 * 1e3,
-		enabled
-	});
-}
 //#endregion
 //#region ../../components/shell/PinScreen.tsx
 function PinScreen({ onAuthSuccess }) {
@@ -22983,101 +27033,6 @@ function PortalVisualEffects() {
 	return /* @__PURE__ */ jsxs(Fragment$1, { children: [/* @__PURE__ */ jsx(BackgroundEffects, {}), /* @__PURE__ */ jsx(PointerEffectsMount, {})] });
 }
 //#endregion
-//#region ../../lib/notifications/context.tsx
-var defaultSettings = {
-	enabled: true,
-	helpRequests: true,
-	absenceApprovals: true,
-	pvpMatches: true,
-	eventReminders: true,
-	officerAlerts: true,
-	soundEnabled: false,
-	desktopEnabled: false
-};
-var SETTINGS_KEY = "guild_notification_settings";
-function getStoredSettings() {
-	if (typeof window === "undefined") return defaultSettings;
-	try {
-		const stored = localStorage.getItem(SETTINGS_KEY);
-		if (stored) {
-			const parsed = JSON.parse(stored);
-			return {
-				...defaultSettings,
-				...parsed
-			};
-		}
-	} catch {}
-	return defaultSettings;
-}
-var NotificationsContext = createContext(null);
-function NotificationsProvider({ children }) {
-	const [toasts, setToasts] = useState([]);
-	const [settings, setSettings] = useState(getStoredSettings);
-	const addToast = useCallback((toast) => {
-		const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-		const newToast = {
-			id,
-			...toast
-		};
-		setToasts((prev) => [...prev, newToast]);
-		if (toast.type === "error" || toast.type === "warning") console.warn(`[${toast.type.toUpperCase()}] ${toast.title}: ${toast.message || ""}`);
-		return id;
-	}, []);
-	const dismissToast = useCallback((id) => {
-		setToasts((prev) => prev.filter((t) => t.id !== id));
-	}, []);
-	const clearAllToasts = useCallback(() => {
-		setToasts([]);
-	}, []);
-	const updateSettings = useCallback((newSettings) => {
-		setSettings((prev) => {
-			const updated = {
-				...prev,
-				...newSettings
-			};
-			if (typeof window !== "undefined") localStorage.setItem(SETTINGS_KEY, JSON.stringify(updated));
-			return updated;
-		});
-	}, []);
-	const requestPermission = useCallback(async () => {
-		if (!("Notification" in window)) return "denied";
-		if (Notification.permission === "granted") return "granted";
-		try {
-			const permission = await Notification.requestPermission();
-			if (permission === "granted") updateSettings({ desktopEnabled: true });
-			return permission;
-		} catch {
-			return "denied";
-		}
-	}, [updateSettings]);
-	const value = useMemo(() => ({
-		toasts,
-		addToast,
-		dismissToast,
-		clearAllToasts,
-		settings,
-		updateSettings,
-		requestPermission
-	}), [
-		toasts,
-		addToast,
-		dismissToast,
-		clearAllToasts,
-		settings,
-		updateSettings,
-		requestPermission
-	]);
-	return /* @__PURE__ */ jsx(NotificationsContext.Provider, {
-		value,
-		children
-	});
-}
-function useNotifications() {
-	const context = useContext(NotificationsContext);
-	if (!context) throw new Error("useNotifications must be used within a NotificationsProvider");
-	return context;
-}
-//#endregion
 //#region ../../components/notifications/Toast.tsx
 var toastIcons = {
 	info: "eye",
@@ -23228,9 +27183,14 @@ function QueryProvider({ children }) {
 }
 //#endregion
 //#region \0virtual:vite-rsc/client-references/group/facade:\0virtual:vinext-rsc-entry
+var export_de2699100888 = { default: AbsencesPage };
+var export_c18db9305e40 = { default: CalendarPage };
 var export_7346d135c2b4 = { default: GuidesPage };
 var export_5f1cc293b170 = { default: HelpPage };
 var export_cd3e30d9f56e = { default: NewsPage };
+var export_809ff3c8fbc4 = { default: ProfilePage };
+var export_97c65a20db9f = { default: PvpPage };
+var export_fc255789ffde = { default: SchedulePage };
 var export_f29e6e234fea = {
 	ErrorBoundary,
 	NotFoundBoundary
@@ -23242,4 +27202,4 @@ var export_746b6ae3be71 = { default: PortalShell };
 var export_38d010f48001 = { I18nProvider };
 var export_c74bc67b8f11 = { QueryProvider };
 //#endregion
-export { export_0deffcb8ffd7, export_38d010f48001, export_5f1cc293b170, export_7346d135c2b4, export_746b6ae3be71, export_c74bc67b8f11, export_cd3e30d9f56e, export_e486da50e5de, export_f29e6e234fea, export_fc1ddee70fd0 };
+export { export_0deffcb8ffd7, export_38d010f48001, export_5f1cc293b170, export_7346d135c2b4, export_746b6ae3be71, export_809ff3c8fbc4, export_97c65a20db9f, export_c18db9305e40, export_c74bc67b8f11, export_cd3e30d9f56e, export_de2699100888, export_e486da50e5de, export_f29e6e234fea, export_fc1ddee70fd0, export_fc255789ffde };

@@ -1410,35 +1410,50 @@ function createFromReadableStream(stream, options = {}) {
 //#endregion
 //#region \0virtual:vite-rsc/client-references
 var client_references_default = {
+	"de2699100888": async () => {
+		return (await import("./assets/facade__virtual_vinext-rsc-entry-CrT3qbrg.js")).export_de2699100888;
+	},
+	"c18db9305e40": async () => {
+		return (await import("./assets/facade__virtual_vinext-rsc-entry-CrT3qbrg.js")).export_c18db9305e40;
+	},
 	"7346d135c2b4": async () => {
-		return (await import("./assets/facade__virtual_vinext-rsc-entry-BDAY3jhq.js")).export_7346d135c2b4;
+		return (await import("./assets/facade__virtual_vinext-rsc-entry-CrT3qbrg.js")).export_7346d135c2b4;
 	},
 	"5f1cc293b170": async () => {
-		return (await import("./assets/facade__virtual_vinext-rsc-entry-BDAY3jhq.js")).export_5f1cc293b170;
+		return (await import("./assets/facade__virtual_vinext-rsc-entry-CrT3qbrg.js")).export_5f1cc293b170;
 	},
 	"cd3e30d9f56e": async () => {
-		return (await import("./assets/facade__virtual_vinext-rsc-entry-BDAY3jhq.js")).export_cd3e30d9f56e;
+		return (await import("./assets/facade__virtual_vinext-rsc-entry-CrT3qbrg.js")).export_cd3e30d9f56e;
+	},
+	"809ff3c8fbc4": async () => {
+		return (await import("./assets/facade__virtual_vinext-rsc-entry-CrT3qbrg.js")).export_809ff3c8fbc4;
+	},
+	"97c65a20db9f": async () => {
+		return (await import("./assets/facade__virtual_vinext-rsc-entry-CrT3qbrg.js")).export_97c65a20db9f;
+	},
+	"fc255789ffde": async () => {
+		return (await import("./assets/facade__virtual_vinext-rsc-entry-CrT3qbrg.js")).export_fc255789ffde;
 	},
 	"f29e6e234fea": async () => {
-		return (await import("./assets/facade__virtual_vinext-rsc-entry-BDAY3jhq.js")).export_f29e6e234fea;
+		return (await import("./assets/facade__virtual_vinext-rsc-entry-CrT3qbrg.js")).export_f29e6e234fea;
 	},
 	"0deffcb8ffd7": async () => {
-		return (await import("./assets/facade__virtual_vinext-rsc-entry-BDAY3jhq.js")).export_0deffcb8ffd7;
+		return (await import("./assets/facade__virtual_vinext-rsc-entry-CrT3qbrg.js")).export_0deffcb8ffd7;
 	},
 	"e486da50e5de": async () => {
-		return (await import("./assets/facade__virtual_vinext-rsc-entry-BDAY3jhq.js")).export_e486da50e5de;
+		return (await import("./assets/facade__virtual_vinext-rsc-entry-CrT3qbrg.js")).export_e486da50e5de;
 	},
 	"fc1ddee70fd0": async () => {
-		return (await import("./assets/facade__virtual_vinext-rsc-entry-BDAY3jhq.js")).export_fc1ddee70fd0;
+		return (await import("./assets/facade__virtual_vinext-rsc-entry-CrT3qbrg.js")).export_fc1ddee70fd0;
 	},
 	"746b6ae3be71": async () => {
-		return (await import("./assets/facade__virtual_vinext-rsc-entry-BDAY3jhq.js")).export_746b6ae3be71;
+		return (await import("./assets/facade__virtual_vinext-rsc-entry-CrT3qbrg.js")).export_746b6ae3be71;
 	},
 	"38d010f48001": async () => {
-		return (await import("./assets/facade__virtual_vinext-rsc-entry-BDAY3jhq.js")).export_38d010f48001;
+		return (await import("./assets/facade__virtual_vinext-rsc-entry-CrT3qbrg.js")).export_38d010f48001;
 	},
 	"c74bc67b8f11": async () => {
-		return (await import("./assets/facade__virtual_vinext-rsc-entry-BDAY3jhq.js")).export_c74bc67b8f11;
+		return (await import("./assets/facade__virtual_vinext-rsc-entry-CrT3qbrg.js")).export_c74bc67b8f11;
 	}
 };
 //#endregion
