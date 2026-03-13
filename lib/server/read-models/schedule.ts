@@ -14,16 +14,18 @@ import {
   markReadModelError,
   markReadModelReady,
 } from './shared';
+import {
+  getReadModelFetchErrorMessage,
+  getReadModelTunnelBypassHeaders,
+  refreshReadModelAfterWrite,
+} from './runtime';
 
 const READ_MODEL_KEY = 'schedule-feed';
 const READ_MODEL_TTL_MS = 5 * 60 * 1000;
 const BOT_SCHEDULE_CACHE_TTL_MS = 30_000;
 const BOT_API_URL = process.env.BOT_API_URL || process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const BOT_API_KEY = process.env.BOT_API_KEY || process.env.DISCORD_BOT_API_KEY;
-const bypassHeader: Record<string, string> =
-  BOT_API_URL.includes('.loca.lt') || BOT_API_URL.includes('.localtunnel.me')
-    ? { 'bypass-tunnel-reminder': '1' }
-    : {};
+const bypassHeader = getReadModelTunnelBypassHeaders(BOT_API_URL);
 
 function getLanguageScheduleTitle(item: Schedule, language: string) {
   if (language === 'zh') return item.titleZh || item.titleEn || item.titleRu || item.registration || '';
@@ -106,9 +108,7 @@ async function fetchScheduleFromBot(language: string): Promise<Schedule[]> {
 
     const payload: unknown = await response.json().catch(() => ({}));
     if (!response.ok) {
-      const message = payload && typeof payload === 'object'
-        ? String((payload as Record<string, unknown>).error || (payload as Record<string, unknown>).message || `HTTP ${response.status}`)
-        : `HTTP ${response.status}`;
+      const message = getReadModelFetchErrorMessage(payload, response.status);
       throw new Error(message);
     }
 
@@ -374,9 +374,5 @@ export async function refreshScheduleReadModelAfterWrite(): Promise<void> {
     return;
   }
 
-  try {
-    await syncScheduleReadModel();
-  } catch (error) {
-    console.error('Failed to refresh schedule read model after write:', error);
-  }
+  await refreshReadModelAfterWrite(syncScheduleReadModel, 'Failed to refresh schedule read model after write:');
 }

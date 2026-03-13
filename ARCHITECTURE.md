@@ -37,7 +37,7 @@
 
 - `app/api/*` - transport layer для HTTP
 - `lib/server/route-helpers.ts` - общие guard-функции, same-origin проверки, DB-backed session validation, JSON parsing и error envelope
-- `lib/server/auth-session.ts` - серверная проверка JWT + активного состояния аккаунта
+- `lib/server/auth-session.ts` - серверная проверка JWT + активного состояния аккаунта, включая pre-query валидацию DB-backed account id
 
 ### 3. Доменные серверные модули
 
@@ -47,8 +47,15 @@
 - `lib/server/schedule/*` - серверные операции по расписанию
 - `lib/server/news/*` - новости и Discord publish flow
 - `lib/server/analytics/*` - аналитика состава
-- `lib/server/pvp/*` - PvP очередь, матчи, рейтинги
+- `lib/server/pvp/*` - PvP очередь, матчи, рейтинги, разделенные на schema / actors / state / mutations / rate-limit / errors
 - `lib/server/registration/*` - registrations, read-model, sync и write-операции
+
+### 3.1. I18n как отдельный слой
+
+- `lib/i18n/context.tsx` - runtime provider и persistence языка
+- `lib/i18n/translations/*` - feature copy для экранов и форм
+- `lib/i18n/copy.ts` - shell/navigation/portal source-of-truth
+- `lib/i18n.ts` - compatibility re-export для существующих импортов
 
 ### 4. Read-model и process-local cache
 
@@ -116,3 +123,4 @@ Discord-бот остается важным интеграционным зве
 - `SECURITY.md` - trust boundaries и security defaults
 - `PERFORMANCE.md` - cache и perf strategy
 - `docs/discord-bot-integration.md` - детали bot-side интеграции
+- `docs/hotspot-refactor-seams.md` - зафиксированные split points для крупных hotspot-модулей

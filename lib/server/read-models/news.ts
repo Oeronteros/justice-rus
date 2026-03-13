@@ -8,16 +8,18 @@ import {
   markReadModelError,
   markReadModelReady,
 } from './shared';
+import {
+  getReadModelFetchErrorMessage,
+  getReadModelTunnelBypassHeaders,
+  refreshReadModelAfterWrite,
+} from './runtime';
 
 const READ_MODEL_KEY = 'news-feed';
 const READ_MODEL_TTL_MS = 5 * 60 * 1000;
 const BOT_NEWS_CACHE_TTL_MS = 30_000;
 const DISCORD_BOT_API_URL = process.env.BOT_API_URL || process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const BOT_API_KEY = process.env.BOT_API_KEY || process.env.DISCORD_BOT_API_KEY;
-const bypassHeader: Record<string, string> =
-  DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me')
-    ? { 'bypass-tunnel-reminder': '1' }
-    : {};
+const bypassHeader = getReadModelTunnelBypassHeaders(DISCORD_BOT_API_URL);
 
 function normalizeNewsRows(data: ReadonlyArray<Record<string, unknown>>): News[] {
   return data.map((item, index) => ({
@@ -117,9 +119,7 @@ async function fetchNewsFromBotSource(token?: string): Promise<News[]> {
 
       const payload: unknown = await response.json().catch(() => ({}));
       if (!response.ok) {
-        const message = payload && typeof payload === 'object'
-          ? String((payload as Record<string, unknown>).error || (payload as Record<string, unknown>).message || `HTTP ${response.status}`)
-          : `HTTP ${response.status}`;
+        const message = getReadModelFetchErrorMessage(payload, response.status);
         errors.push(`${attempt.url}: ${message}`);
         continue;
       }
@@ -358,9 +358,5 @@ export async function refreshNewsReadModelAfterWrite(): Promise<void> {
     return;
   }
 
-  try {
-    await syncNewsReadModel();
-  } catch (error) {
-    console.error('Failed to refresh news read model after write:', error);
-  }
+  await refreshReadModelAfterWrite(syncNewsReadModel, 'Failed to refresh news read model after write:');
 }

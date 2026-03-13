@@ -207,6 +207,11 @@ npm run validate
 4. `npm run build`
 5. `npm run type-check`
 
+`npm run test:e2e` теперь включает два Playwright project внутри одного `playwright.config.ts`:
+
+- `chromium` — основной Next.js smoke/a11y/mobile путь
+- `vinext-chromium` — authenticated vinext pilot и vinext a11y smoke на отдельном vinext dev server
+
 Почему порядок именно такой:
 
 - unit и E2E тесты ловят поведенческие регрессии до production build;
@@ -223,6 +228,12 @@ GitHub Actions workflow находится в `.github/workflows/ci.yml` и за
 ## Производительность
 
 Краткая стратегия по process-local cache и lightweight performance check описана в `PERFORMANCE.md`.
+
+## Текущие engineering notes
+
+- Источник shell/navigation copy теперь централизован в `lib/i18n/copy.ts`; `lib/i18n.ts` оставлен как compatibility re-export для старых импортов.
+- Authenticated session boundary валидирует DB-backed account id до SQL lookup, чтобы тестовые/невалидные идентификаторы не превращались в Postgres `22P02`.
+- Планируемые split points для крупных модулей зафиксированы в `docs/hotspot-refactor-seams.md`.
 
 ## 📋 Roadmap
 

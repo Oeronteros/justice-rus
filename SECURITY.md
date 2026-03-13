@@ -4,6 +4,7 @@
 
 - Authentication uses `httpOnly` cookies for account sessions.
 - Sensitive write endpoints reject cross-origin requests via explicit same-origin checks.
+- DB-backed session resolution validates account id shape before querying `portal_account`, so malformed/test fixture ids fail safely instead of surfacing Postgres type errors.
 - Production responses include hardened baseline headers from `next.config.ts`, including `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`, `Cross-Origin-Resource-Policy`, and `Strict-Transport-Security`.
 - Auth endpoints apply rate limiting and origin checks before issuing cookies.
 
