@@ -87,6 +87,25 @@ describe('resolveSessionFromToken', () => {
     expect(result).toEqual({ valid: false, reason: 'account-state-unavailable' });
   });
 
+  it.each(['member-1', 'officer-1'])('rejects malformed account id %s before any DB query', async (invalidId) => {
+    hasDatabaseUrlMock.mockReturnValue(true);
+    const queryMock = vi.fn();
+
+    verifyTokenMock.mockReturnValue({
+      id: invalidId,
+      role: 'member',
+      authMethod: 'account',
+      nickname: 'Smoke Member',
+    });
+    getPoolMock.mockReturnValue({ query: queryMock });
+
+    const result = await resolveSessionFromToken('account-token');
+
+    expect(result).toEqual({ valid: false, reason: 'account-state-unavailable' });
+    expect(ensureAccountsSchemaMock).not.toHaveBeenCalled();
+    expect(queryMock).not.toHaveBeenCalled();
+  });
+
   it('resolves active account user with class name from registrations', async () => {
     hasDatabaseUrlMock.mockReturnValue(true);
     verifyTokenMock.mockReturnValue({

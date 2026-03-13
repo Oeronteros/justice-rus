@@ -20,6 +20,10 @@ export type SessionResolution =
       reason: SessionFailureReason;
     };
 
+function isPortalAccountId(value: string | undefined): value is string {
+  return Boolean(value && /^\d+$/.test(value));
+}
+
 async function resolveClassName(nickname: string | undefined): Promise<string | null> {
   if (!nickname || !hasDatabaseUrl()) {
     return null;
@@ -71,7 +75,7 @@ export async function resolveSessionFromToken(token: string | null | undefined):
   };
 
   if (decoded.authMethod !== 'pin') {
-    if (!decoded.id || !hasDatabaseUrl()) {
+    if (!isPortalAccountId(decoded.id) || !hasDatabaseUrl()) {
       return {
         valid: false,
         reason: 'account-state-unavailable',

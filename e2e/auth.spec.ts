@@ -100,7 +100,9 @@ test.describe('portal auth smoke', () => {
 
     await expect(page.getByText('Боевой сбор')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Выйти' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Новости', exact: true })).toHaveAttribute('aria-current', 'page');
+    await expect(
+      page.getByRole('navigation', { name: 'Основная навигация' }).getByRole('link', { name: 'Новости', exact: true })
+    ).toHaveAttribute('aria-current', 'page');
 
     await page.getByRole('button', { name: 'Выйти' }).click();
 

@@ -34,8 +34,11 @@ describe('Header navigation accessibility', () => {
       />
     );
 
-    const guidesLink = screen.getByRole('link', { name: 'Guides' });
+    expect(screen.getByRole('navigation', { name: 'Primary navigation' })).toBeInTheDocument();
 
+    const guidesLink = screen.getByRole('navigation', { name: 'Primary navigation' }).querySelector('a[aria-label="Guides"]');
+
+    expect(guidesLink).not.toBeNull();
     expect(guidesLink).toHaveAttribute('href', '/guides');
     expect(guidesLink).toHaveAttribute('aria-current', 'page');
     expect(guidesLink).toHaveAttribute('aria-label', 'Guides');

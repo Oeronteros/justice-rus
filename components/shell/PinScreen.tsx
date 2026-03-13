@@ -52,7 +52,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
         password,
       });
 
-      onAuthSuccess(payload.user as User);
+      onAuthSuccess(payload.user);
     } catch (err) {
       setError(err instanceof Error ? err.message : t.auth.loginFailed);
     } finally {
@@ -120,7 +120,7 @@ export default function PinScreen({ onAuthSuccess }: PinScreenProps) {
     try {
       const payload = await authApi.login({ password: adminPin.trim() });
 
-      onAuthSuccess(payload.user as User);
+      onAuthSuccess(payload.user);
     } catch (err) {
       setError(err instanceof Error ? err.message : t.auth.adminPinRejected);
     } finally {

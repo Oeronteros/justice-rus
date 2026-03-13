@@ -190,7 +190,9 @@ test.describe('vinext pilot smoke', () => {
 
     await expect(page.getByText('Боевой сбор')).toBeVisible({ timeout: 15000 });
     await expect(page.getByRole('button', { name: 'Выйти' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Новости', exact: true })).toHaveAttribute('aria-current', 'page');
+    await expect(
+      page.getByRole('navigation', { name: 'Основная навигация' }).getByRole('link', { name: 'Новости', exact: true })
+    ).toHaveAttribute('aria-current', 'page');
   });
 
   test('logs out from vinext /news back to PinScreen', async ({ page }) => {

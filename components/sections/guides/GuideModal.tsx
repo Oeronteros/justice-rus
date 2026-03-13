@@ -19,6 +19,14 @@ interface GuideModalProps {
   userId?: string;
 }
 
+type ShareCapableNavigator = Navigator & {
+  share: (data?: ShareData) => Promise<void>;
+};
+
+function hasShareApi(navigator: Navigator): navigator is ShareCapableNavigator {
+  return typeof navigator.share === 'function';
+}
+
 function getVoterKey(): string {
   if (typeof window === 'undefined') return 'server';
   const existing = localStorage.getItem('dc_guide_voter');
@@ -157,8 +165,8 @@ export function GuideModal({
     const url = stableGuideUrl;
 
     try {
-      if (typeof navigator !== 'undefined' && 'share' in navigator && typeof (navigator as any).share === 'function') {
-        await (navigator as any).share({
+      if (typeof navigator !== 'undefined' && hasShareApi(navigator)) {
+        await navigator.share({
           title: guideDetail.guide.title,
           text: `${guideDetail.guide.title} • ${guideDetail.guide.category}`,
           url,

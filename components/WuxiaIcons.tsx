@@ -23,8 +23,11 @@ export type IconName =
   | 'book'
   | 'bookOpen'
   | 'checkCircle'
+  | 'questionCircle'
   | 'check'
+  | 'clock'
   | 'x'
+  | 'xCircle'
   | 'edit'
   | 'thumbtack'
   | 'comment'
@@ -292,16 +295,38 @@ export default function WuxiaIcon({ name, className = '' }: IconProps) {
           <path d="M8.2 12.2l2.2 2.3 5.6-6.1" />
         </svg>
       );
+    case 'questionCircle':
+      return (
+        <svg viewBox="0 0 24 24" className={className} {...baseProps}>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M9.7 9.3a2.5 2.5 0 1 1 4.5 1.5c-.8.8-1.7 1.3-1.7 2.6" />
+          <circle cx="12" cy="16.9" r="0.9" fill="currentColor" stroke="none" />
+        </svg>
+      );
     case 'check':
       return (
         <svg viewBox="0 0 24 24" className={className} {...baseProps}>
           <path d="M5 12.5l4 4L19 7.2" />
         </svg>
       );
+    case 'clock':
+      return (
+        <svg viewBox="0 0 24 24" className={className} {...baseProps}>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 7.5v5l3.2 1.9" />
+        </svg>
+      );
     case 'x':
       return (
         <svg viewBox="0 0 24 24" className={className} {...baseProps}>
           <path d="M7 7l10 10M17 7L7 17" />
+        </svg>
+      );
+    case 'xCircle':
+      return (
+        <svg viewBox="0 0 24 24" className={className} {...baseProps}>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M9 9l6 6M15 9l-6 6" />
         </svg>
       );
     case 'edit':

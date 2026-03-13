@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useUpsertRsvp } from '@/lib/rsvp/hooks';
-import WuxiaIcon from '@/components/WuxiaIcons';
+import WuxiaIcon, { type IconName } from '@/components/WuxiaIcons';
 import type { RsvpStatus } from '@/lib/schemas/rsvp';
 import type { User } from '@/lib/schemas/auth';
 
@@ -13,7 +13,7 @@ interface RsvpButtonProps {
   onRsvpChange?: () => void;
 }
 
-const statusConfig: Record<RsvpStatus, { label: string; icon: string; className: string }> = {
+const statusConfig: Record<RsvpStatus, { label: string; icon: IconName; className: string }> = {
   going: {
     label: 'Иду',
     icon: 'checkCircle',
@@ -64,7 +64,7 @@ export function RsvpButton({ scheduleId, currentStatus, user, onRsvpChange }: Rs
         aria-haspopup="menu"
         aria-expanded={isOpen}
       >
-        <WuxiaIcon name={currentConfig.icon as any} className="w-3.5 h-3.5" />
+        <WuxiaIcon name={currentConfig.icon} className="w-3.5 h-3.5" />
         <span>{currentConfig.label}</span>
         <WuxiaIcon name="dots" className="w-3 h-3 opacity-70" />
       </button>
@@ -94,7 +94,7 @@ export function RsvpButton({ scheduleId, currentStatus, user, onRsvpChange }: Rs
                   }`}
                   role="menuitem"
                 >
-                  <WuxiaIcon name={config.icon as any} className="w-3.5 h-3.5" />
+                  <WuxiaIcon name={config.icon} className="w-3.5 h-3.5" />
                   <span>{config.label}</span>
                   {isSelected && (
                     <WuxiaIcon name="check" className="w-3 h-3 ml-auto opacity-70" />

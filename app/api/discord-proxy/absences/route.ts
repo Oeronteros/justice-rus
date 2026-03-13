@@ -7,6 +7,7 @@ import { createAbsenceSchema, updateAbsenceStatusSchema } from '@/lib/schemas/ab
 import { canManageAccounts } from '@/lib/authz';
 import { z } from 'zod';
 import { runServerTaskOnce } from '@/lib/server/db-cache';
+import { getErrorPayloadMessage } from '@/lib/server/error-payload';
 import {
   handleRouteError,
   jsonError,
@@ -106,7 +107,7 @@ export async function GET(request: NextRequest) {
       const errorData = await response.json().catch(() => ({}));
       return jsonError('Failed to fetch absences from Discord bot', response.status, {
         details: {
-          message: (errorData as any).error || (errorData as any).message || `HTTP ${response.status}`,
+          message: getErrorPayloadMessage(errorData, response.status),
         },
       });
     }
@@ -211,7 +212,7 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       return jsonError('Failed to create absence in Discord bot', response.status, {
         details: {
-          message: (data as any).error || (data as any).message || `HTTP ${response.status}`,
+          message: getErrorPayloadMessage(data, response.status),
         },
       });
     }

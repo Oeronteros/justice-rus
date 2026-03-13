@@ -59,6 +59,7 @@ export default function Header({
   const orderLabels = useMemo(() => {
     return sectionLabels[language];
   }, [language]);
+  const primaryNavLabel = language === 'ru' ? 'Основная навигация' : language === 'zh' ? '主导航' : 'Primary navigation';
 
   const sectionLabel = orderLabels[currentSection];
 
@@ -132,7 +133,7 @@ export default function Header({
           </div>
         </div>
 
-        <nav className="hidden md:block mt-3">
+        <nav className="hidden md:block mt-3" aria-label={primaryNavLabel}>
           <div className="dc-nav-shell">
             <div className={`dc-order dc-nav-scroll ${headerCompact ? 'dc-order--compact' : 'dc-order--full'}`}>
               {navItems.map((item) => (
