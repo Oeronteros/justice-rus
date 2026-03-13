@@ -201,7 +201,7 @@ export default {
     "app/layout.tsx": {
       "js": [],
       "css": [
-        "/assets/index-DctI1GUG.css"
+        "/assets/index-C4-yaYne.css"
       ]
     }
   }
