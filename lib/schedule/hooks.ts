@@ -9,6 +9,76 @@ export const scheduleKeys = {
   list: (language: string) => [...scheduleKeys.lists(), { language }] as const,
 };
 
+function getScheduleLanguageFromKey(queryKey: readonly unknown[]): string {
+  const languagePart = queryKey[2];
+  if (languagePart && typeof languagePart === 'object' && 'language' in languagePart) {
+    const value = languagePart.language;
+    return value === 'en' || value === 'zh' ? value : 'ru';
+  }
+
+  return 'ru';
+}
+
+function getScheduleRegistrationForLanguage(item: Pick<Schedule, 'registration' | 'titleRu' | 'titleEn' | 'titleZh'>, language: string): string {
+  if (language === 'zh') {
+    return item.titleZh || item.titleEn || item.titleRu || item.registration || '';
+  }
+
+  if (language === 'en') {
+    return item.titleEn || item.titleRu || item.titleZh || item.registration || '';
+  }
+
+  return item.titleRu || item.titleEn || item.titleZh || item.registration || '';
+}
+
+function setScheduleListCaches(
+  queryClient: ReturnType<typeof useQueryClient>,
+  updater: (items: Schedule[], language: string) => Schedule[]
+): Array<[readonly unknown[], Schedule[] | undefined]> {
+  const previousLists = queryClient.getQueriesData<Schedule[]>({ queryKey: scheduleKeys.lists() });
+
+  for (const [key, value] of previousLists) {
+    queryClient.setQueryData<Schedule[]>(key, updater(value ?? [], getScheduleLanguageFromKey(key)));
+  }
+
+  return previousLists;
+}
+
+function restoreScheduleListCaches(
+  queryClient: ReturnType<typeof useQueryClient>,
+  previousLists: Array<[readonly unknown[], Schedule[] | undefined]>
+) {
+  for (const [key, value] of previousLists) {
+    queryClient.setQueryData(key, value);
+  }
+}
+
+function toOptimisticSchedule(payload: CreateScheduleDto, language: string): Schedule {
+  return {
+    id: `temp-schedule-${Date.now()}`,
+    date: new Date().toISOString(),
+    registration: getScheduleRegistrationForLanguage(
+      {
+        registration: payload.titleRu,
+        titleRu: payload.titleRu,
+        titleEn: payload.titleEn,
+        titleZh: payload.titleZh,
+      },
+      language
+    ),
+    type: payload.dayType,
+    description: payload.time,
+    group: payload.dayType,
+    dayType: payload.dayType,
+    time: payload.time,
+    titleRu: payload.titleRu,
+    titleEn: payload.titleEn,
+    titleZh: payload.titleZh,
+    orderIndex: payload.orderIndex,
+    active: payload.active ?? true,
+  };
+}
+
 // Schedule changes less frequently but is time-sensitive
 export function useSchedule(language: string = 'ru') {
   return useQuery({
@@ -26,21 +96,32 @@ export function useUpdateSchedule() {
     mutationFn: (payload: UpdateScheduleDto) => scheduleApi.update(payload),
     onMutate: async (newData) => {
       await queryClient.cancelQueries({ queryKey: scheduleKeys.all });
-      
-      const previousSchedule = queryClient.getQueryData<Schedule[]>(scheduleKeys.lists());
 
-      if (previousSchedule) {
-        queryClient.setQueryData<Schedule[]>(scheduleKeys.lists(), (old) => {
-          if (!old) return old;
-          return old.map((item) => (item.id === newData.id ? { ...item, ...newData } : item));
-        });
-      }
+      const previousLists = setScheduleListCaches(queryClient, (items, language) =>
+        items.map((item) =>
+          item.id === newData.id
+            ? {
+                ...item,
+                ...newData,
+                registration: getScheduleRegistrationForLanguage(
+                  {
+                    registration: item.registration,
+                    titleRu: newData.titleRu,
+                    titleEn: newData.titleEn,
+                    titleZh: newData.titleZh,
+                  },
+                  language
+                ),
+              }
+            : item
+        )
+      );
 
-      return { previousSchedule };
+      return { previousLists };
     },
     onError: (_err, _newData, context) => {
-      if (context?.previousSchedule) {
-        queryClient.setQueryData(scheduleKeys.lists(), context.previousSchedule);
+      if (context?.previousLists) {
+        restoreScheduleListCaches(queryClient, context.previousLists);
       }
     },
     onSettled: () => {
@@ -57,21 +138,17 @@ export function useCreateSchedule() {
     mutationFn: (payload: CreateScheduleDto) => scheduleApi.create(payload),
     onMutate: async (newData) => {
       await queryClient.cancelQueries({ queryKey: scheduleKeys.all });
-      
-      const previousSchedule = queryClient.getQueryData<Schedule[]>(scheduleKeys.lists());
 
-      if (previousSchedule) {
-        queryClient.setQueryData<Schedule[]>(scheduleKeys.lists(), (old) => {
-          if (!old) return [newData as unknown as Schedule];
-          return [...old, newData as unknown as Schedule];
-        });
-      }
+      const previousLists = setScheduleListCaches(queryClient, (items, language) => [
+        ...items,
+        toOptimisticSchedule(newData, language),
+      ]);
 
-      return { previousSchedule };
+      return { previousLists };
     },
     onError: (_err, _newData, context) => {
-      if (context?.previousSchedule) {
-        queryClient.setQueryData(scheduleKeys.lists(), context.previousSchedule);
+      if (context?.previousLists) {
+        restoreScheduleListCaches(queryClient, context.previousLists);
       }
     },
     onSettled: () => {
