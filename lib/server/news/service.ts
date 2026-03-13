@@ -26,10 +26,15 @@ class NewsError extends Error {
 
 const DISCORD_BOT_API_URL = process.env.BOT_API_URL || process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
 const BOT_API_KEY = process.env.BOT_API_KEY || process.env.DISCORD_BOT_API_KEY;
+const bypassHeader: Record<string, string> =
+  DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me')
+    ? { 'bypass-tunnel-reminder': '1' }
+    : {};
 
 function buildBotHeaders(): Record<string, string> {
   return {
     'Content-Type': 'application/json',
+    ...bypassHeader,
     ...(BOT_API_KEY ? { 'X-API-KEY': BOT_API_KEY, Authorization: `Bearer ${BOT_API_KEY}` } : {}),
   };
 }

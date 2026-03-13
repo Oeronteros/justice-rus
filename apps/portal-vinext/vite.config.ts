@@ -11,10 +11,20 @@ export default defineConfig({
   publicDir: path.resolve(__dirname, '../../public'),
   resolve: {
     tsconfigPaths: true,
-    alias: {
-      '@': path.resolve(__dirname, '../../'),
-      'pg-native': path.resolve(__dirname, './shims/pg-native.ts'),
-    },
+    alias: [
+      {
+        find: /^fonts\//,
+        replacement: `${path.resolve(__dirname, '../../node_modules/katex/dist/fonts')}/`,
+      },
+      {
+        find: '@',
+        replacement: path.resolve(__dirname, '../../'),
+      },
+      {
+        find: 'pg-native',
+        replacement: path.resolve(__dirname, './shims/pg-native.ts'),
+      },
+    ],
   },
   server: {
     host: '127.0.0.1',
