@@ -28,5 +28,5 @@ jobs:
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
 
-      - name: Run unified validation
+      - name: Run A-level validation gate
         run: npm run validate
