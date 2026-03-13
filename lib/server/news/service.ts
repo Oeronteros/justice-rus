@@ -74,7 +74,7 @@ export async function createNews(payload: CreateNewsDto, user: User): Promise<Ne
 
   const publishResult: BotPublishResult = {
     status: 'pending',
-    messageUrl: messageUrl ?? null ?? undefined,
+    messageUrl: messageUrl ?? undefined,
   };
 
   console.log('[FIX] News created in DB-only mode; Discord publish delegated to bot sync', {
