@@ -1,7 +1,12 @@
 // Утилиты аутентификации
 
 import jwt from 'jsonwebtoken';
-import type { User, UserRole } from '@/lib/schemas/auth';
+import {
+  pinAuthUserIdSchema,
+  portalAccountIdSchema,
+  type User,
+  type UserRole,
+} from '@/lib/schemas/auth';
 import { JWT_EXPIRES_IN, getJwtSecret } from './constants';
 import { timingSafeEqual } from 'node:crypto';
 
@@ -19,6 +24,14 @@ type JwtPayload = {
   sub?: string;
 };
 
+function hasValidAuthId(authMethod: 'account' | 'pin', id: string | undefined): boolean {
+  if (authMethod === 'pin') {
+    return !id || pinAuthUserIdSchema.safeParse(id).success;
+  }
+
+  return portalAccountIdSchema.safeParse(id).success;
+}
+
 export function generateToken(user: {
   id?: string;
   nickname?: string;
@@ -28,13 +41,18 @@ export function generateToken(user: {
   discordId?: string | null;
   discordHandle?: string | null;
 }): string {
+  const authMethod = user.authMethod ?? 'account';
+  if (!hasValidAuthId(authMethod, user.id)) {
+    throw new Error(`Invalid ${authMethod} auth token id`);
+  }
+
   return jwt.sign(
     {
       id: user.id,
       nickname: user.nickname,
       role: user.role,
       isActive: user.isActive ?? true,
-      authMethod: user.authMethod ?? 'account',
+      authMethod,
       discordId: user.discordId || null,
       discordHandle: user.discordHandle || null,
       iss: 'silent-moonfall-portal',
@@ -59,12 +77,17 @@ export function verifyToken(token: string): User | null {
       return null;
     }
 
+    const authMethod = decoded.authMethod ?? 'account';
+    if (!hasValidAuthId(authMethod, decoded.id)) {
+      return null;
+    }
+
     return {
       id: decoded.id,
       nickname: decoded.nickname,
       role: decoded.role,
       isActive: decoded.isActive ?? true,
-      authMethod: decoded.authMethod ?? 'account',
+      authMethod,
       discordId: decoded.discordId || null,
       discordHandle: decoded.discordHandle || null,
       exp: decoded.exp,

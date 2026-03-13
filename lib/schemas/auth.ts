@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 export const userRoleSchema = z.enum(['guest', 'member', 'officer', 'head', 'sysadmin']);
 export const authMethodSchema = z.enum(['account', 'pin']);
+export const portalAccountIdSchema = z.string().regex(/^\d+$/);
+export const pinAuthUserIdSchema = z.string().regex(/^pin-(guest|member|officer|head|sysadmin)$/);
 
 export const authUserSchema = z.object({
   id: z.string().optional(),
