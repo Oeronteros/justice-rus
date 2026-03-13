@@ -1,16 +1,13 @@
 import path from 'node:path';
 import { defineConfig } from 'vite';
 import vinext from 'vinext';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   envDir: path.resolve(__dirname, '../../'),
-  plugins: [
-    vinext(),
-    tsconfigPaths(),
-  ],
+  plugins: [vinext()],
   publicDir: path.resolve(__dirname, '../../public'),
   resolve: {
+    tsconfigPaths: true,
     alias: {
       '@': path.resolve(__dirname, '../../'),
       'pg-native': path.resolve(__dirname, './shims/pg-native.ts'),
