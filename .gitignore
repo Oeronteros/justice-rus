@@ -16,6 +16,7 @@
 
 # production
 /build
+/apps/portal-vinext/dist
 
 # misc
 .DS_Store

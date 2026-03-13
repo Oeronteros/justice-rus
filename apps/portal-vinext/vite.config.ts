@@ -4,6 +4,9 @@ import vinext from 'vinext';
 
 export default defineConfig({
   envDir: path.resolve(__dirname, '../../'),
+  build: {
+    chunkSizeWarningLimit: 1500,
+  },
   plugins: [vinext()],
   publicDir: path.resolve(__dirname, '../../public'),
   resolve: {
