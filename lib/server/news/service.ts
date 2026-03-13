@@ -24,60 +24,6 @@ class NewsError extends Error {
   }
 }
 
-const DISCORD_BOT_API_URL = process.env.BOT_API_URL || process.env.DISCORD_BOT_API_URL || 'http://localhost:3001';
-const BOT_API_KEY = process.env.BOT_API_KEY || process.env.DISCORD_BOT_API_KEY;
-const bypassHeader: Record<string, string> =
-  DISCORD_BOT_API_URL.includes('.loca.lt') || DISCORD_BOT_API_URL.includes('.localtunnel.me')
-    ? { 'bypass-tunnel-reminder': '1' }
-    : {};
-
-function buildBotHeaders(): Record<string, string> {
-  return {
-    'Content-Type': 'application/json',
-    ...bypassHeader,
-    ...(BOT_API_KEY ? { 'X-API-KEY': BOT_API_KEY, Authorization: `Bearer ${BOT_API_KEY}` } : {}),
-  };
-}
-
-async function publishNewsToDiscord(payload: {
-  newsId: string;
-  publishKey: string;
-  title: string;
-  content: string;
-  author: string;
-  pinned: boolean;
-}): Promise<BotPublishResult> {
-  const response = await fetch(`${DISCORD_BOT_API_URL}/api/internal/news/publish`, {
-    method: 'POST',
-    headers: buildBotHeaders(),
-    body: JSON.stringify({
-      news_id: payload.newsId,
-      idempotency_key: payload.publishKey,
-      title: payload.title,
-      content: payload.content,
-      author: payload.author,
-      pinned: payload.pinned,
-    }),
-    cache: 'no-store',
-  });
-
-  const body: Record<string, unknown> = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    return {
-      status: 'failed',
-      error: String(body.error || body.detail || body.message || `HTTP ${response.status}`),
-    };
-  }
-
-  return {
-    status: String(body.status || 'sent') as BotPublishResult['status'],
-    messageUrl: body.message_url ? String(body.message_url) : undefined,
-    messageId: body.message_id ? String(body.message_id) : undefined,
-    error: body.error ? String(body.error) : undefined,
-    publishedAt: body.published_at ? String(body.published_at) : undefined,
-  };
-}
-
 export async function listNews(token: string): Promise<News[]> {
   if (hasDatabaseUrl()) {
     const news = await getNewsReadModel();
@@ -126,17 +72,15 @@ export async function createNews(payload: CreateNewsDto, user: User): Promise<Ne
 
   await pool.query('UPDATE news SET publish_key = $2 WHERE id = $1', [newsId, publishKey]);
 
-  const publishResult: BotPublishResult = await publishNewsToDiscord({
+  const publishResult: BotPublishResult = {
+    status: 'pending',
+    messageUrl: messageUrl ?? null ?? undefined,
+  };
+
+  console.log('[FIX] News created in DB-only mode; Discord publish delegated to bot sync', {
     newsId,
     publishKey,
-    title: String(createdRow.title || title),
-    content: String(createdRow.content || content),
-    author: String(createdRow.author || resolvedAuthor),
-    pinned: Boolean(createdRow.pinned),
-  }).catch((error: unknown): BotPublishResult => ({
-    status: 'failed',
-    error: error instanceof Error ? error.message : 'Discord publish failed',
-  }));
+  });
 
   const updatedPublish = await pool.query(
     `UPDATE news

@@ -22,27 +22,20 @@ describe('createNews', () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
-    vi.stubEnv('DISCORD_BOT_API_URL', 'https://late-pillows-watch.loca.lt');
 
     ensureNewsSourceSchemaMock.mockResolvedValue(undefined);
     refreshNewsReadModelAfterWriteMock.mockResolvedValue(undefined);
   });
 
   afterEach(() => {
-    vi.unstubAllEnvs();
     vi.unstubAllGlobals();
+    vi.restoreAllMocks();
   });
 
-  it('adds the localtunnel bypass header when publishing site news to Discord', async () => {
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        status: 'sent',
-        message_url: 'https://discord.com/channels/1/2/3',
-        published_at: '2026-03-13T10:00:00.000Z',
-      }),
-    });
+  it('stores news in the database and leaves Discord delivery pending for the bot', async () => {
+    const fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);
+    vi.spyOn(console, 'log').mockImplementation(() => {});
 
     queryMock
       .mockResolvedValueOnce({
@@ -73,10 +66,10 @@ describe('createNews', () => {
             date: '2026-03-13T10:00:00.000Z',
             pinned: false,
             created_at: '2026-03-13T10:00:00.000Z',
-            message_url: 'https://discord.com/channels/1/2/3',
-            discord_delivery_status: 'sent',
+            message_url: null,
+            discord_delivery_status: 'pending',
             discord_delivery_error: null,
-            published_to_discord_at: '2026-03-13T10:00:00.000Z',
+            published_to_discord_at: null,
           },
         ],
       });
@@ -95,18 +88,11 @@ describe('createNews', () => {
       }
     );
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      'https://late-pillows-watch.loca.lt/api/internal/news/publish',
-      expect.objectContaining({
-        method: 'POST',
-        cache: 'no-store',
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json',
-          'bypass-tunnel-reminder': '1',
-        }),
-      })
-    );
-    expect(result.messageUrl).toBe('https://discord.com/channels/1/2/3');
-    expect(result.discordDeliveryStatus).toBe('sent');
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(queryMock).toHaveBeenCalledTimes(3);
+    expect(queryMock).toHaveBeenNthCalledWith(2, 'UPDATE news SET publish_key = $2 WHERE id = $1', ['7', 'site-news-7']);
+    expect(result.messageUrl).toBeUndefined();
+    expect(result.discordDeliveryStatus).toBe('pending');
+    expect(result.discordDeliveryError).toBeUndefined();
   });
 });
