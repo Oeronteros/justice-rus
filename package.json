@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "next dev",
     "dev:vinext": "npm --prefix apps/portal-vinext run dev",
+    "dev:cutover:pilot": "node scripts/dev-cutover.mjs pilot",
+    "dev:cutover:wave2": "node scripts/dev-cutover.mjs wave2",
+    "dev:cutover:all": "node scripts/dev-cutover.mjs all",
     "build": "node scripts/prepare-build.mjs && next build",
     "build:vinext": "npm --prefix apps/portal-vinext run build",
     "start": "next start",

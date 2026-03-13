@@ -143,6 +143,36 @@ vercel --prod
 
 Не забудьте настроить переменные окружения в Vercel Dashboard.
 
+### Локальный vinext cutover
+
+В репозитории есть path-based cutover scaffold для параллельного запуска `Next` и `vinext`.
+
+- `VINEXT_CUTOVER_SCOPE=off` — весь трафик остается на `Next`
+- `VINEXT_CUTOVER_SCOPE=pilot` — `vinext` забирает `/news`, `/help`, `/guides`
+- `VINEXT_CUTOVER_SCOPE=wave2` — дополнительно забирает `/profile`, `/absences`, `/pvp`, `/schedule`, `/calendar`
+- `VINEXT_CUTOVER_SCOPE=all` — тот же набор, но режим оставлен для дальнейшего расширения волн
+
+Для локального dual-runtime запуска есть готовые команды:
+
+```bash
+npm run dev:cutover:pilot
+npm run dev:cutover:wave2
+npm run dev:cutover:all
+```
+
+По умолчанию они поднимают:
+
+- `Next` на `http://127.0.0.1:3000`
+- `vinext` на `http://127.0.0.1:3101`
+
+Можно переопределить порты и origin:
+
+```bash
+NEXT_PORT=3001 VINEXT_PORT=3201 VINEXT_CUTOVER_ORIGIN=http://127.0.0.1:3201 npm run dev:cutover:wave2
+```
+
+Быстрый rollback локально — остановить cutover script и вернуться к обычному `npm run dev`, либо выставить `VINEXT_CUTOVER_SCOPE=off`.
+
 ## Проверка качества
 
 Локальный и CI-путь теперь совпадают: основной quality gate запускается одной командой.
