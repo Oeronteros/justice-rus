@@ -2,7 +2,7 @@
 
 import jwt from 'jsonwebtoken';
 import type { User, UserRole } from '@/lib/schemas/auth';
-import { JWT_EXPIRES_IN, JWT_SECRET } from './constants';
+import { JWT_EXPIRES_IN, getJwtSecret } from './constants';
 import { timingSafeEqual } from 'node:crypto';
 
 type JwtPayload = {
@@ -41,7 +41,7 @@ export function generateToken(user: {
       aud: 'silent-moonfall-users',
       sub: user.id || user.nickname || user.role,
     },
-    JWT_SECRET,
+    getJwtSecret(),
     {
       expiresIn: JWT_EXPIRES_IN,
     }
@@ -50,7 +50,7 @@ export function generateToken(user: {
 
 export function verifyToken(token: string): User | null {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET, {
+    const decoded = jwt.verify(token, getJwtSecret(), {
       issuer: 'silent-moonfall-portal',
       audience: 'silent-moonfall-users',
     }) as JwtPayload;

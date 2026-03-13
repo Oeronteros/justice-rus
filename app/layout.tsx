@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import InputPerformanceMode from "@/components/InputPerformanceMode";
+import AppTelemetry from "@/components/platform/AppTelemetry";
 import { QueryProvider } from "@/lib/providers/QueryProvider";
 import { I18nProvider } from "@/lib/i18n/context";
+import { shouldEnableTelemetry } from "@/lib/platform/runtime";
 import { defaultLanguage } from "@/lib/i18n/shared";
-
-const shouldLoadVercelTelemetry = process.env.VERCEL === "1";
 
 export const metadata: Metadata = {
   title: "Silent Moonfall | Guild Portal",
@@ -54,8 +52,7 @@ export default function RootLayout({
             </Suspense>
           </I18nProvider>
         </QueryProvider>
-        {shouldLoadVercelTelemetry ? <Analytics /> : null}
-        {shouldLoadVercelTelemetry ? <SpeedInsights /> : null}
+        <AppTelemetry enabled={shouldEnableTelemetry()} />
       </body>
     </html>
   );

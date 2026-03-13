@@ -37,7 +37,15 @@ export const PASSWORDS = {
 } as const;
 
 
-export const JWT_SECRET = requireEnv('JWT_SECRET');
+let jwtSecretCache: string | null = null;
+
+export function getJwtSecret(): string {
+  if (!jwtSecretCache) {
+    jwtSecretCache = requireEnv('JWT_SECRET');
+  }
+
+  return jwtSecretCache;
+}
 
 export const JWT_EXPIRES_IN = '24h';
 export const AUTH_TOKEN_MAX_AGE_SECONDS = 60 * 60 * 12;

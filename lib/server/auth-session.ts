@@ -118,3 +118,30 @@ export async function resolveSessionFromToken(token: string | null | undefined):
     user,
   };
 }
+
+export function resolveSessionFromTokenStateless(token: string | null | undefined): SessionResolution {
+  if (!token) {
+    return {
+      valid: false,
+      reason: 'missing-token',
+    };
+  }
+
+  const decoded = verifyToken(token);
+
+  if (!decoded) {
+    return {
+      valid: false,
+      reason: 'invalid-token',
+    };
+  }
+
+  return {
+    valid: true,
+    user: {
+      ...decoded,
+      className: decoded.className ?? null,
+      prefix: decoded.prefix ?? null,
+    },
+  };
+}

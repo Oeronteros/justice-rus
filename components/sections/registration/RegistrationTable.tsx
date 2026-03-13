@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import AppImage from '@/components/platform/AppImage';
 import { useEffect, useState } from 'react';
 import { handleApiError } from '@/lib/api/errors';
 import { useUpdateRegistrationStats } from '@/lib/registration/hooks';
@@ -140,7 +140,7 @@ function RegistrationIdentity({ registration, compact = false }: { registration:
   return (
     <div className="flex items-center gap-3 min-w-0">
       {registration.avatarUrl ? (
-        <Image
+        <AppImage
           src={registration.avatarUrl}
           alt={registration.nickname || displayDiscord || 'Avatar'}
           width={compact ? 44 : 36}
