@@ -121,3 +121,28 @@ export async function createNews(payload: CreateNewsDto, user: User): Promise<Ne
       : undefined,
   };
 }
+
+export async function deleteNews(newsId: string): Promise<{ id: string }> {
+  if (!hasDatabaseUrl()) {
+    throw new NewsError('Database not configured', 503);
+  }
+
+  await ensureNewsSourceSchema();
+
+  const normalizedId = newsId.trim();
+  if (!normalizedId) {
+    throw new NewsError('News id is required', 400);
+  }
+
+  const pool = getPool();
+  const result = await pool.query('DELETE FROM news WHERE id = $1 RETURNING id', [normalizedId]);
+  const deletedRow = result.rows[0];
+
+  if (!deletedRow) {
+    throw new NewsError('News not found', 404);
+  }
+
+  await refreshNewsReadModelAfterWrite();
+
+  return { id: String(deletedRow.id) };
+}

@@ -4580,13 +4580,32 @@ table td, table th {
   box-shadow: inset 0 1px 0 rgba(207, 230, 245, 0.04), 0 18px 38px rgba(4, 8, 12, 0.32);
 }
 
+.dc-nav-stack {
+  display: grid;
+  gap: 10px;
+}
+
 .dc-nav-scroll {
   gap: 10px;
+}
+
+.dc-order--secondary {
+  padding: 6px;
+  background: rgba(8, 16, 24, 0.5);
 }
 
 .dc-order-step {
   min-height: 46px;
   border-radius: 14px;
+}
+
+.dc-order-step--secondary {
+  min-height: 40px;
+  padding: 6px 10px;
+}
+
+.dc-order-step--secondary .dc-order-label {
+  font-size: 0.76rem;
 }
 
 .dc-order-step.is-active {

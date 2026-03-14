@@ -71,3 +71,27 @@ export function useCreateNews() {
     },
   });
 }
+
+export function useDeleteNews() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => newsApi.remove(id),
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: newsKeys.lists() });
+
+      const previousNews = queryClient.getQueryData<News[]>(newsKeys.lists()) ?? [];
+      queryClient.setQueryData<News[]>(newsKeys.lists(), (old = []) => old.filter((item) => item.id !== id));
+
+      return { previousNews };
+    },
+    onError: (_error, _id, context) => {
+      if (context?.previousNews) {
+        queryClient.setQueryData(newsKeys.lists(), context.previousNews);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: newsKeys.lists() });
+    },
+  });
+}

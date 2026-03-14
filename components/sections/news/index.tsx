@@ -4,7 +4,7 @@ import { Fragment, useMemo, useState, type ReactNode } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
-import { useCreateNews, useNews } from '@/lib/news/hooks';
+import { useCreateNews, useDeleteNews, useNews } from '@/lib/news/hooks';
 import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/lib/schemas/auth';
@@ -269,6 +269,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
   const { t } = useTranslation();
   const { data: news = [], isLoading, error, refetch } = useNews();
   const createNewsMutation = useCreateNews();
+  const deleteNewsMutation = useDeleteNews();
   const { featured, list } = splitFeaturedNews(news);
   const [expandedNewsIds, setExpandedNewsIds] = useState<string[]>([]);
   const [isFeaturedExpanded, setIsFeaturedExpanded] = useState(false);
@@ -277,6 +278,20 @@ function NewsSectionContent({ user }: NewsSectionProps) {
   const [draftPinned, setDraftPinned] = useState(false);
   const [composerNotice, setComposerNotice] = useState<string | null>(null);
   const canPublish = hasRoleAtLeast(user.role, 'officer');
+
+  const handleDeleteNews = async (id: string) => {
+    const confirmed = window.confirm('Удалить эту новость?');
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await deleteNewsMutation.mutateAsync(id);
+      setComposerNotice('Новость удалена с сайта.');
+    } catch (deleteError) {
+      setComposerNotice(handleApiError(deleteError));
+    }
+  };
 
   const composerPreview = useMemo(() => {
     const normalizedContent = normalizeDiscordText(draftContent);
@@ -516,17 +531,30 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                           <span>{featured.author || 'Guild Staff'}</span>
                         </div>
 
-                        {featured.messageUrl ? (
+                        <div className="flex flex-wrap items-center gap-2">
+                          {canPublish ? (
+                            <button
+                              type="button"
+                              className="btn-secondary px-3 py-2 text-xs"
+                              onClick={() => void handleDeleteNews(featured.id)}
+                              disabled={deleteNewsMutation.isPending}
+                            >
+                              {deleteNewsMutation.isPending ? 'Удаляем...' : 'Удалить'}
+                            </button>
+                          ) : null}
+
+                          {featured.messageUrl ? (
                             <a
                               href={featured.messageUrl}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="news-discord-link"
                             >
-                            <WuxiaIcon name="link" className="w-4 h-4" />
-                            Open in Discord
-                          </a>
-                        ) : null}
+                              <WuxiaIcon name="link" className="w-4 h-4" />
+                              Open in Discord
+                            </a>
+                          ) : null}
+                        </div>
                       </div>
                     </article>
                   );
@@ -577,17 +605,30 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                             <span>{item.author || 'Guild Staff'}</span>
                           </div>
 
-                          {item.messageUrl ? (
-                            <a
-                              href={item.messageUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="news-discord-link"
-                            >
-                              <WuxiaIcon name="link" className="w-4 h-4" />
-                              Open in Discord
-                            </a>
-                          ) : null}
+                          <div className="flex flex-wrap items-center gap-2">
+                            {canPublish ? (
+                              <button
+                                type="button"
+                                className="btn-secondary px-3 py-2 text-xs"
+                                onClick={() => void handleDeleteNews(item.id)}
+                                disabled={deleteNewsMutation.isPending}
+                              >
+                                {deleteNewsMutation.isPending ? 'Удаляем...' : 'Удалить'}
+                              </button>
+                            ) : null}
+
+                            {item.messageUrl ? (
+                              <a
+                                href={item.messageUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="news-discord-link"
+                              >
+                                <WuxiaIcon name="link" className="w-4 h-4" />
+                                Open in Discord
+                              </a>
+                            ) : null}
+                          </div>
                         </div>
                       </article>
                     );

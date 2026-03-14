@@ -23,3 +23,17 @@ export const navItems: NavItem[] = [
   { section: 'calculator', href: '/calculator', icon: 'calculator' },
   { section: 'profile', href: '/profile', icon: 'profile' },
 ];
+
+function pickNavItems(sections: readonly Section[]): NavItem[] {
+  return sections
+    .map((section) => navItems.find((item) => item.section === section))
+    .filter((item): item is NavItem => Boolean(item));
+}
+
+export const desktopPrimarySections: readonly Section[] = ['about', 'news', 'registration', 'schedule', 'help', 'profile'];
+export const desktopSecondarySections: readonly Section[] = ['calendar', 'guides', 'absences', 'analytics', 'workflow', 'integrations', 'pvp', 'calculator'];
+export const mobilePrimarySections: readonly Section[] = ['about', 'news', 'registration', 'help'];
+
+export const desktopPrimaryNavItems = pickNavItems(desktopPrimarySections);
+export const desktopSecondaryNavItems = pickNavItems(desktopSecondarySections);
+export const mobilePrimaryNavItems = pickNavItems(mobilePrimarySections);

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Section } from '@/types';
 import { headerCopy, Language, portalCopy, sectionLabels } from '@/lib/i18n';
-import { navItems } from '@/lib/nav';
+import { desktopPrimaryNavItems, desktopSecondaryNavItems } from '@/lib/nav';
 import WuxiaIcon from '../WuxiaIcons';
 
 interface HeaderProps {
@@ -135,25 +135,48 @@ export default function Header({
 
         <nav className="hidden md:block mt-3" aria-label={primaryNavLabel}>
           <div className="dc-nav-shell">
-            <div className={`dc-order dc-nav-scroll ${headerCompact ? 'dc-order--compact' : 'dc-order--full'}`}>
-              {navItems.map((item) => (
-                <Link
-                  key={item.section}
-                  href={item.href}
-                  onMouseEnter={() => onNavPrefetch?.(item.section)}
-                  onFocus={() => onNavPrefetch?.(item.section)}
-                  onTouchStart={() => onNavPrefetch?.(item.section)}
-                  className={`dc-order-step ${currentSection === item.section ? 'is-active' : ''}`}
-                  aria-label={orderLabels[item.section]}
-                  aria-current={currentSection === item.section ? 'page' : undefined}
-                  title={orderLabels[item.section]}
-                >
-                  <span className="dc-order-dot dc-accent">
-                    <WuxiaIcon name={item.icon} className="w-4 h-4" />
-                  </span>
-                  <span className="dc-order-label">{orderLabels[item.section]}</span>
-                </Link>
-              ))}
+            <div className="dc-nav-stack">
+              <div className={`dc-order dc-nav-scroll ${headerCompact ? 'dc-order--compact' : 'dc-order--full'}`}>
+                {desktopPrimaryNavItems.map((item) => (
+                  <Link
+                    key={item.section}
+                    href={item.href}
+                    onMouseEnter={() => onNavPrefetch?.(item.section)}
+                    onFocus={() => onNavPrefetch?.(item.section)}
+                    onTouchStart={() => onNavPrefetch?.(item.section)}
+                    className={`dc-order-step ${currentSection === item.section ? 'is-active' : ''}`}
+                    aria-label={orderLabels[item.section]}
+                    aria-current={currentSection === item.section ? 'page' : undefined}
+                    title={orderLabels[item.section]}
+                  >
+                    <span className="dc-order-dot dc-accent">
+                      <WuxiaIcon name={item.icon} className="w-4 h-4" />
+                    </span>
+                    <span className="dc-order-label">{orderLabels[item.section]}</span>
+                  </Link>
+                ))}
+              </div>
+
+              <div className="dc-order dc-nav-scroll dc-order--secondary" aria-label={language === 'ru' ? 'Дополнительные разделы' : language === 'zh' ? '附加分区' : 'Additional sections'}>
+                {desktopSecondaryNavItems.map((item) => (
+                  <Link
+                    key={item.section}
+                    href={item.href}
+                    onMouseEnter={() => onNavPrefetch?.(item.section)}
+                    onFocus={() => onNavPrefetch?.(item.section)}
+                    onTouchStart={() => onNavPrefetch?.(item.section)}
+                    className={`dc-order-step dc-order-step--secondary ${currentSection === item.section ? 'is-active' : ''}`}
+                    aria-label={orderLabels[item.section]}
+                    aria-current={currentSection === item.section ? 'page' : undefined}
+                    title={orderLabels[item.section]}
+                  >
+                    <span className="dc-order-dot dc-accent">
+                      <WuxiaIcon name={item.icon} className="w-4 h-4" />
+                    </span>
+                    <span className="dc-order-label">{orderLabels[item.section]}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </nav>
