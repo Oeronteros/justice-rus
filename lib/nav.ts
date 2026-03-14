@@ -7,6 +7,13 @@ export type NavItem = {
   icon: IconName;
 };
 
+export type NavGroupKey = 'core' | 'guild' | 'command' | 'tools';
+
+export type NavGroup = {
+  key: NavGroupKey;
+  sections: readonly Section[];
+};
+
 export const navItems: NavItem[] = [
   { section: 'about', href: '/', icon: 'eye' },
   { section: 'news', href: '/news', icon: 'news' },
@@ -35,7 +42,28 @@ export const desktopSecondarySections: readonly Section[] = ['guides', 'absences
 export const mobilePrimarySections: readonly Section[] = ['about', 'news', 'schedule', 'help'];
 export const mobileSecondarySections: readonly Section[] = ['registration', 'profile', 'guides', 'absences', 'analytics', 'workflow', 'integrations', 'pvp', 'calculator'];
 
+export const desktopNavGroups: readonly NavGroup[] = [
+  { key: 'guild', sections: ['registration', 'guides', 'absences', 'pvp'] },
+  { key: 'command', sections: ['analytics', 'workflow', 'integrations'] },
+  { key: 'tools', sections: ['calculator'] },
+];
+
+export const mobileNavGroups: readonly NavGroup[] = [
+  { key: 'core', sections: ['registration', 'profile'] },
+  { key: 'guild', sections: ['guides', 'absences', 'pvp'] },
+  { key: 'command', sections: ['analytics', 'workflow', 'integrations'] },
+  { key: 'tools', sections: ['calculator'] },
+];
+
 export const desktopPrimaryNavItems = pickNavItems(desktopPrimarySections);
 export const desktopSecondaryNavItems = pickNavItems(desktopSecondarySections);
 export const mobilePrimaryNavItems = pickNavItems(mobilePrimarySections);
 export const mobileSecondaryNavItems = pickNavItems(mobileSecondarySections);
+export const desktopGroupedNavItems = desktopNavGroups.map((group) => ({
+  ...group,
+  items: pickNavItems(group.sections),
+}));
+export const mobileGroupedNavItems = mobileNavGroups.map((group) => ({
+  ...group,
+  items: pickNavItems(group.sections),
+}));

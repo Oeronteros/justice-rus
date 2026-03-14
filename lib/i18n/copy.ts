@@ -61,6 +61,11 @@ export const headerCopy: Record<
     logout: string;
     languageSwitcher: string;
     notifications: string;
+    profile: string;
+    navCore: string;
+    navGuild: string;
+    navCommand: string;
+    navTools: string;
   }
 > = {
   ru: {
@@ -70,6 +75,11 @@ export const headerCopy: Record<
     logout: 'Выйти',
     languageSwitcher: 'Язык интерфейса',
     notifications: 'Открыть уведомления',
+    profile: 'Открыть кабинет',
+    navCore: 'Ядро',
+    navGuild: 'Гильдия',
+    navCommand: 'Управление',
+    navTools: 'Инструменты',
   },
   en: {
     brandSubtitle: 'Guild · Justice Mobile',
@@ -78,6 +88,11 @@ export const headerCopy: Record<
     logout: 'Logout',
     languageSwitcher: 'Interface language',
     notifications: 'Open notifications',
+    profile: 'Open profile',
+    navCore: 'Core',
+    navGuild: 'Guild',
+    navCommand: 'Command',
+    navTools: 'Tools',
   },
   zh: {
     brandSubtitle: '公会 · Justice Mobile',
@@ -86,6 +101,11 @@ export const headerCopy: Record<
     logout: '退出',
     languageSwitcher: '界面语言',
     notifications: '打开通知中心',
+    profile: '打开个人页',
+    navCore: '核心',
+    navGuild: '公会',
+    navCommand: '管理',
+    navTools: '工具',
   },
 };
 

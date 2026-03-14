@@ -2322,6 +2322,111 @@ body {
     backdrop-filter: blur(12px);
   }
 
+  .dc-nav-shell--enhanced {
+    display: grid;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .dc-core-rail {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .dc-core-rail--compact {
+    gap: 8px;
+  }
+
+  .dc-core-link,
+  .dc-command-link {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: 16px;
+    color: rgba(215, 229, 239, 0.92);
+  }
+
+  .dc-core-link__active,
+  .dc-command-link__active,
+  .mobile-nav-link__active {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(29, 60, 81, 0.94), rgba(13, 25, 36, 0.96));
+    border: 1px solid rgba(170, 210, 229, 0.32);
+    box-shadow: 0 14px 30px rgba(4, 8, 12, 0.38), inset 0 1px 0 rgba(218, 234, 243, 0.12);
+  }
+
+  .dc-core-link__content,
+  .dc-command-link__content,
+  .mobile-nav-link__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .dc-core-link__content {
+    min-height: 58px;
+    justify-content: center;
+    padding: 0 14px;
+  }
+
+  .dc-command-deck {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .dc-command-group {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 18px;
+    background: linear-gradient(160deg, rgba(9, 16, 24, 0.86), rgba(12, 20, 30, 0.8));
+    border: 1px solid rgba(90, 125, 145, 0.22);
+    box-shadow: inset 0 1px 0 rgba(214, 232, 241, 0.04);
+  }
+
+  .dc-command-group__label,
+  .mobile-nav-group__label {
+    font-size: 0.72rem;
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(153, 183, 198, 0.76);
+    padding-left: 4px;
+  }
+
+  .dc-command-group__items {
+    display: grid;
+    gap: 8px;
+  }
+
+  .dc-command-link__content {
+    min-height: 48px;
+    padding: 0 12px;
+  }
+
+  .dc-core-link:hover,
+  .dc-command-link:hover {
+    color: rgba(232, 240, 245, 0.98);
+  }
+
+  .dc-core-link:not(.is-active),
+  .dc-command-link:not(.is-active) {
+    background: rgba(10, 19, 28, 0.72);
+    border: 1px solid rgba(77, 112, 134, 0.22);
+  }
+
+  .dc-core-link:not(.is-active):hover,
+  .dc-command-link:not(.is-active):hover {
+    background: rgba(17, 31, 43, 0.92);
+    border-color: rgba(143, 185, 204, 0.4);
+  }
+
   .dc-order {
     position: relative;
     display: flex;
@@ -2411,6 +2516,39 @@ body {
   .dc-order-label {
     font-size: 0.8rem;
     white-space: nowrap;
+  }
+
+  .mobile-nav-sheet--enhanced {
+    overflow: hidden;
+  }
+
+  .mobile-nav-sheet-stack {
+    display: grid;
+    gap: 12px;
+  }
+
+  .mobile-nav-group {
+    display: grid;
+    gap: 10px;
+  }
+
+  .mobile-nav-link {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mobile-nav-link__content {
+    justify-content: center;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    min-height: 68px;
+  }
+
+  .mobile-nav-sheet-grid {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .dc-more {
@@ -4589,10 +4727,10 @@ table td, table th {
   gap: 10px;
 }
 
-.dc-order--secondary {
-  padding: 6px;
-  background: rgba(8, 16, 24, 0.5);
-}
+  .dc-order--secondary {
+    padding: 6px;
+    background: rgba(8, 16, 24, 0.5);
+  }
 
 .dc-order-step {
   min-height: 46px;
@@ -4604,9 +4742,25 @@ table td, table th {
   padding: 6px 10px;
 }
 
-.dc-order-step--secondary .dc-order-label {
-  font-size: 0.76rem;
-}
+  .dc-order-step--secondary .dc-order-label {
+    font-size: 0.76rem;
+  }
+
+  @media (max-width: 1199px) {
+    .dc-core-rail {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .dc-command-deck {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 899px) {
+    .dc-command-deck {
+      grid-template-columns: 1fr;
+    }
+  }
 
 .dc-order-step.is-active {
   background: linear-gradient(135deg, rgba(32, 61, 80, 0.96), rgba(14, 30, 43, 0.94));

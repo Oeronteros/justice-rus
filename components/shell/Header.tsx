@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import autoAnimate from '@formkit/auto-animate';
+import { LayoutGroup, motion } from 'motion/react';
 import { Section } from '@/types';
 import { headerCopy, Language, portalCopy, sectionLabels } from '@/lib/i18n';
-import { desktopPrimaryNavItems, desktopSecondaryNavItems } from '@/lib/nav';
+import { desktopGroupedNavItems, desktopPrimaryNavItems } from '@/lib/nav';
 import WuxiaIcon from '../WuxiaIcons';
 
 interface HeaderProps {
@@ -23,6 +25,7 @@ export default function Header({
   onNavPrefetch,
 }: HeaderProps) {
   const [headerCompact, setHeaderCompact] = useState(false);
+  const desktopDeckRef = useRef<HTMLDivElement | null>(null);
 
   const handleRefresh = () => {
     window.location.reload();
@@ -60,8 +63,21 @@ export default function Header({
     return sectionLabels[language];
   }, [language]);
   const primaryNavLabel = language === 'ru' ? 'Основная навигация' : language === 'zh' ? '主导航' : 'Primary navigation';
+  const secondaryNavLabel = language === 'ru' ? 'Командная навигация' : language === 'zh' ? '指挥导航' : 'Command navigation';
 
   const sectionLabel = orderLabels[currentSection];
+
+  useEffect(() => {
+    if (!desktopDeckRef.current) return;
+    autoAnimate(desktopDeckRef.current, { duration: 220, easing: 'ease-out' });
+  }, []);
+
+  const groupLabels = {
+    core: labels.navCore,
+    guild: labels.navGuild,
+    command: labels.navCommand,
+    tools: labels.navTools,
+  } as const;
 
   return (
     <header className={`dc-header sticky top-0 z-40 ${headerCompact ? 'dc-header--compact' : ''}`}>
@@ -122,6 +138,15 @@ export default function Header({
               <WuxiaIcon name="calendarCheck" className="w-5 h-5" />
             </Link>
 
+            <Link
+              href="/profile"
+              className={`dc-icon-btn p-2.5 rounded-xl ${currentSection === 'profile' ? 'dc-icon-btn-active' : ''}`}
+              title={labels.profile}
+              aria-label={labels.profile}
+            >
+              <WuxiaIcon name="profile" className="w-5 h-5" />
+            </Link>
+
             <button
               onClick={handleRefresh}
               className="dc-icon-btn p-2.5 rounded-xl"
@@ -143,49 +168,74 @@ export default function Header({
         </div>
 
         <nav className="hidden md:block mt-3" aria-label={primaryNavLabel}>
-          <div className="dc-nav-shell">
-            <div className="dc-nav-stack">
-              <div className={`dc-order dc-nav-scroll ${headerCompact ? 'dc-order--compact' : 'dc-order--full'}`}>
-                {desktopPrimaryNavItems.map((item) => (
-                  <Link
-                    key={item.section}
-                    href={item.href}
-                    onMouseEnter={() => onNavPrefetch?.(item.section)}
-                    onFocus={() => onNavPrefetch?.(item.section)}
-                    onTouchStart={() => onNavPrefetch?.(item.section)}
-                    className={`dc-order-step ${currentSection === item.section ? 'is-active' : ''}`}
-                    aria-label={orderLabels[item.section]}
-                    aria-current={currentSection === item.section ? 'page' : undefined}
-                    title={orderLabels[item.section]}
-                  >
-                    <span className="dc-order-dot dc-accent">
-                      <WuxiaIcon name={item.icon} className="w-4 h-4" />
-                    </span>
-                    <span className="dc-order-label">{orderLabels[item.section]}</span>
-                  </Link>
-                ))}
-              </div>
+          <div className="dc-nav-shell dc-nav-shell--enhanced">
+            <LayoutGroup id="desktop-core-nav">
+              <div className={`dc-core-rail ${headerCompact ? 'dc-core-rail--compact' : ''}`}>
+                {desktopPrimaryNavItems.map((item) => {
+                  const isActive = currentSection === item.section;
 
-              <div className="dc-order dc-nav-scroll dc-order--secondary" aria-label={language === 'ru' ? 'Дополнительные разделы' : language === 'zh' ? '附加分区' : 'Additional sections'}>
-                {desktopSecondaryNavItems.map((item) => (
-                  <Link
-                    key={item.section}
-                    href={item.href}
-                    onMouseEnter={() => onNavPrefetch?.(item.section)}
-                    onFocus={() => onNavPrefetch?.(item.section)}
-                    onTouchStart={() => onNavPrefetch?.(item.section)}
-                    className={`dc-order-step dc-order-step--secondary ${currentSection === item.section ? 'is-active' : ''}`}
-                    aria-label={orderLabels[item.section]}
-                    aria-current={currentSection === item.section ? 'page' : undefined}
-                    title={orderLabels[item.section]}
-                  >
-                    <span className="dc-order-dot dc-accent">
-                      <WuxiaIcon name={item.icon} className="w-4 h-4" />
-                    </span>
-                    <span className="dc-order-label">{orderLabels[item.section]}</span>
-                  </Link>
-                ))}
+                  return (
+                    <motion.div key={item.section} layout whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }} transition={{ type: 'spring', stiffness: 420, damping: 28 }}>
+                      <Link
+                        href={item.href}
+                        onMouseEnter={() => onNavPrefetch?.(item.section)}
+                        onFocus={() => onNavPrefetch?.(item.section)}
+                        onTouchStart={() => onNavPrefetch?.(item.section)}
+                        className={`dc-core-link ${isActive ? 'is-active' : ''}`}
+                        aria-label={orderLabels[item.section]}
+                        aria-current={isActive ? 'page' : undefined}
+                        title={orderLabels[item.section]}
+                      >
+                        {isActive ? <motion.span layoutId="desktop-core-active" className="dc-core-link__active" transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
+                        <span className="dc-core-link__content">
+                          <span className="dc-order-dot dc-accent">
+                            <WuxiaIcon name={item.icon} className="w-4 h-4" />
+                          </span>
+                          <span className="dc-order-label">{orderLabels[item.section]}</span>
+                        </span>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
               </div>
+            </LayoutGroup>
+
+            <div className="dc-command-deck" ref={desktopDeckRef} aria-label={secondaryNavLabel}>
+              {desktopGroupedNavItems.map((group) => (
+                <section key={group.key} className="dc-command-group">
+                  <div className="dc-command-group__label">{groupLabels[group.key]}</div>
+                  <LayoutGroup id={`desktop-${group.key}-nav`}>
+                    <div className="dc-command-group__items">
+                      {group.items.map((item) => {
+                        const isActive = currentSection === item.section;
+
+                        return (
+                          <motion.div key={item.section} layout whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }} transition={{ type: 'spring', stiffness: 420, damping: 30 }}>
+                            <Link
+                              href={item.href}
+                              onMouseEnter={() => onNavPrefetch?.(item.section)}
+                              onFocus={() => onNavPrefetch?.(item.section)}
+                              onTouchStart={() => onNavPrefetch?.(item.section)}
+                              className={`dc-command-link ${isActive ? 'is-active' : ''}`}
+                              aria-label={orderLabels[item.section]}
+                              aria-current={isActive ? 'page' : undefined}
+                              title={orderLabels[item.section]}
+                            >
+                              {isActive ? <motion.span layoutId="desktop-command-active" className="dc-command-link__active" transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
+                              <span className="dc-command-link__content">
+                                <span className="dc-order-dot dc-accent">
+                                  <WuxiaIcon name={item.icon} className="w-4 h-4" />
+                                </span>
+                                <span className="dc-order-label">{orderLabels[item.section]}</span>
+                              </span>
+                            </Link>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  </LayoutGroup>
+                </section>
+              ))}
             </div>
           </div>
         </nav>
