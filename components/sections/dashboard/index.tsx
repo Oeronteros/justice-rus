@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import WuxiaIcon, { type IconName } from '@/components/WuxiaIcons';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -55,6 +55,11 @@ type ActivityEvent = {
   details?: string;
 };
 
+type RuleSummary = {
+  id: number;
+  text: string;
+};
+
 type DashboardCopy = {
   title: string;
   subtitle: string;
@@ -100,6 +105,15 @@ type DashboardCopy = {
   pvpEmpty: string;
   quickRoutes: string;
   quickRoutesBody: string;
+  profileHub: string;
+  profileHubBody: string;
+  profileKpi: string;
+  profileGuild: string;
+  profileDiscord: string;
+  profileUnavailable: string;
+  guildRules: string;
+  guildRulesBody: string;
+  guildRulesEmpty: string;
   openSchedule: string;
   openHelp: string;
   openNews: string;
@@ -211,6 +225,15 @@ const dashboardCopy: Record<Language, DashboardCopy> = {
     pvpEmpty: 'PvP-контур пока без активной очереди и матчей.',
     quickRoutes: 'Быстрые маршруты',
     quickRoutesBody: 'Переходы в ключевые разделы, если нужно углубиться из дашборда.',
+    profileHub: 'Профиль и доступ',
+    profileHubBody: 'Точка входа в твой кабинет: статус, роль, контакт и личная статистика без перехода вглубь.',
+    profileKpi: 'KPI профиля',
+    profileGuild: 'Гильдия',
+    profileDiscord: 'Discord',
+    profileUnavailable: 'Профиль пока не синхронизирован с реестром.',
+    guildRules: 'Памятка гильдии',
+    guildRulesBody: 'Главные правила, которые стоит держать в голове прямо на входе, а не прятать глубоко в разделе.',
+    guildRulesEmpty: 'Правила пока не заполнены.',
     openSchedule: 'Открыть расписание',
     openHelp: 'Открыть помощь',
     openNews: 'Открыть новости',
@@ -320,6 +343,15 @@ const dashboardCopy: Record<Language, DashboardCopy> = {
     pvpEmpty: 'PvP is quiet right now: no queue and no live match.',
     quickRoutes: 'Quick routes',
     quickRoutesBody: 'Jump deeper into the core modules when a live card needs action.',
+    profileHub: 'Profile hub',
+    profileHubBody: 'A fast entry into your personal cabinet: status, role, contact, and personal stats without leaving the dashboard.',
+    profileKpi: 'Profile KPI',
+    profileGuild: 'Guild',
+    profileDiscord: 'Discord',
+    profileUnavailable: 'Profile is not synced with the roster yet.',
+    guildRules: 'Guild rules',
+    guildRulesBody: 'The key rules should stay visible at the point of entry, not buried deep inside another page.',
+    guildRulesEmpty: 'Rules are not filled in yet.',
     openSchedule: 'Open schedule',
     openHelp: 'Open help board',
     openNews: 'Open news',
@@ -429,6 +461,15 @@ const dashboardCopy: Record<Language, DashboardCopy> = {
     pvpEmpty: '当前 PvP 比较安静：没有排队，也没有进行中的对局。',
     quickRoutes: '快速入口',
     quickRoutesBody: '当某个实时卡片需要深入处理时，可以直接跳到对应模块。',
+    profileHub: '个人档案入口',
+    profileHubBody: '把状态、角色、联系方式和个人数据放在一处，避免每次都深入个人页。',
+    profileKpi: '档案 KPI',
+    profileGuild: '公会',
+    profileDiscord: 'Discord',
+    profileUnavailable: '个人档案还没有与成员名册同步。',
+    guildRules: '公会守则',
+    guildRulesBody: '最重要的规则应该在入口就能看到，而不是藏在深层页面里。',
+    guildRulesEmpty: '规则尚未填写。',
     openSchedule: '打开日程',
     openHelp: '打开求助',
     openNews: '打开公告',
@@ -824,6 +865,9 @@ function DashboardPrimaryRegion({
   newsSnapshot,
   newsLoading,
   activityFeed,
+  profileSnapshot,
+  rulesDigest,
+  rulesLoading,
   language,
 }: {
   copy: DashboardCopy;
@@ -831,10 +875,40 @@ function DashboardPrimaryRegion({
   newsSnapshot: { featured: Array<{ id: string; pinned?: boolean | null; date: string; title: string }>; activeCount: number };
   newsLoading: boolean;
   activityFeed: ActivityEvent[];
+  profileSnapshot: { guild: string | null; discordHandle: string | null; kpi: number | null; className: string | null };
+  rulesDigest: RuleSummary[];
+  rulesLoading: boolean;
   language: Language;
 }) {
   return (
     <div className="guild-dashboard-primary-grid dashboard-card-cluster">
+      <StatusCard title={copy.profileHub} icon="profile" actionHref="/profile" actionLabel={copy.openProfile} tone="active">
+        <div className="dashboard-card-stack">
+          <p className="dashboard-card-copy">{copy.profileHubBody}</p>
+          <div className="dashboard-profile-grid">
+            <div className="dashboard-profile-tile">
+              <span>{copy.yourClass}</span>
+              <strong>{profileSnapshot.className || copy.noClass}</strong>
+            </div>
+            <div className="dashboard-profile-tile">
+              <span>{copy.profileGuild}</span>
+              <strong>{profileSnapshot.guild || 'Silent Moonfall'}</strong>
+            </div>
+            <div className="dashboard-profile-tile">
+              <span>{copy.profileDiscord}</span>
+              <strong>{profileSnapshot.discordHandle || '—'}</strong>
+            </div>
+            <div className="dashboard-profile-tile">
+              <span>{copy.profileKpi}</span>
+              <strong>{profileSnapshot.kpi ?? '—'}</strong>
+            </div>
+          </div>
+          {!profileSnapshot.className && !profileSnapshot.guild && !profileSnapshot.discordHandle && profileSnapshot.kpi === null ? (
+            <div className="dashboard-card-empty">{copy.profileUnavailable}</div>
+          ) : null}
+        </div>
+      </StatusCard>
+
       <StatusCard title={copy.actionCenter} icon="seal" actionHref="/profile" actionLabel={copy.openProfile} tone={helpSnapshot.myResponses.length > 0 ? 'active' : 'steady'}>
         <div className="dashboard-card-stack">
           <p className="dashboard-card-copy">{copy.actionCenterBody}</p>
@@ -876,6 +950,22 @@ function DashboardPrimaryRegion({
               </Link>
             ))}
           </div>
+        </div>
+      </StatusCard>
+
+      <StatusCard title={copy.guildRules} icon="book" actionHref="/profile" actionLabel={copy.openProfile} tone="steady">
+        <div className="dashboard-card-stack">
+          <p className="dashboard-card-copy">{copy.guildRulesBody}</p>
+          {rulesLoading ? <MiniSkeleton /> : rulesDigest.length > 0 ? (
+            <ol className="dashboard-rules-list">
+              {rulesDigest.map((rule, index) => (
+                <li key={rule.id} className="dashboard-rules-item">
+                  <span className="dashboard-rules-index">{index + 1}</span>
+                  <span>{rule.text}</span>
+                </li>
+              ))}
+            </ol>
+          ) : <div className="dashboard-card-empty">{copy.guildRulesEmpty}</div>}
         </div>
       </StatusCard>
 
@@ -928,6 +1018,8 @@ function DashboardPrimaryRegion({
 
 function DashboardSectionContent({ user, language }: DashboardSectionProps) {
   const copy = dashboardCopy[language];
+  const [rulesDigest, setRulesDigest] = useState<RuleSummary[]>([]);
+  const [rulesLoading, setRulesLoading] = useState(true);
   const { data: schedule = [], isLoading: scheduleLoading, error: scheduleError, refetch: refetchSchedule } = useSchedule(language);
   const { data: openHelp = [], isLoading: helpLoading, error: helpError, refetch: refetchHelp } = useHelp('open');
   const { data: registrations = [], isLoading: registrationsLoading, error: registrationsError, refetch: refetchRegistrations } = useRegistrations();
@@ -994,6 +1086,67 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
   }, [pvpState]);
 
   const officerSignals = helpSnapshot.unattended + absenceSnapshot.pending.length + rosterSnapshot.inactive + (pvpSnapshot.disputed ? 1 : 0);
+
+  const profileSnapshot = useMemo(() => {
+    const normalizedNickname = user.nickname?.trim().toLowerCase();
+    const current = normalizedNickname
+      ? registrations.find((item) => item.nickname.trim().toLowerCase() === normalizedNickname)
+      : undefined;
+
+    return {
+      guild: current?.guild ?? null,
+      discordHandle: current?.discordHandle || user.discordHandle || null,
+      kpi: typeof current?.kpi === 'number' ? current.kpi : null,
+      className: current?.class || user.className || null,
+    };
+  }, [registrations, user.className, user.discordHandle, user.nickname]);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadRulesDigest = async () => {
+      try {
+        setRulesLoading(true);
+        const response = await fetch('/api/rules');
+        if (!response.ok) {
+          throw new Error('Failed to load rules');
+        }
+
+        const payload = (await response.json()) as Array<{ id: number; text_ru?: string; text_en?: string }>;
+        if (!active) {
+          return;
+        }
+
+        const localized = payload
+          .map((rule) => ({
+            id: rule.id,
+            text:
+              (language === 'en' ? rule.text_en : '')?.trim() ||
+              rule.text_ru?.trim() ||
+              rule.text_en?.trim() ||
+              '',
+          }))
+          .filter((rule) => rule.text)
+          .slice(0, 3);
+
+        setRulesDigest(localized);
+      } catch {
+        if (active) {
+          setRulesDigest([]);
+        }
+      } finally {
+        if (active) {
+          setRulesLoading(false);
+        }
+      }
+    };
+
+    void loadRulesDigest();
+
+    return () => {
+      active = false;
+    };
+  }, [language]);
 
   useHelpNotifications(openHelp, user.id ?? null, { enabled: true, unattendedThresholdMinutes: 15 });
   useAbsenceNotifications(absences, user.role, { enabled: true });
@@ -1063,6 +1216,9 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
             newsSnapshot={newsSnapshot}
             newsLoading={newsLoading}
             activityFeed={activityFeed}
+            profileSnapshot={profileSnapshot}
+            rulesDigest={rulesDigest}
+            rulesLoading={rulesLoading}
             language={language}
           />
         </div>
