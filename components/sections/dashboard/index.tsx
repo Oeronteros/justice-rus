@@ -24,6 +24,67 @@ import type { Registration } from '@/lib/schemas/registration';
 import type { Schedule } from '@/lib/schemas/schedule';
 import { cn } from '@/lib/utils';
 
+const DASHBOARD_URL_RE = /https?:\/\/[^\s<>"')\]]+/gi;
+const DASHBOARD_TRAILING_URL_PUNCTUATION_RE = /[.,;!?]+$/;
+
+function splitDashboardUrlFromTrailingPunctuation(value: string): { href: string; trailingPunctuation: string } {
+  const trailingPunctuation = value.match(DASHBOARD_TRAILING_URL_PUNCTUATION_RE)?.[0] ?? '';
+  if (!trailingPunctuation) {
+    return { href: value, trailingPunctuation: '' };
+  }
+
+  return {
+    href: value.slice(0, -trailingPunctuation.length),
+    trailingPunctuation,
+  };
+}
+
+function renderDashboardInlineText(value: string, keyPrefix: string): React.ReactNode {
+  if (!value) return value;
+
+  const segments: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let matchIndex = 0;
+
+  for (const match of value.matchAll(DASHBOARD_URL_RE)) {
+    const start = match.index ?? 0;
+    const rawValue = match[0];
+    if (start > lastIndex) {
+      segments.push(value.slice(lastIndex, start));
+    }
+
+    const { href, trailingPunctuation } = splitDashboardUrlFromTrailingPunctuation(rawValue);
+    segments.push(
+      <a
+        key={`${keyPrefix}-url-${matchIndex}`}
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="dashboard-inline-link"
+      >
+        {href}
+      </a>
+    );
+
+    if (trailingPunctuation) {
+      segments.push(trailingPunctuation);
+    }
+
+    lastIndex = start + rawValue.length;
+    matchIndex += 1;
+  }
+
+  if (lastIndex < value.length) {
+    segments.push(value.slice(lastIndex));
+  }
+
+  return segments.length > 0 ? segments : value;
+}
+
+function formatDashboardHeadline(value: string): string {
+  return value.replace(/\s+/g, ' ').trim();
+}
+
 
 
 interface DashboardSectionProps {
@@ -865,7 +926,7 @@ function DashboardPrimaryRegion({
                   <SignalBadge tone={item.pinned ? 'active' : 'steady'}>{item.pinned ? copy.pinned : copy.latest}</SignalBadge>
                   <span>{formatTimeAgo(item.date, copy, language)}</span>
                 </div>
-                <div className="dashboard-news-spotlight__title">{item.title}</div>
+                <div className="dashboard-news-spotlight__title">{renderDashboardInlineText(formatDashboardHeadline(item.title), `dashboard-news-${item.id}`)}</div>
               </div>
             ))}
           </div>
@@ -890,7 +951,7 @@ function DashboardPrimaryRegion({
                     <div className="activity-feed-action">
                       {activityLabel(event.type, copy)}
                     </div>
-                    {event.details && <div className="activity-feed-details">{event.details}</div>}
+                    {event.details && <div className="activity-feed-details">{renderDashboardInlineText(event.details, `activity-${event.id}`)}</div>}
                   </div>
                   <div className="activity-feed-time">{formatTimeAgo(event.timestamp, copy, language)}</div>
                 </div>

@@ -3422,6 +3422,20 @@ body {
   border-radius: 4px;
 }
 
+.dashboard-inline-link {
+  color: rgba(168, 219, 241, 0.96);
+  text-decoration: underline;
+  text-decoration-color: rgba(168, 219, 241, 0.46);
+  text-underline-offset: 0.16em;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.dashboard-inline-link:hover {
+  color: rgba(205, 236, 248, 0.98);
+  text-decoration-color: rgba(205, 236, 248, 0.88);
+}
+
 .news-discord-link {
   display: inline-flex;
   align-items: center;
@@ -4054,6 +4068,11 @@ table td, table th {
     linear-gradient(180deg, rgba(9, 16, 24, 0.96), rgba(7, 12, 18, 0.94));
 }
 
+.dc-page-shell {
+  transform-origin: top center;
+  will-change: opacity, transform;
+}
+
 .dashboard-status-card--active {
   border-color: rgba(74, 222, 128, 0.18);
 }
@@ -4228,6 +4247,16 @@ table td, table th {
   margin-bottom: 8px;
 }
 
+.dashboard-news-spotlight__title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 .dashboard-route-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -4335,6 +4364,8 @@ table td, table th {
   color: rgba(188, 211, 224, 0.96);
   font-size: 0.88rem;
   line-height: 1.45;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .activity-feed-details {
@@ -4345,6 +4376,9 @@ table td, table th {
   border-radius: 12px;
   background: rgba(16, 27, 36, 0.88);
   border: 1px solid rgba(85, 119, 138, 0.22);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .activity-feed-time {

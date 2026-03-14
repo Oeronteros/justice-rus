@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import Header from './Header';
 import MobileNav from './MobileNav';
 import { HeaderProvider, useHeader } from '@/lib/ui/headerContext';
@@ -42,6 +43,7 @@ const pathToSection: Record<string, Section> = {
 
 function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
   const pathname = usePathname();
+  const prefersReducedMotion = useReducedMotion();
   const { language, setLanguage } = useLanguage();
   const { isHeaderHidden } = useHeader();
   const prefetchNews = usePrefetchNews();
@@ -91,9 +93,18 @@ function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
       </div>
       <main id="portal-main" className={`min-h-screen pb-[calc(96px+env(safe-area-inset-bottom))] md:pb-0 ${isHeaderHidden ? '-mt-[var(--header-height,80px)]' : ''}`}>
         <div className="mx-auto max-w-[1280px] overflow-x-clip px-3 sm:px-5 lg:px-8 pt-4 sm:pt-6">
-          <div className={`wuxia-section wuxia-section-${currentSection} rounded-2xl overflow-hidden`}> 
-            {children}
-          </div>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={pathname}
+              className={`wuxia-section wuxia-section-${currentSection} dc-page-shell rounded-2xl overflow-hidden`}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 18, scale: 0.992 }}
+              animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+              exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 10, scale: 0.996 }}
+              transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
       <div className={`transition-transform duration-300 ${isHeaderHidden ? 'translate-y-full' : ''}`}>
