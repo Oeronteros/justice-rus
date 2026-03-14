@@ -88,10 +88,38 @@ function clearFailures(ip: string) {
 }
 
 function legacyPinRole(password: string): UserRole | null {
+  if (safeEqual(password, PASSWORDS.member)) return 'member';
   if (safeEqual(password, PASSWORDS.officer)) return 'officer';
   if (safeEqual(password, PASSWORDS.head)) return 'head';
   if (safeEqual(password, PASSWORDS.sysadmin)) return 'sysadmin';
   return null;
+}
+
+function isLocalHost(value: string | null | undefined): boolean {
+  if (!value) return false;
+
+  return ['localhost', '127.0.0.1', '[::1]', '::1'].some((host) => value.includes(host));
+}
+
+function canUseDevNicknameFallback(request: NextRequest): boolean {
+  if (process.env.NODE_ENV !== 'production') {
+    return true;
+  }
+
+  return isLocalHost(request.headers.get('host')) || isLocalHost(request.headers.get('origin'));
+}
+
+async function buildLegacyUser(role: UserRole, nickname?: string): Promise<AuthResponse['user']> {
+  return {
+    id: `pin-${role}`,
+    nickname: nickname || `${role.toUpperCase()} PIN`,
+    role,
+    isActive: true,
+    authMethod: 'pin',
+    discordHandle: null,
+    className: (await resolveClassName(nickname)) || null,
+    prefix: null,
+  };
 }
 
 async function resolveClassName(nickname: string | undefined): Promise<string | null> {
@@ -134,70 +162,94 @@ export async function POST(request: NextRequest) {
     const payload = parsed.value;
     const password = payload.password.trim();
     const nickname = payload.nickname ? normalizeNickname(payload.nickname) : '';
+    const legacyRole = legacyPinRole(password);
 
     let user: AuthResponse['user'] | null = null;
 
     if (nickname) {
-      const db = requireDatabase('Database is not configured');
-      if (!db.ok) {
-        return db.response;
+      if (hasDatabaseUrl()) {
+        await ensureAccountsSchema();
+        const pool = getPool();
+        const result = await pool.query(
+          `
+          SELECT id, nickname, class_name, discord_handle, prefix, role, is_active, password_hash
+          FROM portal_account
+          WHERE LOWER(nickname) = LOWER($1)
+          LIMIT 1
+          `,
+          [nickname]
+        );
+
+        const row = result.rows[0];
+        if (row) {
+          const validPassword = verifyPassword(password, row.password_hash);
+          if (!validPassword) {
+            if (legacyRole && canUseDevNicknameFallback(request)) {
+              user = await buildLegacyUser(legacyRole, nickname);
+            } else {
+              registerFailure(ip, now);
+              return jsonError('Invalid credentials', 401);
+            }
+          }
+
+          if (!user && !row.is_active) {
+            if (legacyRole && canUseDevNicknameFallback(request)) {
+              user = await buildLegacyUser(legacyRole, nickname);
+            } else {
+              return jsonError('Account exists but is not active yet. Ask officer/GM to activate it.', 403);
+            }
+          }
+
+          if (!user) {
+            await pool.query(
+              `UPDATE portal_account SET last_login_at = NOW(), updated_at = NOW() WHERE id = $1`,
+              [row.id]
+            );
+
+            user = {
+              id: String(row.id),
+              nickname: row.nickname,
+              role: row.role,
+              isActive: true,
+              authMethod: 'account',
+              discordHandle: row.discord_handle || null,
+              className: (await resolveClassName(row.nickname)) || row.class_name || null,
+              prefix: row.prefix || null,
+            };
+          }
+        } else if (legacyRole && canUseDevNicknameFallback(request)) {
+          user = await buildLegacyUser(legacyRole, nickname);
+        } else {
+          registerFailure(ip, now);
+          return jsonError('Invalid credentials', 401);
+        }
+      } else if (legacyRole && canUseDevNicknameFallback(request)) {
+        user = await buildLegacyUser(legacyRole, nickname);
+      } else {
+        const db = requireDatabase('Database is not configured');
+        if (!db.ok) {
+          return db.response;
+        }
       }
 
-      await ensureAccountsSchema();
-      const pool = getPool();
-      const result = await pool.query(
-        `
-        SELECT id, nickname, class_name, discord_handle, prefix, role, is_active, password_hash
-        FROM portal_account
-        WHERE LOWER(nickname) = LOWER($1)
-        LIMIT 1
-        `,
-        [nickname]
-      );
-
-      const row = result.rows[0];
-      const validPassword = row ? verifyPassword(password, row.password_hash) : false;
-      if (!row || !validPassword) {
+      if (user?.authMethod === 'account') {
+        // already resolved from DB-backed account path above
+      } else if (!user) {
         registerFailure(ip, now);
         return jsonError('Invalid credentials', 401);
       }
-
-      if (!row.is_active) {
-        return jsonError('Account exists but is not active yet. Ask officer/GM to activate it.', 403);
-      }
-
-      await pool.query(
-        `UPDATE portal_account SET last_login_at = NOW(), updated_at = NOW() WHERE id = $1`,
-        [row.id]
-      );
-
-        user = {
-          id: String(row.id),
-          nickname: row.nickname,
-          role: row.role,
-          isActive: true,
-          authMethod: 'account',
-          discordHandle: row.discord_handle || null,
-          className: (await resolveClassName(row.nickname)) || row.class_name || null,
-          prefix: row.prefix || null,
-        };
     } else {
-      const role = legacyPinRole(password);
-      if (!role) {
+      if (!legacyRole) {
         registerFailure(ip, now);
         return jsonError('Invalid credentials', 401);
       }
 
-      user = {
-        id: `pin-${role}`,
-        nickname: `${role.toUpperCase()} PIN`,
-        role,
-        isActive: true,
-        authMethod: 'pin',
-        discordHandle: null,
-        className: null,
-        prefix: null,
-      };
+      user = await buildLegacyUser(legacyRole);
+    }
+
+    if (!user) {
+      registerFailure(ip, now);
+      return jsonError('Invalid credentials', 401);
     }
 
     clearFailures(ip);
