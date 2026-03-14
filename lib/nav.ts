@@ -31,9 +31,11 @@ function pickNavItems(sections: readonly Section[]): NavItem[] {
 }
 
 export const desktopPrimarySections: readonly Section[] = ['about', 'news', 'registration', 'schedule', 'help', 'profile'];
-export const desktopSecondarySections: readonly Section[] = ['calendar', 'guides', 'absences', 'analytics', 'workflow', 'integrations', 'pvp', 'calculator'];
-export const mobilePrimarySections: readonly Section[] = ['about', 'news', 'registration', 'help'];
+export const desktopSecondarySections: readonly Section[] = ['guides', 'absences', 'analytics', 'workflow', 'integrations', 'pvp', 'calculator'];
+export const mobilePrimarySections: readonly Section[] = ['about', 'news', 'schedule', 'help'];
+export const mobileSecondarySections: readonly Section[] = ['registration', 'profile', 'guides', 'absences', 'analytics', 'workflow', 'integrations', 'pvp', 'calculator'];
 
 export const desktopPrimaryNavItems = pickNavItems(desktopPrimarySections);
 export const desktopSecondaryNavItems = pickNavItems(desktopSecondarySections);
 export const mobilePrimaryNavItems = pickNavItems(mobilePrimarySections);
+export const mobileSecondaryNavItems = pickNavItems(mobileSecondarySections);

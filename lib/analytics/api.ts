@@ -1,25 +1,20 @@
-import type { RosterAnalytics } from '@/lib/schemas/analytics';
+import { rosterAnalyticsSchema, type RosterAnalytics } from '@/lib/schemas/analytics';
 
-// Mock API for analytics - replace with real API when backend is ready
 export const analyticsApi = {
   getRosterAnalytics: async (days: number = 30): Promise<RosterAnalytics> => {
-    // This will be replaced with actual API call
-    // const response = await getApiAnalyticsRoster({ query: { days } });
-    // return rosterAnalyticsSchema.parse(response.data);
-    
-    // Mock data for demonstration
-    return {
-      heatmap: [],
-      classComposition: [],
-      trends: [],
-      officerWorkload: [],
-      summary: {
-        totalMembers: 0,
-        activeMembers: 0,
-        inactiveMembers: 0,
-        averageAttendance: 0,
-        topAttendees: [],
+    const response = await fetch(`/api/analytics/roster?days=${encodeURIComponent(String(days))}`, {
+      credentials: 'same-origin',
+      headers: {
+        Accept: 'application/json',
       },
-    };
+    });
+
+    const payload = await response.json().catch(() => null);
+    if (!response.ok) {
+      const error = typeof payload?.error === 'string' ? payload.error : 'Failed to fetch analytics';
+      throw new Error(error);
+    }
+
+    return rosterAnalyticsSchema.parse(payload || {});
   },
 };

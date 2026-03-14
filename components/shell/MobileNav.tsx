@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Section } from '@/types';
 import { Language, sectionLabels } from '@/lib/i18n';
-import { mobilePrimaryNavItems, navItems } from '@/lib/nav';
+import { mobilePrimaryNavItems, mobileSecondaryNavItems } from '@/lib/nav';
 import WuxiaIcon from '../WuxiaIcons';
 
 interface MobileNavProps {
@@ -18,7 +18,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
 
   const primaryItems = useMemo(() => mobilePrimaryNavItems, []);
   const secondaryItems = useMemo(
-    () => navItems.filter((item) => !primaryItems.some((primaryItem) => primaryItem.section === item.section)),
+    () => mobileSecondaryNavItems.filter((item) => !primaryItems.some((primaryItem) => primaryItem.section === item.section)),
     [primaryItems]
   );
   const isMoreActive = secondaryItems.some((item) => item.section === currentSection);

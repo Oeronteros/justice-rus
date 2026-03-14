@@ -9,6 +9,9 @@ import {
   refreshNewsReadModelAfterWrite,
 } from '@/lib/server/read-models/news';
 
+const BOT_API_URL = process.env.BOT_API_URL || process.env.DISCORD_BOT_API_URL || '';
+const BOT_API_KEY = process.env.BOT_API_KEY || process.env.DISCORD_BOT_API_KEY || '';
+
 type BotPublishResult = {
   status: 'sent' | 'failed' | 'pending';
   messageUrl?: string;
@@ -135,6 +138,34 @@ export async function deleteNews(newsId: string): Promise<{ id: string }> {
   }
 
   const pool = getPool();
+  const existing = await pool.query('SELECT id, message_url FROM news WHERE id = $1 LIMIT 1', [normalizedId]);
+  const existingRow = existing.rows[0];
+  if (!existingRow) {
+    throw new NewsError('News not found', 404);
+  }
+
+  const messageUrl = existingRow.message_url ? String(existingRow.message_url) : '';
+  if (messageUrl && BOT_API_URL && BOT_API_KEY) {
+    try {
+      const response = await fetch(`${BOT_API_URL.replace(/\/$/, '')}/api/internal/news/delete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-KEY': BOT_API_KEY,
+        },
+        body: JSON.stringify({ message_url: messageUrl }),
+        cache: 'no-store',
+      });
+
+      if (!response.ok) {
+        const payload = await response.text().catch(() => '');
+        console.warn('Failed to delete Discord news message before removing site news:', payload || response.statusText);
+      }
+    } catch (error) {
+      console.warn('Failed to reach Discord bot for news deletion:', error);
+    }
+  }
+
   const result = await pool.query('DELETE FROM news WHERE id = $1 RETURNING id', [normalizedId]);
   const deletedRow = result.rows[0];
 

@@ -5,12 +5,16 @@ import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { useCreateSchedule, useSchedule, useUpdateSchedule } from '@/lib/schedule/hooks';
+import { useRsvps } from '@/lib/rsvp/hooks';
+import { RsvpButton } from '@/components/rsvp/RsvpButton';
+import { RsvpSummaryDisplay } from '@/components/rsvp/RsvpSummary';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/lib/schemas/auth';
 import type { Language } from '@/lib/i18n';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { hasRoleAtLeast } from '@/lib/authz';
 import type { Schedule as ScheduleItem } from '@/lib/schemas/schedule';
+import type { Rsvp } from '@/lib/schemas/rsvp';
 
 interface ScheduleSectionProps {
   user: User;
@@ -339,6 +343,7 @@ function getRecurrenceLabel(kind: keyof typeof recurringGroupAliases, language: 
 
 function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
   const { data: schedules = [], isLoading, error, refetch } = useSchedule(language);
+  const { data: myRsvps = [] } = useRsvps(user.id ?? null);
   const updateSchedule = useUpdateSchedule();
   const createSchedule = useCreateSchedule();
   const [now, setNow] = useState(() => new Date());
@@ -592,6 +597,10 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
   }, [editDraft]);
 
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const myRsvpsByScheduleId = new Map<string, Rsvp>();
+  myRsvps.forEach((rsvp) => {
+    myRsvpsByScheduleId.set(rsvp.scheduleId, rsvp);
+  });
 
   const todayIndex = getWeekdayIndex(now);
   const isSelectedToday = selectedDayIndex === todayIndex;
@@ -762,8 +771,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
           </div>
         )}
 
-        <div className="overflow-x-auto pb-1 no-scrollbar">
-          <div className="flex min-w-max gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">
             {weekdays.map((day, index) => {
               const dayEventsCount = schedules.filter((item) => {
                 const itemDayIndex = getScheduleDayIndex(item);
@@ -777,7 +785,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                   key={day.key}
                   type="button"
                   onClick={() => setSelectedDayIndex(index)}
-                  className={`min-w-[8rem] sm:min-w-[8.75rem] rounded-2xl border px-3.5 py-3 text-left transition-all ${
+                  className={`rounded-2xl border px-3.5 py-3 text-left transition-all ${
                     isActive
                       ? 'border-[#a9d1e4]/65 bg-[linear-gradient(135deg,rgba(37,79,103,0.95),rgba(18,36,48,0.98))] shadow-[0_18px_30px_rgba(5,10,15,0.42)]'
                       : 'border-[#223544]/70 bg-[#0c151d]/85 hover:border-[#4b6f84]/80 hover:bg-[#101d27]/95'
@@ -797,7 +805,6 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                 </button>
               );
             })}
-          </div>
         </div>
 
         {/* Текущее/следующее событие */}
@@ -931,6 +938,18 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                                 <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
                                 {language === 'ru' ? 'Сейчас' : language === 'zh' ? '进行中' : 'Now'}
                               </span>
+                            )}
+
+                            {item.id && (
+                              <div className="mt-3 flex flex-wrap items-center gap-3">
+                                <RsvpButton
+                                  scheduleId={item.id}
+                                  currentStatus={myRsvpsByScheduleId.get(item.id)?.status ?? null}
+                                  user={user}
+                                  onRsvpChange={() => void refetch()}
+                                />
+                                <RsvpSummaryDisplay scheduleId={item.id} compact />
+                              </div>
                             )}
                           </div>
 

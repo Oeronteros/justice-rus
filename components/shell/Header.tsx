@@ -113,6 +113,15 @@ export default function Header({
               <option value="zh">简体中文</option>
             </select>
 
+            <Link
+              href="/calendar"
+              className="dc-icon-btn p-2.5 rounded-xl"
+              title={labels.notifications}
+              aria-label={labels.notifications}
+            >
+              <WuxiaIcon name="calendarCheck" className="w-5 h-5" />
+            </Link>
+
             <button
               onClick={handleRefresh}
               className="dc-icon-btn p-2.5 rounded-xl"

@@ -5,7 +5,7 @@ export const sectionLabels: Record<Language, Record<Section, string>> = {
   ru: {
     registration: 'Участники',
     schedule: 'Расписание',
-    calendar: 'Календарь',
+    calendar: 'Уведомления',
     analytics: 'Аналитика',
     workflow: 'Автоматизация',
     integrations: 'Интеграции',
@@ -21,7 +21,7 @@ export const sectionLabels: Record<Language, Record<Section, string>> = {
   en: {
     registration: 'Members',
     schedule: 'Schedule',
-    calendar: 'Calendar',
+    calendar: 'Notifications',
     analytics: 'Analytics',
     workflow: 'Automation',
     integrations: 'Integrations',
@@ -37,7 +37,7 @@ export const sectionLabels: Record<Language, Record<Section, string>> = {
   zh: {
     registration: '成员',
     schedule: '日程',
-    calendar: '日历',
+    calendar: '通知',
     analytics: '分析',
     workflow: '自动化',
     integrations: '集成',
@@ -60,6 +60,7 @@ export const headerCopy: Record<
     refresh: string;
     logout: string;
     languageSwitcher: string;
+    notifications: string;
   }
 > = {
   ru: {
@@ -68,6 +69,7 @@ export const headerCopy: Record<
     refresh: 'Обновить данные',
     logout: 'Выйти',
     languageSwitcher: 'Язык интерфейса',
+    notifications: 'Открыть уведомления',
   },
   en: {
     brandSubtitle: 'Guild · Justice Mobile',
@@ -75,6 +77,7 @@ export const headerCopy: Record<
     refresh: 'Refresh data',
     logout: 'Logout',
     languageSwitcher: 'Interface language',
+    notifications: 'Open notifications',
   },
   zh: {
     brandSubtitle: '公会 · Justice Mobile',
@@ -82,6 +85,7 @@ export const headerCopy: Record<
     refresh: '刷新数据',
     logout: '退出',
     languageSwitcher: '界面语言',
+    notifications: '打开通知中心',
   },
 };
 
