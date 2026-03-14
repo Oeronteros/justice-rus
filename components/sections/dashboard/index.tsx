@@ -623,6 +623,7 @@ function StatusCard({
   actionHref,
   actionLabel,
   tone = 'steady',
+  className,
   children,
 }: {
   title: string;
@@ -630,10 +631,11 @@ function StatusCard({
   actionHref: string;
   actionLabel: string;
   tone?: LiveTone;
+  className?: string;
   children: React.ReactNode;
 }) {
   return (
-    <article className={cn('card section-card dashboard-status-card p-5 sm:p-6', tone === 'alert' && 'dashboard-status-card--alert', tone === 'active' && 'dashboard-status-card--active')}>
+    <article className={cn('card section-card dashboard-status-card p-5 sm:p-6', tone === 'alert' && 'dashboard-status-card--alert', tone === 'active' && 'dashboard-status-card--active', className)}>
       <div className="dashboard-status-card__header">
         <div className="dashboard-status-card__title-wrap">
           <span className="dashboard-status-card__icon">
@@ -648,6 +650,39 @@ function StatusCard({
       {children}
     </article>
   );
+}
+
+function activityTone(type: ActivityType): LiveTone {
+  if (type === 'created_help' || type === 'created_absence') return 'alert';
+  if (type === 'responded_help' || type === 'approved_absence' || type === 'joined_pvp' || type === 'rsvp_event') return 'active';
+  return 'steady';
+}
+
+function activityIcon(type: ActivityType): IconName {
+  if (type === 'joined_guild') return 'user';
+  if (type === 'responded_help' || type === 'created_help') return 'help';
+  if (type === 'created_absence' || type === 'approved_absence') return 'absences';
+  if (type === 'closed_help') return 'checkCircle';
+  if (type === 'created_guide') return 'book';
+  if (type === 'joined_pvp' || type === 'completed_pvp') return 'sword';
+  if (type === 'updated_profile') return 'profile';
+  if (type === 'created_news') return 'news';
+  return 'seal';
+}
+
+function activityLabel(type: ActivityType, copy: DashboardCopy): string {
+  if (type === 'joined_guild') return copy.joinedGuild;
+  if (type === 'responded_help') return copy.respondedToHelp;
+  if (type === 'created_help') return copy.createdHelp;
+  if (type === 'created_absence') return copy.createdAbsence;
+  if (type === 'approved_absence') return copy.approvedAbsence;
+  if (type === 'closed_help') return copy.closedHelp;
+  if (type === 'created_guide') return copy.createdGuide;
+  if (type === 'joined_pvp') return copy.joinedPvpQueue;
+  if (type === 'completed_pvp') return copy.completedPvpMatch;
+  if (type === 'updated_profile') return copy.updatedProfile;
+  if (type === 'created_news') return copy.createdNews;
+  return copy.rsvpdToEvent;
 }
 
 function DashboardHeroRegion({
@@ -728,6 +763,12 @@ function DashboardHeroRegion({
 
         <p className="guild-dashboard-station__body">{copy.personalStationBody}</p>
 
+        <div className="dashboard-inline-tags guild-dashboard-station__chips">
+          <span className="dashboard-station-chip">{roleLabels[language][user.role]}</span>
+          <span className="dashboard-station-chip">{user.className || copy.noClass}</span>
+          <span className="dashboard-station-chip">{user.prefix || copy.noPrefix}</span>
+        </div>
+
         <div className="guild-dashboard-station__facts">
           <div><span>{copy.yourRole}</span><strong>{roleLabels[language][user.role]}</strong></div>
           <div><span>{copy.yourClass}</span><strong>{user.className || copy.noClass}</strong></div>
@@ -794,7 +835,7 @@ function DashboardPrimaryRegion({
 }) {
   return (
     <div className="guild-dashboard-primary-grid dashboard-card-cluster">
-      <StatusCard title={copy.actionCenter} icon="seal" actionHref="/profile" actionLabel={copy.openProfile} tone="active">
+      <StatusCard title={copy.actionCenter} icon="seal" actionHref="/profile" actionLabel={copy.openProfile} tone={helpSnapshot.myResponses.length > 0 ? 'active' : 'steady'}>
         <div className="dashboard-card-stack">
           <p className="dashboard-card-copy">{copy.actionCenterBody}</p>
           {helpSnapshot.myResponses.length > 0 ? (
@@ -815,6 +856,29 @@ function DashboardPrimaryRegion({
         </div>
       </StatusCard>
 
+      <StatusCard title={copy.quickRoutes} icon="seal" actionHref="/schedule" actionLabel={copy.openSchedule} tone="steady">
+        <div className="dashboard-card-stack">
+          <p className="dashboard-card-copy">{copy.quickRoutesBody}</p>
+          <div className="dashboard-route-grid dashboard-route-grid--dashboard">
+            {[
+              { href: '/schedule', icon: 'calendar' as IconName, label: copy.openSchedule },
+              { href: '/help', icon: 'help' as IconName, label: copy.openHelp },
+              { href: '/news', icon: 'news' as IconName, label: copy.openNews },
+              { href: '/members', icon: 'users' as IconName, label: copy.openMembers },
+              { href: '/guides', icon: 'book' as IconName, label: copy.openGuides },
+              { href: '/pvp', icon: 'sword' as IconName, label: copy.openPvp },
+            ].map((item) => (
+              <Link key={item.href} href={item.href} className="dashboard-route-link dashboard-route-link--compact">
+                <span className="dashboard-route-link__icon">
+                  <WuxiaIcon name={item.icon} className="h-4 w-4" />
+                </span>
+                <span>{item.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </StatusCard>
+
       <StatusCard title={copy.announcements} icon="news" actionHref="/news" actionLabel={copy.openNews} tone={newsSnapshot.activeCount > 0 ? 'active' : 'steady'}>
         {newsLoading ? <MiniSkeleton /> : newsSnapshot.featured.length > 0 ? (
           <div className="dashboard-card-stack">
@@ -831,41 +895,23 @@ function DashboardPrimaryRegion({
         ) : <div className="dashboard-card-empty">{copy.announcementsEmpty}</div>}
       </StatusCard>
 
-      <StatusCard title={copy.activityFeed} icon="list" actionHref="/news" actionLabel={copy.openNews} tone="steady">
+      <StatusCard title={copy.activityFeed} icon="list" actionHref="/news" actionLabel={copy.openNews} tone="steady" className="dashboard-status-card--feed">
         <div className="dashboard-card-stack">
           <p className="dashboard-card-copy">{copy.activityFeedBody}</p>
           {activityFeed.length > 0 ? (
             <div className="activity-feed-list">
               {activityFeed.map((event) => (
-                <div key={event.id} className="activity-feed-item">
+                <div key={event.id} className={cn('activity-feed-item', `activity-feed-item--${activityTone(event.type)}`)}>
                   <div className="activity-feed-icon">
-                    <WuxiaIcon name={
-                      event.type === 'joined_guild' ? 'user' :
-                      event.type === 'responded_help' || event.type === 'created_help' ? 'help' :
-                      event.type === 'created_absence' || event.type === 'approved_absence' ? 'absences' :
-                      event.type === 'closed_help' ? 'checkCircle' :
-                      event.type === 'created_guide' ? 'book' :
-                      event.type === 'joined_pvp' || event.type === 'completed_pvp' ? 'sword' :
-                      event.type === 'updated_profile' ? 'profile' :
-                      event.type === 'created_news' ? 'news' :
-                      'seal'
-                    } className="h-4 w-4" />
+                    <WuxiaIcon name={activityIcon(event.type)} className="h-4 w-4" />
                   </div>
                   <div className="activity-feed-content">
-                    <div className="activity-feed-actor">{event.actor}</div>
+                    <div className="activity-feed-head">
+                      <div className="activity-feed-actor">{event.actor}</div>
+                      <SignalBadge tone={activityTone(event.type)}>{activityLabel(event.type, copy)}</SignalBadge>
+                    </div>
                     <div className="activity-feed-action">
-                      {event.type === 'joined_guild' ? copy.joinedGuild :
-                       event.type === 'responded_help' ? copy.respondedToHelp :
-                       event.type === 'created_help' ? copy.createdHelp :
-                       event.type === 'created_absence' ? copy.createdAbsence :
-                       event.type === 'approved_absence' ? copy.approvedAbsence :
-                       event.type === 'closed_help' ? copy.closedHelp :
-                       event.type === 'created_guide' ? copy.createdGuide :
-                       event.type === 'joined_pvp' ? copy.joinedPvpQueue :
-                       event.type === 'completed_pvp' ? copy.completedPvpMatch :
-                       event.type === 'updated_profile' ? copy.updatedProfile :
-                       event.type === 'created_news' ? copy.createdNews :
-                       copy.rsvpdToEvent}
+                      {activityLabel(event.type, copy)}
                     </div>
                     {event.details && <div className="activity-feed-details">{event.details}</div>}
                   </div>
