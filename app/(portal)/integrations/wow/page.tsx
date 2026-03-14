@@ -4,11 +4,7 @@ import { SectionHero } from '@/components/shared/SectionHero';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { hasRoleAtLeast } from '@/lib/authz';
 import { useUser } from '@/lib/auth/context';
-import type { Language } from '@/lib/i18n';
-
-interface WoWServicesPageProps {
-  language: Language;
-}
+import { useLanguage, type Language } from '@/lib/i18n/context';
 
 const copy: Record<Language, {
   title: string;
@@ -55,7 +51,8 @@ const copy: Record<Language, {
   },
 };
 
-export default function WoWServicesPage({ language }: WoWServicesPageProps) {
+export default function WoWServicesPage() {
+  const { language } = useLanguage();
   const user = useUser();
   const canManageIntegrations = hasRoleAtLeast(user.role, 'officer');
 

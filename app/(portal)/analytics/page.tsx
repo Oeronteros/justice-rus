@@ -14,11 +14,7 @@ import {
 } from '@/components/analytics';
 import { useUser } from '@/lib/auth/context';
 import { hasRoleAtLeast } from '@/lib/authz';
-import type { Language } from '@/lib/i18n';
-
-interface AnalyticsSectionProps {
-  language: Language;
-}
+import { useLanguage, type Language } from '@/lib/i18n/context';
 
 const copy: Record<Language, {
   title: string;
@@ -50,7 +46,8 @@ const copy: Record<Language, {
   },
 };
 
-export default function AnalyticsPage({ language }: AnalyticsSectionProps) {
+export default function AnalyticsPage() {
+  const { language } = useLanguage();
   const user = useUser();
   const { data: analytics, isLoading, error } = useRosterAnalytics(30);
 

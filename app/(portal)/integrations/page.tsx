@@ -5,11 +5,7 @@ import { SectionHero } from '@/components/shared/SectionHero';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { hasRoleAtLeast } from '@/lib/authz';
 import { useUser } from '@/lib/auth/context';
-import type { Language } from '@/lib/i18n';
-
-interface IntegrationsPageProps {
-  language: Language;
-}
+import { useLanguage, type Language } from '@/lib/i18n/context';
 
 const integrations = [
   {
@@ -74,7 +70,8 @@ const copy: Record<Language, {
   },
 };
 
-export default function IntegrationsPage({ language }: IntegrationsPageProps) {
+export default function IntegrationsPage() {
+  const { language } = useLanguage();
   const user = useUser();
   const canManageIntegrations = hasRoleAtLeast(user.role, 'officer');
 

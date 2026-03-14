@@ -1,13 +1,96 @@
 
 > justice-ru@2.0.0 dev
-> next dev
+> next dev --hostname 127.0.0.1 --port 3001
 
 ▲ Next.js 16.1.6 (Turbopack, Cache Components)
-- Local:         http://localhost:3000
-- Network:       http://172.18.0.1:3000
+- Local:         http://127.0.0.1:3001
+- Network:       http://127.0.0.1:3001
 - Environments: .env.local
 - Experiments (use with caution):
   ✓ optimizeCss
 
 ✓ Starting...
-✓ Ready in 2.1s
+✓ Ready in 2.6s
+○ Compiling / ...
+ GET / 200 in 6.4s (compile: 5.5s, render: 862ms)
+ GET /manifest.webmanifest 200 in 1042ms (compile: 988ms, render: 54ms)
+ POST /api/auth 401 in 2.7s (compile: 473ms, render: 2.2s)
+ GET /manifest.webmanifest 200 in 22ms (compile: 11ms, render: 11ms)
+ GET / 200 in 1151ms (compile: 12ms, render: 1139ms)
+ GET /manifest.webmanifest 200 in 21ms (compile: 10ms, render: 11ms)
+ GET /news 200 in 1379ms (compile: 1113ms, render: 266ms)
+ GET /manifest.webmanifest 200 in 24ms (compile: 13ms, render: 11ms)
+ GET /members 200 in 1352ms (compile: 1114ms, render: 238ms)
+ GET /manifest.webmanifest 200 in 17ms (compile: 9ms, render: 8ms)
+ GET /schedule 200 in 1310ms (compile: 1059ms, render: 250ms)
+ GET /manifest.webmanifest 200 in 20ms (compile: 11ms, render: 9ms)
+ GET /calendar 200 in 1052ms (compile: 803ms, render: 249ms)
+ GET /manifest.webmanifest 200 in 17ms (compile: 8ms, render: 9ms)
+ GET /analytics 200 in 1147ms (compile: 870ms, render: 277ms)
+ GET /manifest.webmanifest 200 in 11ms (compile: 4ms, render: 6ms)
+ GET /workflow 200 in 1045ms (compile: 778ms, render: 266ms)
+ GET /manifest.webmanifest 200 in 14ms (compile: 5ms, render: 9ms)
+ GET /integrations 200 in 1154ms (compile: 977ms, render: 177ms)
+ GET /manifest.webmanifest 200 in 16ms (compile: 5ms, render: 12ms)
+ GET /pvp 200 in 810ms (compile: 549ms, render: 261ms)
+○ Compiling /guides ...
+ GET /guides 200 in 7.9s (compile: 7.6s, render: 354ms)
+ GET /manifest.webmanifest 200 in 27ms (compile: 15ms, render: 11ms)
+ GET /manifest.webmanifest 200 in 13ms (compile: 6ms, render: 8ms)
+ GET /help 200 in 1159ms (compile: 898ms, render: 261ms)
+ GET /manifest.webmanifest 200 in 12ms (compile: 5ms, render: 7ms)
+ GET /absences 200 in 993ms (compile: 757ms, render: 236ms)
+ GET /calculator 200 in 895ms (compile: 777ms, render: 117ms)
+ GET /manifest.webmanifest 200 in 14ms (compile: 6ms, render: 8ms)
+ GET /manifest.webmanifest 200 in 33ms (compile: 28ms, render: 6ms)
+ GET /profile 200 in 1069ms (compile: 812ms, render: 257ms)
+✓ Finished writing to filesystem cache in 11.1s
+✓ Compiled in 702ms
+ GET /profile 200 in 1092ms (compile: 14ms, render: 1078ms)
+ GET /manifest.webmanifest 200 in 22ms (compile: 8ms, render: 14ms)
+✓ Finished filesystem cache database compaction in 12.4s
+ GET /manifest.webmanifest 200 in 21ms (compile: 9ms, render: 12ms)
+ GET / 200 in 1058ms (compile: 12ms, render: 1047ms)
+ GET /manifest.webmanifest 200 in 19ms (compile: 10ms, render: 9ms)
+ GET /news 200 in 328ms (compile: 10ms, render: 318ms)
+ GET /manifest.webmanifest 200 in 16ms (compile: 8ms, render: 8ms)
+ GET /members 200 in 373ms (compile: 9ms, render: 364ms)
+ GET /manifest.webmanifest 200 in 16ms (compile: 7ms, render: 9ms)
+ GET /schedule 200 in 321ms (compile: 22ms, render: 299ms)
+ GET /manifest.webmanifest 200 in 19ms (compile: 9ms, render: 10ms)
+ GET /calendar 200 in 379ms (compile: 10ms, render: 369ms)
+ GET /manifest.webmanifest 200 in 20ms (compile: 8ms, render: 12ms)
+ GET /analytics 200 in 2.1s (compile: 398ms, render: 1707ms)
+ GET /manifest.webmanifest 200 in 21ms (compile: 12ms, render: 9ms)
+ GET /workflow 200 in 2.1s (compile: 447ms, render: 1607ms)
+ GET /manifest.webmanifest 200 in 21ms (compile: 12ms, render: 9ms)
+ GET /integrations 200 in 1946ms (compile: 354ms, render: 1593ms)
+ GET /manifest.webmanifest 200 in 18ms (compile: 11ms, render: 8ms)
+ GET /integrations/discord 200 in 1758ms (compile: 1423ms, render: 336ms)
+ GET /manifest.webmanifest 200 in 34ms (compile: 26ms, render: 8ms)
+ GET /integrations/google-sheets 200 in 1559ms (compile: 1248ms, render: 311ms)
+ GET /manifest.webmanifest 200 in 85ms (compile: 75ms, render: 10ms)
+ GET /integrations/wow 200 in 1461ms (compile: 1142ms, render: 319ms)
+ GET /manifest.webmanifest 200 in 11ms (compile: 5ms, render: 6ms)
+ GET /pvp 200 in 1348ms (compile: 11ms, render: 1337ms)
+ GET /manifest.webmanifest 200 in 16ms (compile: 8ms, render: 7ms)
+ GET /guides 200 in 343ms (compile: 13ms, render: 330ms)
+ GET /manifest.webmanifest 200 in 22ms (compile: 12ms, render: 10ms)
+ GET /help 200 in 259ms (compile: 6ms, render: 253ms)
+ GET /manifest.webmanifest 200 in 19ms (compile: 8ms, render: 11ms)
+ GET /absences 200 in 380ms (compile: 13ms, render: 366ms)
+ GET /manifest.webmanifest 200 in 28ms (compile: 12ms, render: 16ms)
+ GET /calculator 200 in 2.4s (compile: 590ms, render: 1808ms)
+ GET /profile 200 in 369ms (compile: 10ms, render: 358ms)
+ GET /manifest.webmanifest 200 in 21ms (compile: 9ms, render: 12ms)
+Persisting failed: Unable to write SST file 00000118.sst
+
+Caused by:
+    Системе не удается найти указанный путь. (os error 3)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)

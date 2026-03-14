@@ -12,11 +12,7 @@ import {
 } from '@/lib/discord';
 import { hasRoleAtLeast } from '@/lib/authz';
 import { useUser } from '@/lib/auth/context';
-import type { Language } from '@/lib/i18n';
-
-interface DiscordIntegrationPageProps {
-  language: Language;
-}
+import { useLanguage, type Language } from '@/lib/i18n/context';
 
 const copy: Record<Language, {
   title: string;
@@ -80,7 +76,8 @@ const copy: Record<Language, {
   },
 };
 
-export default function DiscordIntegrationPage({ language }: DiscordIntegrationPageProps) {
+export default function DiscordIntegrationPage() {
+  const { language } = useLanguage();
   const user = useUser();
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
 
