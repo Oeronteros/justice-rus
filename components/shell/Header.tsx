@@ -4,10 +4,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import autoAnimate from '@formkit/auto-animate';
 import { LayoutGroup, motion } from 'motion/react';
+import * as stylex from '@stylexjs/stylex';
 import { Section } from '@/types';
 import { headerCopy, Language, portalCopy, sectionLabels } from '@/lib/i18n';
 import { desktopGroupedNavItems, desktopPrimaryNavItems } from '@/lib/nav';
+import { mergeStylexProps } from '@/lib/stylex/utils';
 import WuxiaIcon from '../WuxiaIcons';
+import { shellStyles } from './Shell.stylex';
 
 interface HeaderProps {
   currentSection: Section;
@@ -79,25 +82,29 @@ export default function Header({
     tools: labels.navTools,
   } as const;
 
+  const headerProps = stylex.props(shellStyles.header, headerCompact && shellStyles.headerCompact);
+  const headerPanelProps = stylex.props(shellStyles.headerPanel, headerCompact && shellStyles.headerPanelCompact);
+  const headerOathProps = stylex.props(shellStyles.headerOath, headerCompact && shellStyles.headerOathCompact);
+
   return (
-    <header className={`dc-header sticky top-0 z-40 ${headerCompact ? 'dc-header--compact' : ''}`}>
-      <div className={`dc-header-panel max-w-7xl mx-auto px-4 sm:px-6 ${headerCompact ? 'py-2.5' : 'py-3 sm:py-3.5'}`}>
-        <div className="dc-header-top flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-          <Link href="/" className="dc-brand-block flex min-w-0 items-start gap-3 sm:items-center sm:gap-4 text-left group">
-            <div className="relative shrink-0">
-              <div className="seal-ring">
+    <header {...headerProps}>
+      <div {...headerPanelProps}>
+        <div {...stylex.props(shellStyles.headerTop)}>
+          <Link href="/" {...stylex.props(shellStyles.brandBlock)}>
+            <div {...stylex.props(shellStyles.brandSealWrap)}>
+              <div className={`seal-ring ${headerCompact ? stylex.props(shellStyles.compactSeal).className : ''}`}>
                 <div className="seal-core">
                   <WuxiaIcon name="skull" className="w-5 h-5 text-white" />
                 </div>
               </div>
-              <div className="absolute -top-1 -right-1 hidden sm:block w-4 h-4 bg-[#5fd1d4] rounded-full border-2 border-[#0a1118]"></div>
+              <div {...stylex.props(shellStyles.brandStatusDot)} />
             </div>
-            <div className="min-w-0 text-left">
-              <h1 className="text-[1.9rem] sm:text-2xl font-bold font-orbitron dc-text drop-shadow leading-none">
+            <div {...stylex.props(shellStyles.brandTextWrap)}>
+              <h1 {...mergeStylexProps(stylex.props(shellStyles.brandTitle), 'dc-text drop-shadow')}>
                 Silent Moonfall
               </h1>
-              <p className="mt-1 text-xs sm:text-sm dc-muted font-roboto leading-snug sm:whitespace-nowrap">{labels.brandSubtitle}</p>
-              <div className="dc-header-oath hidden sm:flex flex-wrap items-center gap-2 mt-2">
+              <p {...mergeStylexProps(stylex.props(shellStyles.brandSubtitle), 'dc-muted font-roboto')}>{labels.brandSubtitle}</p>
+              <div {...headerOathProps}>
                 <span className="wuxia-tag wuxia-tag-compact">
                   <WuxiaIcon name="eye" className="w-4 h-4" />
                   <span className="wuxia-tag-text">{portalCopy[language].oath}</span>
@@ -107,7 +114,7 @@ export default function Header({
                   <span className="wuxia-tag-text">{labels.activeSection}: {sectionLabel}</span>
                 </span>
               </div>
-              <div className="sm:hidden mt-2">
+              <div {...stylex.props(shellStyles.mobileSectionTag)}>
                 <span className="wuxia-tag wuxia-tag-compact">
                   <WuxiaIcon name="seal" className="w-4 h-4" />
                   <span className="wuxia-tag-text">{sectionLabel}</span>
@@ -116,13 +123,13 @@ export default function Header({
             </div>
           </Link>
 
-          <div className="dc-toolbar flex w-full sm:w-auto flex-wrap items-center justify-between sm:justify-end gap-2">
+          <div {...stylex.props(shellStyles.toolbar)}>
             <select
               id="langSwitch"
               value={language}
               onChange={(e) => onLanguageChange(e.target.value as Language)}
               aria-label={labels.languageSwitcher}
-              className="dc-select min-w-[102px] flex-1 sm:flex-none rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a90b0]/40 transition-all font-medium"
+              {...stylex.props(shellStyles.select)}
             >
               <option value="ru">RU</option>
               <option value="en">EN</option>
@@ -131,7 +138,7 @@ export default function Header({
 
             <Link
               href="/calendar"
-              className="dc-icon-btn p-2.5 rounded-xl"
+              {...stylex.props(shellStyles.iconButton)}
               title={labels.notifications}
               aria-label={labels.notifications}
             >
@@ -140,7 +147,7 @@ export default function Header({
 
             <Link
               href="/profile"
-              className={`dc-icon-btn p-2.5 rounded-xl ${currentSection === 'profile' ? 'dc-icon-btn-active' : ''}`}
+              {...stylex.props(shellStyles.iconButton, currentSection === 'profile' && shellStyles.iconButtonActive)}
               title={labels.profile}
               aria-label={labels.profile}
             >
@@ -149,7 +156,7 @@ export default function Header({
 
             <button
               onClick={handleRefresh}
-              className="dc-icon-btn p-2.5 rounded-xl"
+              {...stylex.props(shellStyles.iconButton)}
               title={labels.refresh}
               aria-label={labels.refresh}
             >
@@ -158,7 +165,7 @@ export default function Header({
 
             <button
               onClick={onLogout}
-              className="dc-icon-btn dc-icon-btn-accent p-2.5 rounded-xl"
+              {...stylex.props(shellStyles.iconButton, shellStyles.iconButtonAccent)}
               title={labels.logout}
               aria-label={labels.logout}
             >
@@ -167,10 +174,10 @@ export default function Header({
           </div>
         </div>
 
-        <nav className="hidden md:block mt-3" aria-label={primaryNavLabel}>
-          <div className="dc-nav-shell dc-nav-shell--enhanced">
+        <nav {...stylex.props(shellStyles.desktopNav)} aria-label={primaryNavLabel}>
+          <div {...stylex.props(shellStyles.navShell, shellStyles.navShellEnhanced)}>
             <LayoutGroup id="desktop-core-nav">
-              <div className={`dc-core-rail ${headerCompact ? 'dc-core-rail--compact' : ''}`}>
+              <div {...stylex.props(shellStyles.coreRail, headerCompact && shellStyles.coreRailCompact)}>
                 {desktopPrimaryNavItems.map((item) => {
                   const isActive = currentSection === item.section;
 
@@ -181,17 +188,17 @@ export default function Header({
                         onMouseEnter={() => onNavPrefetch?.(item.section)}
                         onFocus={() => onNavPrefetch?.(item.section)}
                         onTouchStart={() => onNavPrefetch?.(item.section)}
-                        className={`dc-core-link ${isActive ? 'is-active' : ''}`}
+                        {...stylex.props(shellStyles.navLinkBase, !isActive && shellStyles.navLinkInactive)}
                         aria-label={orderLabels[item.section]}
                         aria-current={isActive ? 'page' : undefined}
                         title={orderLabels[item.section]}
                       >
-                        {isActive ? <motion.span layoutId="desktop-core-active" className="dc-core-link__active" transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
-                        <span className="dc-core-link__content">
-                          <span className="dc-order-dot dc-accent">
+                        {isActive ? <motion.span layoutId="desktop-core-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
+                        <span {...stylex.props(shellStyles.navLinkContent, shellStyles.coreLinkContent)}>
+                          <span {...mergeStylexProps(stylex.props(shellStyles.orderDot), 'dc-accent')}>
                             <WuxiaIcon name={item.icon} className="w-4 h-4" />
                           </span>
-                          <span className="dc-order-label">{orderLabels[item.section]}</span>
+                          <span {...stylex.props(shellStyles.orderLabel)}>{orderLabels[item.section]}</span>
                         </span>
                       </Link>
                     </motion.div>
@@ -200,12 +207,12 @@ export default function Header({
               </div>
             </LayoutGroup>
 
-            <div className="dc-command-deck" ref={desktopDeckRef} aria-label={secondaryNavLabel}>
+            <div {...stylex.props(shellStyles.commandDeck)} ref={desktopDeckRef} aria-label={secondaryNavLabel}>
               {desktopGroupedNavItems.map((group) => (
-                <section key={group.key} className="dc-command-group">
-                  <div className="dc-command-group__label">{groupLabels[group.key]}</div>
+                <section key={group.key} {...stylex.props(shellStyles.commandGroup)}>
+                  <div {...stylex.props(shellStyles.groupLabel)}>{groupLabels[group.key]}</div>
                   <LayoutGroup id={`desktop-${group.key}-nav`}>
-                    <div className="dc-command-group__items">
+                    <div {...stylex.props(shellStyles.groupItems)}>
                       {group.items.map((item) => {
                         const isActive = currentSection === item.section;
 
@@ -216,17 +223,17 @@ export default function Header({
                               onMouseEnter={() => onNavPrefetch?.(item.section)}
                               onFocus={() => onNavPrefetch?.(item.section)}
                               onTouchStart={() => onNavPrefetch?.(item.section)}
-                              className={`dc-command-link ${isActive ? 'is-active' : ''}`}
+                              {...stylex.props(shellStyles.navLinkBase, !isActive && shellStyles.navLinkInactive)}
                               aria-label={orderLabels[item.section]}
                               aria-current={isActive ? 'page' : undefined}
                               title={orderLabels[item.section]}
                             >
-                              {isActive ? <motion.span layoutId="desktop-command-active" className="dc-command-link__active" transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
-                              <span className="dc-command-link__content">
-                                <span className="dc-order-dot dc-accent">
+                              {isActive ? <motion.span layoutId="desktop-command-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
+                              <span {...stylex.props(shellStyles.navLinkContent, shellStyles.commandLinkContent)}>
+                                <span {...mergeStylexProps(stylex.props(shellStyles.orderDot), 'dc-accent')}>
                                   <WuxiaIcon name={item.icon} className="w-4 h-4" />
                                 </span>
-                                <span className="dc-order-label">{orderLabels[item.section]}</span>
+                                <span {...stylex.props(shellStyles.orderLabel)}>{orderLabels[item.section]}</span>
                               </span>
                             </Link>
                           </motion.div>

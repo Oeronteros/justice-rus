@@ -15,6 +15,10 @@ import { useRegistrations, useUpdateRegistrationStats } from '@/lib/registration
 import { getKPIClass, cn } from '@/lib/utils';
 import { useNotifications } from '@/lib/notifications/context';
 import type { UpdateRegistrationStatsPayload } from '@/lib/api/registrations';
+import * as stylex from '@stylexjs/stylex';
+import { mergeStylexProps } from '@/lib/stylex/utils';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { profileStyles } from '@/components/sections/profile/Profile.stylex';
 
 
 
@@ -76,37 +80,37 @@ const ProfileOverview = memo(function ProfileOverview({ profileRegistration, use
   const prefix = profileRegistration?.prefix ?? user.prefix ?? null;
 
   return (
-    <div className="card section-card p-5 sm:p-6">
-      <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-2">Профиль</div>
-      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4 text-sm">
-        <div className="ds-metric-tile">
-          <div className="text-gray-400 mb-1">Ник</div>
-          <div className="text-[#e6eff5] font-medium">{user.nickname || '—'}</div>
+    <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, uiStyles.sectionContainer ? undefined : undefined)} className="p-5 sm:p-6">
+      <div {...stylex.props(profileStyles.headingKicker)}>Профиль</div>
+      <div {...stylex.props(profileStyles.overviewGrid)}>
+        <div {...stylex.props(profileStyles.metricTile)}>
+          <div {...stylex.props(profileStyles.metricLabel)}>Ник</div>
+          <div {...stylex.props(profileStyles.metricValue)}>{user.nickname || '—'}</div>
           <PrefixBadge prefix={prefix} className="mt-2" />
         </div>
-        <div className="ds-metric-tile">
-          <div className="text-gray-400 mb-1">Discord</div>
-          <div className="text-[#e6eff5] font-medium">{profileRegistration?.discordHandle || user.discordHandle || '—'}</div>
+        <div {...stylex.props(profileStyles.metricTile)}>
+          <div {...stylex.props(profileStyles.metricLabel)}>Discord</div>
+          <div {...stylex.props(profileStyles.metricValue)}>{profileRegistration?.discordHandle || user.discordHandle || '—'}</div>
         </div>
-        <div className="ds-metric-tile">
-          <div className="text-gray-400 mb-1">Класс</div>
+        <div {...stylex.props(profileStyles.metricTile)}>
+          <div {...stylex.props(profileStyles.metricLabel)}>Класс</div>
           <ClassBadge
             className={profileRegistration?.class || user.className}
             textClassName="text-[#e6eff5] font-medium"
             iconSizeClassName="h-8 w-8"
           />
         </div>
-        <div className="ds-metric-tile">
-          <div className="text-gray-400 mb-1">Клан</div>
-          <div className="text-[#e6eff5] font-medium">{profileRegistration?.guild || '—'}</div>
+        <div {...stylex.props(profileStyles.metricTile)}>
+          <div {...stylex.props(profileStyles.metricLabel)}>Клан</div>
+          <div {...stylex.props(profileStyles.metricValue)}>{profileRegistration?.guild || '—'}</div>
         </div>
-        <div className="ds-metric-tile">
-          <div className="text-gray-400 mb-1">Роль</div>
-          <div className="text-[#e6eff5] font-medium">{roleLabels[user.role]}</div>
+        <div {...stylex.props(profileStyles.metricTile)}>
+          <div {...stylex.props(profileStyles.metricLabel)}>Роль</div>
+          <div {...stylex.props(profileStyles.metricValue)}>{roleLabels[user.role]}</div>
         </div>
-        <div className="ds-metric-tile">
-          <div className="text-gray-400 mb-1">Статус</div>
-          <div className="text-[#e6eff5] font-medium">{user.isActive ? 'active' : 'inactive'}</div>
+        <div {...stylex.props(profileStyles.metricTile)}>
+          <div {...stylex.props(profileStyles.metricLabel)}>Статус</div>
+          <div {...stylex.props(profileStyles.metricValue)}>{user.isActive ? 'active' : 'inactive'}</div>
         </div>
       </div>
     </div>
@@ -127,96 +131,96 @@ function NotificationSettingsSection() {
   };
 
   return (
-    <div className="card section-card p-5 sm:p-6">
-      <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-3">Уведомления</div>
-      <p className="text-gray-400 text-sm mb-5">Настройте типы уведомлений и способ доставки</p>
+    <div {...mergeStylexProps(stylex.props(uiStyles.card, uiStyles.sectionCard), 'p-5 sm:p-6')}>
+      <div {...stylex.props(profileStyles.headingKicker, profileStyles.headingKickerSpacious)}>Уведомления</div>
+      <p {...stylex.props(profileStyles.mutedText)} style={{ marginBottom: 20 }}>Настройте типы уведомлений и способ доставки</p>
 
-      <div className="notification-settings-group">
-        <div className="notification-setting-item">
-          <div className="notification-setting-label">
-            <div className="notification-setting-title">Все уведомления</div>
-            <div className="notification-setting-description">Глобальное включение/выключение всех уведомлений</div>
+      <div {...stylex.props(profileStyles.notificationGroup)}>
+        <div {...stylex.props(profileStyles.notificationItem)}>
+          <div {...stylex.props(profileStyles.notificationLabel)}>
+            <div {...stylex.props(profileStyles.notificationTitle)}>Все уведомления</div>
+            <div {...stylex.props(profileStyles.notificationDescription)}>Глобальное включение/выключение всех уведомлений</div>
           </div>
-          <div className="notification-toggle">
+          <div {...stylex.props(profileStyles.notificationToggleWrap)}>
             <button
               type="button"
-              className={cn('notification-toggle__switch', settings.enabled && 'notification-toggle__switch--active')}
+              {...stylex.props(profileStyles.toggleSwitch, settings.enabled && profileStyles.toggleSwitchActive)}
               onClick={() => updateSettings({ enabled: !settings.enabled })}
               aria-pressed={settings.enabled}
             >
-              <span className="notification-toggle__knob" />
+              <span {...stylex.props(profileStyles.toggleKnob, settings.enabled && profileStyles.toggleKnobActive)} />
             </button>
           </div>
         </div>
 
-        <div className="notification-setting-item">
-          <div className="notification-setting-label">
-            <div className="notification-setting-title">Запросы помощи</div>
-            <div className="notification-setting-description">Уведомлять о запросах без ответа более 15 минут</div>
+        <div {...stylex.props(profileStyles.notificationItem)}>
+          <div {...stylex.props(profileStyles.notificationLabel)}>
+            <div {...stylex.props(profileStyles.notificationTitle)}>Запросы помощи</div>
+            <div {...stylex.props(profileStyles.notificationDescription)}>Уведомлять о запросах без ответа более 15 минут</div>
           </div>
-          <div className="notification-toggle">
+          <div {...stylex.props(profileStyles.notificationToggleWrap)}>
             <button
               type="button"
-              className={cn('notification-toggle__switch', settings.enabled && settings.helpRequests && 'notification-toggle__switch--active')}
+              {...stylex.props(profileStyles.toggleSwitch, settings.enabled && settings.helpRequests && profileStyles.toggleSwitchActive)}
               onClick={() => updateSettings({ helpRequests: !settings.helpRequests })}
               disabled={!settings.enabled}
               aria-pressed={settings.helpRequests}
             >
-              <span className="notification-toggle__knob" />
+              <span {...stylex.props(profileStyles.toggleKnob, settings.enabled && settings.helpRequests && profileStyles.toggleKnobActive)} />
             </button>
           </div>
         </div>
 
-        <div className="notification-setting-item">
-          <div className="notification-setting-label">
-            <div className="notification-setting-title">Подтверждение отсутствий</div>
-            <div className="notification-setting-description">Для офицеров: уведомления о pending absence</div>
+        <div {...stylex.props(profileStyles.notificationItem)}>
+          <div {...stylex.props(profileStyles.notificationLabel)}>
+            <div {...stylex.props(profileStyles.notificationTitle)}>Подтверждение отсутствий</div>
+            <div {...stylex.props(profileStyles.notificationDescription)}>Для офицеров: уведомления о pending absence</div>
           </div>
-          <div className="notification-toggle">
+          <div {...stylex.props(profileStyles.notificationToggleWrap)}>
             <button
               type="button"
-              className={cn('notification-toggle__switch', settings.enabled && settings.absenceApprovals && 'notification-toggle__switch--active')}
+              {...stylex.props(profileStyles.toggleSwitch, settings.enabled && settings.absenceApprovals && profileStyles.toggleSwitchActive)}
               onClick={() => updateSettings({ absenceApprovals: !settings.absenceApprovals })}
               disabled={!settings.enabled}
               aria-pressed={settings.absenceApprovals}
             >
-              <span className="notification-toggle__knob" />
+              <span {...stylex.props(profileStyles.toggleKnob, settings.enabled && settings.absenceApprovals && profileStyles.toggleKnobActive)} />
             </button>
           </div>
         </div>
 
-        <div className="notification-setting-item">
-          <div className="notification-setting-label">
-            <div className="notification-setting-title">PvP-матчи</div>
-            <div className="notification-setting-description">Завершение матчей и спорные ситуации</div>
+        <div {...stylex.props(profileStyles.notificationItem)}>
+          <div {...stylex.props(profileStyles.notificationLabel)}>
+            <div {...stylex.props(profileStyles.notificationTitle)}>PvP-матчи</div>
+            <div {...stylex.props(profileStyles.notificationDescription)}>Завершение матчей и спорные ситуации</div>
           </div>
-          <div className="notification-toggle">
+          <div {...stylex.props(profileStyles.notificationToggleWrap)}>
             <button
               type="button"
-              className={cn('notification-toggle__switch', settings.enabled && settings.pvpMatches && 'notification-toggle__switch--active')}
+              {...stylex.props(profileStyles.toggleSwitch, settings.enabled && settings.pvpMatches && profileStyles.toggleSwitchActive)}
               onClick={() => updateSettings({ pvpMatches: !settings.pvpMatches })}
               disabled={!settings.enabled}
               aria-pressed={settings.pvpMatches}
             >
-              <span className="notification-toggle__knob" />
+              <span {...stylex.props(profileStyles.toggleKnob, settings.enabled && settings.pvpMatches && profileStyles.toggleKnobActive)} />
             </button>
           </div>
         </div>
 
-        <div className="notification-setting-item">
-          <div className="notification-setting-label">
-            <div className="notification-setting-title">Desktop-уведомления</div>
-            <div className="notification-setting-description">Системные уведомления браузера</div>
+        <div {...stylex.props(profileStyles.notificationItem)}>
+          <div {...stylex.props(profileStyles.notificationLabel)}>
+            <div {...stylex.props(profileStyles.notificationTitle)}>Desktop-уведомления</div>
+            <div {...stylex.props(profileStyles.notificationDescription)}>Системные уведомления браузера</div>
           </div>
-          <div className="notification-toggle">
+          <div {...stylex.props(profileStyles.notificationToggleWrap)}>
             <button
               type="button"
-              className={cn('notification-toggle__switch', settings.desktopEnabled && 'notification-toggle__switch--active')}
+              {...stylex.props(profileStyles.toggleSwitch, settings.desktopEnabled && profileStyles.toggleSwitchActive)}
               onClick={handleDesktopPermission}
               disabled={requesting}
               aria-pressed={settings.desktopEnabled}
             >
-              <span className="notification-toggle__knob" />
+              <span {...stylex.props(profileStyles.toggleKnob, settings.desktopEnabled && profileStyles.toggleKnobActive)} />
             </button>
           </div>
         </div>
@@ -228,40 +232,33 @@ function NotificationSettingsSection() {
 
 const RoleAccessPanel = memo(function RoleAccessPanel({ currentRole }: { currentRole: UserRole }) {
   return (
-    <div className="card section-card p-5 sm:p-6 space-y-5">
+    <div {...mergeStylexProps(stylex.props(uiStyles.card, uiStyles.sectionCard, profileStyles.spaceY5), 'p-5 sm:p-6')}>
       <div>
-        <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-2">Роли и доступ</div>
-        <div className="text-gray-400 text-sm">
+        <div {...stylex.props(profileStyles.headingKicker)}>Роли и доступ</div>
+        <div {...stylex.props(profileStyles.mutedText)}>
           Актуальные права по текущей иерархии: guest - member - officer - head - sysadmin.
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 text-sm">
+      <div {...stylex.props(profileStyles.roleGrid)}>
         {roleExplainerRows.map((entry) => {
           const isCurrentRole = entry.role === currentRole;
 
           return (
-            <article
-              key={entry.role}
-              className={`rounded-2xl border p-4 space-y-3 ${
-                isCurrentRole
-                  ? 'border-[#2f6e8d]/70 bg-[#163042]/45'
-                  : 'ds-section-panel-soft'
-              }`}
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[#e6eff5] font-semibold">{entry.label}</span>
+            <article key={entry.role} {...stylex.props(profileStyles.roleCard, isCurrentRole && profileStyles.roleCardActive)}>
+              <div {...stylex.props(profileStyles.roleHeader)}>
+                <span {...stylex.props(profileStyles.roleTitle)}>{entry.label}</span>
                 {isCurrentRole && (
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-[#8fb9cc]">Твоя роль</span>
+                  <span {...stylex.props(profileStyles.roleCurrent)}>Твоя роль</span>
                 )}
               </div>
 
-              <p className="text-gray-300 text-xs leading-relaxed">{entry.summary}</p>
+              <p {...stylex.props(profileStyles.roleSummary)}>{entry.summary}</p>
 
-              <div className="space-y-2">
+              <div {...stylex.props(profileStyles.capabilityList)}>
                 {entry.capabilities.map((capability) => (
-                  <div key={capability} className="flex items-start gap-2 text-xs text-[#c8dce8]">
-                    <span className="mt-1 inline-flex h-1.5 w-1.5 rounded-full bg-[#8fb9cc] shrink-0" />
+                  <div key={capability} {...stylex.props(profileStyles.capabilityItem)}>
+                    <span {...stylex.props(profileStyles.capabilityDot)} />
                     <span>{capability}</span>
                   </div>
                 ))}
@@ -286,11 +283,11 @@ const ActivityToggleCard = memo(function ActivityToggleCard({ activityKey, isMar
   const labelId = `profile-activity-${activityKey}-label`;
 
   return (
-    <div className="rounded-2xl ds-section-panel-soft p-4">
-      <div className="flex items-start justify-between gap-4">
+    <div {...stylex.props(profileStyles.activityCard)}>
+      <div {...stylex.props(profileStyles.activityHeader)}>
         <div>
-          <div id={labelId} className="text-[#e6eff5] font-medium">{label}</div>
-          <div id={hintId} className="mt-1 text-xs text-gray-400">
+          <div id={labelId} {...stylex.props(profileStyles.activityLabel)}>{label}</div>
+          <div id={hintId} {...stylex.props(profileStyles.activityHint)}>
             Переключатель отметки: красный - нет, зелёный - да.
           </div>
         </div>
@@ -301,20 +298,12 @@ const ActivityToggleCard = memo(function ActivityToggleCard({ activityKey, isMar
           aria-labelledby={labelId}
           aria-describedby={hintId}
           onClick={() => onToggle(activityKey)}
-          className={`relative inline-flex h-8 w-16 shrink-0 rounded-full border ${
-            isMarked
-              ? 'border-green-400/60 bg-green-500/80'
-              : 'border-red-400/50 bg-red-500/75'
-          }`}
+          {...stylex.props(profileStyles.activitySwitch, isMarked && profileStyles.activitySwitchActive)}
         >
-          <span
-            className={`absolute left-1 top-1 inline-flex h-6 w-6 rounded-full bg-white/95 shadow-[0_6px_14px_rgba(0,0,0,0.28)] transition-transform duration-200 ${
-              isMarked ? 'translate-x-8' : 'translate-x-0'
-            }`}
-          />
+          <span {...stylex.props(profileStyles.activityKnob, isMarked && profileStyles.activityKnobActive)} />
         </button>
       </div>
-      <div className={`mt-4 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${isMarked ? 'bg-green-500/15 text-green-300' : 'bg-red-500/15 text-red-200'}`}>
+      <div {...stylex.props(profileStyles.activityPill, isMarked && profileStyles.activityPillActive)}>
         {isMarked ? 'Отмечено' : 'Не отмечено'}
       </div>
     </div>
@@ -634,9 +623,9 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
   };
 
   return (
-    <section className="section-shell py-10 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="section-stack-lg">
+    <section {...stylex.props(uiStyles.sectionShell)}>
+      <div {...stylex.props(uiStyles.sectionContainer)}>
+        <div {...stylex.props(uiStyles.stackLg)}>
         <SectionHero
           icon={<WuxiaIcon name="profile" className="w-5 h-5" />}
           title="Личный кабинет"
@@ -648,16 +637,16 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
 
         <RoleAccessPanel currentRole={user.role} />
 
-        <div className="card section-card p-5 sm:p-6 space-y-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div {...mergeStylexProps(stylex.props(uiStyles.card, uiStyles.sectionCard, profileStyles.statsCard), 'p-5 sm:p-6')}>
+          <div {...stylex.props(profileStyles.statsHeader)}>
             <div>
-              <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-2">Статистика</div>
-              <div className="text-gray-400 text-sm">Данные из Neon: отметки, дуэли, Best MMR и расчётный KPI.</div>
+              <div {...stylex.props(profileStyles.headingKicker)}>Статистика</div>
+              <div {...stylex.props(profileStyles.mutedText)}>Данные из Neon: отметки, дуэли, Best MMR и расчётный KPI.</div>
             </div>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+            <div {...stylex.props(profileStyles.actionRow)}>
               <button
                 type="button"
-                className="btn-secondary px-4 py-2 text-sm"
+                {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}
                 onClick={resetActivities}
                 disabled={updateRegistrationStatsMutation.isPending || !hasMarkedActivities}
               >
@@ -665,7 +654,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
               </button>
               <button
                 type="button"
-                className="btn-secondary px-4 py-2 text-sm"
+                {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}
                 onClick={saveProfileStats}
                 disabled={updateRegistrationStatsMutation.isPending}
               >

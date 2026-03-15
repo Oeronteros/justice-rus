@@ -3,6 +3,7 @@
 import { useCallback, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import * as stylex from '@stylexjs/stylex';
 import Header from './Header';
 import MobileNav from './MobileNav';
 import { HeaderProvider, useHeader } from '@/lib/ui/headerContext';
@@ -14,6 +15,8 @@ import { usePrefetchSchedule } from '@/lib/schedule/hooks';
 import type { User } from '@/lib/schemas/auth';
 import { Section } from '@/types';
 import { useLanguage } from '@/lib/i18n/context';
+import { mergeStylexProps } from '@/lib/stylex/utils';
+import { shellStyles } from './Shell.stylex';
 
 interface MainLayoutProps {
   user: User;
@@ -81,8 +84,8 @@ function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
   );
 
   return (
-    <div className="relative z-30 overflow-x-clip">
-      <div className={`transition-transform duration-300 ${isHeaderHidden ? '-translate-y-full' : ''}`}>
+    <div {...stylex.props(shellStyles.layoutRoot)}>
+      <div {...stylex.props(shellStyles.translateTransition, isHeaderHidden && shellStyles.hideTop)}>
         <Header
           currentSection={currentSection}
           onLogout={onLogout}
@@ -91,12 +94,12 @@ function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
           onNavPrefetch={handleNavPrefetch}
         />
       </div>
-      <main id="portal-main" className={`min-h-screen pb-[calc(96px+env(safe-area-inset-bottom))] md:pb-0 ${isHeaderHidden ? '-mt-[var(--header-height,80px)]' : ''}`}>
-        <div className="mx-auto max-w-[1280px] overflow-x-clip px-3 sm:px-5 lg:px-8 pt-4 sm:pt-6">
+      <main id="portal-main" {...stylex.props(shellStyles.main, isHeaderHidden && shellStyles.mainShifted)}>
+        <div {...stylex.props(shellStyles.mainInner)}>
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={pathname}
-              className={`wuxia-section wuxia-section-${currentSection} dc-page-shell rounded-2xl overflow-hidden`}
+              {...mergeStylexProps(stylex.props(shellStyles.pageShell), `wuxia-section wuxia-section-${currentSection} dc-page-shell`)}
               initial={prefersReducedMotion ? false : { opacity: 0, y: 18, scale: 0.992 }}
               animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
               exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 10, scale: 0.996 }}
@@ -107,7 +110,7 @@ function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
           </AnimatePresence>
         </div>
       </main>
-      <div className={`transition-transform duration-300 ${isHeaderHidden ? 'translate-y-full' : ''}`}>
+      <div {...stylex.props(shellStyles.translateTransition, isHeaderHidden && shellStyles.hideBottom)}>
         <MobileNav currentSection={currentSection} language={language} onNavPrefetch={handleNavPrefetch} />
       </div>
     </div>

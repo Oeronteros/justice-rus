@@ -1,0 +1,486 @@
+import * as stylex from '@stylexjs/stylex';
+import { colors, radius, typography } from '../../../lib/stylex/tokens.stylex';
+
+const shimmer = stylex.keyframes({
+  '0%': { backgroundPosition: '200% 0' },
+  '100%': { backgroundPosition: '-200% 0' },
+});
+
+export const dashboardStyles = stylex.create({
+  heroGrid: {
+    display: 'grid',
+    gap: '18px',
+    alignItems: 'stretch',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 960px)': 'minmax(0, 1.65fr) minmax(320px, 0.95fr)',
+    },
+  },
+  commandCard: {
+    overflow: 'hidden',
+    padding: {
+      default: '24px',
+      '@media (min-width: 640px)': '28px',
+      '@media (min-width: 1280px)': '32px',
+    },
+    background:
+      'radial-gradient(circle at 12% 0%, rgba(110, 190, 230, 0.14), transparent 36%), radial-gradient(circle at 100% 0%, rgba(143, 185, 204, 0.12), transparent 30%), linear-gradient(160deg, rgba(10, 16, 24, 0.96), rgba(8, 13, 20, 0.94))',
+    position: 'relative',
+    '::after': {
+      content: "''",
+      position: 'absolute',
+      inset: '1px',
+      borderRadius: '22px',
+      border: '1px solid rgba(207, 230, 245, 0.05)',
+      pointerEvents: 'none',
+    },
+  },
+  stationCard: {
+    padding: {
+      default: '24px',
+      '@media (min-width: 640px)': '28px',
+    },
+    background:
+      'radial-gradient(circle at 80% 0%, rgba(143, 185, 204, 0.14), transparent 36%), linear-gradient(170deg, rgba(10, 16, 24, 0.96), rgba(7, 12, 18, 0.94))',
+  },
+  headerRow: {
+    display: 'flex',
+    alignItems: {
+      default: 'flex-start',
+      '@media (max-width: 639px)': 'flex-start',
+    },
+    flexDirection: {
+      default: 'row',
+      '@media (max-width: 639px)': 'column',
+    },
+    justifyContent: 'space-between',
+    gap: '16px',
+  },
+  kicker: {
+    fontSize: '0.74rem',
+    letterSpacing: '0.18em',
+    textTransform: 'uppercase',
+    color: 'rgba(151, 196, 218, 0.84)',
+  },
+  title: {
+    marginTop: '8px',
+    fontFamily: typography.display,
+    fontSize: 'clamp(1.8rem, 3vw, 2.5rem)',
+    lineHeight: 1,
+    color: 'rgba(230, 239, 245, 0.98)',
+    letterSpacing: '0.01em',
+  },
+  lede: {
+    marginTop: '18px',
+    fontSize: 'clamp(1.05rem, 1.3vw, 1.2rem)',
+    lineHeight: 1.5,
+    color: 'rgba(224, 238, 247, 0.96)',
+  },
+  body: {
+    color: 'rgba(170, 195, 210, 0.92)',
+    lineHeight: 1.7,
+  },
+  commandBody: {
+    marginTop: '10px',
+    maxWidth: '62ch',
+  },
+  stack: {
+    display: 'grid',
+    gap: '12px',
+  },
+  signalGrid: {
+    marginTop: '20px',
+    display: 'grid',
+    gap: '12px',
+    gridTemplateColumns: {
+      default: 'repeat(3, minmax(0, 1fr))',
+      '@media (max-width: 959px)': '1fr',
+    },
+  },
+  signalCard: {
+    padding: '14px 16px',
+    display: 'grid',
+    gap: '6px',
+    borderRadius: '18px',
+    border: '1px solid rgba(85, 119, 138, 0.26)',
+    backgroundColor: 'rgba(9, 16, 24, 0.72)',
+  },
+  signalText: {
+    color: 'rgba(159, 184, 198, 0.88)',
+    fontSize: '0.82rem',
+  },
+  signalLabel: {
+    letterSpacing: '0.14em',
+    textTransform: 'uppercase',
+  },
+  emphasis: {
+    color: 'rgba(230, 239, 245, 0.98)',
+    fontWeight: 700,
+  },
+  metricGrid: {
+    marginTop: '22px',
+    display: 'grid',
+    gap: '12px',
+    gridTemplateColumns: {
+      default: 'repeat(2, minmax(0, 1fr))',
+      '@media (max-width: 639px)': '1fr',
+    },
+  },
+  metricTile: {
+    padding: '14px 16px',
+    borderRadius: '18px',
+    border: '1px solid rgba(82, 118, 137, 0.38)',
+    backgroundColor: 'rgba(10, 18, 26, 0.7)',
+  },
+  metricTileActive: {
+    borderColor: 'rgba(74, 222, 128, 0.26)',
+    background: 'linear-gradient(160deg, rgba(12, 34, 25, 0.86), rgba(10, 18, 26, 0.84))',
+  },
+  metricTileAlert: {
+    borderColor: 'rgba(248, 113, 113, 0.32)',
+    background: 'linear-gradient(160deg, rgba(54, 22, 27, 0.84), rgba(10, 18, 26, 0.84))',
+  },
+  metricValue: {
+    fontFamily: typography.display,
+    fontSize: '1.9rem',
+    lineHeight: 1,
+    color: 'rgba(235, 243, 248, 0.98)',
+  },
+  metricLabel: {
+    marginTop: '6px',
+    color: 'rgba(159, 184, 198, 0.9)',
+    fontSize: '0.84rem',
+  },
+  stationChips: {
+    marginTop: '14px',
+  },
+  stationChip: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    minHeight: '34px',
+    padding: '0 12px',
+    borderRadius: radius.pill,
+    border: '1px solid rgba(98, 134, 154, 0.34)',
+    backgroundColor: 'rgba(10, 18, 26, 0.74)',
+    color: 'rgba(214, 232, 241, 0.94)',
+    fontSize: '0.82rem',
+    fontWeight: 600,
+  },
+  factsGrid: {
+    marginTop: '18px',
+    display: 'grid',
+    gap: '12px',
+    gridTemplateColumns: {
+      default: 'repeat(2, minmax(0, 1fr))',
+      '@media (max-width: 639px)': '1fr',
+    },
+  },
+  factCard: {
+    padding: '14px 16px',
+    display: 'grid',
+    gap: '6px',
+    borderRadius: '18px',
+    border: '1px solid rgba(85, 119, 138, 0.26)',
+    backgroundColor: 'rgba(9, 16, 24, 0.72)',
+  },
+  queueCard: {
+    marginTop: '14px',
+    padding: '14px 16px',
+    display: 'grid',
+    gap: '8px',
+    borderRadius: '18px',
+    border: '1px solid rgba(85, 119, 138, 0.26)',
+    backgroundColor: 'rgba(9, 16, 24, 0.72)',
+  },
+  queueBadgeText: {
+    color: 'rgba(159, 184, 198, 0.88)',
+    fontSize: '0.82rem',
+  },
+  stationNote: {
+    color: 'rgba(170, 195, 210, 0.88)',
+    fontSize: '0.82rem',
+  },
+  overlayCard: {
+    marginTop: '14px',
+    padding: '14px 16px',
+    display: 'grid',
+    gap: '12px',
+    borderRadius: '18px',
+    border: '1px solid rgba(85, 119, 138, 0.26)',
+    backgroundColor: 'rgba(9, 16, 24, 0.72)',
+  },
+  primaryGrid: {
+    display: 'grid',
+    gap: '18px',
+    alignItems: 'stretch',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 960px)': 'minmax(0, 0.92fr) minmax(0, 1.08fr)',
+    },
+  },
+  statusCard: {
+    minHeight: '100%',
+    padding: {
+      default: '20px',
+      '@media (min-width: 640px)': '24px',
+    },
+  },
+  statusCardActive: {
+    borderColor: 'rgba(74, 222, 128, 0.18)',
+  },
+  statusCardAlert: {
+    borderColor: 'rgba(248, 113, 113, 0.24)',
+  },
+  statusCardFeed: {
+    position: 'relative',
+    overflow: 'hidden',
+    background:
+      'radial-gradient(circle at 100% 0%, rgba(143, 185, 204, 0.1), transparent 38%), linear-gradient(180deg, rgba(9, 16, 24, 0.96), rgba(7, 12, 18, 0.94))',
+    gridColumn: {
+      default: 'auto',
+      '@media (min-width: 960px)': '2',
+    },
+    gridRow: {
+      default: 'auto',
+      '@media (min-width: 960px)': '1 / span 2',
+    },
+  },
+  titleWrap: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  },
+  titleIcon: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '36px',
+    height: '36px',
+    borderRadius: '12px',
+    border: '1px solid rgba(143, 185, 204, 0.24)',
+    backgroundColor: 'rgba(12, 21, 30, 0.8)',
+    color: 'rgba(191, 223, 239, 0.96)',
+  },
+  statusTitle: {
+    color: 'rgba(230, 239, 245, 0.98)',
+    fontSize: '1rem',
+    fontWeight: 700,
+  },
+  inlineLink: {
+    color: 'rgba(143, 185, 204, 0.92)',
+    fontSize: '0.84rem',
+    fontWeight: 600,
+    textDecoration: 'underline',
+    textDecorationColor: 'rgba(168, 219, 241, 0.46)',
+    textUnderlineOffset: '0.16em',
+    overflowWrap: 'anywhere',
+    wordBreak: 'break-word',
+    ':hover': {
+      color: 'rgba(220, 238, 247, 0.98)',
+      textDecorationColor: 'rgba(205, 236, 248, 0.88)',
+    },
+  },
+  listItem: {
+    padding: '12px 14px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: '12px',
+    alignItems: {
+      default: 'flex-start',
+      '@media (max-width: 639px)': 'flex-start',
+    },
+    flexDirection: {
+      default: 'row',
+      '@media (max-width: 639px)': 'column',
+    },
+    borderRadius: '18px',
+    border: '1px solid rgba(85, 119, 138, 0.26)',
+    backgroundColor: 'rgba(9, 16, 24, 0.72)',
+    backdropFilter: 'blur(10px)',
+  },
+  metaText: {
+    color: 'rgba(159, 184, 198, 0.88)',
+    fontSize: '0.82rem',
+  },
+  newsSpotlight: {
+    padding: '12px 14px',
+    borderRadius: '18px',
+    border: '1px solid rgba(85, 119, 138, 0.26)',
+    backgroundColor: 'rgba(9, 16, 24, 0.72)',
+    backdropFilter: 'blur(10px)',
+  },
+  newsSpotlightFeatured: {
+    background:
+      'radial-gradient(circle at 100% 0%, rgba(143, 185, 204, 0.1), transparent 34%), rgba(9, 16, 24, 0.78)',
+  },
+  newsSpotlightMeta: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: '12px',
+    alignItems: {
+      default: 'center',
+      '@media (max-width: 639px)': 'flex-start',
+    },
+    flexDirection: {
+      default: 'row',
+      '@media (max-width: 639px)': 'column',
+    },
+    marginBottom: '8px',
+  },
+  newsTitle: {
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: '3',
+    overflow: 'hidden',
+    lineHeight: 1.45,
+    overflowWrap: 'anywhere',
+    wordBreak: 'break-word',
+    color: 'rgba(230, 239, 245, 0.98)',
+    fontWeight: 700,
+  },
+  activityList: {
+    position: 'relative',
+    display: 'grid',
+    gap: '12px',
+    '::before': {
+      content: "''",
+      position: 'absolute',
+      top: '10px',
+      bottom: '10px',
+      left: '18px',
+      width: '1px',
+      background: 'linear-gradient(180deg, rgba(143, 185, 204, 0.24), rgba(143, 185, 204, 0.04))',
+    },
+  },
+  activityItem: {
+    position: 'relative',
+    display: 'grid',
+    gridTemplateColumns: {
+      default: 'auto minmax(0, 1fr) auto',
+      '@media (max-width: 639px)': 'auto minmax(0, 1fr)',
+    },
+    gap: '14px',
+    alignItems: 'start',
+    padding: '14px 16px 14px 14px',
+    borderRadius: '20px',
+    border: '1px solid rgba(80, 112, 131, 0.26)',
+    background: 'linear-gradient(160deg, rgba(9, 16, 24, 0.92), rgba(8, 12, 18, 0.84))',
+    backdropFilter: 'blur(10px)',
+  },
+  activityItemActive: {
+    borderColor: 'rgba(74, 222, 128, 0.18)',
+    background: 'linear-gradient(160deg, rgba(10, 23, 19, 0.74), rgba(8, 12, 18, 0.9))',
+  },
+  activityItemAlert: {
+    borderColor: 'rgba(248, 113, 113, 0.24)',
+    background: 'linear-gradient(160deg, rgba(36, 17, 21, 0.78), rgba(8, 12, 18, 0.9))',
+  },
+  activityIcon: {
+    position: 'relative',
+    zIndex: 1,
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '38px',
+    height: '38px',
+    marginTop: '2px',
+    borderRadius: '14px',
+    border: '1px solid rgba(143, 185, 204, 0.24)',
+    backgroundColor: 'rgba(11, 21, 30, 0.94)',
+    color: 'rgba(207, 230, 245, 0.96)',
+    boxShadow: '0 10px 18px rgba(4, 8, 12, 0.28)',
+  },
+  activityContent: {
+    minWidth: 0,
+    display: 'grid',
+    gap: '6px',
+  },
+  activityHead: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  activityActor: {
+    color: 'rgba(232, 240, 245, 0.98)',
+    fontSize: '0.97rem',
+    fontWeight: 700,
+    lineHeight: 1.25,
+  },
+  activityAction: {
+    color: 'rgba(188, 211, 224, 0.96)',
+    fontSize: '0.88rem',
+    lineHeight: 1.45,
+    overflowWrap: 'anywhere',
+    wordBreak: 'break-word',
+  },
+  activityDetails: {
+    color: 'rgba(229, 237, 243, 0.9)',
+    fontSize: '0.88rem',
+    lineHeight: 1.45,
+    padding: '8px 10px',
+    borderRadius: '12px',
+    backgroundColor: 'rgba(16, 27, 36, 0.88)',
+    border: '1px solid rgba(85, 119, 138, 0.22)',
+    maxWidth: '100%',
+    overflowWrap: 'anywhere',
+    wordBreak: 'break-word',
+  },
+  activityTime: {
+    color: 'rgba(151, 180, 195, 0.88)',
+    fontSize: '0.77rem',
+    lineHeight: 1.2,
+    letterSpacing: '0.06em',
+    textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
+    paddingTop: {
+      default: '4px',
+      '@media (max-width: 639px)': 0,
+    },
+    paddingLeft: {
+      default: 0,
+      '@media (max-width: 639px)': '52px',
+    },
+  },
+  miniSkeleton: {
+    display: 'grid',
+    gap: '10px',
+  },
+  miniSkeletonLine: {
+    display: 'block',
+    height: '14px',
+    borderRadius: radius.pill,
+    background: 'linear-gradient(90deg, rgba(18, 31, 42, 0.9), rgba(40, 62, 78, 0.9), rgba(18, 31, 42, 0.9))',
+    backgroundSize: '200% 100%',
+    animationName: shimmer,
+    animationDuration: '1.8s',
+    animationTimingFunction: 'ease-in-out',
+    animationIterationCount: 'infinite',
+  },
+  miniSkeletonShort: {
+    width: '42%',
+  },
+  miniSkeletonSoft: {
+    width: '72%',
+  },
+  officerEscalationList: {
+    display: 'grid',
+    gap: '10px',
+  },
+  officerEscalationItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    flexWrap: 'wrap',
+    color: 'rgba(224, 237, 244, 0.95)',
+    lineHeight: 1.5,
+  },
+  officerEscalationLink: {
+    marginLeft: 'auto',
+    color: colors.accentStrong,
+    fontSize: '0.84rem',
+    fontWeight: 600,
+    textDecoration: 'underline',
+    textUnderlineOffset: '0.16em',
+  },
+});

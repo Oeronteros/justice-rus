@@ -22,7 +22,10 @@ import type { Absence } from '@/lib/schemas/absence';
 import type { PvpState } from '@/lib/schemas/pvp';
 import type { Registration } from '@/lib/schemas/registration';
 import type { Schedule } from '@/lib/schemas/schedule';
-import { cn } from '@/lib/utils';
+import * as stylex from '@stylexjs/stylex';
+import { mergeStylexProps } from '@/lib/stylex/utils';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { dashboardStyles } from '@/components/sections/dashboard/Dashboard.stylex';
 
 const DASHBOARD_URL_RE = /https?:\/\/[^\s<>"')\]]+/gi;
 const DASHBOARD_TRAILING_URL_PUNCTUATION_RE = /[.,;!?]+$/;
@@ -653,26 +656,26 @@ function generateSyntheticActivity(
 
 function MiniSkeleton() {
   return (
-    <div className="dashboard-mini-skeleton" aria-hidden="true">
-      <span className="dashboard-mini-skeleton__line dashboard-mini-skeleton__line--short" />
-      <span className="dashboard-mini-skeleton__line" />
-      <span className="dashboard-mini-skeleton__line dashboard-mini-skeleton__line--soft" />
+    <div {...stylex.props(dashboardStyles.miniSkeleton)} aria-hidden="true">
+      <span {...stylex.props(dashboardStyles.miniSkeletonLine, dashboardStyles.miniSkeletonShort)} />
+      <span {...stylex.props(dashboardStyles.miniSkeletonLine)} />
+      <span {...stylex.props(dashboardStyles.miniSkeletonLine, dashboardStyles.miniSkeletonSoft)} />
     </div>
   );
 }
 
 function MetricTile({ label, value, tone = 'steady' }: { label: string; value: string | number; tone?: LiveTone }) {
   return (
-    <div className={cn('dashboard-metric-tile', tone === 'alert' && 'dashboard-metric-tile--alert', tone === 'active' && 'dashboard-metric-tile--active')}>
-      <div className="dashboard-metric-tile__value">{value}</div>
-      <div className="dashboard-metric-tile__label">{label}</div>
+    <div {...stylex.props(dashboardStyles.metricTile, tone === 'alert' && dashboardStyles.metricTileAlert, tone === 'active' && dashboardStyles.metricTileActive)}>
+      <div {...stylex.props(dashboardStyles.metricValue)}>{value}</div>
+      <div {...stylex.props(dashboardStyles.metricLabel)}>{label}</div>
     </div>
   );
 }
 
 function SignalBadge({ tone, children }: { tone: LiveTone; children: React.ReactNode }) {
   return (
-    <span className={cn('ui-badge', tone === 'alert' ? 'ui-badge-danger' : tone === 'active' ? 'ui-badge-success' : 'ui-badge-muted')}>
+    <span {...stylex.props(uiStyles.badge, tone === 'alert' ? uiStyles.badgeDanger : tone === 'active' ? uiStyles.badgeSuccess : uiStyles.badgeMuted)}>
       {children}
     </span>
   );
@@ -696,15 +699,15 @@ function StatusCard({
   children: React.ReactNode;
 }) {
   return (
-    <article className={cn('card section-card dashboard-status-card p-5 sm:p-6', tone === 'alert' && 'dashboard-status-card--alert', tone === 'active' && 'dashboard-status-card--active', className)}>
-      <div className="dashboard-status-card__header">
-        <div className="dashboard-status-card__title-wrap">
-          <span className="dashboard-status-card__icon">
+    <article {...mergeStylexProps(stylex.props(uiStyles.card, uiStyles.sectionCard, dashboardStyles.statusCard, tone === 'alert' && dashboardStyles.statusCardAlert, tone === 'active' && dashboardStyles.statusCardActive, className === 'dashboard-status-card--feed' && dashboardStyles.statusCardFeed), className && className !== 'dashboard-status-card--feed' ? className : undefined)}>
+      <div {...stylex.props(dashboardStyles.headerRow)}>
+        <div {...stylex.props(dashboardStyles.titleWrap)}>
+          <span {...stylex.props(dashboardStyles.titleIcon)}>
             <WuxiaIcon name={icon} className="h-5 w-5" />
           </span>
-          <h3 className="dashboard-status-card__title">{title}</h3>
+          <h3 {...stylex.props(dashboardStyles.statusTitle)}>{title}</h3>
         </div>
-        <Link href={actionHref} className="dashboard-inline-link">
+        <Link href={actionHref} {...stylex.props(dashboardStyles.inlineLink)}>
           {actionLabel}
         </Link>
       </div>
@@ -774,38 +777,38 @@ function DashboardHeroRegion({
   officerSignals: number;
 }) {
   return (
-    <div className="guild-dashboard-grid dashboard-hero-shell">
-      <article className="card section-card guild-dashboard-command p-6 sm:p-7 xl:p-8">
-        <div className="guild-dashboard-command__header">
+    <div {...stylex.props(dashboardStyles.heroGrid)}>
+      <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, dashboardStyles.commandCard)}>
+        <div {...stylex.props(dashboardStyles.headerRow)}>
           <div>
-            <div className="dashboard-kicker">{copy.liveStatus}</div>
-            <h3 className="guild-dashboard-command__title">{copy.situationRoom}</h3>
+            <div {...stylex.props(dashboardStyles.kicker)}>{copy.liveStatus}</div>
+            <h3 {...stylex.props(dashboardStyles.title)}>{copy.situationRoom}</h3>
           </div>
           <SignalBadge tone={liveTone}>{liveLabel}</SignalBadge>
         </div>
 
-        <p className="guild-dashboard-command__lede">{copy.openingLine}</p>
-        <p className="guild-dashboard-command__body">{copy.liveSnapshot}</p>
+        <p {...stylex.props(dashboardStyles.lede)}>{copy.openingLine}</p>
+        <p {...stylex.props(dashboardStyles.body, dashboardStyles.commandBody)}>{copy.liveSnapshot}</p>
 
-        <div className="guild-dashboard-command__signals dashboard-command-signal-strip">
-          <div className="guild-dashboard-command__signal">
-            <span className="dashboard-command__signal-label">Readiness</span>
-            <strong>{rosterSnapshot.readinessPercent}%</strong>
-            <span>{rosterSnapshot.readyCore} {copy.activeMembers.toLowerCase()}</span>
+        <div {...stylex.props(dashboardStyles.signalGrid)}>
+          <div {...stylex.props(dashboardStyles.signalCard)}>
+            <span {...stylex.props(dashboardStyles.signalText, dashboardStyles.signalLabel)}>Readiness</span>
+            <strong {...stylex.props(dashboardStyles.emphasis)}>{rosterSnapshot.readinessPercent}%</strong>
+            <span {...stylex.props(dashboardStyles.signalText)}>{rosterSnapshot.readyCore} {copy.activeMembers.toLowerCase()}</span>
           </div>
-          <div className="guild-dashboard-command__signal">
-            <span className="dashboard-command__signal-label">Support</span>
-            <strong>{helpSnapshot.unattended}</strong>
-            <span>{copy.unattendedRequests.toLowerCase()}</span>
+          <div {...stylex.props(dashboardStyles.signalCard)}>
+            <span {...stylex.props(dashboardStyles.signalText, dashboardStyles.signalLabel)}>Support</span>
+            <strong {...stylex.props(dashboardStyles.emphasis)}>{helpSnapshot.unattended}</strong>
+            <span {...stylex.props(dashboardStyles.signalText)}>{copy.unattendedRequests.toLowerCase()}</span>
           </div>
-          <div className="guild-dashboard-command__signal">
-            <span className="dashboard-command__signal-label">Officer</span>
-            <strong>{officerSignals}</strong>
-            <span>{officerSignals > 0 ? copy.activeAlerts : copy.allClear}</span>
+          <div {...stylex.props(dashboardStyles.signalCard)}>
+            <span {...stylex.props(dashboardStyles.signalText, dashboardStyles.signalLabel)}>Officer</span>
+            <strong {...stylex.props(dashboardStyles.emphasis)}>{officerSignals}</strong>
+            <span {...stylex.props(dashboardStyles.signalText)}>{officerSignals > 0 ? copy.activeAlerts : copy.allClear}</span>
           </div>
         </div>
 
-        <div className="guild-dashboard-metric-grid">
+        <div {...stylex.props(dashboardStyles.metricGrid)}>
           <MetricTile label={copy.activeMembers} value={rosterSnapshot.active} tone={liveTone === 'steady' ? 'active' : liveTone} />
           <MetricTile label={copy.unattendedRequests} value={helpSnapshot.unattended} tone={helpSnapshot.unattended > 0 ? 'alert' : 'steady'} />
           <MetricTile label={copy.pendingAbsences} value={absenceSnapshot.pending.length} tone={absenceSnapshot.pending.length > 0 ? 'alert' : 'steady'} />
@@ -813,62 +816,62 @@ function DashboardHeroRegion({
         </div>
       </article>
 
-      <aside className="card section-card guild-dashboard-station p-6 sm:p-7">
-        <div className="guild-dashboard-station__header">
+      <aside {...stylex.props(uiStyles.card, uiStyles.sectionCard, dashboardStyles.stationCard)}>
+        <div {...stylex.props(dashboardStyles.headerRow)}>
           <div>
-            <div className="dashboard-kicker">{copy.personalStation}</div>
-            <h3 className="guild-dashboard-station__title">{user.nickname || 'Silent Moonfall'}</h3>
+            <div {...stylex.props(dashboardStyles.kicker)}>{copy.personalStation}</div>
+            <h3 {...stylex.props(dashboardStyles.title)}>{user.nickname || 'Silent Moonfall'}</h3>
           </div>
           <SignalBadge tone={user.isActive ? 'active' : 'alert'}>{user.isActive ? copy.activeState : copy.inactiveState}</SignalBadge>
         </div>
 
-        <p className="guild-dashboard-station__body">{copy.personalStationBody}</p>
+        <p {...stylex.props(dashboardStyles.body)}>{copy.personalStationBody}</p>
 
-        <div className="dashboard-inline-tags guild-dashboard-station__chips">
-          <span className="dashboard-station-chip">{roleLabels[language][user.role]}</span>
-          <span className="dashboard-station-chip">{user.className || copy.noClass}</span>
-          <span className="dashboard-station-chip">{user.prefix || copy.noPrefix}</span>
+        <div {...stylex.props(uiStyles.inlineTags, dashboardStyles.stationChips)}>
+          <span {...stylex.props(dashboardStyles.stationChip)}>{roleLabels[language][user.role]}</span>
+          <span {...stylex.props(dashboardStyles.stationChip)}>{user.className || copy.noClass}</span>
+          <span {...stylex.props(dashboardStyles.stationChip)}>{user.prefix || copy.noPrefix}</span>
         </div>
 
-        <div className="guild-dashboard-station__facts">
-          <div><span>{copy.yourRole}</span><strong>{roleLabels[language][user.role]}</strong></div>
-          <div><span>{copy.yourClass}</span><strong>{user.className || copy.noClass}</strong></div>
-          <div><span>{copy.yourPrefix}</span><strong>{user.prefix ? <PrefixBadge prefix={user.prefix} variant="compact" /> : copy.noPrefix}</strong></div>
-          <div><span>{copy.accountState}</span><strong>{user.isActive ? copy.activeState : copy.inactiveState}</strong></div>
+        <div {...stylex.props(dashboardStyles.factsGrid)}>
+          <div {...stylex.props(dashboardStyles.factCard)}><span {...stylex.props(dashboardStyles.metaText)}>{copy.yourRole}</span><strong {...stylex.props(dashboardStyles.emphasis)}>{roleLabels[language][user.role]}</strong></div>
+          <div {...stylex.props(dashboardStyles.factCard)}><span {...stylex.props(dashboardStyles.metaText)}>{copy.yourClass}</span><strong {...stylex.props(dashboardStyles.emphasis)}>{user.className || copy.noClass}</strong></div>
+          <div {...stylex.props(dashboardStyles.factCard)}><span {...stylex.props(dashboardStyles.metaText)}>{copy.yourPrefix}</span><strong {...stylex.props(dashboardStyles.emphasis)}>{user.prefix ? <PrefixBadge prefix={user.prefix} variant="compact" /> : copy.noPrefix}</strong></div>
+          <div {...stylex.props(dashboardStyles.factCard)}><span {...stylex.props(dashboardStyles.metaText)}>{copy.accountState}</span><strong {...stylex.props(dashboardStyles.emphasis)}>{user.isActive ? copy.activeState : copy.inactiveState}</strong></div>
         </div>
 
-        <div className="guild-dashboard-station__queue">
-          <div><span className="dashboard-kicker">PvP</span><strong>{pvpSnapshot.userInQueue ? copy.queuedNow : copy.notQueued}</strong></div>
-          <div className="ui-badge ui-badge-muted">{pvpSnapshot.queueSize > 0 ? `${copy.activeQueue}: ${pvpSnapshot.queueSize}` : copy.noQueue}</div>
-          {pvpSnapshot.topPlayer ? <div className="dashboard-station-note">Top: {pvpSnapshot.topPlayer.nickname} · {pvpSnapshot.topPlayer.rating}</div> : null}
+        <div {...stylex.props(dashboardStyles.queueCard)}>
+          <div><span {...stylex.props(dashboardStyles.kicker)}>PvP</span><strong {...stylex.props(dashboardStyles.emphasis)}>{pvpSnapshot.userInQueue ? copy.queuedNow : copy.notQueued}</strong></div>
+          <div {...stylex.props(uiStyles.badge, uiStyles.badgeMuted, dashboardStyles.queueBadgeText)}>{pvpSnapshot.queueSize > 0 ? `${copy.activeQueue}: ${pvpSnapshot.queueSize}` : copy.noQueue}</div>
+          {pvpSnapshot.topPlayer ? <div {...stylex.props(dashboardStyles.stationNote)}>Top: {pvpSnapshot.topPlayer.nickname} · {pvpSnapshot.topPlayer.rating}</div> : null}
         </div>
 
         {isOfficer && (
-          <div className="guild-dashboard-station__overlay">
-            <span className="dashboard-kicker">{copy.officerOverlay}</span>
-            <strong>{officerSignals > 0 ? officerSignals : 0}</strong>
-            <p>{officerSignals > 0 ? copy.activeAlerts : copy.noOverlay}</p>
+          <div {...stylex.props(dashboardStyles.overlayCard)}>
+            <span {...stylex.props(dashboardStyles.kicker)}>{copy.officerOverlay}</span>
+            <strong {...stylex.props(dashboardStyles.emphasis)}>{officerSignals > 0 ? officerSignals : 0}</strong>
+            <p {...stylex.props(dashboardStyles.metaText)}>{officerSignals > 0 ? copy.activeAlerts : copy.noOverlay}</p>
 
-            <div className="officer-escalation-list">
+            <div {...stylex.props(dashboardStyles.officerEscalationList)}>
               {absenceSnapshot.pending.length > 0 && (
-                <div className="officer-escalation-item">
+                <div {...stylex.props(dashboardStyles.officerEscalationItem)}>
                   <WuxiaIcon name="calendarX" className="h-4 w-4" />
                   <span>{absenceSnapshot.pending.length} {copy.pendingAbsencesLabel}</span>
-                  <Link href="/absences" className="officer-escalation-link">{copy.openAbsences}</Link>
+                  <Link href="/absences" {...stylex.props(dashboardStyles.officerEscalationLink)}>{copy.openAbsences}</Link>
                 </div>
               )}
               {helpSnapshot.unattended > 0 && (
-                <div className="officer-escalation-item">
+                <div {...stylex.props(dashboardStyles.officerEscalationItem)}>
                   <WuxiaIcon name="alertTriangle" className="h-4 w-4" />
                   <span>{helpSnapshot.unattended} {copy.pendingHelpLabel}</span>
-                  <Link href="/help" className="officer-escalation-link">{copy.openHelp}</Link>
+                  <Link href="/help" {...stylex.props(dashboardStyles.officerEscalationLink)}>{copy.openHelp}</Link>
                 </div>
               )}
               {pvpSnapshot.disputed && (
-                <div className="officer-escalation-item">
+                <div {...stylex.props(dashboardStyles.officerEscalationItem)}>
                   <WuxiaIcon name="alertTriangle" className="h-4 w-4" />
                   <span>1 {copy.disputedMatchesLabel}</span>
-                  <Link href="/pvp" className="officer-escalation-link">{copy.openPvp}</Link>
+                  <Link href="/pvp" {...stylex.props(dashboardStyles.officerEscalationLink)}>{copy.openPvp}</Link>
                 </div>
               )}
             </div>
@@ -895,69 +898,69 @@ function DashboardPrimaryRegion({
   language: Language;
 }) {
   return (
-    <div className="guild-dashboard-primary-grid dashboard-card-cluster">
+    <div {...stylex.props(dashboardStyles.primaryGrid)}>
       <StatusCard title={copy.actionCenter} icon="seal" actionHref="/profile" actionLabel={copy.openProfile} tone={helpSnapshot.myResponses.length > 0 ? 'active' : 'steady'}>
-        <div className="dashboard-card-stack">
-          <p className="dashboard-card-copy">{copy.actionCenterBody}</p>
+        <div {...stylex.props(dashboardStyles.stack)}>
+          <p {...stylex.props(dashboardStyles.body)}>{copy.actionCenterBody}</p>
           {helpSnapshot.myResponses.length > 0 ? (
-            <div className="dashboard-list">
+            <div {...stylex.props(dashboardStyles.stack)}>
               {helpSnapshot.myResponses.slice(0, 3).map((r) => (
-                <div key={r.id} className="dashboard-list__item">
+                <div key={r.id} {...stylex.props(dashboardStyles.listItem)}>
                   <div>
-                    <div className="dashboard-list__title">{r.title}</div>
-                    <div className="dashboard-list__meta">{formatTimeAgo(r.createdAt, copy, language)}</div>
+                    <div {...stylex.props(dashboardStyles.emphasis)}>{r.title}</div>
+                    <div {...stylex.props(dashboardStyles.metaText)}>{formatTimeAgo(r.createdAt, copy, language)}</div>
                   </div>
                   <SignalBadge tone="active">{copy.respondedToHelp}</SignalBadge>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="dashboard-card-empty">{copy.noTasks}</div>
+            <div {...stylex.props(dashboardStyles.body)}>{copy.noTasks}</div>
           )}
         </div>
       </StatusCard>
 
       <StatusCard title={copy.announcements} icon="news" actionHref="/news" actionLabel={copy.openNews} tone={newsSnapshot.activeCount > 0 ? 'active' : 'steady'}>
         {newsLoading ? <MiniSkeleton /> : newsSnapshot.featured.length > 0 ? (
-          <div className="dashboard-card-stack">
+          <div {...stylex.props(dashboardStyles.stack)}>
             {newsSnapshot.featured.map((item, index) => (
-              <div key={item.id} className={cn('dashboard-news-spotlight', index === 0 && 'dashboard-news-spotlight--featured')}>
-                <div className="dashboard-news-spotlight__meta">
+              <div key={item.id} {...stylex.props(dashboardStyles.newsSpotlight, index === 0 && dashboardStyles.newsSpotlightFeatured)}>
+                <div {...stylex.props(dashboardStyles.newsSpotlightMeta)}>
                   <SignalBadge tone={item.pinned ? 'active' : 'steady'}>{item.pinned ? copy.pinned : copy.latest}</SignalBadge>
-                  <span>{formatTimeAgo(item.date, copy, language)}</span>
+                  <span {...stylex.props(dashboardStyles.metaText)}>{formatTimeAgo(item.date, copy, language)}</span>
                 </div>
-                <div className="dashboard-news-spotlight__title">{renderDashboardInlineText(formatDashboardHeadline(item.title), `dashboard-news-${item.id}`)}</div>
+                <div {...stylex.props(dashboardStyles.newsTitle)}>{renderDashboardInlineText(formatDashboardHeadline(item.title), `dashboard-news-${item.id}`)}</div>
               </div>
             ))}
           </div>
-        ) : <div className="dashboard-card-empty">{copy.announcementsEmpty}</div>}
+        ) : <div {...stylex.props(dashboardStyles.body)}>{copy.announcementsEmpty}</div>}
       </StatusCard>
 
       <StatusCard title={copy.activityFeed} icon="list" actionHref="/news" actionLabel={copy.openNews} tone="steady" className="dashboard-status-card--feed">
-        <div className="dashboard-card-stack">
-          <p className="dashboard-card-copy">{copy.activityFeedBody}</p>
+        <div {...stylex.props(dashboardStyles.stack)}>
+          <p {...stylex.props(dashboardStyles.body)}>{copy.activityFeedBody}</p>
           {activityFeed.length > 0 ? (
-            <div className="activity-feed-list">
+            <div {...stylex.props(dashboardStyles.activityList)}>
               {activityFeed.map((event) => (
-                <div key={event.id} className={cn('activity-feed-item', `activity-feed-item--${activityTone(event.type)}`)}>
-                  <div className="activity-feed-icon">
+                <div key={event.id} {...stylex.props(dashboardStyles.activityItem, activityTone(event.type) === 'active' && dashboardStyles.activityItemActive, activityTone(event.type) === 'alert' && dashboardStyles.activityItemAlert)}>
+                  <div {...stylex.props(dashboardStyles.activityIcon)}>
                     <WuxiaIcon name={activityIcon(event.type)} className="h-4 w-4" />
                   </div>
-                  <div className="activity-feed-content">
-                    <div className="activity-feed-head">
-                      <div className="activity-feed-actor">{event.actor}</div>
+                  <div {...stylex.props(dashboardStyles.activityContent)}>
+                    <div {...stylex.props(dashboardStyles.activityHead)}>
+                      <div {...stylex.props(dashboardStyles.activityActor)}>{event.actor}</div>
                       <SignalBadge tone={activityTone(event.type)}>{activityLabel(event.type, copy)}</SignalBadge>
                     </div>
-                    <div className="activity-feed-action">
+                    <div {...stylex.props(dashboardStyles.activityAction)}>
                       {activityLabel(event.type, copy)}
                     </div>
-                    {event.details && <div className="activity-feed-details">{renderDashboardInlineText(event.details, `activity-${event.id}`)}</div>}
+                    {event.details && <div {...stylex.props(dashboardStyles.activityDetails)}>{renderDashboardInlineText(event.details, `activity-${event.id}`)}</div>}
                   </div>
-                  <div className="activity-feed-time">{formatTimeAgo(event.timestamp, copy, language)}</div>
+                  <div {...stylex.props(dashboardStyles.activityTime)}>{formatTimeAgo(event.timestamp, copy, language)}</div>
                 </div>
               ))}
             </div>
-          ) : <div className="dashboard-card-empty">{copy.noActivity}</div>}
+          ) : <div {...stylex.props(dashboardStyles.body)}>{copy.noActivity}</div>}
         </div>
       </StatusCard>
     </div>
@@ -1055,8 +1058,8 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
 
   if (coreErrored && coreEmpty) {
     return (
-      <section className="section-shell py-10 sm:py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section {...stylex.props(uiStyles.sectionShell)}>
+        <div {...stylex.props(uiStyles.sectionContainer)}>
           <EmptyState
             icon="alertTriangle"
             title={copy.title}
@@ -1070,13 +1073,13 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
   }
 
   return (
-    <section className="section-shell py-10 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="section-stack-lg">
+    <section {...stylex.props(uiStyles.sectionShell)}>
+      <div {...stylex.props(uiStyles.sectionContainer)}>
+        <div {...stylex.props(uiStyles.stackLg)}>
           <SectionHero icon={<WuxiaIcon name="eye" className="h-5 w-5" />} title={copy.title} subtitle={copy.subtitle} chips={copy.chips} actions={
             <>
-              <Link href="/schedule" className="btn-primary px-4 py-2.5">{copy.openSchedule}</Link>
-              <Link href="/help" className="btn-secondary px-4 py-2.5">{copy.openHelp}</Link>
+              <Link href="/schedule" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>{copy.openSchedule}</Link>
+              <Link href="/help" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}>{copy.openHelp}</Link>
             </>
           } />
 
