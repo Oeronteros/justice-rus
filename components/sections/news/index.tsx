@@ -12,6 +12,9 @@ import { SectionHero } from '@/components/shared/SectionHero';
 import { useTranslation } from '@/lib/i18n/context';
 import { hasRoleAtLeast } from '@/lib/authz';
 import { handleApiError } from '@/lib/api/errors';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { newsStyles } from './News.stylex';
 
 interface NewsSectionProps {
   user: User;
@@ -205,7 +208,7 @@ function renderNewsLineWithLinks(value: string, keyPrefix: string): ReactNode {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="news-inline-link"
+          {...stylex.props(newsStyles.inlineLink)}
         >
           {formatKnownNewsUrl(href) ?? decodeUriComponentSafe(href)}
         </a>
@@ -256,13 +259,13 @@ function DeliveryBadge({ status }: { status?: 'pending' | 'sent' | 'failed' }) {
   }
 
   const tone = status === 'sent'
-    ? 'bg-emerald-500/12 text-emerald-200 border-emerald-400/30'
+    ? newsStyles.deliverySent
     : status === 'failed'
-      ? 'bg-rose-500/12 text-rose-200 border-rose-400/30'
-      : 'bg-amber-500/12 text-amber-100 border-amber-400/30';
+      ? newsStyles.deliveryFailed
+      : newsStyles.deliveryPending;
   const label = status === 'sent' ? 'Sent to Discord' : status === 'failed' ? 'Discord failed' : 'Publishing';
 
-  return <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 ${tone}`}>{label}</span>;
+  return <span {...stylex.props(newsStyles.deliveryBadge, tone)}>{label}</span>;
 }
 
 function NewsSectionContent({ user }: NewsSectionProps) {
@@ -356,7 +359,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
         title={t.news.error}
         description={error instanceof Error ? error.message : t.news.error}
         action={
-          <button onClick={() => refetch()} className="btn-primary">
+          <button onClick={() => refetch()} {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>
             <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
             {t.errors.tryAgain}
           </button>
@@ -367,9 +370,9 @@ function NewsSectionContent({ user }: NewsSectionProps) {
   }
 
   return (
-    <section className="section-shell py-10 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="section-stack-lg">
+    <section {...stylex.props(uiStyles.sectionShell)}>
+      <div {...stylex.props(uiStyles.sectionContainer)}>
+        <div {...stylex.props(uiStyles.stackLg)}>
           <SectionHero
             icon={<WuxiaIcon name="news" className="w-5 h-5" />}
             title={t.news.title}
@@ -378,88 +381,88 @@ function NewsSectionContent({ user }: NewsSectionProps) {
           />
 
         {canPublish ? (
-          <div className="grid gap-4 sm:gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-            <article className="card section-card ds-section-panel p-5 sm:p-6 md:p-7">
-              <div className="mb-5 flex items-center justify-between gap-3">
+          <div {...stylex.props(newsStyles.sectionGrid)}>
+            <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, newsStyles.composerCard)}>
+              <div {...stylex.props(newsStyles.headerRow)}>
                 <div>
-                  <div className="text-xs sm:text-sm uppercase tracking-[0.18em] text-[#9ec5d8]">News console</div>
-                  <h3 className="mt-2 text-2xl font-bold font-orbitron text-cyan-100">Публикация в портал и Discord</h3>
+                  <div {...stylex.props(newsStyles.kicker)}>News console</div>
+                  <h3 {...stylex.props(newsStyles.panelTitleLg)}>Публикация в портал и Discord</h3>
                 </div>
                 <DeliveryBadge status={createNewsMutation.isPending ? 'pending' : undefined} />
               </div>
 
-              <div className="grid gap-4">
-                <label className="space-y-2">
-                  <span className="text-sm text-gray-400">Заголовок</span>
+              <div {...stylex.props(newsStyles.composerGrid)}>
+                <label {...stylex.props(newsStyles.labelStack)}>
+                  <span {...stylex.props(newsStyles.label)}>Заголовок</span>
                   <input
                     type="text"
                     value={draftTitle}
                     onChange={(event) => setDraftTitle(event.target.value)}
-                    className="input-field w-full"
+                    {...stylex.props(uiStyles.input)}
                     placeholder="Например: Подготовка к GVG"
                   />
                 </label>
 
-                <label className="space-y-2">
-                  <span className="text-sm text-gray-400">Текст новости</span>
+                <label {...stylex.props(newsStyles.labelStack)}>
+                  <span {...stylex.props(newsStyles.label)}>Текст новости</span>
                   <textarea
                     value={draftContent}
                     onChange={(event) => setDraftContent(event.target.value)}
-                    className="input-field min-h-[220px] w-full resize-y"
+                    {...stylex.props(uiStyles.input, newsStyles.textarea)}
                     placeholder="Пиши как в гайдах: заголовки, ссылки, списки. Бот адаптирует сообщение для Discord."
                   />
                 </label>
 
-                <label className="inline-flex items-center gap-3 rounded-2xl ds-section-panel-soft px-4 py-3 text-sm text-cyan-50">
+                <label {...stylex.props(newsStyles.checkboxWrap)}>
                   <input
                     type="checkbox"
                     checked={draftPinned}
                     onChange={(event) => setDraftPinned(event.target.checked)}
-                    className="h-4 w-4 accent-cyan-300"
+                    {...stylex.props(newsStyles.checkbox)}
                   />
                   Закрепить как featured-новость
                 </label>
 
                 {composerNotice ? (
-                  <div className="ds-notice border-cyan-400/20 bg-[#11202a]/75 text-[#d9edf7]">
+                  <div {...stylex.props(uiStyles.notice, newsStyles.noticeInfo)}>
                     {composerNotice}
                   </div>
                 ) : null}
 
-                <div className="flex flex-wrap items-center gap-3">
+                <div {...stylex.props(newsStyles.actionRow)}>
                   <button
                     type="button"
-                    className="btn-primary px-5 py-3"
+                    {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}
                     onClick={submitNews}
                     disabled={createNewsMutation.isPending}
                   >
                     {createNewsMutation.isPending ? 'Публикуем...' : 'Опубликовать новость'}
                   </button>
-                  <span className="text-sm text-[#c7dbe7]">Публикация создает запись на сайте и сразу отправляет сообщение через бота.</span>
+                  <span {...stylex.props(newsStyles.actionHint)}>Публикация создает запись на сайте и сразу отправляет сообщение через бота.</span>
                 </div>
               </div>
             </article>
 
-            <article className="card section-card ds-section-panel p-5 sm:p-6 md:p-7">
-              <div className="text-xs sm:text-sm uppercase tracking-[0.18em] text-[#9ec5d8]">Discord preview</div>
-              <h3 className="mt-2 text-xl font-bold font-orbitron text-cyan-100">Как это будет выглядеть</h3>
+            <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, newsStyles.composerCard)}>
+              <div {...stylex.props(newsStyles.kicker)}>Discord preview</div>
+              <h3 {...stylex.props(newsStyles.panelTitleMd)}>Как это будет выглядеть</h3>
 
               {composerPreview ? (
-                <div className="ds-section-panel mt-5 rounded-[28px] border-cyan-400/15 bg-[#0b131b]/88 p-5 shadow-[0_24px_60px_rgba(2,8,14,0.45)]">
-                  <div className="mb-3 flex items-center gap-2 text-xs text-cyan-100/70">
+                <div {...stylex.props(newsStyles.previewShell)}>
+                  <div {...stylex.props(newsStyles.previewTopRow)}>
                     <DeliveryBadge status="sent" />
-                    {draftPinned ? <span className="rounded-full border border-amber-400/30 bg-amber-500/10 px-2.5 py-1 text-amber-200">Pinned</span> : null}
+                    {draftPinned ? <span {...stylex.props(newsStyles.pinnedPill)}>Pinned</span> : null}
                   </div>
-                  <div className="rounded-3xl ds-section-panel-soft border-cyan-400/12 bg-[#111b24] p-5">
-                    <h4 className="text-xl font-bold text-cyan-100">{composerPreview.title}</h4>
-                    <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-7 text-gray-200/90">
+                  <div {...stylex.props(newsStyles.previewInner)}>
+                    <h4 {...stylex.props(newsStyles.previewTitle)}>{composerPreview.title}</h4>
+                    <p {...stylex.props(newsStyles.previewBody)}>
                       {renderNewsTextWithLinks(composerPreview.body, 'composer-preview')}
                     </p>
-                    <div className="mt-4 text-xs uppercase tracking-[0.22em] text-gray-500">Автор: {user.nickname || 'Guild Staff'}</div>
+                    <div {...stylex.props(newsStyles.previewAuthor)}>Автор: {user.nickname || 'Guild Staff'}</div>
                   </div>
                 </div>
               ) : (
-                <div className="ds-section-panel mt-5 rounded-[28px] border-dashed border-cyan-400/20 bg-[#0b131b]/78 p-6 text-sm text-gray-400">
+                <div {...stylex.props(newsStyles.previewShell, newsStyles.previewShellEmpty)}>
                   Заполни новость слева, и здесь появится Discord-safe превью.
                 </div>
               )}
@@ -491,51 +494,51 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                   const featuredPreview = canExpandFeatured && !isFeaturedExpanded ? `${trimPreviewAtSafeBoundary(preview, 757)}...` : preview;
 
                   return (
-                    <article className="card news-hero section-card ds-section-panel p-5 sm:p-6 md:p-8">
-                      <div className="flex items-center gap-2 text-xs sm:text-sm mb-4">
+                    <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, newsStyles.featuredCard)}>
+                      <div {...stylex.props(newsStyles.tagRow)}>
                         {featured.pinned ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-500/10 text-yellow-300 border border-yellow-400/30">
+                          <span {...stylex.props(newsStyles.featuredPinned)}>
                             <WuxiaIcon name="thumbtack" className="w-3.5 h-3.5" />
                             Featured
                           </span>
                         ) : null}
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-300 border border-blue-400/20">
+                        <span {...stylex.props(newsStyles.guildUpdatePill)}>
                           <WuxiaIcon name="news" className="w-3.5 h-3.5" />
                           Guild Update
                         </span>
                         <DeliveryBadge status={featured.discordDeliveryStatus} />
                       </div>
 
-                      <h3 className="text-[1.45rem] sm:text-3xl font-bold font-orbitron mb-2 text-cyan-100 tracking-[0.01em]">
+                      <h3 {...stylex.props(newsStyles.featuredTitle)}>
                         {displayTitle}
                       </h3>
-                      <p className="news-meta mb-4">{formatDate(featured.date)}</p>
+                      <p {...stylex.props(newsStyles.meta)}>{formatDate(featured.date)}</p>
 
-                      <p className="text-gray-200/95 mb-6 text-base sm:text-lg leading-relaxed break-words">
+                      <p {...stylex.props(newsStyles.featuredBody)}>
                         {renderNewsTextWithLinks(featuredPreview, `featured-${featured.id}`)}
                       </p>
 
                       {canExpandFeatured ? (
                         <button
                           type="button"
-                          className="news-expand-button mb-6"
+                          {...stylex.props(newsStyles.expandButton)}
                           onClick={() => setIsFeaturedExpanded((current) => !current)}
                         >
                           {isFeaturedExpanded ? 'Show less' : 'Read full news'}
                         </button>
-                      ) : null}
+                        ) : null}
 
-                      <div className="news-card-footer mt-auto pt-5 border-t border-cyan-400/15">
-                        <div className="flex items-center gap-2 text-gray-300 text-sm sm:text-base">
+                      <div {...stylex.props(newsStyles.cardFooter)}>
+                        <div {...stylex.props(newsStyles.authorRow)}>
                           <WuxiaIcon name="user" className="w-4 h-4 text-gray-400" />
                           <span>{featured.author || 'Guild Staff'}</span>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-2">
+                        <div {...stylex.props(newsStyles.actionButtons)}>
                           {canPublish ? (
                             <button
                               type="button"
-                              className="btn-secondary px-3 py-2 text-xs"
+                              {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary, uiStyles.buttonXs)}
                               onClick={() => void handleDeleteNews(featured.id)}
                               disabled={deleteNewsMutation.isPending}
                             >
@@ -548,7 +551,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                               href={featured.messageUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="news-discord-link"
+                              {...stylex.props(newsStyles.discordLink)}
                             >
                               <WuxiaIcon name="link" className="w-4 h-4" />
                               Open in Discord
@@ -562,7 +565,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
               ) : null}
 
               {list.length > 0 ? (
-                <div className="grid gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-3 items-stretch">
+                <div {...stylex.props(newsStyles.listGrid)}>
                   {list.map((item) => {
                     const normalizedContent = normalizeDiscordText(item.content);
                     const displayTitle = resolveDisplayTitle(item.title, normalizedContent);
@@ -571,45 +574,45 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                     const canExpand = preview.length > 320;
 
                     return (
-                      <article key={item.id} className="card news-card section-card ds-section-panel p-5 sm:p-6 md:p-7">
-                        <div className="flex items-center gap-2 text-xs sm:text-sm mb-3">
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-300 border border-blue-400/20">
+                      <article key={item.id} {...stylex.props(uiStyles.card, uiStyles.sectionCard, newsStyles.newsCard)}>
+                        <div {...stylex.props(newsStyles.tagRow)}>
+                          <span {...stylex.props(newsStyles.guildUpdatePill)}>
                             <WuxiaIcon name="news" className="w-3.5 h-3.5" />
                             Guild Update
                           </span>
                           <DeliveryBadge status={item.discordDeliveryStatus} />
                         </div>
 
-                        <h3 className="text-lg sm:text-xl font-bold font-orbitron mb-2 text-cyan-200 tracking-[0.01em]">
+                        <h3 {...stylex.props(newsStyles.newsCardTitle)}>
                           {displayTitle}
                         </h3>
-                        <p className="news-meta mb-4">{formatDate(item.date)}</p>
+                        <p {...stylex.props(newsStyles.meta)}>{formatDate(item.date)}</p>
 
-                        <p className={`news-card-preview text-gray-200/95 mb-4 text-sm sm:text-base leading-relaxed break-words${isExpanded ? ' is-expanded' : ''}`}>
+                        <p {...stylex.props(newsStyles.previewText, isExpanded && newsStyles.previewExpanded)}>
                           {renderNewsTextWithLinks(preview, `news-${item.id}`)}
                         </p>
 
                         {canExpand ? (
                           <button
                             type="button"
-                            className="news-expand-button mb-6"
+                            {...stylex.props(newsStyles.expandButton)}
                             onClick={() => toggleExpandedNews(item.id)}
                           >
                             {isExpanded ? 'Show less' : 'Read full news'}
                           </button>
                         ) : null}
 
-                        <div className="news-card-footer mt-auto pt-4 border-t border-cyan-400/15">
-                          <div className="flex items-center gap-2 text-gray-300 text-sm">
+                        <div {...stylex.props(newsStyles.cardFooter)}>
+                          <div {...stylex.props(newsStyles.authorRow)}>
                             <WuxiaIcon name="user" className="w-4 h-4 text-gray-400" />
                             <span>{item.author || 'Guild Staff'}</span>
                           </div>
 
-                          <div className="flex flex-wrap items-center gap-2">
+                          <div {...stylex.props(newsStyles.actionButtons)}>
                             {canPublish ? (
                               <button
                                 type="button"
-                                className="btn-secondary px-3 py-2 text-xs"
+                                {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary, uiStyles.buttonXs)}
                                 onClick={() => void handleDeleteNews(item.id)}
                                 disabled={deleteNewsMutation.isPending}
                               >
@@ -622,7 +625,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                                 href={item.messageUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="news-discord-link"
+                                {...stylex.props(newsStyles.discordLink)}
                               >
                                 <WuxiaIcon name="link" className="w-4 h-4" />
                                 Open in Discord

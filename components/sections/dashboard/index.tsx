@@ -63,7 +63,7 @@ function renderDashboardInlineText(value: string, keyPrefix: string): React.Reac
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="dashboard-inline-link"
+        {...stylex.props(dashboardStyles.inlineLink)}
       >
         {href}
       </a>
