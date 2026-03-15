@@ -1,7 +1,9 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import * as stylex from '@stylexjs/stylex';
 import { useTranslation } from '@/lib/i18n/context';
+import { sectionHeroStyles } from '@/components/shared/SectionHero.stylex';
 
 interface SectionHeroProps {
   icon?: ReactNode;
@@ -24,18 +26,18 @@ export function SectionHero({
   const resolvedEyebrow = eyebrow ?? t.common.portalEyebrow;
 
   return (
-    <div className="portal-hero mb-8">
-      <div className="portal-hero-main">
-        <div className="portal-hero-eyebrow">{resolvedEyebrow}</div>
-        <h2 className="portal-hero-title">
-          {icon ? <span className="portal-hero-icon">{icon}</span> : null}
+    <div {...stylex.props(sectionHeroStyles.root)}>
+      <div {...stylex.props(sectionHeroStyles.main)}>
+        <div {...stylex.props(sectionHeroStyles.eyebrow)}>{resolvedEyebrow}</div>
+        <h2 {...stylex.props(sectionHeroStyles.title)}>
+          {icon ? <span {...stylex.props(sectionHeroStyles.icon)}>{icon}</span> : null}
           <span>{title}</span>
         </h2>
-        {subtitle ? <p className="portal-hero-subtitle">{subtitle}</p> : null}
+        {subtitle ? <p {...stylex.props(sectionHeroStyles.subtitle)}>{subtitle}</p> : null}
         {chips && chips.length > 0 ? (
-          <div className="portal-hero-chips">
+          <div {...stylex.props(sectionHeroStyles.chips)}>
             {chips.map((chip) => (
-              <span key={chip} className="portal-hero-chip">
+              <span key={chip} {...stylex.props(sectionHeroStyles.chip)}>
                 {chip}
               </span>
             ))}
@@ -43,7 +45,7 @@ export function SectionHero({
         ) : null}
       </div>
 
-      {actions ? <div className="portal-hero-actions">{actions}</div> : null}
+      {actions ? <div {...stylex.props(sectionHeroStyles.actions)}>{actions}</div> : null}
     </div>
   );
 }

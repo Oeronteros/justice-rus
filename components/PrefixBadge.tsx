@@ -1,6 +1,8 @@
 'use client';
 
+import * as stylex from '@stylexjs/stylex';
 import { cn } from '@/lib/utils';
+import { prefixBadgeStyles } from '@/components/PrefixBadge.stylex';
 
 type PrefixBadgeVariant = 'default' | 'compact';
 
@@ -10,9 +12,9 @@ interface PrefixBadgeProps {
   className?: string;
 }
 
-const variantClasses: Record<PrefixBadgeVariant, string> = {
-  default: 'px-2.5 py-1 text-[11px] tracking-[0.2em]',
-  compact: 'px-2 py-0.5 text-[10px] tracking-[0.16em]',
+const variantStyles: Record<PrefixBadgeVariant, ReturnType<typeof stylex.props>> = {
+  default: stylex.props(prefixBadgeStyles.default),
+  compact: stylex.props(prefixBadgeStyles.compact),
 };
 
 export function PrefixBadge({ prefix, variant = 'default', className }: PrefixBadgeProps) {
@@ -24,11 +26,8 @@ export function PrefixBadge({ prefix, variant = 'default', className }: PrefixBa
 
   return (
     <span
-      className={cn(
-        'inline-flex rounded-full border border-cyan-400/30 bg-cyan-500/10 font-semibold uppercase text-cyan-100',
-        variantClasses[variant],
-        className
-      )}
+      {...variantStyles[variant]}
+      className={cn(stylex.props(prefixBadgeStyles.badge).className, variantStyles[variant].className, className)}
     >
       {value}
     </span>

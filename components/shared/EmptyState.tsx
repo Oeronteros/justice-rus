@@ -1,7 +1,10 @@
 'use client';
 
 import { ReactNode } from 'react';
+import * as stylex from '@stylexjs/stylex';
 import WuxiaIcon, { type IconName } from '@/components/WuxiaIcons';
+import { asyncStateStyles } from '@/components/shared/AsyncState.stylex';
+import { mergeStylexProps } from '@/lib/stylex/utils';
 
 interface ActionButton {
   label: string;
@@ -46,22 +49,23 @@ export function EmptyState({
   };
 
   const badgeTone = variant === 'error' ? 'ui-badge ui-badge-danger' : 'ui-badge ui-badge-muted';
+  const rootProps = mergeStylexProps(stylex.props(asyncStateStyles.emptyRoot), 'card section-card');
 
   return (
-    <div className="card section-card px-6 py-10 sm:px-8 sm:py-12 text-center">
-      <div className="flex justify-center mb-6">
-        <div className={`w-20 h-20 rounded-full flex items-center justify-center ${variant === 'error' ? 'bg-red-900/30' : 'bg-gray-800/50'}`}>
+    <div {...rootProps}>
+      <div {...stylex.props(asyncStateStyles.iconWrap)}>
+        <div {...stylex.props(asyncStateStyles.iconSurface, variant === 'error' && asyncStateStyles.iconSurfaceError)}>
           {renderIcon()}
         </div>
       </div>
-      <div className="mb-3 flex justify-center">
-        <span className={badgeTone}>{variant === 'error' ? 'Need attention' : 'No data yet'}</span>
+      <div {...stylex.props(asyncStateStyles.badgeWrap)}>
+        <span {...stylex.props(asyncStateStyles.badge, variant === 'error' && asyncStateStyles.badgeError)}>{variant === 'error' ? 'Need attention' : 'No data yet'}</span>
       </div>
-      <h3 className={`text-xl font-bold mb-2 ${variant === 'error' ? 'text-red-300' : 'text-[#d9e9f2]'}`}>
+      <h3 {...stylex.props(asyncStateStyles.title, variant === 'error' && asyncStateStyles.titleError)}>
         {title}
       </h3>
       {description && (
-        <p className="text-[#9fb5c3] max-w-md mx-auto mb-6 leading-7">{description}</p>
+        <p {...stylex.props(asyncStateStyles.description)}>{description}</p>
       )}
       {renderAction()}
     </div>

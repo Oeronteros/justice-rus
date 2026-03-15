@@ -1,0 +1,122 @@
+import * as stylex from '@stylexjs/stylex';
+import { colors, radius, typography } from '../../lib/stylex/tokens.stylex';
+
+export const sectionHeroStyles = stylex.create({
+  root: {
+    position: 'relative',
+    display: 'grid',
+    gap: {
+      default: '18px',
+      '@media (max-width: 640px)': '16px',
+    },
+    padding: {
+      default: '20px',
+      '@media (max-width: 640px)': '18px',
+      '@media (min-width: 1024px)': '26px 28px',
+    },
+    marginBottom: {
+      default: '32px',
+      '@media (min-width: 640px)': '40px',
+    },
+    borderRadius: radius.lg,
+    border: `1px solid ${colors.accentSoft}`,
+    background:
+      'radial-gradient(circle at 8% 12%, rgba(98, 155, 186, 0.16), transparent 46%), radial-gradient(circle at 84% 18%, rgba(143, 185, 204, 0.1), transparent 45%), linear-gradient(145deg, rgba(10, 18, 26, 0.88), rgba(8, 12, 18, 0.88))',
+    boxShadow: `0 20px 40px ${colors.shadowStrong}`,
+    overflow: 'hidden',
+    gridTemplateColumns: {
+      default: 'minmax(0, 1fr)',
+      '@media (min-width: 1024px)': 'minmax(0, 1fr) auto',
+    },
+    alignItems: {
+      default: 'stretch',
+      '@media (min-width: 1024px)': 'end',
+    },
+    '::before': {
+      content: "''",
+      position: 'absolute',
+      inset: 0,
+      background:
+        'linear-gradient(115deg, rgba(185, 218, 235, 0.1), transparent 28%, transparent 70%, rgba(136, 176, 196, 0.08))',
+      pointerEvents: 'none',
+    },
+    '::after': {
+      content: "''",
+      position: 'absolute',
+      inset: 'auto -12% -55% -12%',
+      height: '70%',
+      background: 'radial-gradient(circle at 50% 0%, rgba(143, 185, 204, 0.16), transparent 70%)',
+      pointerEvents: 'none',
+    },
+  },
+  main: {
+    position: 'relative',
+    zIndex: 1,
+    minWidth: 0,
+  },
+  eyebrow: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '8px',
+    marginBottom: '10px',
+    textTransform: 'uppercase',
+    letterSpacing: '0.14em',
+    fontSize: '0.7rem',
+    color: 'rgba(186, 214, 230, 0.85)',
+  },
+  title: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    fontSize: 'clamp(1.6rem, 2.8vw, 2.25rem)',
+    lineHeight: 1.05,
+    color: colors.paperStrong,
+    fontFamily: typography.display,
+    fontWeight: 700,
+    letterSpacing: '0.02em',
+  },
+  icon: {
+    display: 'inline-grid',
+    placeItems: 'center',
+    width: '40px',
+    height: '40px',
+    flexShrink: 0,
+    borderRadius: '11px',
+    border: `1px solid ${colors.accentSoft}`,
+    backgroundColor: colors.panelSolid,
+    color: 'rgba(170, 210, 230, 0.95)',
+    boxShadow: `inset 0 0 14px ${colors.accentGlow}`,
+  },
+  subtitle: {
+    marginTop: '10px',
+    maxWidth: '65ch',
+    color: colors.paperMuted,
+    lineHeight: 1.6,
+  },
+  chips: {
+    marginTop: '14px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '8px',
+  },
+  chip: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    padding: '6px 10px',
+    borderRadius: radius.pill,
+    border: `1px solid ${colors.accentSoft}`,
+    backgroundColor: colors.overlay,
+    color: 'rgba(193, 214, 227, 0.92)',
+    fontSize: '0.75rem',
+    letterSpacing: '0.04em',
+    textTransform: 'uppercase',
+  },
+  actions: {
+    position: 'relative',
+    zIndex: 1,
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '10px',
+    alignItems: 'flex-start',
+  },
+});

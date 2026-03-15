@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import * as stylex from '@stylexjs/stylex';
+import "./stylex.css";
 import "./globals.css";
 import InputPerformanceMode from "@/components/InputPerformanceMode";
 import AppTelemetry from "@/components/platform/AppTelemetry";
+import { rootLayoutStyles } from '@/app/layout.stylex';
 import { QueryProvider } from "@/lib/providers/QueryProvider";
 import { I18nProvider } from "@/lib/i18n/context";
 import { shouldEnableTelemetry } from "@/lib/platform/runtime";
 import { defaultLanguage } from "@/lib/i18n/shared";
+import { mergeStylexProps } from '@/lib/stylex/utils';
 
 export const metadata: Metadata = {
   title: "Silent Moonfall | Guild Portal",
@@ -41,14 +45,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const bodyProps = mergeStylexProps(stylex.props(rootLayoutStyles.body), 'theme-wuxia');
+
   return (
     <html lang={defaultLanguage}>
-      <body className="theme-wuxia">
+      <body {...bodyProps}>
         <InputPerformanceMode />
         <QueryProvider>
           <I18nProvider>
-            <Suspense fallback={<div className="relative z-10 min-h-screen" />}>
-              <div className="relative z-10">{children}</div>
+            <Suspense fallback={<div {...stylex.props(rootLayoutStyles.fallback)} />}>
+              <div {...stylex.props(rootLayoutStyles.content)}>{children}</div>
             </Suspense>
           </I18nProvider>
         </QueryProvider>

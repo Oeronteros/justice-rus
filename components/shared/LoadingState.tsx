@@ -1,8 +1,11 @@
 'use client';
 
 import { ReactNode } from 'react';
+import * as stylex from '@stylexjs/stylex';
 import WuxiaIcon, { type IconName } from '@/components/WuxiaIcons';
+import { asyncStateStyles } from '@/components/shared/AsyncState.stylex';
 import { useTranslation } from '@/lib/i18n/context';
+import { mergeStylexProps } from '@/lib/stylex/utils';
 
 interface LoadingStateProps {
   title?: string;
@@ -35,39 +38,39 @@ export function LoadingState({
   };
 
   return (
-    <section className="py-10 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="loading-shell mb-8 sm:mb-10">
-          <div className="loading-shell-header">
-            <div className="loading-shell-kicker">Silent Moonfall</div>
-            <h2 className="loading-shell-title">
-              <span className="loading-shell-icon">{renderIcon()}</span>
+    <section {...stylex.props(asyncStateStyles.section)}>
+      <div {...stylex.props(asyncStateStyles.container)}>
+        <div {...stylex.props(asyncStateStyles.heroStack)}>
+          <div {...stylex.props(asyncStateStyles.heroHeader)}>
+            <div {...stylex.props(asyncStateStyles.heroKicker)}>Silent Moonfall</div>
+            <h2 {...stylex.props(asyncStateStyles.heroTitle)}>
+              <span {...stylex.props(asyncStateStyles.heroIcon)}>{renderIcon()}</span>
               <span>{resolvedTitle}</span>
             </h2>
-            <p className="loading-shell-subtitle">{resolvedSubtitle}</p>
+            <p {...stylex.props(asyncStateStyles.heroSubtitle)}>{resolvedSubtitle}</p>
           </div>
 
-          <div className="loading-shell-chips" aria-hidden="true">
-            <span className="loading-chip" />
-            <span className="loading-chip loading-chip-wide" />
-            <span className="loading-chip" />
+          <div {...stylex.props(asyncStateStyles.chipRow)} aria-hidden="true">
+            <span {...stylex.props(asyncStateStyles.skeletonChip)} />
+            <span {...stylex.props(asyncStateStyles.skeletonChip, asyncStateStyles.skeletonChipWide)} />
+            <span {...stylex.props(asyncStateStyles.skeletonChip)} />
           </div>
         </div>
 
-        <div className={`loading-grid ${layout === 'list' ? 'loading-grid-list' : 'loading-grid-cards'}`}>
+        <div {...stylex.props(asyncStateStyles.grid, layout === 'list' ? asyncStateStyles.listGrid : asyncStateStyles.cardsGrid)}>
           {Array.from({ length: count }).map((_, i) => (
-            <div key={i} className="loading-card card p-5 sm:p-6">
-              <div className="loading-card-top">
-                <span className="loading-pill" />
-                <span className="loading-line loading-line-short" />
+            <div key={i} {...mergeStylexProps(stylex.props(asyncStateStyles.card), 'card')}>
+              <div {...stylex.props(asyncStateStyles.cardTop)}>
+                <span {...stylex.props(asyncStateStyles.pill)} />
+                <span {...stylex.props(asyncStateStyles.line, asyncStateStyles.lineShort)} />
               </div>
-              <div className="loading-line loading-line-title" />
-              <div className="loading-line loading-line-body" />
-              <div className="loading-line loading-line-body loading-line-body-short" />
-              <div className="loading-block" />
-              <div className="loading-card-footer">
-                <span className="loading-pill loading-pill-wide" />
-                <span className="loading-pill" />
+              <div {...stylex.props(asyncStateStyles.line, asyncStateStyles.lineTitle)} />
+              <div {...stylex.props(asyncStateStyles.line)} />
+              <div {...stylex.props(asyncStateStyles.line, asyncStateStyles.lineBodyShort)} />
+              <div {...stylex.props(asyncStateStyles.block)} />
+              <div {...stylex.props(asyncStateStyles.cardFooter)}>
+                <span {...stylex.props(asyncStateStyles.pill, asyncStateStyles.pillWide)} />
+                <span {...stylex.props(asyncStateStyles.pill)} />
               </div>
             </div>
           ))}
@@ -83,13 +86,15 @@ interface LoadingSpinnerProps {
 }
 
 export function LoadingSpinner({ size = 'md', className = '' }: LoadingSpinnerProps) {
-  const sizeClasses = {
-    sm: 'h-4 w-4',
-    md: 'h-8 w-8',
-    lg: 'h-12 w-12',
+  const sizeStyles = {
+    sm: asyncStateStyles.spinnerSm,
+    md: asyncStateStyles.spinnerMd,
+    lg: asyncStateStyles.spinnerLg,
   };
 
+  const spinnerProps = stylex.props(asyncStateStyles.spinner, sizeStyles[size]);
+
   return (
-    <div className={`animate-spin rounded-full border-t-2 border-b-2 border-red-600 ${sizeClasses[size]} ${className}`} />
+    <div {...spinnerProps} className={[spinnerProps.className, className].filter(Boolean).join(' ')} />
   );
 }

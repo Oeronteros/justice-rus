@@ -1,7 +1,9 @@
 'use client';
 
 import { Component, type ReactNode, type ErrorInfo } from 'react';
+import * as stylex from '@stylexjs/stylex';
 import WuxiaIcon from '@/components/WuxiaIcons';
+import { asyncStateStyles } from '@/components/shared/AsyncState.stylex';
 import { useTranslation } from '@/lib/i18n/context';
 
 interface ErrorFallbackProps {
@@ -13,16 +15,16 @@ function ErrorFallback({ error, onRetry }: ErrorFallbackProps) {
   const { t } = useTranslation();
 
   return (
-    <div className="py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center py-12">
-          <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center">
+    <div {...stylex.props(asyncStateStyles.section)}>
+      <div {...stylex.props(asyncStateStyles.container)}>
+        <div {...stylex.props(asyncStateStyles.centerStack)}>
+          <div {...stylex.props(asyncStateStyles.iconWrap)}>
+            <div {...stylex.props(asyncStateStyles.errorIconSurface)}>
               <WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />
             </div>
           </div>
-          <h3 className="text-2xl font-bold text-red-400 mb-2">{t.errors.somethingWrong}</h3>
-          <p className="text-gray-400 mb-6 max-w-md mx-auto">
+          <h3 {...stylex.props(asyncStateStyles.errorTitle)}>{t.errors.somethingWrong}</h3>
+          <p {...stylex.props(asyncStateStyles.errorText)}>
             {error?.message || t.errors.unknown}
           </p>
           <button onClick={onRetry} className="btn-primary">
