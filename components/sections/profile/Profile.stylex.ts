@@ -292,4 +292,85 @@ export const profileStyles = stylex.create({
       '@media (min-width: 640px)': 'flex-end',
     },
   },
+  statsMetricGrid: {
+    display: 'grid',
+    gridTemplateColumns: {
+      default: 'repeat(2, minmax(0, 1fr))',
+      '@media (min-width: 1024px)': 'repeat(5, minmax(0, 1fr))',
+    },
+    gap: '16px',
+    fontSize: '0.875rem',
+  },
+  statsMetricTile: {
+    padding: '14px 16px',
+    borderRadius: radius.md,
+    border: '1px solid rgba(42, 60, 76, 0.72)',
+    backgroundColor: 'rgba(16, 26, 35, 0.7)',
+  },
+  statsMetricGood: {
+    borderColor: 'rgba(34, 197, 94, 0.35)',
+    backgroundColor: 'rgba(34, 197, 94, 0.12)',
+    color: 'rgba(134, 239, 172, 0.96)',
+  },
+  statsMetricMedium: {
+    borderColor: 'rgba(234, 179, 8, 0.35)',
+    backgroundColor: 'rgba(234, 179, 8, 0.12)',
+    color: 'rgba(253, 224, 71, 0.96)',
+  },
+  statsMetricBad: {
+    borderColor: 'rgba(239, 68, 68, 0.35)',
+    backgroundColor: 'rgba(239, 68, 68, 0.12)',
+    color: 'rgba(252, 165, 165, 0.96)',
+  },
+  fieldGrid: {
+    display: 'grid',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 768px)': 'repeat(3, minmax(0, 1fr))',
+    },
+    gap: '16px',
+    fontSize: '0.875rem',
+  },
+  labelStack: {
+    display: 'grid',
+    gap: '8px',
+  },
+  fieldLabel: {
+    color: 'rgba(156, 163, 175, 0.95)',
+  },
+  classPreview: {
+    borderRadius: radius.xl,
+    border: '1px solid rgba(47, 110, 141, 0.35)',
+    backgroundColor: 'rgba(18, 32, 43, 0.55)',
+    padding: '12px 16px',
+  },
+  activityGrid: {
+    display: 'grid',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 768px)': 'repeat(2, minmax(0, 1fr))',
+      '@media (min-width: 1280px)': 'repeat(3, minmax(0, 1fr))',
+    },
+    gap: '16px',
+    fontSize: '0.875rem',
+  },
+  accountsHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '12px',
+    marginBottom: '16px',
+  },
+  accountsTitle: {
+    color: colors.paperStrong,
+    fontSize: '1.25rem',
+    fontWeight: 700,
+  },
+  loadingText: {
+    color: 'rgba(156, 163, 175, 0.95)',
+    fontSize: '0.875rem',
+  },
+  nicknameCell: {
+    fontWeight: 500,
+  },
 });

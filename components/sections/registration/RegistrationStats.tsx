@@ -4,6 +4,8 @@ import type { User } from '@/lib/schemas/auth';
 import type { Registration } from '@/lib/schemas/registration';
 import { canSeeNumericKpi } from '@/lib/authz';
 import { getKPIClass } from '@/lib/utils';
+import * as stylex from '@stylexjs/stylex';
+import { registrationStyles } from './Registration.stylex';
 
 interface RegistrationStatsProps {
   registrations: Registration[];
@@ -21,27 +23,32 @@ export function RegistrationStats({ registrations, user }: RegistrationStatsProp
         : '0',
   };
   const avgKpiClass = getKPIClass(Number(stats.avgKPI));
+  const avgKpiTone = avgKpiClass === 'kpi-good'
+    ? registrationStyles.statValueKpiGood
+    : avgKpiClass === 'kpi-medium'
+      ? registrationStyles.statValueKpiMedium
+      : registrationStyles.statValueKpiBad;
 
   return (
-    <div id="registration-kpi" className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-3">
-      <div className="ds-metric-tile text-center">
-        <div className="text-3xl font-bold font-orbitron text-red-400 mb-2">
+    <div id="registration-kpi" {...stylex.props(registrationStyles.statsGrid)}>
+      <div {...stylex.props(registrationStyles.statTile)}>
+        <div {...stylex.props(registrationStyles.statValue, registrationStyles.statValueTotal)}>
           {stats.total}
         </div>
-        <div className="text-sm text-[#c7dbe7]">Всего учётных записей</div>
+        <div {...stylex.props(registrationStyles.statLabel)}>Всего учётных записей</div>
       </div>
-      <div className="ds-metric-tile text-center">
-        <div className="text-3xl font-bold font-orbitron text-green-400 mb-2">
+      <div {...stylex.props(registrationStyles.statTile)}>
+        <div {...stylex.props(registrationStyles.statValue, registrationStyles.statValueOnline)}>
           {stats.online}
         </div>
-        <div className="text-sm text-[#c7dbe7]">В строю</div>
+        <div {...stylex.props(registrationStyles.statLabel)}>В строю</div>
       </div>
       {canSeeNumericKpi(user.role) && (
-        <div className="ds-metric-tile text-center">
-          <div className={`text-3xl font-bold font-orbitron mb-2 ${avgKpiClass}`}>
+        <div {...stylex.props(registrationStyles.statTile)}>
+          <div {...stylex.props(registrationStyles.statValue, avgKpiTone)}>
             {stats.avgKPI}
           </div>
-          <div className="text-sm text-[#c7dbe7]">Средний KPI</div>
+          <div {...stylex.props(registrationStyles.statLabel)}>Средний KPI</div>
         </div>
       )}
     </div>

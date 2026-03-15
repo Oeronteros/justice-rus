@@ -12,7 +12,6 @@ import { canAssignRoles, canManageAccounts, roleOrder } from '@/lib/authz';
 import { roleExplainerRows, roleLabels } from '@/lib/roles';
 import { useAccounts, useKnownClasses, useUpdateAccount } from '@/lib/auth/hooks';
 import { useRegistrations, useUpdateRegistrationStats } from '@/lib/registration/hooks';
-import { getKPIClass, cn } from '@/lib/utils';
 import { useNotifications } from '@/lib/notifications/context';
 import type { UpdateRegistrationStatsPayload } from '@/lib/api/registrations';
 import * as stylex from '@stylexjs/stylex';
@@ -80,7 +79,7 @@ const ProfileOverview = memo(function ProfileOverview({ profileRegistration, use
   const prefix = profileRegistration?.prefix ?? user.prefix ?? null;
 
   return (
-    <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, uiStyles.sectionContainer ? undefined : undefined)} className="p-5 sm:p-6">
+    <div {...mergeStylexProps(stylex.props(uiStyles.card, uiStyles.sectionCard), 'p-5 sm:p-6')}>
       <div {...stylex.props(profileStyles.headingKicker)}>Профиль</div>
       <div {...stylex.props(profileStyles.overviewGrid)}>
         <div {...stylex.props(profileStyles.metricTile)}>
@@ -332,12 +331,12 @@ const AccountsPanel = memo(function AccountsPanel({
   updateAccount,
 }: AccountsPanelProps) {
   return (
-    <div className="card section-card p-5 sm:p-6">
-      <div className="flex items-center justify-between mb-4 gap-3">
-        <h3 className="text-xl font-bold font-orbitron text-[#e6eff5]">Валидность учеток</h3>
+    <div {...mergeStylexProps(stylex.props(uiStyles.card, uiStyles.sectionCard), 'p-5 sm:p-6')}>
+      <div {...stylex.props(profileStyles.accountsHeader)}>
+        <h3 {...mergeStylexProps(stylex.props(profileStyles.accountsTitle), 'font-orbitron')}>Валидность учеток</h3>
         <button
           type="button"
-          className="dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0"
+          {...stylex.props(uiStyles.iconButton)}
           onClick={loadAccounts}
           title="Обновить"
           aria-label="Обновить"
@@ -347,36 +346,36 @@ const AccountsPanel = memo(function AccountsPanel({
       </div>
 
       {accountsError && (
-        <div className="ds-notice mb-4">
+        <div {...mergeStylexProps(stylex.props(uiStyles.notice), 'mb-4')}>
           <WuxiaIcon name="alertTriangle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
           {accountsError}
         </div>
       )}
 
       {accountsLoading ? (
-        <div className="text-sm text-gray-400">Загрузка аккаунтов...</div>
+        <div {...stylex.props(profileStyles.loadingText)}>Загрузка аккаунтов...</div>
       ) : (
-        <div className="table-frame overflow-x-auto">
-          <table className="table-modern">
+        <div {...stylex.props(uiStyles.tableFrame)}>
+          <table {...stylex.props(uiStyles.table)}>
             <thead>
               <tr>
-                <th>Ник</th>
-                <th>Роль</th>
-                <th>Статус</th>
-                <th>Класс</th>
-                <th>Создан</th>
-                <th>Последний вход</th>
-                <th>Действие</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>Ник</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>Роль</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>Статус</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>Класс</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>Создан</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>Последний вход</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>Действие</th>
               </tr>
             </thead>
             <tbody>
-              {accounts.map((account) => (
-                <tr key={account.id}>
-                  <td className="font-medium">{account.nickname}</td>
-                  <td>
+              {accounts.map((account, index) => (
+                <tr key={account.id} {...stylex.props(index % 2 === 1 && uiStyles.tableRowEven, uiStyles.tableRowHover)}>
+                  <td {...stylex.props(uiStyles.tableCell, profileStyles.nicknameCell)}>{account.nickname}</td>
+                  <td {...stylex.props(uiStyles.tableCell)}>
                     {canChangeRoles ? (
                       <select
-                        className="select-field text-xs min-w-[120px]"
+                        {...mergeStylexProps(stylex.props(uiStyles.select), 'text-xs min-w-[120px]')}
                         value={account.role}
                         onChange={(e) => updateAccount(account, { role: e.target.value as UserRole })}
                         disabled={togglingId === account.id}
@@ -389,30 +388,26 @@ const AccountsPanel = memo(function AccountsPanel({
                       roleLabels[account.role]
                     )}
                   </td>
-                  <td>
+                  <td {...stylex.props(uiStyles.tableCell)}>
                     <span
-                      className={`px-3 py-1 rounded-full text-xs ${
-                        account.isActive
-                          ? 'bg-green-600/20 text-green-300 border border-green-600/30'
-                          : 'bg-yellow-600/20 text-yellow-300 border border-yellow-600/30'
-                      }`}
+                      {...stylex.props(uiStyles.badge, account.isActive ? uiStyles.badgeSuccess : uiStyles.badgeWarning)}
                     >
                       {account.isActive ? 'active' : 'inactive'}
                     </span>
                   </td>
-                  <td>
+                  <td {...stylex.props(uiStyles.tableCell)}>
                     <ClassBadge
                       className={rosterByNickname.get(account.nickname.toLowerCase())?.class}
                       textClassName="text-[#e6eff5]"
                       iconSizeClassName="h-8 w-8"
                     />
                   </td>
-                  <td>{new Date(account.createdAt).toLocaleDateString()}</td>
-                  <td>{account.lastLoginAt ? new Date(account.lastLoginAt).toLocaleString() : '—'}</td>
-                  <td>
+                  <td {...stylex.props(uiStyles.tableCell)}>{new Date(account.createdAt).toLocaleDateString()}</td>
+                  <td {...stylex.props(uiStyles.tableCell)}>{account.lastLoginAt ? new Date(account.lastLoginAt).toLocaleString() : '—'}</td>
+                  <td {...stylex.props(uiStyles.tableCell)}>
                     <button
                       type="button"
-                      className="btn-secondary px-3 py-2 text-xs"
+                      {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary, uiStyles.buttonXs)}
                       disabled={togglingId === account.id}
                       onClick={() => updateAccount(account, { isActive: !account.isActive })}
                     >
@@ -480,17 +475,12 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
     return [...values].sort((a, b) => a.localeCompare(b, 'ru'));
   }, [knownClasses, profileDraft.className]);
 
-  const profileKpiClass = useMemo(() => getKPIClass(profileRegistration?.kpi ?? 0), [profileRegistration?.kpi]);
-
   const profileKpiTone = useMemo(() => {
-    if (profileKpiClass === 'kpi-good') {
-      return 'border-green-500/35 bg-green-500/12 text-green-300';
-    }
-    if (profileKpiClass === 'kpi-medium') {
-      return 'border-yellow-500/35 bg-yellow-500/12 text-yellow-300';
-    }
-    return 'border-red-500/35 bg-red-500/12 text-red-300';
-  }, [profileKpiClass]);
+    const kpi = profileRegistration?.kpi ?? 0;
+    if (kpi >= 6) return profileStyles.statsMetricGood;
+    if (kpi >= 3) return profileStyles.statsMetricMedium;
+    return profileStyles.statsMetricBad;
+  }, [profileRegistration?.kpi]);
 
   const accountsError = useMemo(() => {
     if (updateAccountMutation.error instanceof Error) {
@@ -664,60 +654,60 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
           </div>
 
           {profileNotice && (
-            <div className="ds-notice">
+            <div {...stylex.props(uiStyles.notice, uiStyles.noticeSuccess)}>
               <WuxiaIcon name="checkCircle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
               {profileNotice}
             </div>
           )}
 
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 text-sm">
-            <div className={`ds-metric-tile border ${profileKpiTone}`}>
-              <div className="text-gray-400 mb-1">KPI</div>
-              <div className={`font-medium ${profileKpiClass}`}>{profileRegistration?.kpi ?? 0}</div>
+          <div {...stylex.props(profileStyles.statsMetricGrid)}>
+            <div {...stylex.props(profileStyles.statsMetricTile, profileKpiTone)}>
+              <div {...stylex.props(profileStyles.metricLabel)}>KPI</div>
+              <div {...stylex.props(profileStyles.metricValue)}>{profileRegistration?.kpi ?? 0}</div>
             </div>
-            <div className="ds-metric-tile">
-              <div className="text-gray-400 mb-1">ELO</div>
-              <div className="text-[#e6eff5] font-medium">{profileRegistration?.elo ?? 0}</div>
+            <div {...stylex.props(profileStyles.statsMetricTile)}>
+              <div {...stylex.props(profileStyles.metricLabel)}>ELO</div>
+              <div {...stylex.props(profileStyles.metricValue)}>{profileRegistration?.elo ?? 0}</div>
             </div>
-            <div className="ds-metric-tile">
-              <div className="text-gray-400 mb-1">Best MMR</div>
-              <div className="text-[#e6eff5] font-medium">{profileRegistration?.mmr20 ?? 0}</div>
+            <div {...stylex.props(profileStyles.statsMetricTile)}>
+              <div {...stylex.props(profileStyles.metricLabel)}>Best MMR</div>
+              <div {...stylex.props(profileStyles.metricValue)}>{profileRegistration?.mmr20 ?? 0}</div>
             </div>
-            <div className="ds-metric-tile">
-              <div className="text-gray-400 mb-1">Всего отметок</div>
-              <div className="text-[#e6eff5] font-medium">{profileRegistration?.marks ?? 0}</div>
+            <div {...stylex.props(profileStyles.statsMetricTile)}>
+              <div {...stylex.props(profileStyles.metricLabel)}>Всего отметок</div>
+              <div {...stylex.props(profileStyles.metricValue)}>{profileRegistration?.marks ?? 0}</div>
             </div>
-            <div className="ds-metric-tile">
-              <div className="text-gray-400 mb-1">Bounty</div>
-              <div className="text-[#e6eff5] font-medium">{profileRegistration?.bounty ?? 0}</div>
+            <div {...stylex.props(profileStyles.statsMetricTile)}>
+              <div {...stylex.props(profileStyles.metricLabel)}>Bounty</div>
+              <div {...stylex.props(profileStyles.metricValue)}>{profileRegistration?.bounty ?? 0}</div>
             </div>
-            <div className="ds-metric-tile">
-              <div className="text-gray-400 mb-1">Победы в дуэлях</div>
-              <div className="text-[#e6eff5] font-medium">{profileRegistration?.duelWins ?? 0}</div>
+            <div {...stylex.props(profileStyles.statsMetricTile)}>
+              <div {...stylex.props(profileStyles.metricLabel)}>Победы в дуэлях</div>
+              <div {...stylex.props(profileStyles.metricValue)}>{profileRegistration?.duelWins ?? 0}</div>
             </div>
-            <div className="ds-metric-tile">
-              <div className="text-gray-400 mb-1">Поражения в дуэлях</div>
-              <div className="text-[#e6eff5] font-medium">{profileRegistration?.duelLosses ?? 0}</div>
+            <div {...stylex.props(profileStyles.statsMetricTile)}>
+              <div {...stylex.props(profileStyles.metricLabel)}>Поражения в дуэлях</div>
+              <div {...stylex.props(profileStyles.metricValue)}>{profileRegistration?.duelLosses ?? 0}</div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <label className="space-y-2">
-              <span className="text-gray-400">Discord</span>
+          <div {...stylex.props(profileStyles.fieldGrid)}>
+            <label {...stylex.props(profileStyles.labelStack)}>
+              <span {...stylex.props(profileStyles.fieldLabel)}>Discord</span>
               <input
                 type="text"
                 value={profileDraft.discordHandle}
                 onChange={(e) => setProfileDraft((prev) => ({ ...prev, discordHandle: e.target.value }))}
-                className="input-field w-full"
+                {...stylex.props(uiStyles.input)}
                 placeholder="@example"
               />
             </label>
-            <label className="space-y-2">
-              <span className="text-gray-400">Титул / префикс</span>
+            <label {...stylex.props(profileStyles.labelStack)}>
+              <span {...stylex.props(profileStyles.fieldLabel)}>Титул / префикс</span>
               <select
                 value={profileDraft.prefix}
                 onChange={(e) => setProfileDraft((prev) => ({ ...prev, prefix: e.target.value }))}
-                className="select-field w-full"
+                {...stylex.props(uiStyles.select)}
               >
                 <option value="">Без префикса</option>
                 {prefixOptions.map((prefix) => (
@@ -725,12 +715,12 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
                 ))}
               </select>
             </label>
-            <label className="space-y-2">
-              <span className="text-gray-400">Класс</span>
+            <label {...stylex.props(profileStyles.labelStack)}>
+              <span {...stylex.props(profileStyles.fieldLabel)}>Класс</span>
               <select
                 value={profileDraft.className}
                 onChange={(e) => setProfileDraft((prev) => ({ ...prev, className: e.target.value }))}
-                className="select-field w-full"
+                {...stylex.props(uiStyles.select)}
               >
                 <option value="">Выбери класс</option>
                 {classOptions.map((className) => (
@@ -738,33 +728,33 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
                 ))}
               </select>
               {profileDraft.className ? (
-                <div className="rounded-2xl border border-[#2f6e8d]/35 bg-[#12202b]/55 px-4 py-3">
+                <div {...stylex.props(profileStyles.classPreview)}>
                   <ClassBadge className={profileDraft.className} badgeClassName="w-full" textClassName="text-[#e6eff5] font-medium" />
                 </div>
               ) : null}
             </label>
-            <label className="space-y-2">
-              <span className="text-gray-400">Клан</span>
+            <label {...stylex.props(profileStyles.labelStack)}>
+              <span {...stylex.props(profileStyles.fieldLabel)}>Клан</span>
               <input
                 type="text"
                 value={profileDraft.guild}
                 onChange={(e) => setProfileDraft((prev) => ({ ...prev, guild: e.target.value }))}
-                className="input-field w-full"
+                {...stylex.props(uiStyles.input)}
                 placeholder="Название клана"
               />
             </label>
-            <label className="space-y-2">
-              <span className="text-gray-400">Best MMR</span>
+            <label {...stylex.props(profileStyles.labelStack)}>
+              <span {...stylex.props(profileStyles.fieldLabel)}>Best MMR</span>
               <input
                 type="number"
                 value={profileDraft.mmr20}
                 onChange={(e) => setProfileDraft((prev) => ({ ...prev, mmr20: Number(e.target.value) || 0 }))}
-                className="input-field w-full"
+                {...stylex.props(uiStyles.input)}
               />
             </label>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 text-sm">
+          <div {...stylex.props(profileStyles.activityGrid)}>
             {activityLabels.map(({ key, label }) => {
               const isMarked = profileDraft[key] > 0;
 

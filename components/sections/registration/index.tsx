@@ -24,6 +24,9 @@ import {
 } from './columnLabels';
 import { useTranslation } from '@/lib/i18n/context';
 import { hasRoleAtLeast } from '@/lib/authz';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { registrationStyles } from './Registration.stylex';
 
 interface RegistrationSectionProps {
   user: User;
@@ -91,7 +94,7 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
         title={t.registration.error}
         description={error instanceof Error ? error.message : t.errors.server}
         action={
-          <button onClick={() => refetch()} className="btn-primary">
+          <button onClick={() => refetch()} {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>
             <WuxiaIcon name="redo" className="inline-block w-4 h-4 mr-2" />
             {t.errors.tryAgain}
           </button>
@@ -102,9 +105,9 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
   }
 
   return (
-    <section className="section-shell py-10 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="section-stack-lg">
+    <section {...stylex.props(uiStyles.sectionShell)}>
+      <div {...stylex.props(uiStyles.sectionContainer)}>
+        <div {...stylex.props(uiStyles.stackLg)}>
           <SectionHero
             icon={<WuxiaIcon name="registration" className="w-5 h-5" />}
             title={t.registration.title}
@@ -114,7 +117,7 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
 
           <RegistrationStats registrations={registrations} user={user} />
 
-          <div className="card section-card ds-section-panel section-filter-card p-4 sm:p-6">
+          <div {...stylex.props(registrationStyles.filterCard)}>
           <RegistrationFilters
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
@@ -127,19 +130,19 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
           />
 
           {canEditColumns && (
-            <div className="mb-4 sm:mb-6 rounded-2xl ds-section-panel-soft p-4 sm:p-5">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div {...stylex.props(registrationStyles.renamePanel)}>
+            <div {...stylex.props(registrationStyles.renameHeader)}>
               <div>
-                <div className="text-sm uppercase tracking-widest text-[#9ec5d8] mb-1">Названия столбцов</div>
-                <div className="text-sm text-gray-400">Офицеры и выше могут переименовать заголовки. Сохраненные названия видны всем участникам.</div>
+                <div {...stylex.props(registrationStyles.headingKicker)}>Названия столбцов</div>
+                <div {...stylex.props(registrationStyles.mutedText)}>Офицеры и выше могут переименовать заголовки. Сохраненные названия видны всем участникам.</div>
               </div>
-              <div className="flex gap-2">
-                <button type="button" className="btn-secondary px-4 py-2 text-sm" onClick={() => setLabelsOpen((value) => !value)}>
+              <div {...stylex.props(registrationStyles.actionRow)}>
+                <button type="button" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)} onClick={() => setLabelsOpen((value) => !value)}>
                   {labelsOpen ? 'Скрыть названия' : 'Переименовать столбцы'}
                 </button>
                 <button
                   type="button"
-                  className="btn-secondary px-4 py-2 text-sm"
+                  {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}
                   disabled={updateColumnLabels.isPending}
                   onClick={() => {
                     void updateColumnLabels.mutateAsync(defaultRegistrationColumnLabels);
@@ -151,10 +154,10 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
             </div>
 
             {labelsOpen && (
-              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+              <div {...stylex.props(registrationStyles.renameGrid)}>
                 {registrationColumnOrder.map((key) => (
-                  <label key={key} className="space-y-2 text-sm">
-                    <span className="text-gray-400">{defaultRegistrationColumnLabels[key]}</span>
+                  <label key={key} {...stylex.props(registrationStyles.labelStack)}>
+                    <span {...stylex.props(registrationStyles.fieldLabel)}>{defaultRegistrationColumnLabels[key]}</span>
                     <input
                       value={draftColumnLabels[key]}
                       onChange={(event) => {
@@ -164,14 +167,14 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
                           [key]: value || defaultRegistrationColumnLabels[key as RegistrationColumnKey],
                         }));
                       }}
-                      className="input-field w-full"
+                      {...stylex.props(uiStyles.input)}
                     />
                   </label>
                 ))}
-                <div className="sm:col-span-2 xl:col-span-3 flex flex-wrap gap-2 pt-2">
+                <div {...stylex.props(registrationStyles.renameActions)}>
                   <button
                     type="button"
-                    className="btn-primary px-4 py-2 text-sm"
+                    {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}
                     disabled={updateColumnLabels.isPending}
                     onClick={() => {
                       void updateColumnLabels.mutateAsync(draftColumnLabels);
@@ -181,7 +184,7 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
                   </button>
                   <button
                     type="button"
-                    className="btn-secondary px-4 py-2 text-sm"
+                    {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}
                     disabled={updateColumnLabels.isPending}
                     onClick={() => setDraftColumnLabels(sharedColumnLabels)}
                   >

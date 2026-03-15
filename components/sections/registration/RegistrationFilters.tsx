@@ -1,5 +1,9 @@
 'use client';
 
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { registrationStyles } from './Registration.stylex';
+
 interface RegistrationFiltersProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
@@ -22,19 +26,19 @@ export function RegistrationFilters({
   onSortChange,
 }: RegistrationFiltersProps) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-[minmax(0,1.3fr)_repeat(3,minmax(0,0.72fr))] lg:items-center">
+    <div {...stylex.props(registrationStyles.filtersGrid)}>
       <input
         type="text"
         value={searchTerm}
         onChange={(e) => onSearchChange(e.target.value)}
         placeholder="Поиск по имени, Discord или классу..."
-        className="input-field w-full"
+        {...stylex.props(uiStyles.input)}
       />
 
       <select
         value={statusFilter}
         onChange={(e) => onStatusChange(e.target.value)}
-        className="select-field w-full"
+        {...stylex.props(uiStyles.select)}
       >
         <option value="all">Все статусы</option>
         <option value="active">Активен</option>
@@ -44,7 +48,7 @@ export function RegistrationFilters({
       <select
         value={rankFilter}
         onChange={(e) => onRankChange(e.target.value)}
-        className="select-field w-full"
+        {...stylex.props(uiStyles.select)}
       >
         <option value="all">Все ранги</option>
         <option value="guest">Гость</option>
@@ -57,7 +61,7 @@ export function RegistrationFilters({
       <select
         value={sortBy}
         onChange={(e) => onSortChange(e.target.value)}
-        className="select-field w-full"
+        {...stylex.props(uiStyles.select)}
         aria-label="Сортировка участников"
       >
         <option value="nickname-asc">Имя: А-Я</option>

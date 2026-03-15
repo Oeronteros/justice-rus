@@ -13,6 +13,10 @@ import type { Registration } from '@/lib/schemas/registration';
 import { canSeeNumericKpi, hasRoleAtLeast } from '@/lib/authz';
 import type { UpdateRegistrationStatsPayload } from '@/lib/api/registrations';
 import type { RegistrationColumnLabels } from './columnLabels';
+import * as stylex from '@stylexjs/stylex';
+import { mergeStylexProps } from '@/lib/stylex/utils';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { registrationStyles } from './Registration.stylex';
 
 interface RegistrationTableProps {
   registrations: Registration[];
@@ -138,25 +142,25 @@ function RegistrationIdentity({ registration, compact = false }: { registration:
   const sizeClass = compact ? 'h-11 w-11 text-xs' : 'h-9 w-9 text-[11px]';
 
   return (
-    <div className="flex items-center gap-3 min-w-0">
+    <div {...stylex.props(registrationStyles.identityRow)}>
       {registration.avatarUrl ? (
         <AppImage
           src={registration.avatarUrl}
           alt={registration.nickname || displayDiscord || 'Avatar'}
           width={compact ? 44 : 36}
           height={compact ? 44 : 36}
-          className={`${sizeClass} rounded-full border border-[#385264] object-cover bg-[#0c151d] shrink-0`}
+          className={`${sizeClass} ${stylex.props(registrationStyles.identityAvatar).className}`}
           unoptimized
         />
       ) : (
-        <div className={`${sizeClass} rounded-full border border-[#385264] bg-gradient-to-br from-[#223544] to-[#4a90b0] text-[#f7fbff] font-semibold shrink-0 grid place-items-center`}>
+        <div className={`${sizeClass} ${stylex.props(registrationStyles.identityAvatarFallback).className}`}>
           {initials}
         </div>
       )}
 
-      <div className="min-w-0">
-        <div className="font-medium truncate">{displayDiscord || 'Discord не указан'}</div>
-        <div className="text-xs text-gray-400 truncate">{registration.nickname}</div>
+      <div {...stylex.props(registrationStyles.identityMeta)}>
+        <div {...stylex.props(registrationStyles.identityPrimary)}>{displayDiscord || 'Discord не указан'}</div>
+        <div {...stylex.props(registrationStyles.identitySecondary)}>{registration.nickname}</div>
       </div>
     </div>
   );
@@ -172,14 +176,20 @@ function renderActivityValue(value: number) {
 
 function KpiValue({ registration, user }: { registration: Registration; user: User }) {
   if (canSeeNumericKpi(user.role) || registration.nickname.toLowerCase() === (user.nickname || '').toLowerCase()) {
-    return <span className={`${getKPIClass(registration.kpi)} font-medium`}>{registration.kpi}</span>;
+    const kpiClass = getKPIClass(registration.kpi);
+    const tone = kpiClass === 'kpi-good'
+      ? registrationStyles.kpiValueGood
+      : kpiClass === 'kpi-medium'
+        ? registrationStyles.kpiValueMedium
+        : registrationStyles.kpiValueBad;
+    return <span {...stylex.props(tone)}>{registration.kpi}</span>;
   }
 
   const indicator = getKpiIndicator(registration.kpi);
   return (
-    <span className={`inline-flex items-center gap-2 ${indicator.className}`}>
-      <span className="inline-block w-2.5 h-2.5 rounded-full bg-current"></span>
-      <span className="text-xs uppercase tracking-wide">{indicator.label}</span>
+    <span {...mergeStylexProps(stylex.props(registrationStyles.kpiIndicator), indicator.className)}>
+      <span {...stylex.props(registrationStyles.kpiDot)}></span>
+      <span {...stylex.props(registrationStyles.kpiIndicatorText)}>{indicator.label}</span>
     </span>
   );
 }
@@ -307,15 +317,13 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
 
   if (registrations.length === 0) {
     return (
-      <div className="card section-card ds-section-panel px-6 py-10 text-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-16 h-16 rounded-full ds-section-panel-soft grid place-items-center">
+      <div {...mergeStylexProps(stylex.props(uiStyles.card, uiStyles.sectionCard, registrationStyles.emptyCard), 'px-6 py-10')}>
+        <div {...stylex.props(registrationStyles.emptyIconSurface)}>
             <WuxiaIcon name="usersSlash" className="w-8 h-8 text-gray-400" />
-          </div>
-          <span className="ui-badge ui-badge-muted">Roster empty</span>
-          <div className="text-lg text-[#d9e9f2] font-semibold">Записей не найдено</div>
-          <div className="text-sm text-[#9fb5c3]">Смени поиск или фильтры</div>
         </div>
+        <span {...stylex.props(uiStyles.badge, uiStyles.badgeMuted)}>Roster empty</span>
+        <div {...stylex.props(registrationStyles.emptyTitle)}>Записей не найдено</div>
+        <div {...stylex.props(registrationStyles.emptyText)}>Смени поиск или фильтры</div>
       </div>
     );
   }
@@ -323,56 +331,56 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
   return (
     <>
       {isMobileLayout ? (
-        <div className="table-card-grid">
+        <div {...stylex.props(registrationStyles.mobileCardGrid)}>
           {registrations.map((registration, index) => (
-            <div key={`${registration.nickname}-${registration.discord || index}`} className="table-card">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3 min-w-0">
+            <div key={`${registration.nickname}-${registration.discord || index}`} {...stylex.props(registrationStyles.mobileCard)}>
+              <div {...stylex.props(registrationStyles.mobileCardHeader)}>
+                <div {...stylex.props(registrationStyles.mobileCardLead)}>
                   <RegistrationIdentity registration={registration} compact />
-                  <div className="min-w-0">
-                    <div className="text-xs uppercase tracking-[0.14em] text-[#9ec5d8] mb-1">#{index + 1}</div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <div className="text-lg font-semibold text-[#e6eff5]">{registration.nickname}</div>
+                  <div {...stylex.props(registrationStyles.mobileCardMeta)}>
+                    <div {...stylex.props(registrationStyles.mobileCardIndex)}>#{index + 1}</div>
+                    <div {...stylex.props(registrationStyles.mobileCardNameRow)}>
+                      <div {...stylex.props(registrationStyles.mobileCardName)}>{registration.nickname}</div>
                       <PrefixBadge prefix={registration.prefix} variant="compact" />
                     </div>
-                    <div className="text-sm text-gray-400 mt-1 truncate">{getDisplayDiscord(registration) || 'Discord не указан'}</div>
+                    <div {...stylex.props(registrationStyles.mobileCardDiscord)}>{getDisplayDiscord(registration) || 'Discord не указан'}</div>
                   </div>
                 </div>
-                <span className={`ui-badge ${getRankClass(registration.rank)}`}>
+                <span {...mergeStylexProps(stylex.props(uiStyles.badge), getRankClass(registration.rank))}>
                   {rankLabels[registration.rank] || registration.rank}
                 </span>
               </div>
 
-              <div className="table-card-section grid grid-cols-2 gap-3 text-sm">
-                <div className="metric-tile">
-                  <div className="metric-label">{columnLabels.class}</div>
+              <div {...stylex.props(registrationStyles.mobileSection, registrationStyles.mobileMetricsGrid)}>
+                <div {...stylex.props(registrationStyles.mobileMetricTile)}>
+                  <div {...stylex.props(registrationStyles.mobileMetricLabel)}>{columnLabels.class}</div>
                   <ClassBadge className={registration.class} textClassName="text-[#e6eff5]" iconSizeClassName="h-8 w-8" />
                 </div>
-                <div className="metric-tile">
-                  <div className="metric-label">{columnLabels.guild}</div>
-                  <div className="metric-value">{registration.guild || '—'}</div>
+                <div {...stylex.props(registrationStyles.mobileMetricTile)}>
+                  <div {...stylex.props(registrationStyles.mobileMetricLabel)}>{columnLabels.guild}</div>
+                  <div {...stylex.props(registrationStyles.mobileMetricValue)}>{registration.guild || '—'}</div>
                 </div>
-                <div className="metric-tile">
-                  <div className="metric-label">{columnLabels.elo}</div>
-                  <div className="metric-value">{registration.elo || 0}</div>
+                <div {...stylex.props(registrationStyles.mobileMetricTile)}>
+                  <div {...stylex.props(registrationStyles.mobileMetricLabel)}>{columnLabels.elo}</div>
+                  <div {...stylex.props(registrationStyles.mobileMetricValue)}>{registration.elo || 0}</div>
                 </div>
-                <div className="metric-tile">
-                  <div className="metric-label">{columnLabels.mmr20}</div>
-                  <div className="metric-value">{registration.mmr20 || 0}</div>
+                <div {...stylex.props(registrationStyles.mobileMetricTile)}>
+                  <div {...stylex.props(registrationStyles.mobileMetricLabel)}>{columnLabels.mmr20}</div>
+                  <div {...stylex.props(registrationStyles.mobileMetricValue)}>{registration.mmr20 || 0}</div>
                 </div>
-                <div className="metric-tile">
-                  <div className="metric-label">{columnLabels.bounty}</div>
-                  <div className="metric-value">{registration.bounty || 0}</div>
+                <div {...stylex.props(registrationStyles.mobileMetricTile)}>
+                  <div {...stylex.props(registrationStyles.mobileMetricLabel)}>{columnLabels.bounty}</div>
+                  <div {...stylex.props(registrationStyles.mobileMetricValue)}>{registration.bounty || 0}</div>
                 </div>
-                <div className="metric-tile">
-                  <div className="metric-label">{columnLabels.status}</div>
-                  <span className={`ui-badge ${getStatusClass(registration.status)}`}>
+                <div {...stylex.props(registrationStyles.mobileMetricTile)}>
+                  <div {...stylex.props(registrationStyles.mobileMetricLabel)}>{columnLabels.status}</div>
+                  <span {...mergeStylexProps(stylex.props(uiStyles.badge), getStatusClass(registration.status))}>
                     {statusLabels[registration.status] || registration.status}
                   </span>
                 </div>
               </div>
 
-              <div className="table-card-section grid grid-cols-2 gap-3 text-sm">
+              <div {...stylex.props(registrationStyles.mobileSection, registrationStyles.mobileMetricsGrid)}>
                 {[
                   ['outerHeroic', renderActivityValue(registration.outerHeroic || 0)],
                   ['innerHeroic', renderActivityValue(registration.innerHeroic || 0)],
@@ -382,19 +390,19 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
                   ['secretRealm', renderActivityValue(registration.secretRealm || 0)],
                   ['marks', String(registration.marks || 0)],
                 ].map(([key, value]) => (
-                  <div key={key} className="metric-tile">
-                    <div className="metric-label">{columnLabels[key as keyof RegistrationColumnLabels]}</div>
-                    <div className="metric-value">{value}</div>
+                  <div key={key} {...stylex.props(registrationStyles.mobileMetricTile)}>
+                    <div {...stylex.props(registrationStyles.mobileMetricLabel)}>{columnLabels[key as keyof RegistrationColumnLabels]}</div>
+                    <div {...stylex.props(registrationStyles.mobileMetricValue)}>{value}</div>
                   </div>
                 ))}
-                <div className="metric-tile col-span-2">
-                  <div className="metric-label">{columnLabels.kpi}</div>
+                <div {...stylex.props(registrationStyles.mobileMetricTile, registrationStyles.fullSpan)}>
+                  <div {...stylex.props(registrationStyles.mobileMetricLabel)}>{columnLabels.kpi}</div>
                   <KpiValue registration={registration} user={user} />
                 </div>
               </div>
 
               {canSeeFullStats && (
-                <button type="button" className="btn-secondary w-full py-3" onClick={() => openEditor(registration)}>
+                <button type="button" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary, registrationStyles.mobileEditButton)} onClick={() => openEditor(registration)}>
                   Изменить запись
                 </button>
               )}
@@ -402,70 +410,70 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
           ))}
         </div>
       ) : (
-        <div className="table-frame overflow-x-auto">
-          <table className="table-modern">
+        <div {...stylex.props(uiStyles.tableFrame)}>
+          <table {...stylex.props(uiStyles.table)}>
             <thead>
               <tr>
-                <th className="text-left">{columnLabels.index}</th>
-                <th className="text-left">{columnLabels.discord}</th>
-                <th className="text-left">{columnLabels.nickname}</th>
-                <th className="text-left">{columnLabels.rank}</th>
-                <th className="text-left">{columnLabels.class}</th>
-                <th className="text-left">{columnLabels.guild}</th>
-                <th className="text-left">{columnLabels.elo}</th>
-                <th className="text-left">{columnLabels.mmr20}</th>
-                <th className="text-left">{columnLabels.bounty}</th>
-                <th className="text-left">{columnLabels.outerHeroic}</th>
-                <th className="text-left">{columnLabels.innerHeroic}</th>
-                <th className="text-left">{columnLabels.crimsonSands}</th>
-                <th className="text-left">{columnLabels.abyss}</th>
-                <th className="text-left">{columnLabels.gvg}</th>
-                <th className="text-left">{columnLabels.secretRealm}</th>
-                <th className="text-left">{columnLabels.marks}</th>
-                <th className="text-left">{columnLabels.kpi}</th>
-                <th className="text-left">{columnLabels.status}</th>
-                {canSeeFullStats && <th className="text-left">{columnLabels.actions}</th>}
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.index}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.discord}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.nickname}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.rank}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.class}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.guild}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.elo}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.mmr20}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.bounty}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.outerHeroic}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.innerHeroic}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.crimsonSands}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.abyss}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.gvg}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.secretRealm}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.marks}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.kpi}</th>
+                <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.status}</th>
+                {canSeeFullStats && <th {...stylex.props(uiStyles.tableHeadCell)}>{columnLabels.actions}</th>}
               </tr>
             </thead>
             <tbody>
               {registrations.map((registration, index) => (
-                <tr key={`${registration.nickname}-${registration.discord || index}`} className="hover:bg-gray-800/50">
-                  <td className="text-red-400 font-medium">#{index + 1}</td>
-                  <td className="min-w-[220px]">
+                <tr key={`${registration.nickname}-${registration.discord || index}`} {...stylex.props(index % 2 === 1 && uiStyles.tableRowEven, uiStyles.tableRowHover)}>
+                  <td {...stylex.props(uiStyles.tableCell, registrationStyles.desktopIndex)}>#{index + 1}</td>
+                  <td {...stylex.props(uiStyles.tableCell, registrationStyles.desktopIdentityCell)}>
                     <RegistrationIdentity registration={registration} />
                   </td>
-                  <td className="font-medium">
-                    <div className="flex flex-wrap items-center gap-2">
+                  <td {...stylex.props(uiStyles.tableCell, registrationStyles.desktopNicknameCell)}>
+                    <div {...stylex.props(registrationStyles.desktopNicknameRow)}>
                       <span>{registration.nickname}</span>
                       <PrefixBadge prefix={registration.prefix} variant="compact" />
                     </div>
                   </td>
-                  <td>
-                    <span className={`ui-badge ${getRankClass(registration.rank)}`}>
+                  <td {...stylex.props(uiStyles.tableCell)}>
+                    <span {...mergeStylexProps(stylex.props(uiStyles.badge), getRankClass(registration.rank))}>
                       {rankLabels[registration.rank] || registration.rank}
                     </span>
                   </td>
-                  <td><ClassBadge className={registration.class} textClassName="text-[#e6eff5]" iconSizeClassName="h-8 w-8" /></td>
-                  <td>{registration.guild || '—'}</td>
-                  <td>{registration.elo || 0}</td>
-                  <td>{registration.mmr20 || 0}</td>
-                  <td>{registration.bounty || 0}</td>
-                  <td title={String(registration.outerHeroic || 0)}>{renderActivityValue(registration.outerHeroic || 0)}</td>
-                  <td title={String(registration.innerHeroic || 0)}>{renderActivityValue(registration.innerHeroic || 0)}</td>
-                  <td title={String(registration.crimsonSands || 0)}>{renderActivityValue(registration.crimsonSands || 0)}</td>
-                  <td title={String(registration.abyss || 0)}>{renderActivityValue(registration.abyss || 0)}</td>
-                  <td title={String(registration.gvg || 0)}>{renderActivityValue(registration.gvg || 0)}</td>
-                  <td title={String(registration.secretRealm || 0)}>{renderActivityValue(registration.secretRealm || 0)}</td>
-                  <td>{registration.marks || 0}</td>
-                  <td><KpiValue registration={registration} user={user} /></td>
-                  <td>
-                    <span className={`ui-badge ${getStatusClass(registration.status)}`}>
+                  <td {...stylex.props(uiStyles.tableCell)}><ClassBadge className={registration.class} textClassName="text-[#e6eff5]" iconSizeClassName="h-8 w-8" /></td>
+                  <td {...stylex.props(uiStyles.tableCell)}>{registration.guild || '—'}</td>
+                  <td {...stylex.props(uiStyles.tableCell)}>{registration.elo || 0}</td>
+                  <td {...stylex.props(uiStyles.tableCell)}>{registration.mmr20 || 0}</td>
+                  <td {...stylex.props(uiStyles.tableCell)}>{registration.bounty || 0}</td>
+                  <td {...stylex.props(uiStyles.tableCell)} title={String(registration.outerHeroic || 0)}>{renderActivityValue(registration.outerHeroic || 0)}</td>
+                  <td {...stylex.props(uiStyles.tableCell)} title={String(registration.innerHeroic || 0)}>{renderActivityValue(registration.innerHeroic || 0)}</td>
+                  <td {...stylex.props(uiStyles.tableCell)} title={String(registration.crimsonSands || 0)}>{renderActivityValue(registration.crimsonSands || 0)}</td>
+                  <td {...stylex.props(uiStyles.tableCell)} title={String(registration.abyss || 0)}>{renderActivityValue(registration.abyss || 0)}</td>
+                  <td {...stylex.props(uiStyles.tableCell)} title={String(registration.gvg || 0)}>{renderActivityValue(registration.gvg || 0)}</td>
+                  <td {...stylex.props(uiStyles.tableCell)} title={String(registration.secretRealm || 0)}>{renderActivityValue(registration.secretRealm || 0)}</td>
+                  <td {...stylex.props(uiStyles.tableCell)}>{registration.marks || 0}</td>
+                  <td {...stylex.props(uiStyles.tableCell)}><KpiValue registration={registration} user={user} /></td>
+                  <td {...stylex.props(uiStyles.tableCell)}>
+                    <span {...mergeStylexProps(stylex.props(uiStyles.badge), getStatusClass(registration.status))}>
                       {statusLabels[registration.status] || registration.status}
                     </span>
                   </td>
                   {canSeeFullStats && (
-                    <td>
-                      <button type="button" className="btn-secondary px-3 py-2 text-xs" onClick={() => openEditor(registration)}>
+                    <td {...stylex.props(uiStyles.tableCell)}>
+                      <button type="button" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary, uiStyles.buttonXs)} onClick={() => openEditor(registration)}>
                         Изменить
                       </button>
                     </td>
@@ -478,18 +486,18 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
       )}
 
       {canSeeFullStats && editingRegistration && editDraft && (
-        <div className="modal-backdrop" onClick={closeEditor}>
-          <div className="modal-shell modal-shell-narrow p-6 md:p-8" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="registration-editor-title">
-            <div className="modal-header">
+        <div {...stylex.props(uiStyles.modalBackdrop)} onClick={closeEditor}>
+          <div {...mergeStylexProps(stylex.props(uiStyles.modalShell, uiStyles.modalShellNarrow), 'p-6 md:p-8')} onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="registration-editor-title">
+            <div {...stylex.props(uiStyles.modalHeader)}>
               <div>
-                <h3 id="registration-editor-title" className="modal-title">Редактирование записи</h3>
-                <p className="modal-subtitle">
+                <h3 id="registration-editor-title" {...mergeStylexProps(stylex.props(uiStyles.modalTitle), 'font-orbitron')}>Редактирование записи</h3>
+                <p {...stylex.props(uiStyles.modalSubtitle)}>
                   {editingRegistration.nickname} · {getDisplayDiscord(editingRegistration) || 'Discord не указан'}
                 </p>
               </div>
               <button
                 type="button"
-                className="dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0"
+                {...stylex.props(uiStyles.iconButton)}
                 onClick={closeEditor}
                 disabled={updateRegistrationStats.isPending}
                 title="Закрыть"
@@ -498,66 +506,66 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <label className="space-y-2 text-sm md:col-span-2">
-                <span className="text-gray-400">Discord</span>
+            <div {...stylex.props(registrationStyles.modalBodyGrid)}>
+              <label {...stylex.props(registrationStyles.labelStack, registrationStyles.modalFieldFull)}>
+                <span {...stylex.props(registrationStyles.fieldLabel)}>Discord</span>
                 <input
                   value={editDraft.discordHandle}
                   onChange={(event) => updateDraftField('discordHandle', event.target.value)}
-                  className="input-field w-full"
+                  {...stylex.props(uiStyles.input)}
                   placeholder="@example"
                 />
               </label>
-              <label className="space-y-2 text-sm">
-                <span className="text-gray-400">Класс</span>
+              <label {...stylex.props(registrationStyles.labelStack)}>
+                <span {...stylex.props(registrationStyles.fieldLabel)}>Класс</span>
                 <input
                   value={editDraft.className}
                   onChange={(event) => updateDraftField('className', event.target.value)}
-                  className="input-field w-full"
+                  {...stylex.props(uiStyles.input)}
                   placeholder="Класс"
                 />
                 {editDraft.className ? (
-                  <div className="rounded-2xl ds-section-panel-soft border-[#2f6e8d]/35 bg-[#12202b]/55 px-4 py-3">
+                  <div {...stylex.props(registrationStyles.modalPreview)}>
                     <ClassBadge className={editDraft.className} badgeClassName="w-full" textClassName="text-[#e6eff5] font-medium" />
                   </div>
                 ) : null}
               </label>
-              <label className="space-y-2 text-sm">
-                <span className="text-gray-400">Клан</span>
+              <label {...stylex.props(registrationStyles.labelStack)}>
+                <span {...stylex.props(registrationStyles.fieldLabel)}>Клан</span>
                 <input
                   value={editDraft.guild}
                   onChange={(event) => updateDraftField('guild', event.target.value)}
-                  className="input-field w-full"
+                  {...stylex.props(uiStyles.input)}
                   placeholder="Клан"
                 />
               </label>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div {...stylex.props(registrationStyles.modalNumbersGrid)}>
               {editableNumericFields.map((field) => (
-                <label key={field.key} className="space-y-2 text-sm">
-                  <span className="text-gray-400">{field.label}</span>
+                <label key={field.key} {...stylex.props(registrationStyles.labelStack)}>
+                  <span {...stylex.props(registrationStyles.fieldLabel)}>{field.label}</span>
                   <input
                     type="number"
                     value={editDraft[field.key]}
                     onChange={(event) => updateDraftField(field.key, event.target.value)}
-                    className="input-field w-full"
+                    {...stylex.props(uiStyles.input)}
                   />
                 </label>
               ))}
             </div>
 
             {editError && (
-              <div className="ds-notice mt-6 border-red-900/40 bg-red-900/20 text-red-300">
+              <div {...stylex.props(uiStyles.notice, uiStyles.noticeError, registrationStyles.modalError)}>
                 <WuxiaIcon name="alertTriangle" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
                 {editError}
               </div>
             )}
 
-            <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:justify-end">
+            <div {...stylex.props(registrationStyles.modalActions)}>
               <button
                 type="button"
-                className="btn-secondary px-5 py-3"
+                {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}
                 onClick={closeEditor}
                 disabled={updateRegistrationStats.isPending}
               >
@@ -565,7 +573,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
               </button>
               <button
                 type="button"
-                className="btn-primary px-5 py-3"
+                {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}
                 onClick={() => void saveEditor()}
                 disabled={updateRegistrationStats.isPending}
               >
