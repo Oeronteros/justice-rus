@@ -991,9 +991,9 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
         )}
 
         {canEditSchedule && editDraft && (
-          <div className="modal-backdrop" onClick={closeEditor}>
+          <div {...stylex.props(uiStyles.modalBackdrop)} onClick={closeEditor}>
             <div
-              className="modal-shell w-full max-w-6xl p-0 overflow-hidden"
+              {...mergeStylexProps(stylex.props(uiStyles.modalShell), 'w-full max-w-6xl p-0 overflow-hidden')}
               onClick={(event) => event.stopPropagation()}
               role="dialog"
               aria-modal="true"
@@ -1001,14 +1001,14 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
             >
               <div className="grid max-h-[92vh] grid-cols-1 overflow-auto lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.95fr)]">
                 <div className="p-6 md:p-8">
-                  <div className="modal-header">
+                  <div {...stylex.props(uiStyles.modalHeader)}>
                     <div>
-                      <h3 id="schedule-editor-title" className="modal-title">
+                      <h3 id="schedule-editor-title" {...mergeStylexProps(stylex.props(uiStyles.modalTitle), 'font-orbitron')}>
                         {editingSchedule
                           ? (language === 'ru' ? 'Редактировать слот' : language === 'zh' ? '编辑活动' : 'Edit schedule slot')
                           : (language === 'ru' ? 'Добавить событие' : language === 'zh' ? '添加活动' : 'Add event')}
                       </h3>
-                      <p className="modal-subtitle">
+                      <p {...stylex.props(uiStyles.modalSubtitle)}>
                         {editingSchedule
                           ? editingSchedule.registration || (language === 'ru' ? 'Обнови слот и проверь живой предпросмотр справа.' : language === 'zh' ? '更新活动并查看右侧实时预览。' : 'Update the slot and review the live preview on the right.')
                           : language === 'ru'
@@ -1020,7 +1020,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                     </div>
                     <button
                       type="button"
-                      className="dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0"
+                      {...stylex.props(uiStyles.iconButton)}
                       onClick={closeEditor}
                       disabled={updateSchedule.isPending || createSchedule.isPending}
                       aria-label={language === 'ru' ? 'Закрыть редактор расписания' : language === 'zh' ? '关闭日程编辑器' : 'Close schedule editor'}
@@ -1030,21 +1030,21 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                   </div>
 
                   <div className="mb-6 flex flex-wrap gap-2 text-xs">
-                    <span className="ui-badge ui-badge-accent">
+                    <span {...stylex.props(uiStyles.badge)}>
                       {editingSchedule ? (language === 'ru' ? 'Режим: редактирование' : language === 'zh' ? '模式：编辑' : 'Mode: editing') : language === 'ru' ? 'Режим: создание' : language === 'zh' ? '模式：创建' : 'Mode: create'}
                     </span>
-                    <span className={`ui-badge ${editDraft.active ? 'ui-badge-success' : 'ui-badge-warning'}`}>
+                    <span {...stylex.props(uiStyles.badge, editDraft.active ? uiStyles.badgeSuccess : uiStyles.badgeWarning)}>
                       {editDraft.active ? (language === 'ru' ? 'Показывается в расписании' : language === 'zh' ? '活动显示中' : 'Visible in schedule') : language === 'ru' ? 'Скрыт из расписания' : language === 'zh' ? '活动已隐藏' : 'Hidden from schedule'}
                     </span>
-                    <span className={`ui-badge ${hasDraftErrors ? 'ui-badge-danger' : 'ui-badge-accent'}`}>
+                    <span {...stylex.props(uiStyles.badge, hasDraftErrors ? uiStyles.badgeDanger : uiStyles.badgeMuted)}>
                       {hasDraftErrors
                         ? (language === 'ru' ? 'Нужно поправить поля' : language === 'zh' ? '仍有字段需要修正' : 'Some fields need attention')
                         : (language === 'ru' ? 'Форма готова к сохранению' : language === 'zh' ? '表单已可保存' : 'Form is ready to save')}
                     </span>
                   </div>
 
-                  <div className="space-y-5">
-                    <div className="editor-panel">
+                  <div {...stylex.props(opsStyles.listStack)}>
+                    <div {...stylex.props(uiStyles.softPanel)} style={{ padding: 20 }}>
                       <div className="mb-4 flex items-center justify-between gap-3">
                         <div>
                           <div className="text-sm font-semibold text-[#e6eff5]">
@@ -1066,7 +1066,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                               key={day.key}
                               type="button"
                               onClick={() => updateDraft({ dayType: day.labels[language] })}
-                              className={`ui-chip ${isActive ? 'is-active' : ''}`}
+                              {...stylex.props(uiStyles.chip, isActive && uiStyles.chipActive)}
                             >
                               {day.labels[language]}
                             </button>
@@ -1083,7 +1083,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                               key={kind}
                               type="button"
                               onClick={() => updateDraft({ dayType: getRecurringAlias(kind, language) })}
-                              className={`ui-chip ${isActive ? 'is-active' : ''}`}
+                              {...stylex.props(uiStyles.chip, isActive && uiStyles.chipActive)}
                             >
                               {getRecurrenceLabel(kind, language)}
                             </button>
@@ -1097,14 +1097,14 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                           value={editDraft.dayType}
                           onChange={(event) => updateDraft({ dayType: event.target.value })}
                           ref={dayInputRef}
-                          className={`input-field w-full ${draftErrors.dayType ? 'border-rose-500/60' : ''}`}
+                          {...mergeStylexProps(stylex.props(uiStyles.input), draftErrors.dayType ? 'border-rose-500/60' : undefined)}
                           placeholder={language === 'ru' ? 'Например: Понедельник или Еженедельные' : language === 'zh' ? '例如：星期一 或 每周' : 'For example: Monday or Weekly'}
                         />
                         {draftErrors.dayType && <p className="text-xs text-rose-300">{draftErrors.dayType}</p>}
                       </label>
                     </div>
 
-                    <div className="editor-panel">
+                    <div {...stylex.props(uiStyles.softPanel)} style={{ padding: 20 }}>
                       <div className="mb-4 flex items-center justify-between gap-3">
                         <div>
                           <div className="text-sm font-semibold text-[#e6eff5]">
@@ -1124,7 +1124,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                             type="time"
                             value={draftTimeParts.start}
                             onChange={(event) => updateDraftTime('start', event.target.value)}
-                            className={`input-field w-full ${draftErrors.time ? 'border-rose-500/60' : ''}`}
+                            {...mergeStylexProps(stylex.props(uiStyles.input), draftErrors.time ? 'border-rose-500/60' : undefined)}
                           />
                         </label>
                         <label className="space-y-2 text-sm">
@@ -1133,7 +1133,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                             type="time"
                             value={draftTimeParts.end}
                             onChange={(event) => updateDraftTime('end', event.target.value)}
-                            className={`input-field w-full ${draftErrors.time ? 'border-rose-500/60' : ''}`}
+                            {...mergeStylexProps(stylex.props(uiStyles.input), draftErrors.time ? 'border-rose-500/60' : undefined)}
                           />
                         </label>
                         <label className="space-y-2 text-sm">
@@ -1144,7 +1144,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                             max={999}
                             value={editDraft.orderIndex}
                             onChange={(event) => updateDraft({ orderIndex: event.target.value })}
-                            className="input-field w-full"
+                            {...stylex.props(uiStyles.input)}
                           />
                         </label>
                       </div>
@@ -1155,7 +1155,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                             key={minutes}
                             type="button"
                             onClick={() => applyDurationPreset(minutes)}
-                            className="ui-chip"
+                            {...stylex.props(uiStyles.chip)}
                           >
                             {language === 'ru' ? `${minutes} мин` : language === 'zh' ? `${minutes} 分钟` : `${minutes} min`}
                           </button>
@@ -1163,7 +1163,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                         <button
                           type="button"
                           onClick={() => updateDraft({ time: '' })}
-                          className="ui-chip"
+                          {...stylex.props(uiStyles.chip)}
                         >
                           {language === 'ru' ? 'Очистить время' : language === 'zh' ? '清除时间' : 'Clear time'}
                         </button>
@@ -1174,7 +1174,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                         <input
                           value={editDraft.time}
                           onChange={(event) => updateDraft({ time: event.target.value })}
-                          className={`input-field w-full ${draftErrors.time ? 'border-rose-500/60' : ''}`}
+                          {...mergeStylexProps(stylex.props(uiStyles.input), draftErrors.time ? 'border-rose-500/60' : undefined)}
                           placeholder="19:30 - 20:30"
                         />
                         <p className="text-xs text-[#7f97a6]">
@@ -1184,7 +1184,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                       </label>
                     </div>
 
-                    <div className="editor-panel">
+                    <div {...stylex.props(uiStyles.softPanel)} style={{ padding: 20 }}>
                       <div className="mb-4 flex items-center justify-between gap-3">
                         <div>
                           <div className="text-sm font-semibold text-[#e6eff5]">
@@ -1203,7 +1203,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                           <input
                             value={editDraft.titleRu}
                             onChange={(event) => updateDraft({ titleRu: event.target.value })}
-                            className={`input-field w-full ${draftErrors.titleRu ? 'border-rose-500/60' : ''}`}
+                            {...mergeStylexProps(stylex.props(uiStyles.input), draftErrors.titleRu ? 'border-rose-500/60' : undefined)}
                           />
                           {draftErrors.titleRu && <p className="text-xs text-rose-300">{draftErrors.titleRu}</p>}
                         </label>
@@ -1212,7 +1212,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                           <input
                             value={editDraft.titleEn}
                             onChange={(event) => updateDraft({ titleEn: event.target.value })}
-                            className={`input-field w-full ${draftErrors.titleEn ? 'border-rose-500/60' : ''}`}
+                            {...mergeStylexProps(stylex.props(uiStyles.input), draftErrors.titleEn ? 'border-rose-500/60' : undefined)}
                           />
                           {draftErrors.titleEn && <p className="text-xs text-rose-300">{draftErrors.titleEn}</p>}
                         </label>
@@ -1221,7 +1221,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                           <input
                             value={editDraft.titleZh}
                             onChange={(event) => updateDraft({ titleZh: event.target.value })}
-                            className="input-field w-full"
+                            {...stylex.props(uiStyles.input)}
                           />
                         </label>
                       </div>
@@ -1230,20 +1230,20 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                         <button
                           type="button"
                           onClick={() => fillDraftTitlesFrom('titleRu')}
-                          className="ui-chip"
-                        >
+                            {...stylex.props(uiStyles.chip)}
+                          >
                           {language === 'ru' ? 'Заполнить пустые из RU' : language === 'zh' ? '用 RU 填充空字段' : 'Fill empty titles from RU'}
                         </button>
                         <button
                           type="button"
                           onClick={() => fillDraftTitlesFrom('titleEn')}
-                          className="ui-chip"
-                        >
+                            {...stylex.props(uiStyles.chip)}
+                          >
                           {language === 'ru' ? 'Заполнить пустые из EN' : language === 'zh' ? '用 EN 填充空字段' : 'Fill empty titles from EN'}
                         </button>
                       </div>
 
-                      <label className="mt-4 flex items-center gap-3 text-sm rounded-2xl ds-section-panel-soft p-4">
+                      <label {...stylex.props(uiStyles.softPanel)} className="mt-4 flex items-center gap-3 text-sm p-4">
                         <input
                           type="checkbox"
                           checked={editDraft.active}
@@ -1280,7 +1280,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                     )}
                     <button
                       type="button"
-                      className="btn-secondary px-5 py-3 w-full sm:w-auto"
+                      {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}
                       onClick={closeEditor}
                       disabled={updateSchedule.isPending || createSchedule.isPending}
                     >
@@ -1288,7 +1288,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                     </button>
                     <button
                       type="button"
-                      className="btn-primary px-5 py-3 w-full sm:w-auto"
+                      {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}
                       onClick={() => void saveScheduleEdit()}
                       disabled={updateSchedule.isPending || createSchedule.isPending || hasDraftErrors}
                     >
