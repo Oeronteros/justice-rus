@@ -1285,7 +1285,7 @@ body {
     transform: translateY(8px);
   }
   100% {
-    opacity: 0.55;
+    opacity: 0.28;
     transform: translateY(0);
   }
 }
@@ -1296,11 +1296,11 @@ body {
     transform: translate(calc(-50% + var(--seal-shift-x)), calc(-50% + var(--seal-shift-y))) scale(0.7) rotate(0deg);
   }
   60% {
-    opacity: 0.85;
+    opacity: 0.42;
     transform: translate(calc(-50% + var(--seal-shift-x)), calc(-50% + var(--seal-shift-y))) scale(1.05) rotate(var(--seal-rotate));
   }
   100% {
-    opacity: 0.45;
+    opacity: 0.2;
     transform: translate(calc(-50% + var(--seal-shift-x)), calc(-50% + var(--seal-shift-y))) scale(1) rotate(var(--seal-rotate));
   }
 }
@@ -1570,12 +1570,12 @@ body {
     position: relative;
     overflow: hidden;
     border-radius: 24px;
-    border: 1px solid rgba(164, 205, 223, 0.42);
+    border: 1px solid rgba(184, 160, 111, 0.34);
     background:
-      radial-gradient(circle at 12% 18%, rgba(171, 219, 244, 0.18), transparent 32%),
-      radial-gradient(circle at 88% 22%, rgba(92, 160, 196, 0.18), transparent 34%),
-      linear-gradient(135deg, rgba(12, 22, 31, 0.96), rgba(8, 14, 21, 0.98));
-    box-shadow: inset 0 0 0 1px rgba(207, 230, 245, 0.06), 0 24px 48px rgba(4, 8, 12, 0.55);
+      radial-gradient(circle at 12% 18%, rgba(184, 160, 111, 0.12), transparent 32%),
+      radial-gradient(circle at 88% 22%, rgba(139, 64, 58, 0.12), transparent 34%),
+      linear-gradient(135deg, rgba(14, 22, 31, 0.94), rgba(10, 16, 24, 0.96));
+    box-shadow: inset 0 0 0 1px rgba(207, 230, 245, 0.04), 0 16px 32px rgba(4, 8, 12, 0.42);
     min-height: 164px;
   }
 
@@ -1620,8 +1620,8 @@ body {
     width: 10px;
     height: 10px;
     border-radius: 999px;
-    background: #aee6ff;
-    box-shadow: 0 0 16px rgba(174, 230, 255, 0.9);
+    background: #d5be92;
+    box-shadow: 0 0 10px rgba(213, 190, 146, 0.5);
     animation: matchmakingDotPulse 1.4s ease-in-out infinite;
   }
 
@@ -1631,7 +1631,7 @@ body {
     line-height: 0.9;
     letter-spacing: 0.08em;
     color: #f3fbff;
-    text-shadow: 0 0 28px rgba(151, 215, 245, 0.3);
+    text-shadow: 0 0 12px rgba(213, 190, 146, 0.22);
   }
 
   .matchmaking-banner__meta {

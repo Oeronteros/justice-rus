@@ -19,10 +19,10 @@ export const sectionHeroStyles = stylex.create({
       '@media (min-width: 640px)': '40px',
     },
     borderRadius: radius.lg,
-    border: `1px solid ${colors.accentSoft}`,
+    border: `1px solid ${colors.accentMuted}`,
     background:
-      'radial-gradient(circle at 10% 10%, rgba(169, 71, 63, 0.22), transparent 42%), radial-gradient(circle at 84% 18%, rgba(130, 185, 173, 0.14), transparent 40%), linear-gradient(145deg, rgba(20, 22, 28, 0.92), rgba(11, 13, 17, 0.92))',
-    boxShadow: `0 20px 40px ${colors.shadowStrong}`,
+      'radial-gradient(circle at 10% 10%, rgba(139, 64, 58, 0.12), transparent 42%), radial-gradient(circle at 84% 18%, rgba(184, 160, 111, 0.1), transparent 40%), linear-gradient(145deg, rgba(20, 22, 28, 0.92), rgba(11, 13, 17, 0.92))',
+    boxShadow: `0 14px 28px ${colors.shadowStrong}`,
     overflow: 'hidden',
     gridTemplateColumns: {
       default: 'minmax(0, 1fr)',
@@ -37,7 +37,7 @@ export const sectionHeroStyles = stylex.create({
       position: 'absolute',
       inset: 0,
       background:
-        'linear-gradient(115deg, rgba(237, 220, 191, 0.1), transparent 28%, transparent 70%, rgba(130, 185, 173, 0.1))',
+        'linear-gradient(115deg, rgba(237, 220, 191, 0.06), transparent 28%, transparent 70%, rgba(184, 160, 111, 0.06))',
       pointerEvents: 'none',
     },
     '::after': {
@@ -45,7 +45,7 @@ export const sectionHeroStyles = stylex.create({
       position: 'absolute',
       inset: 'auto -12% -55% -12%',
       height: '70%',
-      background: 'radial-gradient(circle at 50% 0%, rgba(130, 185, 173, 0.2), transparent 70%)',
+      background: 'radial-gradient(circle at 50% 0%, rgba(184, 160, 111, 0.12), transparent 70%)',
       pointerEvents: 'none',
     },
   },
