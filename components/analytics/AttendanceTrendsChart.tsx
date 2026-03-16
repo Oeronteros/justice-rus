@@ -2,6 +2,9 @@
 
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { AttendanceTrend } from '@/lib/schemas/analytics';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { analyticsStyles } from './Analytics.stylex';
 
 interface AttendanceTrendsChartProps {
   data: AttendanceTrend[];
@@ -11,10 +14,10 @@ interface AttendanceTrendsChartProps {
 export function AttendanceTrendsChart({ data, daysToShow = 14 }: AttendanceTrendsChartProps) {
   if (!data || data.length === 0) {
     return (
-      <div className="card section-card p-6">
-        <div className="text-center text-gray-400 py-8">
+      <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, analyticsStyles.card)}>
+        <div {...stylex.props(analyticsStyles.empty)}>
           <WuxiaIcon name="schedule" className="w-12 h-12 mx-auto mb-3 opacity-30" />
-          <p className="text-sm">Нет данных о трендах</p>
+          <p {...stylex.props(analyticsStyles.emptyText)}>Нет данных о трендах</p>
         </div>
       </div>
     );
@@ -30,12 +33,10 @@ export function AttendanceTrendsChart({ data, daysToShow = 14 }: AttendanceTrend
     : 0;
 
   return (
-    <div className="card section-card p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-[#bcd6e5]">Тренды посещаемости</h3>
-        <div className={`flex items-center gap-1 text-xs font-medium ${
-          trend > 0 ? 'text-[#2d5a3f]' : trend < 0 ? 'text-[#5a2d2d]' : 'text-gray-400'
-        }`}>
+    <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, analyticsStyles.card)}>
+      <div {...stylex.props(analyticsStyles.header)}>
+        <h3 {...stylex.props(analyticsStyles.title)}>Тренды посещаемости</h3>
+        <div {...stylex.props(analyticsStyles.subtleRow, trend > 0 ? analyticsStyles.summaryValueGood : trend < 0 ? analyticsStyles.summaryValueBad : analyticsStyles.meta)}>
           <WuxiaIcon
             name={trend > 0 ? 'redo' : trend < 0 ? 'refresh' : 'spinner'}
             className="w-3.5 h-3.5"
@@ -45,9 +46,9 @@ export function AttendanceTrendsChart({ data, daysToShow = 14 }: AttendanceTrend
       </div>
 
       {/* Chart */}
-      <div className="relative h-48 mb-4">
+      <div {...stylex.props(analyticsStyles.chartBox)}>
         {/* Grid Lines */}
-        <div className="absolute inset-0 flex flex-col justify-between text-xs text-gray-500">
+        <div {...stylex.props(analyticsStyles.chartGrid)}>
           {[100, 75, 50, 25, 0].map((level) => (
             <div key={level} className="flex items-center gap-2">
               <span className="w-8 text-right">{level}%</span>
@@ -57,7 +58,7 @@ export function AttendanceTrendsChart({ data, daysToShow = 14 }: AttendanceTrend
         </div>
 
         {/* Bars */}
-        <div className="absolute inset-0 left-10 right-0 flex items-end justify-between gap-1 px-2">
+        <div {...stylex.props(analyticsStyles.chartBars)}>
           {recentData.map((day, idx) => {
             const height = (day.attendanceRate / maxAttendance) * 100;
             const isActive = day.attendanceRate >= 60;
@@ -68,20 +69,9 @@ export function AttendanceTrendsChart({ data, daysToShow = 14 }: AttendanceTrend
                 className="flex-1 flex flex-col justify-end group relative"
               >
                 <div
-                  className={`w-full rounded-t transition-all ${
-                    isActive
-                      ? 'bg-gradient-to-t from-[#2d5a3f] to-[#6fb98f]'
-                      : 'bg-gradient-to-t from-[#5a2d2d] to-[#b96f6f]'
-                  }`}
+                  {...stylex.props(analyticsStyles.chartBar, isActive ? analyticsStyles.chartBarGood : analyticsStyles.chartBarBad)}
                   style={{ height: `${height}%` }}
                 />
-                
-                {/* Tooltip */}
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-[#101a23] border border-[#2a3c4c] rounded text-xs text-[#e6eff5] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-                  <div className="font-medium">{day.attendanceRate}%</div>
-                  <div className="text-gray-400">{day.activeMembers}/{day.totalMembers} участников</div>
-                  <div className="text-gray-400">{day.eventsCount} событий</div>
-                </div>
               </div>
             );
           })}
@@ -89,7 +79,7 @@ export function AttendanceTrendsChart({ data, daysToShow = 14 }: AttendanceTrend
       </div>
 
       {/* X-Axis Labels */}
-      <div className="flex justify-between gap-1 px-2 mt-2 text-xs text-gray-400">
+      <div {...stylex.props(analyticsStyles.xAxis)}>
         {recentData.map((day, idx) => {
           const date = new Date(day.date);
           const showLabel = idx % Math.ceil(recentData.length / 7) === 0;
@@ -105,28 +95,26 @@ export function AttendanceTrendsChart({ data, daysToShow = 14 }: AttendanceTrend
       </div>
 
       {/* Summary Stats */}
-      <div className="mt-4 pt-4 border-t border-[#2a3c4c]/60 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+      <div {...stylex.props(analyticsStyles.summaryGrid4)}>
         <div>
-          <div className="text-gray-400 mb-1">Средняя посещаемость</div>
-          <div className="text-lg font-semibold text-[#e6eff5]">{averageRate}%</div>
+          <div {...stylex.props(analyticsStyles.summaryLabel)}>Средняя посещаемость</div>
+          <div {...stylex.props(analyticsStyles.summaryValue)}>{averageRate}%</div>
         </div>
         <div>
-          <div className="text-gray-400 mb-1">Пик активности</div>
-          <div className="text-sm font-medium text-[#2d5a3f]">
+          <div {...stylex.props(analyticsStyles.summaryLabel)}>Пик активности</div>
+          <div {...stylex.props(analyticsStyles.summaryValueGood)}>
             {Math.round(Math.max(...recentData.map(d => d.attendanceRate)))}%
           </div>
         </div>
         <div>
-          <div className="text-gray-400 mb-1">Спад активности</div>
-          <div className="text-sm font-medium text-[#5a2d2d]">
+          <div {...stylex.props(analyticsStyles.summaryLabel)}>Спад активности</div>
+          <div {...stylex.props(analyticsStyles.summaryValueBad)}>
             {Math.round(Math.min(...recentData.map(d => d.attendanceRate)))}%
           </div>
         </div>
         <div>
-          <div className="text-gray-400 mb-1">Тренд</div>
-          <div className={`text-lg font-semibold ${
-            trend > 0 ? 'text-[#2d5a3f]' : trend < 0 ? 'text-[#5a2d2d]' : 'text-gray-400'
-          }`}>
+          <div {...stylex.props(analyticsStyles.summaryLabel)}>Тренд</div>
+          <div {...stylex.props(analyticsStyles.summaryValue, trend > 0 ? analyticsStyles.summaryValueGood : trend < 0 ? analyticsStyles.summaryValueBad : analyticsStyles.meta)}>
             {trend > 0 ? '↗' : trend < 0 ? '↘' : '→'} {trend > 0 ? 'Рост' : trend < 0 ? 'Спад' : 'Стабильно'}
           </div>
         </div>

@@ -2,18 +2,21 @@
 
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { AttendanceHeatmap } from '@/lib/schemas/analytics';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { analyticsStyles } from './Analytics.stylex';
 
 interface AttendanceHeatmapProps {
   data: AttendanceHeatmap[];
   weeksToShow?: number;
 }
 
-function getAttendanceColor(rate: number): string {
-  if (rate >= 80) return 'bg-[#2d5a3f]/90 border-[#2d5a3f]';
-  if (rate >= 60) return 'bg-[#5a4a2d]/90 border-[#5a4a2d]';
-  if (rate >= 40) return 'bg-[#5a3a2d]/90 border-[#5a3a2d]';
-  if (rate >= 20) return 'bg-[#5a2d2d]/90 border-[#5a2d2d]';
-  return 'bg-[#2d3a5a]/90 border-[#2d3a5a]';
+function getAttendanceTone(rate: number): stylex.StyleXStyles {
+  if (rate >= 80) return analyticsStyles.heatmapCellExcellent;
+  if (rate >= 60) return analyticsStyles.heatmapCellGood;
+  if (rate >= 40) return analyticsStyles.heatmapCellMid;
+  if (rate >= 20) return analyticsStyles.heatmapCellLow;
+  return analyticsStyles.heatmapCellEmpty;
 }
 
 function getAttendanceLabel(rate: number): string {
@@ -27,10 +30,10 @@ function getAttendanceLabel(rate: number): string {
 export function AttendanceHeatmapDisplay({ data, weeksToShow = 8 }: AttendanceHeatmapProps) {
   if (!data || data.length === 0) {
     return (
-      <div className="card section-card p-6">
-        <div className="text-center text-gray-400 py-8">
+      <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, analyticsStyles.card)}>
+        <div {...stylex.props(analyticsStyles.empty)}>
           <WuxiaIcon name="calendar" className="w-12 h-12 mx-auto mb-3 opacity-30" />
-          <p className="text-sm">Нет данных о посещаемости</p>
+          <p {...stylex.props(analyticsStyles.emptyText)}>Нет данных о посещаемости</p>
         </div>
       </div>
     );
@@ -39,46 +42,44 @@ export function AttendanceHeatmapDisplay({ data, weeksToShow = 8 }: AttendanceHe
   const sortedData = [...data].sort((a, b) => b.averageAttendance - a.averageAttendance);
 
   return (
-    <div className="card section-card p-6 overflow-hidden">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-[#bcd6e5]">Heatmap посещаемости</h3>
-        <div className="flex items-center gap-2 text-xs">
-          <span className="text-gray-400">Последние {weeksToShow} недель</span>
+    <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, analyticsStyles.card)}>
+      <div {...stylex.props(analyticsStyles.header)}>
+        <h3 {...stylex.props(analyticsStyles.title)}>Heatmap посещаемости</h3>
+        <div {...stylex.props(analyticsStyles.meta)}>Последние {weeksToShow} недель</div>
         </div>
-      </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-3 mb-4 text-xs">
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-[#2d5a3f]" />
-          <span className="text-gray-400">80%+</span>
+      <div {...stylex.props(analyticsStyles.legend)}>
+        <div {...stylex.props(analyticsStyles.legendItem)}>
+          <div {...stylex.props(analyticsStyles.swatch, analyticsStyles.heatmapCellExcellent)} />
+          <span>80%+</span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-[#5a4a2d]" />
-          <span className="text-gray-400">60-79%</span>
+        <div {...stylex.props(analyticsStyles.legendItem)}>
+          <div {...stylex.props(analyticsStyles.swatch, analyticsStyles.heatmapCellGood)} />
+          <span>60-79%</span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-[#5a3a2d]" />
-          <span className="text-gray-400">40-59%</span>
+        <div {...stylex.props(analyticsStyles.legendItem)}>
+          <div {...stylex.props(analyticsStyles.swatch, analyticsStyles.heatmapCellMid)} />
+          <span>40-59%</span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-[#5a2d2d]" />
-          <span className="text-gray-400">20-39%</span>
+        <div {...stylex.props(analyticsStyles.legendItem)}>
+          <div {...stylex.props(analyticsStyles.swatch, analyticsStyles.heatmapCellLow)} />
+          <span>20-39%</span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-[#2d3a5a]" />
-          <span className="text-gray-400">&lt;20%</span>
+        <div {...stylex.props(analyticsStyles.legendItem)}>
+          <div {...stylex.props(analyticsStyles.swatch, analyticsStyles.heatmapCellEmpty)} />
+          <span>&lt;20%</span>
         </div>
       </div>
 
       {/* Heatmap Grid */}
-      <div className="overflow-x-auto">
-        <div className="min-w-max">
+      <div {...stylex.props(analyticsStyles.heatmapWrap)}>
+        <div {...stylex.props(analyticsStyles.heatmapInner)}>
           {/* Header - Weeks */}
-          <div className="grid grid-cols-[120px_repeat(8,1fr)] gap-1 mb-2">
-            <div className="text-xs text-gray-400 font-medium">Участник</div>
+          <div {...stylex.props(analyticsStyles.heatmapHeader)}>
+            <div style={{ fontWeight: 600 }}>Участник</div>
             {data[0]?.weeks.slice(-weeksToShow).map((week, idx) => (
-              <div key={idx} className="text-xs text-gray-400 text-center">
+              <div key={idx} style={{ textAlign: 'center' }}>
                 {new Date(week.weekStart).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
               </div>
             ))}
@@ -88,28 +89,23 @@ export function AttendanceHeatmapDisplay({ data, weeksToShow = 8 }: AttendanceHe
           {sortedData.map((member) => (
             <div
               key={member.memberId}
-              className="grid grid-cols-[120px_repeat(8,1fr)] gap-1 mb-2 items-center"
+              {...stylex.props(analyticsStyles.heatmapRow)}
             >
               {/* Member Info */}
-              <div className="text-xs text-[#e6eff5] truncate pr-2" title={member.memberName}>
-                <div className="font-medium truncate">{member.memberName}</div>
-                <div className="text-[10px] text-gray-400 truncate">{member.role} · {member.className}</div>
+              <div style={{ fontSize: 12, color: '#e6eff5', paddingRight: 8, overflow: 'hidden' }} title={member.memberName}>
+                <div style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{member.memberName}</div>
+                <div style={{ fontSize: 10, color: 'rgba(156,163,175,0.95)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{member.role} · {member.className}</div>
               </div>
 
               {/* Week Cells */}
               {member.weeks.slice(-weeksToShow).map((week, idx) => (
                 <div
                   key={idx}
-                  className={`h-8 rounded border ${getAttendanceColor(week.attendanceRate)} relative group cursor-help`}
+                  {...stylex.props(analyticsStyles.heatmapCellBase, getAttendanceTone(week.attendanceRate))}
                   title={`${getAttendanceLabel(week.attendanceRate)}: ${week.eventsAttended}/${week.totalEvents}`}
                 >
-                  <div className="absolute inset-0 flex items-center justify-center text-[10px] font-medium text-white/90">
+                  <div {...stylex.props(analyticsStyles.heatmapPct)}>
                     {week.attendanceRate}%
-                  </div>
-                  
-                  {/* Tooltip */}
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-[#101a23] border border-[#2a3c4c] rounded text-xs text-[#e6eff5] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-                    {week.eventsAttended}/{week.totalEvents} событий
                   </div>
                 </div>
               ))}
@@ -119,26 +115,26 @@ export function AttendanceHeatmapDisplay({ data, weeksToShow = 8 }: AttendanceHe
       </div>
 
       {/* Summary Stats */}
-      <div className="mt-4 pt-4 border-t border-[#2a3c4c]/60 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+      <div {...stylex.props(analyticsStyles.summaryGrid4)}>
         <div>
-          <div className="text-gray-400 mb-1">Средняя посещаемость</div>
-          <div className="text-lg font-semibold text-[#e6eff5]">
+          <div {...stylex.props(analyticsStyles.summaryLabel)}>Средняя посещаемость</div>
+          <div {...stylex.props(analyticsStyles.summaryValue)}>
             {Math.round(data.reduce((sum, m) => sum + m.averageAttendance, 0) / data.length)}%
           </div>
         </div>
         <div>
-          <div className="text-gray-400 mb-1">Лучший участник</div>
-          <div className="text-sm font-medium text-[#2d5a3f] truncate">
+          <div {...stylex.props(analyticsStyles.summaryLabel)}>Лучший участник</div>
+          <div {...stylex.props(analyticsStyles.summaryValueGood)}>
             {sortedData[0]?.memberName || '—'}
           </div>
         </div>
         <div>
-          <div className="text-gray-400 mb-1">Всего участников</div>
-          <div className="text-lg font-semibold text-[#e6eff5]">{data.length}</div>
+          <div {...stylex.props(analyticsStyles.summaryLabel)}>Всего участников</div>
+          <div {...stylex.props(analyticsStyles.summaryValue)}>{data.length}</div>
         </div>
         <div>
-          <div className="text-gray-400 mb-1">Недель в анализе</div>
-          <div className="text-lg font-semibold text-[#e6eff5]">{weeksToShow}</div>
+          <div {...stylex.props(analyticsStyles.summaryLabel)}>Недель в анализе</div>
+          <div {...stylex.props(analyticsStyles.summaryValue)}>{weeksToShow}</div>
         </div>
       </div>
     </div>
