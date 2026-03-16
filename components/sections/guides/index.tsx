@@ -11,6 +11,8 @@ import { normalizeGuideTitle } from '@/lib/guides/obsidian';
 import type { User } from '@/lib/schemas/auth';
 import { useHeader } from '@/lib/ui/headerContext';
 import { canModerateContent } from '@/lib/authz';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
 
 interface GuidesSectionProps {
   user: User;
@@ -107,9 +109,9 @@ function GuidesSectionContent({ user }: GuidesSectionProps) {
   }, [createOpen, hideHeader, openGuideId, showHeader]);
 
   return (
-    <section className="section-shell py-10 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="section-stack-lg">
+    <section {...stylex.props(uiStyles.sectionShell)}>
+      <div {...stylex.props(uiStyles.sectionContainer)}>
+        <div {...stylex.props(uiStyles.stackLg)}>
           <GuidesList
             onGuideClick={handleGuideClick}
             onCreateClick={handleCreateClick}

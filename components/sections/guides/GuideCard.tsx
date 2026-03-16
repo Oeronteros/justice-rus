@@ -3,6 +3,9 @@
 import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { GuideSummary } from '@/lib/schemas/guide';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { guidesStyles } from './Guides.stylex';
 
 interface GuideCardProps {
   guide: GuideSummary;
@@ -14,32 +17,32 @@ export function GuideCard({ guide, onClick }: GuideCardProps) {
     <button
       type="button"
       onClick={onClick}
-      className="card section-card ds-section-panel p-4 sm:p-5 text-left hover:transform hover:-translate-y-1 transition-all duration-300"
+      {...stylex.props(uiStyles.card, uiStyles.sectionCard, guidesStyles.guideCard)}
     >
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-        <span className="ds-kicker">
+      <div {...stylex.props(guidesStyles.cardTop)}>
+        <span {...stylex.props(uiStyles.badge, uiStyles.badgeMuted)}>
           <WuxiaIcon name="tag" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
           {guide.category}
         </span>
-        <span className="text-xs text-gray-400">{formatDate(guide.updatedAt)}</span>
+        <span style={{ fontSize: 12, color: 'rgba(156,163,175,0.95)' }}>{formatDate(guide.updatedAt)}</span>
       </div>
 
-      <h3 className="text-lg font-bold font-orbitron mb-3 text-[#e6eff5] leading-snug min-h-[3.1rem] sm:min-h-[3.5rem] tracking-[0.01em]">
+      <h3 {...stylex.props(guidesStyles.cardTitle)}>
         {guide.title}
       </h3>
 
-      <div className="flex items-center justify-between gap-3 pt-3 border-t border-gray-700/50 text-sm text-gray-400">
-        <span className="inline-flex items-center gap-2 rounded-full bg-[#0f1720]/70 px-3 py-1 text-xs text-[#c5d9e5]">
+      <div {...stylex.props(guidesStyles.cardMeta)}>
+        <span {...stylex.props(guidesStyles.authorPill)}>
           <WuxiaIcon name="user" className="w-4 h-4" />
           {guide.author}
         </span>
 
-        <span className="inline-flex items-center gap-3 text-xs">
-          <span className="inline-flex items-center gap-1 rounded-full bg-[#0f1720]/70 px-2.5 py-1">
+        <span {...stylex.props(guidesStyles.statPills)}>
+          <span {...stylex.props(guidesStyles.statPill)}>
             <WuxiaIcon name="seal" className="w-4 h-4 text-[#8fb9cc]" />
             {guide.votes}
           </span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-[#0f1720]/70 px-2.5 py-1">
+          <span {...stylex.props(guidesStyles.statPill)}>
             <WuxiaIcon name="comment" className="w-4 h-4" />
             {guide.commentsCount}
           </span>

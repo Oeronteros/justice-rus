@@ -5,6 +5,9 @@ import { CommentForm } from '@/components/forms/CommentForm';
 import { useAddComment } from '@/lib/guides/hooks';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { GuideComment, CreateCommentDto } from '@/lib/schemas/guide';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { guidesStyles } from './Guides.stylex';
 
 interface GuideCommentsProps {
   guideId: string;
@@ -26,34 +29,34 @@ export function GuideComments({
   };
 
   return (
-    <div className="mt-8 section-stack-md">
-      <div className="flex items-center justify-between gap-3">
-        <h4 className="text-lg font-bold text-[#e6eff5] inline-flex items-center gap-2">
+    <div {...stylex.props(guidesStyles.commentsRoot)}>
+      <div {...stylex.props(guidesStyles.commentsHeader)}>
+        <h4 {...stylex.props(guidesStyles.commentsTitle)}>
           <WuxiaIcon name="comment" className="w-5 h-5 text-[#8fb9cc]" />
           Комментарии
         </h4>
-        <span className="ui-badge ui-badge-muted">{comments.length}</span>
+        <span {...stylex.props(uiStyles.badge, uiStyles.badgeMuted)}>{comments.length}</span>
       </div>
 
-      <div className="space-y-4">
+      <div {...stylex.props(guidesStyles.commentsList)}>
         {comments.length === 0 ? (
-          <div className="card section-card p-5 text-sm text-[#9fb5c3]">
+          <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, guidesStyles.commentCard)}>
             Пока тишина. Оставь первый комментарий.
           </div>
         ) : (
           comments.map((c) => (
-            <div key={c.id} className="card section-card p-5">
-              <div className="flex items-center justify-between text-sm text-gray-400 mb-2">
-                <span className="inline-flex items-center gap-2">
+            <div key={c.id} {...stylex.props(uiStyles.card, uiStyles.sectionCard, guidesStyles.commentCard)}>
+              <div {...stylex.props(guidesStyles.commentTop)}>
+                <span {...stylex.props(guidesStyles.commentAuthor)}>
                   <WuxiaIcon name="user" className="w-4 h-4" />
                   {c.author}
                 </span>
-                <span className="inline-flex items-center gap-2">
+                <span {...stylex.props(guidesStyles.commentAuthor)}>
                   <WuxiaIcon name="calendar" className="w-4 h-4" />
                   {formatDate(c.createdAt)}
                 </span>
               </div>
-              <div className="text-gray-300 whitespace-pre-wrap leading-relaxed">
+              <div {...stylex.props(guidesStyles.commentBody)}>
                 {c.comment}
               </div>
             </div>
@@ -61,14 +64,14 @@ export function GuideComments({
         )}
       </div>
 
-      <div className="mt-6">
+      <div>
         <CommentForm
           onSubmit={handleSubmit}
           isSubmitting={addComment.isPending}
         />
         
         {canModerate && userRole && (
-          <div className="mt-4 text-xs text-gray-500">
+          <div {...stylex.props(guidesStyles.moderatorHint)}>
             Роль: <span className="text-gray-300">{userRole}</span> (можно будет добавить модерацию/редактирование).
           </div>
         )}

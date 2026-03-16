@@ -15,6 +15,11 @@ import { SectionHero } from '@/components/shared/SectionHero';
 import { hasRoleAtLeast } from '@/lib/authz';
 import type { Schedule as ScheduleItem } from '@/lib/schemas/schedule';
 import type { Rsvp } from '@/lib/schemas/rsvp';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { mergeStylexProps } from '@/lib/stylex/utils';
+import { opsStyles } from '@/components/sections/ops/Ops.stylex';
+import { scheduleStyles } from './Schedule.stylex';
 
 interface ScheduleSectionProps {
   user: User;
@@ -695,7 +700,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
         title={language === 'ru' ? 'Расписание недоступно' : language === 'zh' ? '日程暂时不可用' : 'Schedule is unavailable'}
         description={error instanceof Error ? error.message : language === 'ru' ? 'Не удалось загрузить' : language === 'zh' ? '加载失败' : 'Failed to load'}
         action={
-          <button onClick={() => refetch()} className="btn-primary">
+          <button onClick={() => refetch()} {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>
             <WuxiaIcon name="refresh" className="w-4 h-4 mr-2" />
             {language === 'ru' ? 'Повторить' : language === 'zh' ? '重试' : 'Retry'}
           </button>
@@ -706,9 +711,9 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
   }
 
   return (
-    <section className="section-shell py-8 sm:py-10">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="section-stack-lg">
+    <section {...stylex.props(uiStyles.sectionShell)}>
+      <div {...stylex.props(uiStyles.sectionContainer, scheduleStyles.shell)}>
+        <div {...stylex.props(uiStyles.stackLg)}>
         <SectionHero
           icon={<WuxiaIcon name="schedule" className="w-5 h-5" />}
           title={language === 'ru' ? `Расписание — ${selectedDay.labels.ru}` : language === 'zh' ? `日程 - ${selectedDay.labels.zh}` : `Schedule - ${selectedDay.labels.en}`}
@@ -719,22 +724,24 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
           ]}
           actions={
             <>
-              <div className="ds-toolbar w-full sm:w-auto">
+              <div {...stylex.props(scheduleStyles.navSurface)}>
                 <button
                   type="button"
-                  className="dc-icon-btn h-10 w-10 rounded-lg text-[#8fb9cc]"
+                  {...stylex.props(uiStyles.iconButton)}
+                  style={{ width: 40, height: 40, minWidth: 40, color: '#8fb9cc' }}
                   onClick={() => setSelectedDayIndex((current) => (current + weekdays.length - 1) % weekdays.length)}
                   title={language === 'ru' ? 'Предыдущий день' : language === 'zh' ? '上一天' : 'Previous day'}
                   aria-label={language === 'ru' ? 'Предыдущий день' : language === 'zh' ? '上一天' : 'Previous day'}
                 >
                   <span aria-hidden="true" className="text-lg leading-none">&lt;</span>
                 </button>
-                <div className="min-w-0 flex-1 px-2 text-center text-sm font-semibold text-[#e6eff5]">
+                <div {...stylex.props(scheduleStyles.navLabel)}>
                   {selectedDay.labels[language]}
                 </div>
                 <button
                   type="button"
-                  className="dc-icon-btn h-10 w-10 rounded-lg text-[#8fb9cc]"
+                  {...stylex.props(uiStyles.iconButton)}
+                  style={{ width: 40, height: 40, minWidth: 40, color: '#8fb9cc' }}
                   onClick={() => setSelectedDayIndex((current) => (current + 1) % weekdays.length)}
                   title={language === 'ru' ? 'Следующий день' : language === 'zh' ? '下一天' : 'Next day'}
                   aria-label={language === 'ru' ? 'Следующий день' : language === 'zh' ? '下一天' : 'Next day'}
@@ -746,7 +753,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                 <button
                   type="button"
                   onClick={openCreator}
-                  className="btn-secondary w-full sm:w-auto"
+                  {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}
                 >
                   <WuxiaIcon name="plus" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
                   {language === 'ru' ? 'Добавить событие' : language === 'zh' ? '添加活动' : 'Add event'}
@@ -754,7 +761,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
               )}
               <button
                 onClick={() => refetch()}
-                className="dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0"
+                {...stylex.props(uiStyles.iconButton)}
                 title={language === 'ru' ? 'Обновить' : language === 'zh' ? '刷新' : 'Refresh'}
                 aria-label={language === 'ru' ? 'Обновить расписание' : language === 'zh' ? '刷新日程' : 'Refresh schedule'}
               >
@@ -765,13 +772,13 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
         />
 
         {scheduleNotice && (
-          <div className="ds-notice mt-4 mb-6">
+          <div {...stylex.props(uiStyles.notice, uiStyles.noticeSuccess)}>
             <WuxiaIcon name="checkCircle" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
             {scheduleNotice}
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">
+        <div {...stylex.props(scheduleStyles.weekGrid)}>
             {weekdays.map((day, index) => {
               const dayEventsCount = schedules.filter((item) => {
                 const itemDayIndex = getScheduleDayIndex(item);
@@ -785,21 +792,17 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                   key={day.key}
                   type="button"
                   onClick={() => setSelectedDayIndex(index)}
-                  className={`rounded-2xl border px-3.5 py-3 text-left transition-all ${
-                    isActive
-                      ? 'border-[#a9d1e4]/65 bg-[linear-gradient(135deg,rgba(37,79,103,0.95),rgba(18,36,48,0.98))] shadow-[0_18px_30px_rgba(5,10,15,0.42)]'
-                      : 'border-[#223544]/70 bg-[#0c151d]/85 hover:border-[#4b6f84]/80 hover:bg-[#101d27]/95'
-                  }`}
+                  {...stylex.props(scheduleStyles.weekDayBtn, isActive && scheduleStyles.weekDayBtnActive)}
                 >
-                  <div className="flex items-center justify-between gap-3">
-                    <span className={`text-sm font-semibold ${isActive ? 'text-[#f3fbff]' : 'text-[#d3e3ec]'}`}>{day.labels[language]}</span>
+                  <div {...stylex.props(scheduleStyles.weekDayHead)}>
+                    <span {...stylex.props(scheduleStyles.weekDayLabel, isActive && scheduleStyles.weekDayLabelActive)}>{day.labels[language]}</span>
                     {isToday && (
-                      <span className="rounded-full border border-emerald-400/35 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
+                      <span {...stylex.props(scheduleStyles.todayPill)}>
                         {language === 'ru' ? 'Сегодня' : language === 'zh' ? '今天' : 'Today'}
                       </span>
                     )}
                   </div>
-                  <div className="mt-2 text-xs text-[#8aa4b3]">
+                  <div {...stylex.props(scheduleStyles.weekDayMeta)}>
                     {dayEventsCount} {language === 'ru' ? 'событий' : language === 'zh' ? '活动' : 'events'}
                   </div>
                 </button>
@@ -811,26 +814,26 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
         {(currentEvent || nextEvent) && (
           <div>
             {currentEvent ? (
-              <div className="card section-card ds-section-panel rounded-2xl border-green-700/50 bg-gradient-to-r from-green-900/30 to-green-800/20 p-4 sm:p-5">
-                <div className="flex items-center gap-2 text-green-400 text-sm font-medium mb-2">
+              <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, scheduleStyles.bannerCard, scheduleStyles.currentBanner)}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#4ade80', fontSize: 14, fontWeight: 500, marginBottom: 8 }}>
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                   {language === 'ru' ? 'Сейчас идёт' : language === 'zh' ? '进行中' : 'Happening now'}
                 </div>
-                <div className="text-white font-semibold text-lg">{getDisplayTitle(currentEvent, language)}</div>
-                <div className="text-gray-400 text-sm mt-1">
+                <div {...stylex.props(scheduleStyles.bannerTitle)}>{getDisplayTitle(currentEvent, language)}</div>
+                <div {...stylex.props(scheduleStyles.bannerMeta)}>
                   {getDisplayTime(currentEvent)} • {currentEvent.group || (language === 'ru' ? 'Общее' : language === 'zh' ? '综合' : 'General')}
                 </div>
               </div>
             ) : nextEvent && nextEvent.parsedTime ? (
-              <div className="card section-card ds-section-panel rounded-2xl border-[#8fb9cc]/30 bg-gradient-to-r from-[#1a2a3a] to-[#1a1a2a] p-4 sm:p-5">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, scheduleStyles.bannerCard, scheduleStyles.nextBanner)}>
+                <div {...stylex.props(opsStyles.toolbar)}>
                   <div>
-                    <div className="flex items-center gap-2 text-[#8fb9cc] text-sm font-medium mb-2">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#8fb9cc', fontSize: 14, fontWeight: 500, marginBottom: 8 }}>
                       <WuxiaIcon name="schedule" className="w-4 h-4" />
                       {language === 'ru' ? 'Следующее событие' : language === 'zh' ? '下一场活动' : 'Next event'}
                     </div>
-                    <div className="text-white font-semibold text-lg">{getDisplayTitle(nextEvent, language)}</div>
-                    <div className="text-gray-400 text-sm mt-1">
+                    <div {...stylex.props(scheduleStyles.bannerTitle)}>{getDisplayTitle(nextEvent, language)}</div>
+                    <div {...stylex.props(scheduleStyles.bannerMeta)}>
                       {getDisplayTime(nextEvent)} • {nextEvent.group || (language === 'ru' ? 'Общее' : language === 'zh' ? '综合' : 'General')}
                     </div>
                   </div>
@@ -846,17 +849,17 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
         )}
 
         {selectedSchedules.length === 0 ? (
-          <div className="card section-card ds-section-panel rounded-2xl border-gray-800 p-8 sm:p-12 text-center">
+          <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, scheduleStyles.emptyCard)}>
             <WuxiaIcon name="schedule" className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-lg">
+            <p style={{ color: 'rgba(156,163,175,0.95)', fontSize: '1.125rem' }}>
               {language === 'ru' ? `Нет событий на ${selectedDay.labels.ru.toLowerCase()}` : language === 'zh' ? `${selectedDay.labels.zh}没有活动` : `No events for ${selectedDay.labels.en}`}
             </p>
-            <p className="text-gray-500 text-sm mt-2">
+            <p style={{ color: 'rgba(107,114,128,0.95)', fontSize: '0.875rem', marginTop: 8 }}>
               {language === 'ru' ? 'Отдыхай, воин!' : language === 'zh' ? '好好休息，勇士！' : 'Rest well, warrior!'}
             </p>
           </div>
         ) : (
-          <div className="grid gap-4 sm:gap-5 md:grid-cols-2">
+          <div {...stylex.props(scheduleStyles.groupGrid)}>
             {sortedGroups.map((groupName) => {
               const items = groupedByGroup[groupName];
               const color = getGroupColor(groupName);
@@ -864,23 +867,23 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
               return (
                 <div
                   key={groupName}
-                  className="card section-card ds-section-panel rounded-2xl border-gray-800 overflow-hidden hover:border-gray-700 transition-colors"
+                  {...stylex.props(uiStyles.card, uiStyles.sectionCard, scheduleStyles.groupCard)}
                 >
                   {/* Заголовок группы */}
                   <div 
-                    className="px-4 py-3 border-b border-gray-800"
+                    {...stylex.props(scheduleStyles.groupHeader)}
                     style={{ borderLeftWidth: 3, borderLeftColor: color }}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-white">{groupName}</span>
-                      <span className="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded-full">
+                    <div {...stylex.props(scheduleStyles.groupHeaderRow)}>
+                      <span {...stylex.props(scheduleStyles.groupTitle)}>{groupName}</span>
+                      <span {...stylex.props(scheduleStyles.groupCount)}>
                         {items.length} {language === 'ru' ? 'событий' : language === 'zh' ? '项活动' : 'events'}
                       </span>
                     </div>
                   </div>
-                  
+                   
                   {/* События */}
-                  <div className="divide-y divide-gray-800/50">
+                  <div>
                     {items.map((item, idx) => {
                       const timeLabel = getDisplayTime(item);
                       const time = parseTime(timeLabel);
@@ -892,56 +895,46 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                       return (
                         <div
                           key={item.id || `${groupName}-${timeLabel}-${idx}`}
-                          className={`px-4 py-3.5 flex items-start gap-3 transition-colors ${
-                            isNow 
-                              ? 'bg-green-900/20' 
-                              : isNext 
-                                ? 'bg-[#8fb9cc]/10' 
-                                : isPast 
-                                  ? 'opacity-50' 
-                                  : 'hover:bg-gray-800/30'
-                          }`}
+                          {...stylex.props(idx > 0 && scheduleStyles.eventsDivider, scheduleStyles.eventRow, isNow && scheduleStyles.eventRowNow, isNext && scheduleStyles.eventRowNext, isPast && scheduleStyles.eventRowPast)}
                         >
                           {/* Время */}
-                          <div className={`font-mono text-sm w-[4.5rem] flex-shrink-0 ${
-                            isNow ? 'text-green-400' : isNext ? 'text-[#8fb9cc]' : 'text-gray-500'
-                          }`}>
+                          <div {...stylex.props(scheduleStyles.eventTime, isNow && scheduleStyles.eventTimeNow, isNext && scheduleStyles.eventTimeNext)}>
                             {timeLabel}
                           </div>
-                          
+                           
                           {/* Название */}
-                          <div className="flex-1 min-w-0">
-                            <div className={`${isPast ? 'text-gray-500' : 'text-gray-200'} ${isNow ? 'font-medium' : ''}`}>
+                          <div {...stylex.props(scheduleStyles.eventBody)}>
+                            <div {...stylex.props(scheduleStyles.eventTitle, isPast && scheduleStyles.eventTitlePast, isNow && scheduleStyles.eventTitleNow)}>
                               {getDisplayTitle(item, language)}
                             </div>
-                            <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[#7f97a6]">
+                            <div {...stylex.props(scheduleStyles.eventMetaRow)}>
                               {typeof item.orderIndex === 'number' && (
-                                <span className="rounded-full border border-[#294454]/70 bg-[#0f1c25]/80 px-2 py-0.5">
+                                <span {...stylex.props(scheduleStyles.microPill)}>
                                   #{item.orderIndex}
                                 </span>
                               )}
                               {isRecurring && (
-                                <span className="rounded-full border border-[#35596a]/70 bg-[#10202a]/80 px-2 py-0.5 text-[#9dc5d7]">
+                                <span {...stylex.props(scheduleStyles.microPill, scheduleStyles.recurringPill)}>
                                   {isRecurringScheduleItem(item, 'daily')
                                     ? getRecurrenceLabel('daily', language)
                                     : getRecurrenceLabel('weekly', language)}
                                 </span>
                               )}
                               {item.active === false && (
-                                <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-amber-300">
+                                <span {...stylex.props(scheduleStyles.microPill, scheduleStyles.hiddenPill)}>
                                   {language === 'ru' ? 'Скрыто' : language === 'zh' ? '隐藏' : 'Hidden'}
                                 </span>
                               )}
                             </div>
                             {isNow && (
-                              <span className="inline-flex items-center gap-1 text-xs text-green-400 mt-1">
-                                <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
+                              <span {...stylex.props(scheduleStyles.liveNow)}>
+                                <span {...stylex.props(scheduleStyles.liveDot)} className="animate-pulse"></span>
                                 {language === 'ru' ? 'Сейчас' : language === 'zh' ? '进行中' : 'Now'}
                               </span>
                             )}
 
                             {item.id && (
-                              <div className="mt-3 flex flex-wrap items-center gap-3">
+                              <div {...stylex.props(opsStyles.actionRow)} style={{ marginTop: 12 }}>
                                 <RsvpButton
                                   scheduleId={item.id}
                                   currentStatus={myRsvpsByScheduleId.get(item.id)?.status ?? null}
@@ -956,7 +949,8 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                           {canEditSchedule && item.id && (
                             <button
                               type="button"
-                              className="dc-icon-btn p-2 rounded-lg text-[#8fb9cc]"
+                              {...stylex.props(uiStyles.iconButton)}
+                              style={{ padding: 8, width: 40, height: 40, minWidth: 40, color: '#8fb9cc' }}
                               onClick={() => openEditor(item)}
                               title={language === 'ru' ? 'Редактировать слот' : language === 'zh' ? '编辑活动' : 'Edit slot'}
                               aria-label={language === 'ru' ? 'Редактировать событие' : language === 'zh' ? '编辑活动' : 'Edit event'}
@@ -981,14 +975,14 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
 
         {/* Статистика */}
         {selectedSchedules.length > 0 && (
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-sm text-gray-500">
+          <div {...stylex.props(scheduleStyles.summary)}>
             <span>{selectedDay.labels[language]}</span>
             <span>•</span>
             <span>{selectedSchedules.length} {language === 'ru' ? 'событий' : language === 'zh' ? '活动' : 'events'}</span>
             {nextEvent && nextEvent.parsedTime && (
               <>
                 <span>•</span>
-                <span className="text-[#8fb9cc]">
+                <span {...stylex.props(scheduleStyles.summaryAccent)}>
                   {language === 'ru' ? 'След.' : language === 'zh' ? '下一个' : 'Next'}: {formatCountdown(nextEvent.parsedTime.start - currentMinutes, language)}
                 </span>
               </>

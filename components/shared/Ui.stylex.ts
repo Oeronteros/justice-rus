@@ -154,6 +154,34 @@ export const uiStyles = stylex.create({
     flexWrap: 'wrap',
     gap: '8px',
   },
+  chip: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    minHeight: '36px',
+    padding: '8px 14px',
+    borderRadius: radius.pill,
+    border: '1px solid rgba(73,110,130,0.38)',
+    backgroundColor: 'rgba(11,20,29,0.74)',
+    color: 'rgba(205,225,236,0.94)',
+    fontSize: '0.84rem',
+    fontWeight: 600,
+    cursor: 'pointer',
+    transitionProperty: 'border-color, background-color, transform',
+    transitionDuration: '160ms',
+    ':hover': {
+      borderColor: 'rgba(170,210,230,0.55)',
+      backgroundColor: 'rgba(16,29,39,0.9)',
+      transform: 'translateY(-1px)',
+    },
+  },
+  chipActive: {
+    borderColor: 'rgba(169,209,228,0.65)',
+    background: 'linear-gradient(135deg, rgba(37,79,103,0.95), rgba(18,36,48,0.98))',
+    color: '#f3fbff',
+    boxShadow: '0 18px 30px rgba(5,10,15,0.42)',
+  },
   notice: {
     borderRadius: '16px',
     border: '1px solid rgba(47, 110, 141, 0.4)',
@@ -273,6 +301,12 @@ export const uiStyles = stylex.create({
   },
   modalShellNarrow: {
     maxWidth: '980px',
+  },
+  modalShellFull: {
+    width: '100%',
+    maxWidth: '100%',
+    maxHeight: '100%',
+    borderRadius: 0,
   },
   modalHeader: {
     display: 'flex',

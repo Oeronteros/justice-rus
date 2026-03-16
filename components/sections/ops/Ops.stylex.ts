@@ -142,6 +142,15 @@ export const opsStyles = stylex.create({
     },
     textAlign: 'center',
   },
+  emptyIconSurface: {
+    width: '64px',
+    height: '64px',
+    borderRadius: radius.pill,
+    display: 'grid',
+    placeItems: 'center',
+    border: '1px solid rgba(42,60,76,0.72)',
+    backgroundColor: 'rgba(12,21,29,0.78)',
+  },
   emptyTitle: {
     fontSize: '1.25rem',
     fontWeight: 600,

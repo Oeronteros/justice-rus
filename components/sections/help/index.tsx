@@ -21,6 +21,9 @@ import type { User } from '@/lib/schemas/auth';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { canModerateContent, hasRoleAtLeast } from '@/lib/authz';
 import { useTranslation } from '@/lib/i18n/context';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { opsStyles } from '@/components/sections/ops/Ops.stylex';
 
 interface HelpSectionProps {
   user: User;
@@ -156,9 +159,9 @@ function HelpSectionContent({ user }: HelpSectionProps) {
   };
 
   return (
-    <section className="section-shell py-10 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="section-stack-lg">
+    <section {...stylex.props(uiStyles.sectionShell)}>
+      <div {...stylex.props(uiStyles.sectionContainer)}>
+        <div {...stylex.props(uiStyles.stackLg)}>
           <SectionHero
             icon={<WuxiaIcon name="help" className="w-5 h-5" />}
             title={t.help.title}
@@ -166,22 +169,22 @@ function HelpSectionContent({ user }: HelpSectionProps) {
             chips={['Support Board', 'Open / Closed', 'Officer Review']}
           />
 
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 sm:gap-6 lg:gap-8 items-start">
-            <div className="lg:col-span-2 card section-card ds-section-panel p-5 sm:p-6 lg:p-8">
-            <div className="flex items-center mb-6">
-              <div className="w-12 h-12 bg-gradient-to-r from-[#2f6e8d]/30 to-[#8fb9cc]/30 rounded-full flex items-center justify-center mr-4">
+          <div {...stylex.props(opsStyles.splitGrid)}>
+            <div {...stylex.props(opsStyles.sideCol, uiStyles.card, uiStyles.sectionCard, opsStyles.panel)}>
+            <div {...stylex.props(opsStyles.iconTitleRow)}>
+              <div {...stylex.props(opsStyles.iconWrap)}>
                 <WuxiaIcon name="plus" className="w-7 h-7 text-[#8fb9cc]" />
               </div>
-              <h3 className="text-2xl font-bold font-orbitron text-[#e6eff5]">{t.help.createRequest}</h3>
+              <h3 {...stylex.props(opsStyles.panelTitle)}>{t.help.createRequest}</h3>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="input-field flex items-center text-sm text-gray-400">{t.help.profilePrefix} <span className="text-[#d2e5ef] ml-2">{user.nickname || t.help.currentUserFallback}</span></div>
+            <form onSubmit={handleSubmit} {...stylex.props(opsStyles.formStack)}>
+              <div {...stylex.props(opsStyles.fieldGrid2)}>
+                <div {...stylex.props(uiStyles.input, opsStyles.helperInline)}>{t.help.profilePrefix} <span {...stylex.props(opsStyles.helperAccent)}>{user.nickname || t.help.currentUserFallback}</span></div>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="select-field w-full"
+                  {...stylex.props(uiStyles.select)}
                   aria-label={t.help.category}
                 >
                   {categories.map((c) => (
@@ -190,25 +193,25 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 </select>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div {...stylex.props(opsStyles.fieldGrid2)}>
                 <div>
-                  <div className="text-xs text-gray-400 mb-1 px-1">{t.help.gatheringStart}</div>
+                  <div {...stylex.props(opsStyles.fieldLabel)} style={{ fontSize: '0.75rem', marginBottom: 4, paddingInline: 4 }}>{t.help.gatheringStart}</div>
                   <input
                     type="datetime-local"
                     value={gatheringStartLocal}
                     onChange={(e) => setGatheringStartLocal(e.target.value)}
-                    className="input-field w-full"
+                    {...stylex.props(uiStyles.input)}
                     aria-label={t.help.gatheringStart}
                     required
                   />
                 </div>
                 <div>
-                  <div className="text-xs text-gray-400 mb-1 px-1">{t.help.gatheringEnd}</div>
+                  <div {...stylex.props(opsStyles.fieldLabel)} style={{ fontSize: '0.75rem', marginBottom: 4, paddingInline: 4 }}>{t.help.gatheringEnd}</div>
                   <input
                     type="datetime-local"
                     value={gatheringEndLocal}
                     onChange={(e) => setGatheringEndLocal(e.target.value)}
-                    className="input-field w-full"
+                    {...stylex.props(uiStyles.input)}
                     aria-label={t.help.gatheringEnd}
                     required
                   />
@@ -219,7 +222,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder={t.help.titlePlaceholder}
-                className="input-field w-full"
+                {...stylex.props(uiStyles.input)}
                 aria-label={t.help.titlePlaceholder}
                 maxLength={140}
                 required
@@ -229,7 +232,8 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 value={details}
                 onChange={(e) => setDetails(e.target.value)}
                 placeholder={t.help.detailsPlaceholder}
-                className="input-field min-h-[140px] w-full"
+                {...stylex.props(uiStyles.input)}
+                style={{ minHeight: 140 }}
                 aria-label={t.help.detailsPlaceholder}
                 maxLength={5000}
                 required
@@ -237,7 +241,8 @@ function HelpSectionContent({ user }: HelpSectionProps) {
 
               <button
                 type="submit"
-                className="btn-primary w-full py-3"
+                {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}
+                style={{ width: '100%', minHeight: 48 }}
                 disabled={createRequest.isPending}
               >
                 {createRequest.isPending ? (
@@ -254,7 +259,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
               </button>
 
               {createRequest.error && (
-                <div className="ds-notice mt-2">
+                <div {...stylex.props(uiStyles.notice, uiStyles.noticeError)}>
                   <WuxiaIcon name="alertTriangle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
                   {createRequest.error instanceof Error ? createRequest.error.message : t.help.createFailed}
                 </div>
@@ -262,17 +267,17 @@ function HelpSectionContent({ user }: HelpSectionProps) {
             </form>
           </div>
 
-            <div className="lg:col-span-3 section-stack-md">
-            <div className="ds-toolbar flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-400">{t.help.show}</span>
-                <div className="inline-flex rounded-2xl p-1 bg-[#0b141d]/70 border border-[#223140]/70">
+            <div {...stylex.props(opsStyles.mainCol, opsStyles.listStack)}>
+            <div {...stylex.props(opsStyles.toolbarSurface)}>
+              <div {...stylex.props(opsStyles.actionRow)}>
+                <span {...stylex.props(opsStyles.helperInline)}>{t.help.show}</span>
+                <div {...stylex.props(opsStyles.actionRow)}>
                   {(['open', 'closed', 'all'] as const).map((value) => (
                     <button
                       key={value}
                       type="button"
                       onClick={() => setStatus(value)}
-                      className={`ui-chip ${status === value ? 'is-active' : ''}`}
+                      {...stylex.props(uiStyles.chip, status === value && uiStyles.chipActive)}
                     >
                       {value === 'open' ? t.help.open : value === 'closed' ? t.help.closed : t.help.all}
                     </button>
@@ -282,7 +287,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
 
               <button
                 type="button"
-                className="dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0"
+                {...stylex.props(uiStyles.iconButton)}
                 onClick={() => refetch()}
                 title={t.common.refresh}
               >
@@ -299,17 +304,17 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 layout="list"
               />
             ) : requests.length === 0 ? (
-              <div className="card section-card ds-section-panel p-8 sm:p-10 text-center">
-                <div className="flex justify-center mb-5">
-                  <div className="w-16 h-16 rounded-full ds-section-panel-soft grid place-items-center">
+              <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, opsStyles.emptyCard)}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+                  <div {...stylex.props(opsStyles.emptyIconSurface)}>
                     <WuxiaIcon name="seal" className="w-8 h-8 text-[#8fb9cc]" />
                   </div>
                 </div>
-                <div className="text-xl font-semibold text-[#e6eff5]">{t.help.noRequestsTitle}</div>
-                <p className="text-gray-400 mt-2">{t.help.noRequestsDescription}</p>
+                <div {...stylex.props(opsStyles.emptyTitle)}>{t.help.noRequestsTitle}</div>
+                <p {...stylex.props(opsStyles.emptyDescription)}>{t.help.noRequestsDescription}</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-4 sm:gap-5">
+              <div {...stylex.props(opsStyles.listStack)}>
                 {requests.map((req) => {
                   const isResponder = Boolean(user.id) && req.responders.some((r) => r.userId === user.id);
                   const canEditTime =
@@ -318,34 +323,30 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                     (!req.authorUserId && user.nickname && req.author && req.author.toLowerCase() === user.nickname.toLowerCase());
 
                   return (
-                    <div key={req.id} className="card section-card ds-section-panel p-5 sm:p-6">
-                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                    <div key={req.id} {...stylex.props(uiStyles.card, uiStyles.sectionCard, opsStyles.panel)}>
+                      <div {...stylex.props(opsStyles.toolbar)} style={{ alignItems: 'flex-start' }}>
                         <div className="min-w-0">
-                          <div className="flex flex-wrap items-center gap-2 mb-3">
-                            <span className="ds-kicker text-sm font-medium">
+                          <div {...stylex.props(opsStyles.actionRow)} style={{ marginBottom: 12 }}>
+                            <span {...stylex.props(uiStyles.badge, uiStyles.badgeMuted)}>
                               <WuxiaIcon name="tag" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
                               {req.category}
                             </span>
                             <span
-                              className={`ds-kicker text-sm font-medium ${
-                                req.status === 'closed'
-                                  ? 'bg-[#0f1720]/70 text-gray-400 border border-[#223140]/70'
-                                  : 'bg-[#183244]/70 text-[#e6eff5] border border-[#2f6e8d]/50'
-                              }`}
+                              {...stylex.props(uiStyles.badge, req.status === 'closed' ? uiStyles.badgeMuted : uiStyles.badgeSuccess)}
                             >
                               {req.status === 'closed' ? t.help.statusClosed : t.help.statusOpen}
                             </span>
                           </div>
 
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
-                            <div className="inline-flex items-center gap-2 text-sm text-gray-300">
+                          <div {...stylex.props(opsStyles.toolbar)} style={{ marginBottom: 12 }}>
+                            <div {...stylex.props(opsStyles.helperInline)} style={{ color: 'rgba(209,213,219,0.95)' }}>
                               <WuxiaIcon name="calendar" className="w-4 h-4 text-[#8fb9cc]" />
-                              <span className="text-[#d2e5ef]">{t.help.gatheringLabel} {formatDateTimeRange(req.gatheringStart, req.gatheringEnd)}</span>
+                              <span style={{ color: '#d2e5ef' }}>{t.help.gatheringLabel} {formatDateTimeRange(req.gatheringStart, req.gatheringEnd)}</span>
                             </div>
                             {canEditTime && editingTimeId !== req.id && (
                               <button
                                 type="button"
-                                className="text-sm font-medium text-[#8fb9cc] hover:text-[#bcd6e5] transition-colors text-left"
+                                {...stylex.props(uiStyles.chip)}
                                 onClick={() => startEditTime(req.id, req.gatheringStart, req.gatheringEnd)}
                               >
                                 {t.help.editTime}
@@ -354,36 +355,36 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                           </div>
 
                           {editingTimeId === req.id && (
-                            <div className="mb-4 rounded-2xl ds-section-panel-soft p-4">
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div {...stylex.props(uiStyles.softPanel)} style={{ marginBottom: 16, padding: 16 }}>
+                              <div {...stylex.props(opsStyles.fieldGrid2)}>
                                 <div>
-                                  <div className="text-xs text-gray-400 mb-1 px-1">Сбор: начало</div>
+                                  <div {...stylex.props(opsStyles.fieldLabel)} style={{ fontSize: '0.75rem', marginBottom: 4, paddingInline: 4 }}>Сбор: начало</div>
                                   <input
                                     type="datetime-local"
                                     value={editStartLocal}
                                     onChange={(e) => setEditStartLocal(e.target.value)}
-                                    className="input-field w-full"
+                                    {...stylex.props(uiStyles.input)}
                                     aria-label={t.help.gatheringStart}
                                     required
                                   />
                                 </div>
                                 <div>
-                                  <div className="text-xs text-gray-400 mb-1 px-1">Сбор: конец</div>
+                                  <div {...stylex.props(opsStyles.fieldLabel)} style={{ fontSize: '0.75rem', marginBottom: 4, paddingInline: 4 }}>Сбор: конец</div>
                                   <input
                                     type="datetime-local"
                                     value={editEndLocal}
                                     onChange={(e) => setEditEndLocal(e.target.value)}
-                                    className="input-field w-full"
+                                    {...stylex.props(uiStyles.input)}
                                     aria-label={t.help.gatheringEnd}
                                     required
                                   />
                                 </div>
                               </div>
 
-                              <div className="flex flex-wrap gap-3 mt-3">
+                              <div {...stylex.props(opsStyles.actionRow)} style={{ marginTop: 12 }}>
                                 <button
                                   type="button"
-                                  className="btn-primary px-4 py-2 w-full sm:w-auto"
+                                  {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}
                                   onClick={() => saveEditTime(req.id)}
                                   disabled={updateTimeRange.isPending}
                                 >
@@ -391,7 +392,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                                 </button>
                                 <button
                                   type="button"
-                                  className="dc-icon-btn px-4 py-2 rounded-xl w-full sm:w-auto"
+                                  {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}
                                   onClick={() => setEditingTimeId(null)}
                                 >
                                   Отмена
@@ -401,15 +402,15 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                           )}
 
                           <div className="mb-4">
-                            <div className="text-xs text-gray-400 mb-2">Откликнулись ({req.responders.length})</div>
+                            <div {...stylex.props(opsStyles.fieldLabel)} style={{ fontSize: '0.75rem', marginBottom: 8 }}>Откликнулись ({req.responders.length})</div>
                             {req.responders.length === 0 ? (
-                              <div className="text-xs text-gray-500">Пока никто не откликнулся</div>
+                              <div {...stylex.props(opsStyles.helperInline)} style={{ fontSize: '0.75rem' }}>Пока никто не откликнулся</div>
                             ) : (
-                              <div className="flex flex-wrap gap-2">
+                              <div {...stylex.props(opsStyles.actionRow)}>
                                 {req.responders.map((r) => (
                                   <span
                                     key={`${req.id}:${r.userId}`}
-                                    className="ds-kicker gap-2 text-xs"
+                                    {...stylex.props(uiStyles.badge, uiStyles.badgeMuted)}
                                     title={r.respondedAt}
                                   >
                                     <span>{r.nickname}</span>
@@ -425,15 +426,15 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                             )}
                           </div>
 
-                          <h3 className="text-xl font-bold font-orbitron text-[#e6eff5] mb-2 break-words">{req.title}</h3>
-                          <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{req.details}</p>
+                          <h3 {...stylex.props(opsStyles.panelTitle)} style={{ fontSize: '1.25rem', marginBottom: 8 }}>{req.title}</h3>
+                          <p {...stylex.props(opsStyles.bodyText)} style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{req.details}</p>
 
                           {req.status === 'open' && (
-                            <div className="mt-4 flex flex-wrap gap-3">
+                            <div {...stylex.props(opsStyles.actionRow)} style={{ marginTop: 16 }}>
                               {isResponder ? (
                                 <button
                                   type="button"
-                                  className="dc-icon-btn px-4 py-2 rounded-xl text-sm"
+                                  {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}
                                   onClick={() => withdrawRsvp.mutateAsync(req.id)}
                                   disabled={withdrawRsvp.isPending}
                                 >
@@ -442,7 +443,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                               ) : (
                                 <button
                                   type="button"
-                                  className="btn-primary px-4 py-2 text-sm w-full sm:w-auto"
+                                  {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}
                                   onClick={() => rsvp.mutateAsync({ id: req.id })}
                                   disabled={rsvp.isPending}
                                 >
@@ -453,24 +454,24 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                           )}
                         </div>
 
-                        <div className="sm:text-right text-sm text-gray-400 flex flex-col gap-3">
+                        <div {...stylex.props(opsStyles.listStack)} style={{ fontSize: '0.875rem', color: 'rgba(156,163,175,0.95)' }}>
                           <div>
-                            <div className="inline-flex items-center gap-2">
+                            <div {...stylex.props(opsStyles.helperInline)}>
                               <WuxiaIcon name="user" className="w-4 h-4" />
                               <span>{req.author}</span>
                             </div>
-                            <div className="inline-flex items-center gap-2 mt-1">
+                            <div {...stylex.props(opsStyles.helperInline)} style={{ marginTop: 4 }}>
                               <WuxiaIcon name="calendar" className="w-4 h-4" />
                               <span>{formatDate(req.createdAt)}</span>
                             </div>
                           </div>
 
                           {(canModerate || canDelete) && (
-                            <div className="flex flex-wrap items-center gap-3 sm:justify-end">
+                            <div {...stylex.props(opsStyles.actionRow)} style={{ justifyContent: 'flex-end' }}>
                               {canModerate && (
                                 <button
                                   type="button"
-                                  className="text-sm font-medium text-[#8fb9cc] hover:text-[#bcd6e5] transition-colors"
+                                  {...stylex.props(uiStyles.chip)}
                                   onClick={() => toggleStatus(req.id, req.status)}
                                   disabled={updateStatus.isPending}
                                 >
@@ -484,7 +485,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                               {canDelete && (
                                 <button
                                   type="button"
-                                  className="text-sm font-medium text-red-400 hover:text-red-300 transition-colors"
+                                  {...stylex.props(uiStyles.chip, uiStyles.badgeDanger)}
                                   onClick={() => deleteRequest(req.id)}
                                   disabled={deleteHelpRequest.isPending}
                                 >

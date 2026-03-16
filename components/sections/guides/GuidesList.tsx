@@ -9,6 +9,9 @@ import { EmptyState } from '@/components/shared/EmptyState';
 import { SectionHero } from '@/components/shared/SectionHero';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { useTranslation } from '@/lib/i18n/context';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { guidesStyles } from './Guides.stylex';
 
 interface GuidesListProps {
   onGuideClick: (guideId: string) => void;
@@ -151,7 +154,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
         title={t.guides.error}
         description={error instanceof Error ? error.message : t.errors.server}
         action={
-          <button onClick={() => refetch()} className="btn-primary">
+          <button onClick={() => refetch()} {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>
             <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
             {t.errors.tryAgain}
           </button>
@@ -174,7 +177,8 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t.guides.search}
-              className="input-field w-full min-w-0 sm:min-w-[220px]"
+              {...stylex.props(uiStyles.input)}
+              style={{ minWidth: 220 }}
             />
             <input
               ref={markdownInputRef}
@@ -193,7 +197,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
             />
             <button
               type="button"
-              className="btn-secondary w-full sm:w-auto"
+              {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}
               onClick={() => markdownInputRef.current?.click()}
               disabled={isImporting}
             >
@@ -202,7 +206,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
             </button>
             <button
               type="button"
-              className="btn-secondary w-full sm:w-auto"
+              {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}
               onClick={() => markdownFolderInputRef.current?.click()}
               disabled={isImporting}
             >
@@ -211,13 +215,13 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
             </button>
             <button
               type="button"
-              className="dc-icon-btn h-[46px] w-[46px] rounded-xl shrink-0"
+              {...stylex.props(uiStyles.iconButton)}
               onClick={() => refetch()}
               title="Обновить"
             >
               <WuxiaIcon name="refresh" className="w-5 h-5" />
             </button>
-            <button type="button" className="btn-primary w-full sm:w-auto px-5 py-3" onClick={onCreateClick}>
+            <button type="button" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)} onClick={onCreateClick}>
               <WuxiaIcon name="edit" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
               {t.guides.create}
             </button>
@@ -226,7 +230,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
       />
 
       <div
-        className="portal-dropzone"
+        {...stylex.props(guidesStyles.dropzone, isDragOver && guidesStyles.dropzoneActive)}
         data-over={isDragOver ? 'true' : 'false'}
         onDragOver={(event) => {
           event.preventDefault();
@@ -235,24 +239,24 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
         onDragLeave={() => setIsDragOver(false)}
         onDrop={handleDrop}
       >
-        <div className="text-sm text-[#bdd5e4]">
+        <div {...stylex.props(guidesStyles.dropzoneText)}>
           <WuxiaIcon name="upload" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
           Перетащи `.md` вместе с вложениями или выбери целую папку из Obsidian.
         </div>
       </div>
 
       {notice && (
-        <div className="ds-notice">
+        <div {...stylex.props(uiStyles.notice, uiStyles.noticeSuccess)}>
           <WuxiaIcon name="checkCircle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
           {notice}
         </div>
       )}
 
-      <div className="section-stack-md">
-        <div className="flex flex-wrap gap-2">
+      <div {...stylex.props(uiStyles.stackLg)}>
+        <div {...stylex.props(uiStyles.inlineTags)}>
           <button
             type="button"
-            className={`ds-filter-chip ${selectedCategory === 'all' ? 'is-active' : ''}`}
+            {...stylex.props(uiStyles.chip, selectedCategory === 'all' && uiStyles.chipActive)}
             onClick={() => setSelectedCategory('all')}
           >
             Все категории · {guides.length}
@@ -261,7 +265,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
             <button
               key={category}
               type="button"
-              className={`ds-filter-chip ${selectedCategory === category ? 'is-active' : ''}`}
+              {...stylex.props(uiStyles.chip, selectedCategory === category && uiStyles.chipActive)}
               onClick={() => setSelectedCategory(category)}
             >
               {category} · {count}
@@ -269,10 +273,10 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
           ))}
         </div>
 
-        <div className="flex flex-wrap gap-2 items-center">
+        <div {...stylex.props(uiStyles.inlineTags)}>
           <button
             type="button"
-            className={`ds-filter-chip ${selectedAuthor === 'all' ? 'is-active' : ''}`}
+            {...stylex.props(uiStyles.chip, selectedAuthor === 'all' && uiStyles.chipActive)}
             onClick={() => setSelectedAuthor('all')}
           >
             Все авторы
@@ -281,7 +285,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
             <button
               key={author}
               type="button"
-              className={`ds-filter-chip ${selectedAuthor === author ? 'is-active' : ''}`}
+              {...stylex.props(uiStyles.chip, selectedAuthor === author && uiStyles.chipActive)}
               onClick={() => setSelectedAuthor(author)}
             >
               {author} · {count}
@@ -289,12 +293,12 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
           ))}
         </div>
 
-        <div className="text-sm text-[#b8ccd8] text-center sm:text-left">
+        <div {...stylex.props(guidesStyles.statsText)}>
           Показано: <span className="text-gray-300 font-medium">{filteredGuides.length}</span> из <span className="text-gray-300 font-medium">{guides.length}</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+      <div {...stylex.props(guidesStyles.cardGrid)}>
         {filteredGuides.length === 0 ? (
           <div className="col-span-full">
             <EmptyState

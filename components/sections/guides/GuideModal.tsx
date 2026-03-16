@@ -9,6 +9,9 @@ import type { GuideCategory } from '@/lib/schemas/guide';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { GuideComments } from './GuideComments';
 import { GuideEditor } from './GuideEditor';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { guidesStyles } from './Guides.stylex';
 
 interface GuideModalProps {
   guideId: string;
@@ -253,33 +256,32 @@ export function GuideModal({
 
   const modalContent = (
     <div
-      className="fixed inset-0 bg-[#080c10] flex flex-col"
-      style={{ zIndex: 99999 }}
+      {...stylex.props(guidesStyles.modalRoot)}
       role="dialog"
       aria-modal="true"
       aria-labelledby="guide-modal-title"
     >
       {/* Шапка */}
-      <div className="flex-shrink-0 bg-[#0a0e12] border-b border-[#1a2a38] px-4 py-3">
-        <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
+      <div {...stylex.props(guidesStyles.modalHeaderBar)}>
+        <div {...stylex.props(guidesStyles.modalHeaderInner)}>
           <div className="min-w-0 flex-1">
-            <h3 id="guide-modal-title" className="text-base font-medium text-white truncate">
+            <h3 id="guide-modal-title" {...stylex.props(guidesStyles.modalTitle)}>
               {guideDetail?.guide.title || 'Загрузка...'}
             </h3>
-            <div className="text-xs text-gray-500 mt-0.5">
+            <div {...stylex.props(guidesStyles.modalSubtle)}>
               {guideDetail && `${guideDetail.guide.author} • ${guideDetail.guide.category}`}
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-wrap justify-end">
+          <div {...stylex.props(guidesStyles.modalActionRow)}>
             {actionNotice && (
-              <span className="ui-badge ui-badge-muted hidden sm:inline-flex">
+              <span {...stylex.props(uiStyles.badge, uiStyles.badgeMuted)} className="hidden sm:inline-flex">
                 {actionNotice}
               </span>
             )}
             {guideDetail && (
               <button
                 type="button"
-                className={`ui-chip ${guideDetail.voted ? 'is-active' : ''}`}
+                {...stylex.props(uiStyles.chip, guideDetail.voted && uiStyles.chipActive)}
                 onClick={handleVote}
                 disabled={voteGuide.isPending}
               >
@@ -289,7 +291,7 @@ export function GuideModal({
             {guideDetail && (
               <button
                 type="button"
-                className="ui-chip"
+                {...stylex.props(uiStyles.chip)}
                 onClick={handleDownload}
               >
                 Скачать
@@ -298,7 +300,7 @@ export function GuideModal({
             {guideDetail && (
               <button
                 type="button"
-                className="ui-chip"
+                {...stylex.props(uiStyles.chip)}
                 onClick={handleShare}
               >
                 Поделиться
@@ -307,7 +309,7 @@ export function GuideModal({
             {guideDetail && (
               <button
                 type="button"
-                className="ui-chip"
+                {...stylex.props(uiStyles.chip)}
                 onClick={handleTranslate}
               >
                 Перевести
@@ -316,7 +318,7 @@ export function GuideModal({
             {guideDetail && canEdit && (
               <button
                 type="button"
-                className="ui-chip"
+                {...stylex.props(uiStyles.chip)}
                 onClick={() => {
                   setActionNotice(null);
                   setEditOpen(true);
@@ -328,7 +330,7 @@ export function GuideModal({
             {canModerate && (
               <button
                 type="button"
-                className="ui-chip ui-badge-danger"
+                {...stylex.props(uiStyles.chip, uiStyles.badgeDanger)}
                 onClick={handleDelete}
                 disabled={deleteGuide.isPending}
               >
@@ -338,7 +340,7 @@ export function GuideModal({
             <button
               ref={closeButtonRef}
               type="button"
-              className="dc-icon-btn h-[42px] w-[42px] rounded-xl shrink-0 text-gray-300"
+              {...stylex.props(uiStyles.iconButton)}
               onClick={handleClose}
             >
               <WuxiaIcon name="x" className="w-5 h-5" />
@@ -348,8 +350,8 @@ export function GuideModal({
       </div>
 
       {/* Контент */}
-      <div ref={contentRef} className="flex-1 overflow-y-auto">
-        <div className="max-w-6xl mx-auto px-4 py-6">
+      <div ref={contentRef} {...stylex.props(guidesStyles.modalContentScroll)}>
+        <div {...stylex.props(guidesStyles.modalContentWrap)}>
           {isLoading && (
             <div className="loading-inline" aria-live="polite">
               <div className="loading-inline-card">
@@ -381,22 +383,22 @@ export function GuideModal({
             <>
               <div className="grid gap-8 xl:grid-cols-[260px_minmax(0,1fr)]">
                 {outline.length > 0 && (
-                  <aside className="xl:sticky xl:top-6 xl:self-start rounded-3xl border border-[#1f3344] bg-[#0b141d]/82 p-4 shadow-[0_18px_34px_rgba(4,8,12,0.35)]">
-                    <div className="flex items-center gap-2 text-sm font-medium text-[#dceaf4] mb-3">
+                  <aside {...stylex.props(guidesStyles.outlineAside)}>
+                    <div {...stylex.props(guidesStyles.outlineTitle)}>
                       <WuxiaIcon name="list" className="w-4 h-4 text-[#8fb9cc]" />
                       Навигация
                     </div>
-                    <div className="space-y-1.5 max-h-[70vh] overflow-auto pr-1">
+                    <div {...stylex.props(guidesStyles.outlineList)}>
                       {outline.map((heading) => (
                         <button
                           key={heading.id}
                           type="button"
-                          className="guide-outline-link"
+                          {...stylex.props(guidesStyles.outlineLink)}
                           data-level={heading.level}
                           onClick={() => handleScrollToHeading(heading.id)}
                           title={heading.text}
                         >
-                          <span className="guide-outline-link-dot" />
+                          <span {...stylex.props(guidesStyles.outlineDot)} />
                           <span>{heading.text}</span>
                         </button>
                       ))}
@@ -423,12 +425,12 @@ export function GuideModal({
                           <button
                             key={guide.id}
                             type="button"
-                            className="guide-backlink-card"
+                            {...stylex.props(guidesStyles.backlinkCard)}
                             onClick={() => onGuideSelect?.(guide.id)}
                           >
-                            <span className="guide-backlink-category">{guide.category}</span>
-                            <span className="guide-backlink-title">{guide.title}</span>
-                            <span className="guide-backlink-meta">by {guide.author}</span>
+                            <span {...stylex.props(guidesStyles.backlinkCategory)}>{guide.category}</span>
+                            <span {...stylex.props(guidesStyles.backlinkTitle)}>{guide.title}</span>
+                            <span {...stylex.props(guidesStyles.backlinkMeta)}>by {guide.author}</span>
                           </button>
                         ))}
                       </div>
