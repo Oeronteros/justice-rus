@@ -108,6 +108,10 @@ export const shellStyles = stylex.create({
     lineHeight: 1,
   },
   brandSubtitle: {
+    display: {
+      default: 'none',
+      '@media (min-width: 520px)': 'block',
+    },
     marginTop: '4px',
     fontSize: {
       default: '0.7rem',
@@ -433,10 +437,9 @@ export const shellStyles = stylex.create({
   pageShell: {
     borderRadius: '18px',
     overflow: 'hidden',
-    border: '1px solid rgba(192, 167, 121, 0.22)',
-    background:
-      'radial-gradient(circle at 12% 6%, rgba(169, 71, 63, 0.09), transparent 30%), radial-gradient(circle at 86% 8%, rgba(130, 185, 173, 0.1), transparent 30%), linear-gradient(160deg, rgba(15, 18, 24, 0.78), rgba(10, 12, 16, 0.82))',
-    boxShadow: '0 22px 44px rgba(2, 3, 5, 0.42)',
+    border: '1px solid rgba(192, 167, 121, 0.14)',
+    background: 'linear-gradient(160deg, rgba(16, 20, 26, 0.86), rgba(12, 15, 20, 0.88))',
+    boxShadow: '0 12px 24px rgba(2, 3, 5, 0.3)',
   },
   mobileNavRoot: {
     display: {

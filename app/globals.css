@@ -128,22 +128,11 @@ body {
 }
 
 .theme-wuxia .wuxia-aurora {
-  background: conic-gradient(from 120deg at 18% 30%, rgba(184, 160, 111, 0.12), transparent 35%, rgba(139, 64, 58, 0.1), transparent 65%);
-  filter: blur(72px);
-  opacity: 0.22;
-  mix-blend-mode: normal;
-  animation: none;
+  display: none;
 }
 
 .theme-wuxia .wuxia-cursor-glow {
-  background: radial-gradient(
-    circle at var(--cursor-x) var(--cursor-y),
-    rgba(184, 160, 111, 0.16),
-    transparent 58%
-  );
-  filter: blur(56px);
-  opacity: 0.26;
-  mix-blend-mode: normal;
+  display: none;
 }
 
 .theme-wuxia .wuxia-constellation {
@@ -154,23 +143,18 @@ body {
     radial-gradient(circle at 72% 36%, rgba(223, 232, 242, 0.35) 0 1px, transparent 2px),
     radial-gradient(circle at 86% 60%, rgba(223, 232, 242, 0.3) 0 1px, transparent 2px),
     radial-gradient(circle at 40% 74%, rgba(223, 232, 242, 0.35) 0 1px, transparent 2px);
-  opacity: 0.14;
-  mix-blend-mode: normal;
-  animation: constellationDrift 50s linear infinite;
+  display: none;
 }
 
 .theme-wuxia .wuxia-noise {
   background-image:
     repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 2px),
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.015) 1px, transparent 1px, transparent 3px);
-  mix-blend-mode: soft-light;
-  opacity: 0.22;
+  display: none;
 }
 
 .theme-wuxia .wuxia-scroll-grid {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='70' height='70'><path d='M35 0V70M0 35H70M7 7L63 63M7 63L63 7' stroke='%238fb9cc' stroke-opacity='0.18' stroke-width='1'/></svg>");
-  mix-blend-mode: soft-light;
-  opacity: 0.08;
+  display: none;
 }
 
 .theme-wuxia[data-input-active='true'] {
@@ -736,12 +720,19 @@ body {
   position: relative;
   display: grid;
   place-items: center;
-  width: 56px;
-  height: 56px;
+  width: 46px;
+  height: 46px;
   border-radius: 999px;
   background: radial-gradient(circle, rgba(184, 160, 111, 0.12), transparent 65%);
   border: 1px solid rgba(184, 160, 111, 0.38);
   box-shadow: inset 0 0 12px rgba(184, 160, 111, 0.14), 0 0 12px rgba(184, 160, 111, 0.08);
+}
+
+@media (min-width: 640px) {
+  .theme-wuxia .seal-ring {
+    width: 56px;
+    height: 56px;
+  }
 }
 
 .theme-wuxia .seal-ring::after {
@@ -1308,10 +1299,7 @@ body {
 
 .theme-wuxia .wuxia-section::before,
 .theme-wuxia .wuxia-section::after {
-  content: '';
-  position: absolute;
-  pointer-events: none;
-  z-index: 0;
+  display: none;
 }
 
 .theme-wuxia .wuxia-section {
