@@ -3,19 +3,19 @@
 @import "@milkdown/crepe/theme/classic-dark.css";
 
 :root {
-  --wuxia-ink: #07090d;
-  --wuxia-ink-soft: #14171d;
-  --wuxia-paper: #e8dfcf;
-  --wuxia-vermillion: #a9473f;
-  --wuxia-crimson: #6c2c28;
-  --wuxia-gold: #d9bc80;
-  --wuxia-jade: #82b9ad;
+  --wuxia-ink: #0d1014;
+  --wuxia-ink-soft: #191d24;
+  --wuxia-paper: #e6dccb;
+  --wuxia-vermillion: #8b403a;
+  --wuxia-crimson: #5f2b28;
+  --wuxia-gold: #b8a06f;
+  --wuxia-jade: #9b8a63;
   --wuxia-shadow: #050608;
   --wuxia-ice: #eef4ec;
   --wuxia-steel: #232730;
   --wuxia-glass: rgba(18, 20, 26, 0.78);
-  --wuxia-line: rgba(192, 167, 121, 0.3);
-  --wuxia-glow: rgba(130, 185, 173, 0.24);
+  --wuxia-line: rgba(184, 160, 111, 0.22);
+  --wuxia-glow: rgba(184, 160, 111, 0.18);
   --font-body: 'Manrope', 'Noto Sans', 'Segoe UI', sans-serif;
   --font-display: 'Noto Serif', 'Noto Serif SC', 'Times New Roman', serif;
   --tilt-x: 0deg;
@@ -42,9 +42,9 @@ body {
 
 body {
   background:
-    radial-gradient(circle at 14% 8%, rgba(169, 71, 63, 0.14), transparent 38%),
-    radial-gradient(circle at 86% 12%, rgba(130, 185, 173, 0.12), transparent 42%),
-    linear-gradient(168deg, #07090d 0%, #101318 48%, #07090d 100%);
+    radial-gradient(circle at 14% 8%, rgba(139, 64, 58, 0.08), transparent 34%),
+    radial-gradient(circle at 84% 10%, rgba(184, 160, 111, 0.08), transparent 38%),
+    linear-gradient(168deg, #0d1014 0%, #171b21 52%, #0d1014 100%);
   color: var(--wuxia-paper);
   font-family: var(--font-body);
 }
@@ -54,7 +54,7 @@ body {
 }
 
 .theme-wuxia .dc-muted {
-  color: rgba(201, 217, 228, 0.96);
+  color: rgba(214, 204, 186, 0.88);
 }
 
 .theme-wuxia .dc-accent {
@@ -62,16 +62,16 @@ body {
 }
 
 .theme-wuxia .dc-accent-strong {
-  color: rgba(207, 230, 245, 0.9);
+  color: rgba(243, 230, 201, 0.94);
 }
 
 .theme-wuxia .dc-details {
   padding: 14px 16px;
   border-radius: 18px;
-  border: 1px solid rgba(143, 185, 204, 0.22);
-  background: rgba(8, 12, 18, 0.68);
-  box-shadow: 0 18px 34px rgba(4, 8, 12, 0.55);
-  backdrop-filter: blur(12px);
+  border: 1px solid rgba(184, 160, 111, 0.2);
+  background: rgba(16, 20, 26, 0.72);
+  box-shadow: 0 12px 24px rgba(4, 8, 12, 0.4);
+  backdrop-filter: blur(8px);
 }
 
 .theme-wuxia .dc-summary {
@@ -82,8 +82,8 @@ body {
   cursor: pointer;
   list-style: none;
   user-select: none;
-  font-family: 'ZCOOL XiaoWei', serif;
-  letter-spacing: 0.18em;
+  font-family: var(--font-display);
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--wuxia-paper);
   font-size: 0.8rem;
@@ -121,29 +121,29 @@ body {
 
 .theme-wuxia .wuxia-backdrop {
   background:
-    radial-gradient(circle at 18% 12%, rgba(95, 178, 214, 0.18), transparent 55%),
-    radial-gradient(circle at 82% 18%, rgba(143, 185, 204, 0.22), transparent 45%),
-    radial-gradient(circle at 50% 80%, rgba(16, 24, 33, 0.92), transparent 60%),
-    linear-gradient(160deg, #0a0f14 0%, #0d151f 50%, #0a0f14 100%);
+    radial-gradient(circle at 18% 12%, rgba(139, 64, 58, 0.12), transparent 52%),
+    radial-gradient(circle at 82% 18%, rgba(184, 160, 111, 0.14), transparent 45%),
+    radial-gradient(circle at 50% 80%, rgba(16, 20, 26, 0.86), transparent 60%),
+    linear-gradient(160deg, #0f1318 0%, #161c23 50%, #0f1318 100%);
 }
 
 .theme-wuxia .wuxia-aurora {
-  background: conic-gradient(from 120deg at 18% 30%, rgba(110, 190, 230, 0.18), transparent 35%, rgba(53, 101, 131, 0.2), transparent 65%);
-  filter: blur(60px);
-  opacity: 0.55;
-  mix-blend-mode: screen;
-  animation: auroraSweep 20s ease-in-out infinite;
+  background: conic-gradient(from 120deg at 18% 30%, rgba(184, 160, 111, 0.12), transparent 35%, rgba(139, 64, 58, 0.1), transparent 65%);
+  filter: blur(72px);
+  opacity: 0.22;
+  mix-blend-mode: normal;
+  animation: none;
 }
 
 .theme-wuxia .wuxia-cursor-glow {
   background: radial-gradient(
     circle at var(--cursor-x) var(--cursor-y),
-    rgba(143, 185, 204, 0.24),
+    rgba(184, 160, 111, 0.16),
     transparent 58%
   );
-  filter: blur(70px);
-  opacity: 0.65;
-  mix-blend-mode: screen;
+  filter: blur(56px);
+  opacity: 0.26;
+  mix-blend-mode: normal;
 }
 
 .theme-wuxia .wuxia-constellation {
@@ -154,8 +154,8 @@ body {
     radial-gradient(circle at 72% 36%, rgba(223, 232, 242, 0.35) 0 1px, transparent 2px),
     radial-gradient(circle at 86% 60%, rgba(223, 232, 242, 0.3) 0 1px, transparent 2px),
     radial-gradient(circle at 40% 74%, rgba(223, 232, 242, 0.35) 0 1px, transparent 2px);
-  opacity: 0.35;
-  mix-blend-mode: screen;
+  opacity: 0.14;
+  mix-blend-mode: normal;
   animation: constellationDrift 50s linear infinite;
 }
 
@@ -164,7 +164,7 @@ body {
     repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 2px),
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.015) 1px, transparent 1px, transparent 3px);
   mix-blend-mode: soft-light;
-  opacity: 0.6;
+  opacity: 0.22;
 }
 
 .theme-wuxia .wuxia-scroll-grid {
@@ -738,9 +738,9 @@ body {
   width: 56px;
   height: 56px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(143, 185, 204, 0.2), transparent 65%);
-  border: 1px solid rgba(143, 185, 204, 0.5);
-  box-shadow: inset 0 0 18px rgba(143, 185, 204, 0.2), 0 0 20px rgba(143, 185, 204, 0.15);
+  background: radial-gradient(circle, rgba(184, 160, 111, 0.12), transparent 65%);
+  border: 1px solid rgba(184, 160, 111, 0.38);
+  box-shadow: inset 0 0 12px rgba(184, 160, 111, 0.14), 0 0 12px rgba(184, 160, 111, 0.08);
 }
 
 .theme-wuxia .seal-ring::after {
@@ -748,7 +748,7 @@ body {
   position: absolute;
   inset: -6px;
   border-radius: 999px;
-  border: 1px dashed rgba(143, 185, 204, 0.35);
+  border: 1px dashed rgba(184, 160, 111, 0.28);
   animation: sigilRotate 22s linear infinite;
 }
 
@@ -756,8 +756,8 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 999px;
-  background: linear-gradient(140deg, rgba(74, 144, 176, 0.85), rgba(143, 185, 204, 0.95));
-  box-shadow: 0 0 18px rgba(74, 144, 176, 0.4);
+  background: linear-gradient(140deg, rgba(139, 64, 58, 0.82), rgba(184, 160, 111, 0.9));
+  box-shadow: 0 0 10px rgba(139, 64, 58, 0.22);
   display: grid;
   place-items: center;
 }
@@ -775,8 +775,8 @@ body {
   border-radius: 32px;
   background: linear-gradient(160deg, rgba(11, 18, 26, 0.92), rgba(8, 12, 18, 0.98));
   border: 1px solid var(--wuxia-line);
-  box-shadow: 0 32px 70px rgba(5, 9, 14, 0.75);
-  backdrop-filter: blur(14px);
+  box-shadow: 0 20px 40px rgba(5, 9, 14, 0.48);
+  backdrop-filter: blur(10px);
   overflow: hidden;
 }
 
@@ -801,9 +801,9 @@ body {
   content: '';
   position: absolute;
   inset: -120% 0 0 0;
-  background: linear-gradient(120deg, transparent, rgba(143, 185, 204, 0.25), transparent);
-  opacity: 0.4;
-  animation: bannerSheen 16s linear infinite;
+  background: linear-gradient(120deg, transparent, rgba(184, 160, 111, 0.12), transparent);
+  opacity: 0.18;
+  animation: none;
   pointer-events: none;
 }
 
