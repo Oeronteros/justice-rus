@@ -83,7 +83,7 @@ export const asyncStateStyles = stylex.create({
     minWidth: '84px',
     height: '12px',
     borderRadius: radius.pill,
-    backgroundColor: 'rgba(130, 185, 173, 0.22)',
+    backgroundColor: 'rgba(184, 160, 111, 0.2)',
   },
   skeletonChipWide: {
     minWidth: '132px',
@@ -128,7 +128,7 @@ export const asyncStateStyles = stylex.create({
     display: 'inline-flex',
     height: '12px',
     borderRadius: radius.pill,
-    backgroundColor: 'rgba(143, 185, 204, 0.18)',
+    backgroundColor: 'rgba(184, 160, 111, 0.16)',
     width: '68px',
   },
   pillWide: {
@@ -139,7 +139,7 @@ export const asyncStateStyles = stylex.create({
     width: '100%',
     height: '12px',
     borderRadius: radius.pill,
-    backgroundColor: 'rgba(192, 167, 121, 0.16)',
+    backgroundColor: 'rgba(184, 160, 111, 0.16)',
   },
   lineShort: {
     width: '38%',
@@ -157,7 +157,7 @@ export const asyncStateStyles = stylex.create({
       '@media (max-width: 640px)': '82px',
     },
     borderRadius: radius.md,
-    backgroundColor: 'rgba(130, 185, 173, 0.12)',
+    backgroundColor: 'rgba(184, 160, 111, 0.1)',
   },
   emptyRoot: {
     textAlign: 'center',
