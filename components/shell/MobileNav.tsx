@@ -21,6 +21,27 @@ interface MobileNavProps {
 export default function MobileNav({ currentSection, language, onNavPrefetch }: MobileNavProps) {
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const sheetRef = useRef<HTMLDivElement | null>(null);
+  const menuOpenedAtRef = useRef(0);
+
+  const closeMoreMenu = () => setIsMoreOpen(false);
+
+  const toggleMoreMenu = () => {
+    setIsMoreOpen((value) => {
+      if (!value) {
+        menuOpenedAtRef.current = Date.now();
+      }
+
+      return !value;
+    });
+  };
+
+  const closeViaScrim = () => {
+    if (Date.now() - menuOpenedAtRef.current < 140) {
+      return;
+    }
+
+    closeMoreMenu();
+  };
 
   const primaryItems = useMemo(() => mobilePrimaryNavItems, []);
   const secondaryItems = useMemo(
@@ -43,47 +64,73 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
     autoAnimate(sheetRef.current, { duration: 220, easing: 'ease-out' });
   }, []);
 
+  useEffect(() => {
+    setIsMoreOpen(false);
+  }, [currentSection]);
+
+  useEffect(() => {
+    if (!isMoreOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isMoreOpen]);
+
   return (
     <div {...stylex.props(shellStyles.mobileNavRoot)}>
       <AnimatePresence>
         {isMoreOpen ? (
-          <motion.nav
-            initial={{ opacity: 0, y: 18, scale: 0.985 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.985 }}
-            transition={{ type: 'spring', stiffness: 340, damping: 28 }}
-            {...stylex.props(shellStyles.mobileSheetFrame)}
-            aria-label={moreNavLabel}
-          >
-            <div {...stylex.props(shellStyles.mobileSheetStack)} ref={sheetRef}>
-              {mobileGroupedNavItems.map((group) => (
-                <section key={group.key} {...stylex.props(shellStyles.mobileGroup)}>
-                  <div {...stylex.props(shellStyles.groupLabel)}>{groupLabels[group.key]}</div>
-                  <div {...stylex.props(shellStyles.mobileSheetGrid)}>
-                    {group.items.map((item) => (
-                      <Link
-                        key={item.section}
-                        href={item.href}
-                        onClick={() => setIsMoreOpen(false)}
-                        onTouchStart={() => onNavPrefetch?.(item.section)}
-                        onMouseEnter={() => onNavPrefetch?.(item.section)}
-                        onFocus={() => onNavPrefetch?.(item.section)}
-                        {...stylex.props(shellStyles.mobileSheetLink, currentSection === item.section && shellStyles.mobileSheetLinkActive)}
-                        aria-label={sectionLabels[language][item.section]}
-                        aria-current={currentSection === item.section ? 'page' : undefined}
-                        title={sectionLabels[language][item.section]}
-                      >
-                        <span {...mergeStylexProps(stylex.props(shellStyles.mobileSheetIcon), 'dc-accent')}>
-                          <WuxiaIcon name={item.icon} className="h-5 w-5" />
-                        </span>
-                        <span className="min-w-0">{sectionLabels[language][item.section]}</span>
-                      </Link>
-                    ))}
-                  </div>
-                </section>
-              ))}
-            </div>
-          </motion.nav>
+          <>
+            <motion.button
+              type="button"
+              aria-label={moreNavLabel}
+              onClick={closeViaScrim}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              {...stylex.props(shellStyles.mobileSheetScrim)}
+            />
+            <motion.nav
+              initial={{ opacity: 0, y: 18, scale: 0.985 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.985 }}
+              transition={{ type: 'spring', stiffness: 340, damping: 28 }}
+              {...stylex.props(shellStyles.mobileSheetFrame)}
+              aria-label={moreNavLabel}
+            >
+              <div {...stylex.props(shellStyles.mobileSheetStack)} ref={sheetRef}>
+                {mobileGroupedNavItems.map((group) => (
+                  <section key={group.key} {...stylex.props(shellStyles.mobileGroup)}>
+                    <div {...stylex.props(shellStyles.groupLabel)}>{groupLabels[group.key]}</div>
+                    <div {...stylex.props(shellStyles.mobileSheetGrid)}>
+                      {group.items.map((item) => (
+                        <Link
+                          key={item.section}
+                          href={item.href}
+                          onTouchStart={() => onNavPrefetch?.(item.section)}
+                          onMouseEnter={() => onNavPrefetch?.(item.section)}
+                          onFocus={() => onNavPrefetch?.(item.section)}
+                          {...stylex.props(shellStyles.mobileSheetLink, currentSection === item.section && shellStyles.mobileSheetLinkActive)}
+                          aria-label={sectionLabels[language][item.section]}
+                          aria-current={currentSection === item.section ? 'page' : undefined}
+                          title={sectionLabels[language][item.section]}
+                        >
+                          <span {...mergeStylexProps(stylex.props(shellStyles.mobileSheetIcon), 'dc-accent')}>
+                            <WuxiaIcon name={item.icon} className="h-5 w-5" />
+                          </span>
+                          <span className="min-w-0">{sectionLabels[language][item.section]}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </section>
+                ))}
+              </div>
+            </motion.nav>
+          </>
         ) : null}
       </AnimatePresence>
 
@@ -100,7 +147,6 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
                 <Link
                   key={item.section}
                   href={item.href}
-                  onClick={() => setIsMoreOpen(false)}
                   onTouchStart={() => onNavPrefetch?.(item.section)}
                   onMouseEnter={() => onNavPrefetch?.(item.section)}
                   onFocus={() => onNavPrefetch?.(item.section)}
@@ -125,7 +171,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
             <button
               type="button"
               {...stylex.props(shellStyles.mobileChip, shellStyles.mobileMore, (isMoreOpen || isMoreActive) && shellStyles.mobileChipActive)}
-              onClick={() => setIsMoreOpen((value) => !value)}
+              onClick={toggleMoreMenu}
               aria-expanded={isMoreOpen}
               aria-label={moreLabel}
               title={moreLabel}

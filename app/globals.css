@@ -3,19 +3,21 @@
 @import "@milkdown/crepe/theme/classic-dark.css";
 
 :root {
-  --wuxia-ink: #0a0f14;
-  --wuxia-ink-soft: #111821;
-  --wuxia-paper: #dfe8f2;
-  --wuxia-vermillion: #4a90b0;
-  --wuxia-crimson: #23506b;
-  --wuxia-gold: #8fb9cc;
-  --wuxia-jade: #78b8b0;
-  --wuxia-shadow: #101821;
-  --wuxia-ice: #cfe6f5;
-  --wuxia-steel: #1b2a38;
-  --wuxia-glass: rgba(11, 18, 26, 0.72);
-  --wuxia-line: rgba(143, 185, 204, 0.28);
-  --wuxia-glow: rgba(110, 190, 230, 0.25);
+  --wuxia-ink: #07090d;
+  --wuxia-ink-soft: #14171d;
+  --wuxia-paper: #e8dfcf;
+  --wuxia-vermillion: #a9473f;
+  --wuxia-crimson: #6c2c28;
+  --wuxia-gold: #d9bc80;
+  --wuxia-jade: #82b9ad;
+  --wuxia-shadow: #050608;
+  --wuxia-ice: #eef4ec;
+  --wuxia-steel: #232730;
+  --wuxia-glass: rgba(18, 20, 26, 0.78);
+  --wuxia-line: rgba(192, 167, 121, 0.3);
+  --wuxia-glow: rgba(130, 185, 173, 0.24);
+  --font-body: 'Manrope', 'Noto Sans', 'Segoe UI', sans-serif;
+  --font-display: 'Noto Serif', 'Noto Serif SC', 'Times New Roman', serif;
   --tilt-x: 0deg;
   --tilt-y: 0deg;
   --cursor-x: 50%;
@@ -39,9 +41,12 @@ body {
 }
 
 body {
-  background: var(--wuxia-ink);
+  background:
+    radial-gradient(circle at 14% 8%, rgba(169, 71, 63, 0.14), transparent 38%),
+    radial-gradient(circle at 86% 12%, rgba(130, 185, 173, 0.12), transparent 42%),
+    linear-gradient(168deg, #07090d 0%, #101318 48%, #07090d 100%);
   color: var(--wuxia-paper);
-  font-family: 'Manrope', 'Noto Sans', 'Segoe UI', sans-serif;
+  font-family: var(--font-body);
 }
 
 .theme-wuxia .dc-text {
@@ -105,13 +110,13 @@ body {
 }
 
 .font-orbitron {
-  font-family: 'Rajdhani', 'Trebuchet MS', sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: 0.008em;
+  letter-spacing: 0.02em;
 }
 
 .font-roboto {
-  font-family: 'Manrope', 'Noto Sans', 'Segoe UI', sans-serif;
+  font-family: var(--font-body);
 }
 
 .theme-wuxia .wuxia-backdrop {

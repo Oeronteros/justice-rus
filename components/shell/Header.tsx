@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import autoAnimate from '@formkit/auto-animate';
-import { LayoutGroup, motion } from 'motion/react';
+import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
 import * as stylex from '@stylexjs/stylex';
 import { Section } from '@/types';
 import { headerCopy, Language, portalCopy, sectionLabels } from '@/lib/i18n';
@@ -28,6 +28,7 @@ export default function Header({
   onNavPrefetch,
 }: HeaderProps) {
   const [headerCompact, setHeaderCompact] = useState(false);
+  const [isDesktopMenuOpen, setIsDesktopMenuOpen] = useState(false);
   const desktopDeckRef = useRef<HTMLDivElement | null>(null);
 
   const handleRefresh = () => {
@@ -67,13 +68,34 @@ export default function Header({
   }, [language]);
   const primaryNavLabel = language === 'ru' ? 'Основная навигация' : language === 'zh' ? '主导航' : 'Primary navigation';
   const secondaryNavLabel = language === 'ru' ? 'Командная навигация' : language === 'zh' ? '指挥导航' : 'Command navigation';
+  const immersiveMenuLabel = language === 'ru' ? 'Разделы' : language === 'zh' ? '分区菜单' : 'Sections';
+  const immersiveMenuHint = language === 'ru' ? 'Быстрый переход по всем модулям' : language === 'zh' ? '快速跳转到全部模块' : 'Quick jump across all modules';
 
   const sectionLabel = orderLabels[currentSection];
 
   useEffect(() => {
     if (!desktopDeckRef.current) return;
     autoAnimate(desktopDeckRef.current, { duration: 220, easing: 'ease-out' });
-  }, []);
+  }, [isDesktopMenuOpen]);
+
+  useEffect(() => {
+    setIsDesktopMenuOpen(false);
+  }, [currentSection]);
+
+  useEffect(() => {
+    if (!isDesktopMenuOpen) return;
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsDesktopMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [isDesktopMenuOpen]);
 
   const groupLabels = {
     core: labels.navCore,
@@ -176,74 +198,108 @@ export default function Header({
 
         <nav {...stylex.props(shellStyles.desktopNav)} aria-label={primaryNavLabel}>
           <div {...stylex.props(shellStyles.navShell, shellStyles.navShellEnhanced)}>
-            <LayoutGroup id="desktop-core-nav">
-              <div {...stylex.props(shellStyles.coreRail, headerCompact && shellStyles.coreRailCompact)}>
-                {desktopPrimaryNavItems.map((item) => {
-                  const isActive = currentSection === item.section;
+            <div {...stylex.props(shellStyles.navHeadRow)}>
+              <LayoutGroup id="desktop-core-nav">
+                <div {...stylex.props(shellStyles.coreRail, headerCompact && shellStyles.coreRailCompact)}>
+                  {desktopPrimaryNavItems.map((item) => {
+                    const isActive = currentSection === item.section;
 
-                  return (
-                    <motion.div key={item.section} layout whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }} transition={{ type: 'spring', stiffness: 420, damping: 28 }}>
-                      <Link
-                        href={item.href}
-                        onMouseEnter={() => onNavPrefetch?.(item.section)}
-                        onFocus={() => onNavPrefetch?.(item.section)}
-                        onTouchStart={() => onNavPrefetch?.(item.section)}
-                        {...stylex.props(shellStyles.navLinkBase, !isActive && shellStyles.navLinkInactive)}
-                        aria-label={orderLabels[item.section]}
-                        aria-current={isActive ? 'page' : undefined}
-                        title={orderLabels[item.section]}
-                      >
-                        {isActive ? <motion.span layoutId="desktop-core-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
-                        <span {...stylex.props(shellStyles.navLinkContent, shellStyles.coreLinkContent)}>
-                          <span {...mergeStylexProps(stylex.props(shellStyles.orderDot), 'dc-accent')}>
-                            <WuxiaIcon name={item.icon} className="w-4 h-4" />
+                    return (
+                      <motion.div key={item.section} layout whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }} transition={{ type: 'spring', stiffness: 420, damping: 28 }}>
+                        <Link
+                          href={item.href}
+                          onMouseEnter={() => onNavPrefetch?.(item.section)}
+                          onFocus={() => onNavPrefetch?.(item.section)}
+                          onTouchStart={() => onNavPrefetch?.(item.section)}
+                          {...stylex.props(shellStyles.navLinkBase, !isActive && shellStyles.navLinkInactive)}
+                          aria-label={orderLabels[item.section]}
+                          aria-current={isActive ? 'page' : undefined}
+                          title={orderLabels[item.section]}
+                        >
+                          {isActive ? <motion.span layoutId="desktop-core-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
+                          <span {...stylex.props(shellStyles.navLinkContent, shellStyles.coreLinkContent)}>
+                            <span {...mergeStylexProps(stylex.props(shellStyles.orderDot), 'dc-accent')}>
+                              <WuxiaIcon name={item.icon} className="w-4 h-4" />
+                            </span>
+                            <span {...stylex.props(shellStyles.orderLabel)}>{orderLabels[item.section]}</span>
                           </span>
-                          <span {...stylex.props(shellStyles.orderLabel)}>{orderLabels[item.section]}</span>
-                        </span>
-                      </Link>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </LayoutGroup>
+                        </Link>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </LayoutGroup>
 
-            <div {...stylex.props(shellStyles.commandDeck)} ref={desktopDeckRef} aria-label={secondaryNavLabel}>
-              {desktopGroupedNavItems.map((group) => (
-                <section key={group.key} {...stylex.props(shellStyles.commandGroup)}>
-                  <div {...stylex.props(shellStyles.groupLabel)}>{groupLabels[group.key]}</div>
-                  <LayoutGroup id={`desktop-${group.key}-nav`}>
-                    <div {...stylex.props(shellStyles.groupItems)}>
-                      {group.items.map((item) => {
-                        const isActive = currentSection === item.section;
-
-                        return (
-                          <motion.div key={item.section} layout whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }} transition={{ type: 'spring', stiffness: 420, damping: 30 }}>
-                            <Link
-                              href={item.href}
-                              onMouseEnter={() => onNavPrefetch?.(item.section)}
-                              onFocus={() => onNavPrefetch?.(item.section)}
-                              onTouchStart={() => onNavPrefetch?.(item.section)}
-                              {...stylex.props(shellStyles.navLinkBase, !isActive && shellStyles.navLinkInactive)}
-                              aria-label={orderLabels[item.section]}
-                              aria-current={isActive ? 'page' : undefined}
-                              title={orderLabels[item.section]}
-                            >
-                              {isActive ? <motion.span layoutId="desktop-command-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
-                              <span {...stylex.props(shellStyles.navLinkContent, shellStyles.commandLinkContent)}>
-                                <span {...mergeStylexProps(stylex.props(shellStyles.orderDot), 'dc-accent')}>
-                                  <WuxiaIcon name={item.icon} className="w-4 h-4" />
-                                </span>
-                                <span {...stylex.props(shellStyles.orderLabel)}>{orderLabels[item.section]}</span>
-                              </span>
-                            </Link>
-                          </motion.div>
-                        );
-                      })}
-                    </div>
-                  </LayoutGroup>
-                </section>
-              ))}
+              <button
+                type="button"
+                onClick={() => setIsDesktopMenuOpen((current) => !current)}
+                aria-expanded={isDesktopMenuOpen}
+                aria-controls="desktop-immersive-menu"
+                aria-label={immersiveMenuLabel}
+                title={immersiveMenuLabel}
+                {...stylex.props(shellStyles.desktopMenuButton, isDesktopMenuOpen && shellStyles.desktopMenuButtonActive)}
+              >
+                <WuxiaIcon name="dots" className="w-5 h-5" />
+                <span {...stylex.props(shellStyles.desktopMenuLabel)}>{immersiveMenuLabel}</span>
+              </button>
             </div>
+
+            <AnimatePresence initial={false}>
+              {isDesktopMenuOpen ? (
+                <motion.section
+                  id="desktop-immersive-menu"
+                  initial={{ opacity: 0, y: -10, scale: 0.99 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.99 }}
+                  transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+                  {...stylex.props(shellStyles.immersivePanel)}
+                  aria-label={secondaryNavLabel}
+                >
+                  <div {...stylex.props(shellStyles.immersivePanelHeader)}>
+                    <span {...stylex.props(shellStyles.immersivePanelTitle)}>{secondaryNavLabel}</span>
+                    <span {...stylex.props(shellStyles.immersivePanelHint)}>{immersiveMenuHint}</span>
+                  </div>
+
+                  <div {...stylex.props(shellStyles.commandDeck)} ref={desktopDeckRef}>
+                    {desktopGroupedNavItems.map((group) => (
+                      <section key={group.key} {...stylex.props(shellStyles.commandGroup)}>
+                        <div {...stylex.props(shellStyles.groupLabel)}>{groupLabels[group.key]}</div>
+                        <LayoutGroup id={`desktop-${group.key}-nav`}>
+                          <div {...stylex.props(shellStyles.groupItems)}>
+                            {group.items.map((item) => {
+                              const isActive = currentSection === item.section;
+
+                              return (
+                                <motion.div key={item.section} layout whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }} transition={{ type: 'spring', stiffness: 420, damping: 30 }}>
+                                  <Link
+                                    href={item.href}
+                                    onMouseEnter={() => onNavPrefetch?.(item.section)}
+                                    onFocus={() => onNavPrefetch?.(item.section)}
+                                    onTouchStart={() => onNavPrefetch?.(item.section)}
+                                    {...stylex.props(shellStyles.navLinkBase, !isActive && shellStyles.navLinkInactive)}
+                                    aria-label={orderLabels[item.section]}
+                                    aria-current={isActive ? 'page' : undefined}
+                                    title={orderLabels[item.section]}
+                                  >
+                                    {isActive ? <motion.span layoutId="desktop-command-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
+                                    <span {...stylex.props(shellStyles.navLinkContent, shellStyles.commandLinkContent)}>
+                                      <span {...mergeStylexProps(stylex.props(shellStyles.orderDot), 'dc-accent')}>
+                                        <WuxiaIcon name={item.icon} className="w-4 h-4" />
+                                      </span>
+                                      <span {...stylex.props(shellStyles.orderLabel)}>{orderLabels[item.section]}</span>
+                                    </span>
+                                  </Link>
+                                </motion.div>
+                              );
+                            })}
+                          </div>
+                        </LayoutGroup>
+                      </section>
+                    ))}
+                  </div>
+                </motion.section>
+              ) : null}
+            </AnimatePresence>
           </div>
         </nav>
       </div>

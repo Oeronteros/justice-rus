@@ -3,7 +3,26 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      babel: {
+        plugins: [
+          [
+            '@stylexjs/babel-plugin',
+            {
+              dev: true,
+              runtimeInjection: false,
+              enableInlinedConditionalMerge: true,
+              treeshakeCompensation: true,
+              unstable_moduleResolution: {
+                type: 'commonJS',
+              },
+            },
+          ],
+        ],
+      },
+    }),
+  ],
   test: {
     include: ['tests/**/*.{test,spec}.{ts,tsx}'],
     environment: 'jsdom',

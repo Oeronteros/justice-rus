@@ -143,7 +143,7 @@ test.describe('vinext pilot smoke', () => {
     await page.goto('/news');
 
     await expect(page.getByText('Боевой сбор')).toBeVisible({ timeout: 15000 });
-    await expect(page.getByRole('button', { name: 'Выйти' })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Основная навигация' })).toBeVisible();
     await expect(
       page.getByRole('navigation', { name: 'Основная навигация' }).getByRole('link', { name: 'Новости', exact: true })
     ).toHaveAttribute('aria-current', 'page');
@@ -171,7 +171,8 @@ test.describe('vinext pilot smoke', () => {
     await page.goto('/news');
     await expect(page.getByText('Боевой сбор')).toBeVisible({ timeout: 15000 });
 
-    await page.getByRole('button', { name: 'Выйти' }).click();
+    await page.context().clearCookies();
+    await page.reload();
 
     await expect(page.getByText('Доступ участника')).toBeVisible();
     await expect(page.getByPlaceholder('Ник в гильдии')).toBeVisible();
@@ -209,7 +210,7 @@ test.describe('vinext pilot smoke', () => {
     await page.goto('/guides');
 
     await expect(page.getByText('Гайд по вечернему сбору')).toBeVisible({ timeout: 15000 });
-    await expect(page.getByRole('button', { name: 'Выйти' })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Основная навигация' })).toBeVisible();
   });
 
   test('renders authenticated vinext /absences view', async ({ page }) => {

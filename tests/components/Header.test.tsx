@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import Header from '@/components/shell/Header';
 
 interface MockLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
@@ -36,7 +36,11 @@ describe('Header navigation accessibility', () => {
 
     expect(screen.getByRole('navigation', { name: 'Primary navigation' })).toBeInTheDocument();
 
-    const guidesLink = screen.getByRole('navigation', { name: 'Primary navigation' }).querySelector('a[aria-label="Guides"]');
+    fireEvent.click(screen.getByRole('button', { name: 'Sections' }));
+
+    expect(screen.getByLabelText('Command navigation')).toBeInTheDocument();
+
+    const guidesLink = screen.getByLabelText('Command navigation').querySelector('a[aria-label="Guides"]');
 
     expect(guidesLink).not.toBeNull();
     expect(guidesLink).toHaveAttribute('href', '/guides');

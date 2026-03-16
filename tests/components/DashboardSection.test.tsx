@@ -58,6 +58,6 @@ describe('DashboardSection', () => {
     expect(screen.getByText('Readiness')).toBeInTheDocument();
     expect(screen.getByText('Support')).toBeInTheDocument();
     expect(screen.getByText('Officer')).toBeInTheDocument();
-    expect(screen.getByText('Raid Lead')).toBeInTheDocument();
+    expect(screen.getAllByText('Raid Lead').length).toBeGreaterThan(0);
   });
 });

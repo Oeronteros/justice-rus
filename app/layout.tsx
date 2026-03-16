@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { Manrope, Noto_Serif } from 'next/font/google';
 import * as stylex from '@stylexjs/stylex';
 import "./stylex.css";
 import "./globals.css";
@@ -40,6 +41,19 @@ export const viewport = {
   maximumScale: 5,
 };
 
+const bodyFont = Manrope({
+  subsets: ['latin', 'cyrillic'],
+  display: 'swap',
+  variable: '--font-body',
+});
+
+const displayFont = Noto_Serif({
+  subsets: ['latin', 'cyrillic'],
+  display: 'swap',
+  variable: '--font-display',
+  weight: ['500', '700', '800'],
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -48,7 +62,7 @@ export default function RootLayout({
   const bodyProps = mergeStylexProps(stylex.props(rootLayoutStyles.body), 'theme-wuxia');
 
   return (
-    <html lang={defaultLanguage}>
+    <html lang={defaultLanguage} className={`${bodyFont.variable} ${displayFont.variable}`}>
       <body {...bodyProps}>
         <InputPerformanceMode />
         <QueryProvider>

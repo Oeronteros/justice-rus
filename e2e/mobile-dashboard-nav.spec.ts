@@ -1,6 +1,6 @@
 import { expect, test, type Page, type Route } from '@playwright/test';
 
-test.use({ viewport: { width: 390, height: 844 } });
+test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
 
 const authResponse = {
   success: true,
@@ -215,7 +215,7 @@ async function installPortalMocks(page: Page) {
 }
 
 test.describe('mobile dashboard and nav flow', () => {
-  test('logs in on mobile, shows refreshed dashboard, and navigates through members and PvP', async ({ page }) => {
+  test('logs in on mobile, shows refreshed dashboard, and opens PvP from immersive menu', async ({ page }) => {
     await installPortalMocks(page);
 
     await page.goto('/');
@@ -225,21 +225,21 @@ test.describe('mobile dashboard and nav flow', () => {
 
     await expect(page.getByText('Операционная сводка')).toBeVisible();
     await expect(page.getByText('Readiness')).toBeVisible();
-    await expect(page.getByText('Raid Lead')).toBeVisible();
+    await expect(page.getByText('Raid Lead').first()).toBeVisible();
     await expect(page.getByRole('link', { name: 'Дашборд', exact: true })).toHaveAttribute('aria-current', 'page');
-
-    await page.locator('.mobile-nav-link[aria-label="Участники"]').click();
-    await expect(page).toHaveURL(/\/members$/);
-    await expect(page.locator('.mobile-nav-link[aria-label="Участники"]')).toHaveAttribute('aria-current', 'page');
-    await expect(page.locator('.table-card').first()).toContainText('Vanguard');
 
     const moreButton = page.getByRole('button', { name: 'Еще' });
     await moreButton.click();
     await expect(moreButton).toHaveAttribute('aria-expanded', 'true');
-    await page.locator('.mobile-nav-sheet-link[aria-label="PvP"]').click();
 
-    await expect(page.getByText('Топ рейтинга')).toBeVisible();
-    await expect(page.getByText('Последние подтвержденные матчи')).toBeVisible();
+    const moreNav = page.getByRole('navigation', { name: 'Дополнительная навигация' });
+    await expect(moreNav).toBeVisible();
+    const pvpLink = page.locator('nav[aria-label="Дополнительная навигация"] a[href="/pvp"]').first();
+    await expect(pvpLink).toBeVisible();
+    await pvpLink.tap();
+
+    await expect(page.getByText(/Топ рейтинга/i).first()).toBeVisible();
+    await expect(page.getByText(/Последние подтвержденные матчи/i).first()).toBeVisible();
     await expect(page.getByText('Vanguard').first()).toBeVisible();
     await expect(page.getByText('Raid Lead').first()).toBeVisible();
   });

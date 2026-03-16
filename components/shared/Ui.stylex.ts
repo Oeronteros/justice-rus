@@ -27,20 +27,20 @@ export const uiStyles = stylex.create({
   card: {
     position: 'relative',
     borderRadius: '16px',
-    border: '1px solid rgba(73, 110, 130, 0.4)',
+    border: '1px solid rgba(192, 167, 121, 0.34)',
     background:
-      'radial-gradient(circle at 10% 0%, rgba(110, 190, 230, 0.07), transparent 45%), linear-gradient(145deg, rgba(10, 16, 24, 0.92), rgba(8, 12, 18, 0.88))',
+      'radial-gradient(circle at 10% 0%, rgba(169, 71, 63, 0.12), transparent 42%), radial-gradient(circle at 88% 10%, rgba(130, 185, 173, 0.1), transparent 34%), linear-gradient(145deg, rgba(17, 19, 24, 0.94), rgba(11, 13, 17, 0.9))',
     transitionProperty: 'border-color, transform, box-shadow',
     transitionDuration: '150ms',
     boxShadow: '0 18px 34px rgba(4, 8, 12, 0.42)',
     ':hover': {
-      borderColor: 'rgba(170, 210, 230, 0.55)',
-      boxShadow: '0 26px 46px rgba(4, 8, 12, 0.55)',
+      borderColor: 'rgba(219, 196, 158, 0.64)',
+      boxShadow: '0 26px 46px rgba(2, 3, 5, 0.62)',
       transform: 'translateY(-1px)',
     },
     ':focus-within': {
-      borderColor: 'rgba(180, 221, 239, 0.58)',
-      boxShadow: '0 0 0 1px rgba(180, 221, 239, 0.18), 0 24px 44px rgba(4, 8, 12, 0.55)',
+      borderColor: 'rgba(226, 205, 170, 0.66)',
+      boxShadow: '0 0 0 1px rgba(226, 205, 170, 0.2), 0 24px 44px rgba(2, 3, 5, 0.6)',
     },
   },
   sectionCard: {
@@ -48,8 +48,8 @@ export const uiStyles = stylex.create({
   },
   softPanel: {
     borderRadius: '20px',
-    border: '1px solid rgba(42, 60, 76, 0.72)',
-    backgroundColor: 'rgba(12, 21, 29, 0.78)',
+    border: '1px solid rgba(112, 96, 70, 0.72)',
+    backgroundColor: 'rgba(20, 22, 28, 0.82)',
     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.02)',
   },
   buttonBase: {
@@ -77,37 +77,37 @@ export const uiStyles = stylex.create({
     },
   },
   buttonPrimary: {
-    background: 'linear-gradient(120deg, #2f6f90, #5d9cbc)',
-    border: '1px solid rgba(174, 212, 231, 0.4)',
-    boxShadow: '0 14px 28px rgba(8, 17, 24, 0.42)',
+    background: 'linear-gradient(120deg, #a9473f, #82b9ad)',
+    border: '1px solid rgba(223, 199, 160, 0.46)',
+    boxShadow: '0 14px 28px rgba(2, 3, 5, 0.52)',
     ':hover': {
-      background: 'linear-gradient(120deg, #3a7d9f, #6ba8c6)',
-      boxShadow: '0 18px 32px rgba(8, 17, 24, 0.52)',
+      background: 'linear-gradient(120deg, #bc574e, #97cec2)',
+      boxShadow: '0 18px 32px rgba(2, 3, 5, 0.6)',
     },
     ':active': {
       filter: 'brightness(0.98)',
     },
     ':focus-visible': {
-      outline: '2px solid rgba(205, 236, 248, 0.84)',
+      outline: '2px solid rgba(232, 215, 187, 0.84)',
     },
     ':disabled': {
       boxShadow: '0 10px 20px rgba(8, 17, 24, 0.28)',
     },
   },
   buttonSecondary: {
-    backgroundColor: 'rgba(10, 16, 24, 0.78)',
-    border: '1px solid rgba(115, 153, 173, 0.35)',
-    boxShadow: 'inset 0 0 0 1px rgba(93, 132, 153, 0.12)',
+    backgroundColor: 'rgba(20, 22, 28, 0.84)',
+    border: '1px solid rgba(146, 126, 92, 0.38)',
+    boxShadow: 'inset 0 0 0 1px rgba(146, 126, 92, 0.14)',
     ':hover': {
-      backgroundColor: 'rgba(13, 24, 34, 0.92)',
-      borderColor: 'rgba(165, 206, 225, 0.54)',
-      boxShadow: '0 14px 28px rgba(4, 8, 12, 0.36)',
+      backgroundColor: 'rgba(33, 29, 32, 0.94)',
+      borderColor: 'rgba(218, 195, 156, 0.56)',
+      boxShadow: '0 14px 28px rgba(2, 3, 5, 0.46)',
     },
     ':active': {
       backgroundColor: 'rgba(9, 17, 25, 0.96)',
     },
     ':focus-visible': {
-      outline: '2px solid rgba(205, 236, 248, 0.68)',
+      outline: '2px solid rgba(232, 215, 187, 0.72)',
     },
   },
   buttonXs: {
@@ -184,9 +184,9 @@ export const uiStyles = stylex.create({
   },
   notice: {
     borderRadius: '16px',
-    border: '1px solid rgba(47, 110, 141, 0.4)',
-    backgroundColor: 'rgba(22, 32, 43, 0.65)',
-    color: '#c7dce8',
+    border: '1px solid rgba(146, 126, 92, 0.42)',
+    backgroundColor: 'rgba(26, 22, 24, 0.68)',
+    color: '#d9cab0',
     fontSize: '0.9rem',
     lineHeight: 1.6,
     padding: '14px 16px',
@@ -207,14 +207,14 @@ export const uiStyles = stylex.create({
     padding: '12px 16px',
     transitionProperty: 'border-color, box-shadow, background-color',
     transitionDuration: '150ms',
-    backgroundColor: 'rgba(9, 14, 20, 0.96)',
-    border: '1px solid rgba(92, 126, 145, 0.4)',
+    backgroundColor: 'rgba(18, 20, 26, 0.96)',
+    border: '1px solid rgba(146, 126, 92, 0.46)',
     color: colors.paper,
     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.03)',
     ':focus': {
       outline: 'none',
-      borderColor: 'rgba(176, 214, 231, 0.66)',
-      boxShadow: '0 0 0 3px rgba(74, 144, 176, 0.26)',
+      borderColor: 'rgba(223, 199, 160, 0.7)',
+      boxShadow: '0 0 0 3px rgba(169, 71, 63, 0.24)',
     },
   },
   select: {
@@ -223,21 +223,21 @@ export const uiStyles = stylex.create({
     padding: '12px 16px',
     transitionProperty: 'border-color, box-shadow, background-color',
     transitionDuration: '150ms',
-    backgroundColor: 'rgba(9, 14, 20, 0.96)',
-    border: '1px solid rgba(92, 126, 145, 0.4)',
+    backgroundColor: 'rgba(18, 20, 26, 0.96)',
+    border: '1px solid rgba(146, 126, 92, 0.46)',
     color: '#fff',
     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.03)',
     ':focus': {
       outline: 'none',
-      borderColor: 'rgba(176, 214, 231, 0.66)',
-      boxShadow: '0 0 0 3px rgba(74, 144, 176, 0.26)',
+      borderColor: 'rgba(223, 199, 160, 0.7)',
+      boxShadow: '0 0 0 3px rgba(169, 71, 63, 0.24)',
     },
   },
   tableFrame: {
     overflowX: 'auto',
     borderRadius: radius.xl,
-    border: '1px solid rgba(42, 60, 76, 0.72)',
-    background: 'linear-gradient(145deg, rgba(10, 18, 26, 0.9), rgba(8, 12, 18, 0.9))',
+    border: '1px solid rgba(112, 96, 70, 0.72)',
+    background: 'linear-gradient(145deg, rgba(17, 19, 24, 0.92), rgba(10, 12, 16, 0.92))',
   },
   textCenter: {
     textAlign: 'center',
@@ -258,23 +258,23 @@ export const uiStyles = stylex.create({
     position: 'sticky',
     top: 0,
     zIndex: 1,
-    backgroundColor: 'rgba(12, 18, 26, 0.94)',
+    backgroundColor: 'rgba(20, 22, 28, 0.95)',
     backdropFilter: 'blur(8px)',
-    color: 'rgba(159, 201, 223, 0.92)',
+    color: 'rgba(222, 203, 170, 0.92)',
   },
   tableCell: {
     padding: '16px 24px',
     whiteSpace: 'nowrap',
     fontSize: '0.875rem',
-    color: '#c1d4e1',
+    color: '#dccdb2',
     borderTop: '1px solid rgba(255, 255, 255, 0.03)',
   },
   tableRowEven: {
-    backgroundColor: 'rgba(12, 18, 26, 0.6)',
+    backgroundColor: 'rgba(20, 22, 28, 0.66)',
   },
   tableRowHover: {
     ':hover': {
-      backgroundColor: 'rgba(20, 34, 46, 0.6)',
+      backgroundColor: 'rgba(38, 32, 34, 0.58)',
     },
   },
   modalBackdrop: {
@@ -285,7 +285,7 @@ export const uiStyles = stylex.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: '16px',
-    backgroundColor: 'rgba(3, 6, 9, 0.76)',
+    backgroundColor: 'rgba(7, 8, 12, 0.78)',
     backdropFilter: 'blur(10px)',
   },
   modalShell: {
@@ -294,10 +294,10 @@ export const uiStyles = stylex.create({
     maxHeight: 'min(92vh, 980px)',
     overflow: 'auto',
     borderRadius: '30px',
-    border: '1px solid rgba(66, 97, 118, 0.7)',
+    border: '1px solid rgba(160, 139, 103, 0.66)',
     background:
-      'radial-gradient(circle at 10% 0%, rgba(110, 190, 230, 0.08), transparent 36%), linear-gradient(145deg, rgba(10, 16, 24, 0.96), rgba(8, 12, 18, 0.94))',
-    boxShadow: '0 30px 70px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(255,255,255,0.03)',
+      'radial-gradient(circle at 10% 0%, rgba(169, 71, 63, 0.12), transparent 36%), radial-gradient(circle at 86% 10%, rgba(130, 185, 173, 0.1), transparent 34%), linear-gradient(145deg, rgba(17, 19, 24, 0.97), rgba(10, 12, 16, 0.95))',
+    boxShadow: '0 30px 70px rgba(0, 0, 0, 0.56), inset 0 0 0 1px rgba(248, 237, 217, 0.04)',
   },
   modalShellNarrow: {
     maxWidth: '980px',

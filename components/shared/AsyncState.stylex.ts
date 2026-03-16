@@ -38,7 +38,7 @@ export const asyncStateStyles = stylex.create({
     fontSize: '0.75rem',
     letterSpacing: '0.2em',
     textTransform: 'uppercase',
-    color: colors.accent,
+    color: 'rgba(222, 203, 170, 0.92)',
   },
   heroTitle: {
     display: 'flex',
@@ -63,7 +63,7 @@ export const asyncStateStyles = stylex.create({
       '@media (max-width: 640px)': '38px',
     },
     borderRadius: '12px',
-    backgroundColor: 'rgba(13, 24, 34, 0.72)',
+    backgroundColor: 'rgba(27, 22, 24, 0.78)',
     color: colors.accentStrong,
   },
   heroSubtitle: {
@@ -83,7 +83,7 @@ export const asyncStateStyles = stylex.create({
     minWidth: '84px',
     height: '12px',
     borderRadius: radius.pill,
-    backgroundColor: 'rgba(143, 185, 204, 0.18)',
+    backgroundColor: 'rgba(130, 185, 173, 0.22)',
   },
   skeletonChipWide: {
     minWidth: '132px',
@@ -139,7 +139,7 @@ export const asyncStateStyles = stylex.create({
     width: '100%',
     height: '12px',
     borderRadius: radius.pill,
-    backgroundColor: 'rgba(143, 185, 204, 0.14)',
+    backgroundColor: 'rgba(192, 167, 121, 0.16)',
   },
   lineShort: {
     width: '38%',
@@ -157,7 +157,7 @@ export const asyncStateStyles = stylex.create({
       '@media (max-width: 640px)': '82px',
     },
     borderRadius: radius.md,
-    backgroundColor: 'rgba(143, 185, 204, 0.1)',
+    backgroundColor: 'rgba(130, 185, 173, 0.12)',
   },
   emptyRoot: {
     textAlign: 'center',
@@ -178,7 +178,7 @@ export const asyncStateStyles = stylex.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(31, 41, 55, 0.5)',
+    backgroundColor: 'rgba(33, 28, 31, 0.58)',
   },
   iconSurfaceError: {
     backgroundColor: colors.dangerSurfaceStrong,
@@ -243,7 +243,7 @@ export const asyncStateStyles = stylex.create({
     maxWidth: '28rem',
     marginInline: 'auto',
     marginBottom: '24px',
-    color: 'rgba(156, 163, 175, 0.95)',
+    color: 'rgba(214, 196, 169, 0.9)',
   },
   spinner: {
     display: 'inline-block',

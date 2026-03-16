@@ -21,7 +21,7 @@ export const sectionHeroStyles = stylex.create({
     borderRadius: radius.lg,
     border: `1px solid ${colors.accentSoft}`,
     background:
-      'radial-gradient(circle at 8% 12%, rgba(98, 155, 186, 0.16), transparent 46%), radial-gradient(circle at 84% 18%, rgba(143, 185, 204, 0.1), transparent 45%), linear-gradient(145deg, rgba(10, 18, 26, 0.88), rgba(8, 12, 18, 0.88))',
+      'radial-gradient(circle at 10% 10%, rgba(169, 71, 63, 0.22), transparent 42%), radial-gradient(circle at 84% 18%, rgba(130, 185, 173, 0.14), transparent 40%), linear-gradient(145deg, rgba(20, 22, 28, 0.92), rgba(11, 13, 17, 0.92))',
     boxShadow: `0 20px 40px ${colors.shadowStrong}`,
     overflow: 'hidden',
     gridTemplateColumns: {
@@ -37,7 +37,7 @@ export const sectionHeroStyles = stylex.create({
       position: 'absolute',
       inset: 0,
       background:
-        'linear-gradient(115deg, rgba(185, 218, 235, 0.1), transparent 28%, transparent 70%, rgba(136, 176, 196, 0.08))',
+        'linear-gradient(115deg, rgba(237, 220, 191, 0.1), transparent 28%, transparent 70%, rgba(130, 185, 173, 0.1))',
       pointerEvents: 'none',
     },
     '::after': {
@@ -45,7 +45,7 @@ export const sectionHeroStyles = stylex.create({
       position: 'absolute',
       inset: 'auto -12% -55% -12%',
       height: '70%',
-      background: 'radial-gradient(circle at 50% 0%, rgba(143, 185, 204, 0.16), transparent 70%)',
+      background: 'radial-gradient(circle at 50% 0%, rgba(130, 185, 173, 0.2), transparent 70%)',
       pointerEvents: 'none',
     },
   },
@@ -62,7 +62,7 @@ export const sectionHeroStyles = stylex.create({
     textTransform: 'uppercase',
     letterSpacing: '0.14em',
     fontSize: '0.7rem',
-    color: 'rgba(186, 214, 230, 0.85)',
+    color: 'rgba(224, 208, 180, 0.9)',
   },
   title: {
     display: 'flex',
@@ -84,7 +84,7 @@ export const sectionHeroStyles = stylex.create({
     borderRadius: '11px',
     border: `1px solid ${colors.accentSoft}`,
     backgroundColor: colors.panelSolid,
-    color: 'rgba(170, 210, 230, 0.95)',
+    color: 'rgba(232, 246, 240, 0.96)',
     boxShadow: `inset 0 0 14px ${colors.accentGlow}`,
   },
   subtitle: {
@@ -106,7 +106,7 @@ export const sectionHeroStyles = stylex.create({
     borderRadius: radius.pill,
     border: `1px solid ${colors.accentSoft}`,
     backgroundColor: colors.overlay,
-    color: 'rgba(193, 214, 227, 0.92)',
+    color: 'rgba(223, 208, 181, 0.95)',
     fontSize: '0.75rem',
     letterSpacing: '0.04em',
     textTransform: 'uppercase',

@@ -7,7 +7,31 @@ export default defineConfig({
   build: {
     chunkSizeWarningLimit: 1500,
   },
-  plugins: [vinext()],
+  plugins: [
+    vinext({
+      react: {
+        babel: {
+          plugins: [
+            [
+              '@stylexjs/babel-plugin',
+              {
+                dev: process.env.NODE_ENV !== 'production',
+                runtimeInjection: false,
+                enableInlinedConditionalMerge: true,
+                treeshakeCompensation: true,
+                aliases: {
+                  '@/*': [path.resolve(__dirname, '../../*')],
+                },
+                unstable_moduleResolution: {
+                  type: 'commonJS',
+                },
+              },
+            ],
+          ],
+        },
+      },
+    }),
+  ],
   publicDir: path.resolve(__dirname, '../../public'),
   resolve: {
     tsconfigPaths: true,

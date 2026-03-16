@@ -8,11 +8,16 @@ import type { News } from '@/lib/schemas/news';
 
 const useNewsMock = vi.fn();
 const createNewsMutateAsyncMock = vi.fn();
+const deleteNewsMutateAsyncMock = vi.fn();
 
 vi.mock('@/lib/news/hooks', () => ({
   useNews: () => useNewsMock(),
   useCreateNews: () => ({
     mutateAsync: createNewsMutateAsyncMock,
+    isPending: false,
+  }),
+  useDeleteNews: () => ({
+    mutateAsync: deleteNewsMutateAsyncMock,
     isPending: false,
   }),
 }));
@@ -31,6 +36,7 @@ describe('NewsSection link rendering', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     createNewsMutateAsyncMock.mockReset();
+    deleteNewsMutateAsyncMock.mockReset();
     useNewsMock.mockReturnValue({
       data: [],
       isLoading: false,

@@ -13,7 +13,7 @@ export const toastStyles = stylex.create({
     borderRadius: radius.xl,
     border: `1px solid ${colors.accentMuted}`,
     background:
-      'linear-gradient(145deg, rgba(10, 18, 26, 0.94), rgba(8, 12, 18, 0.96))',
+      'radial-gradient(circle at 14% 10%, rgba(169, 71, 63, 0.16), transparent 42%), radial-gradient(circle at 86% 16%, rgba(130, 185, 173, 0.14), transparent 36%), linear-gradient(145deg, rgba(18, 20, 26, 0.96), rgba(10, 12, 16, 0.98))',
     boxShadow: `0 18px 36px ${colors.shadowSoft}`,
   },
   exiting: {
@@ -27,7 +27,7 @@ export const toastStyles = stylex.create({
     borderRadius: radius.pill,
     display: 'grid',
     placeItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    backgroundColor: 'rgba(245, 237, 222, 0.08)',
   },
   content: {
     minWidth: 0,
@@ -52,7 +52,7 @@ export const toastStyles = stylex.create({
     padding: '0 12px',
     borderRadius: radius.pill,
     border: `1px solid ${colors.accentSoft}`,
-    backgroundColor: 'rgba(11, 20, 29, 0.72)',
+    backgroundColor: 'rgba(25, 21, 24, 0.76)',
     color: colors.accentStrong,
     fontWeight: 600,
     cursor: 'pointer',
