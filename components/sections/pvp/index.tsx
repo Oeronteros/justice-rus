@@ -15,6 +15,8 @@ import { handleApiError } from '@/lib/api/errors';
 import * as stylex from '@stylexjs/stylex';
 import { uiStyles } from '@/components/shared/Ui.stylex';
 import { opsStyles } from '@/components/sections/ops/Ops.stylex';
+import { mergeStylexProps } from '@/lib/stylex/utils';
+import { pvpStyles } from './Pvp.stylex';
 
 interface PvpSectionProps {
   user: User;
@@ -68,22 +70,22 @@ function QueueSearchBanner({ joinedAt, queueSize }: { joinedAt: string; queueSiz
   const elapsed = getQueueElapsed(joinedAt, now);
 
   return (
-    <div className="matchmaking-banner">
-      <div className="matchmaking-banner__fx" aria-hidden="true">
-        <span className="matchmaking-banner__pulse" />
-        <span className="matchmaking-banner__pulse matchmaking-banner__pulse--delay" />
-        <span className="matchmaking-banner__scan" />
+    <div {...stylex.props(pvpStyles.matchmakingBanner)}>
+      <div {...stylex.props(pvpStyles.fxLayer)} aria-hidden="true">
+        <span {...stylex.props(pvpStyles.pulse)} />
+        <span {...stylex.props(pvpStyles.pulse, pvpStyles.pulseDelayed)} />
+        <span {...stylex.props(pvpStyles.scan)} />
       </div>
 
-      <div className="matchmaking-banner__content">
-        <div className="matchmaking-banner__status">
-          <span className="matchmaking-banner__dot" />
+      <div {...stylex.props(pvpStyles.matchmakingContent)}>
+        <div {...stylex.props(pvpStyles.matchmakingStatus)}>
+          <span {...stylex.props(pvpStyles.matchmakingDot)} />
           Поиск матча
         </div>
 
-        <div className="matchmaking-banner__timer">{formatDuration(elapsed)}</div>
+        <div {...stylex.props(pvpStyles.matchmakingTimer)}>{formatDuration(elapsed)}</div>
 
-        <div className="matchmaking-banner__meta">
+        <div {...stylex.props(pvpStyles.matchmakingMeta)}>
           <span>Плашка подбора активна</span>
           <span>Игроков в очереди: {queueSize}</span>
         </div>
@@ -110,14 +112,14 @@ function MatchCard({
   const hasReported = Boolean(match.yourReport);
 
   return (
-    <div className="card section-card ds-section-panel p-5 sm:p-6 space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+    <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, pvpStyles.matchCard)}>
+      <div {...stylex.props(pvpStyles.matchHeader)}>
         <div>
-          <div className="text-sm uppercase tracking-widest text-green-300 mb-2">Текущий матч</div>
-          <div className="text-2xl font-bold font-orbitron text-[#e6eff5]">{you.nickname} vs {opponent.nickname}</div>
-          <div className="text-sm text-gray-400 mt-2">Создан: {formatDateTime(match.createdAt)}</div>
+          <div {...stylex.props(pvpStyles.matchKicker)}>Текущий матч</div>
+          <div {...stylex.props(pvpStyles.matchTitle)}>{you.nickname} vs {opponent.nickname}</div>
+          <div {...stylex.props(pvpStyles.matchMeta)}>Создан: {formatDateTime(match.createdAt)}</div>
         </div>
-        <div className="ds-kicker border-green-700/45 bg-green-900/30 py-2 text-xs text-green-300">
+        <div {...stylex.props(uiStyles.badge, uiStyles.badgeSuccess)}>
           <WuxiaIcon name="sword" className="w-4 h-4" />
           {match.confirmationStatus === 'confirmed'
             ? 'Подтверждено'
@@ -129,10 +131,10 @@ function MatchCard({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-        <div className="rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4">
-          <div className="text-gray-400 mb-1">Ты</div>
-          <div className="flex flex-wrap items-center gap-2 text-[#e6eff5] font-semibold">
+      <div {...stylex.props(pvpStyles.duelGrid)}>
+        <div {...stylex.props(pvpStyles.duelCard)}>
+          <div {...stylex.props(pvpStyles.duelLabel)}>Ты</div>
+          <div {...stylex.props(pvpStyles.duelNameRow)}>
             <span>{you.nickname}</span>
             <PrefixBadge prefix={you.prefix} variant="compact" />
           </div>
@@ -140,9 +142,9 @@ function MatchCard({
             <ClassBadge className={you.className} emptyLabel="Класс не указан" textClassName="text-green-300 text-xs" iconSizeClassName="h-7 w-7" />
           </div>
         </div>
-        <div className="rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4">
-          <div className="text-gray-400 mb-1">Соперник</div>
-          <div className="flex flex-wrap items-center gap-2 text-[#e6eff5] font-semibold">
+        <div {...stylex.props(pvpStyles.duelCard)}>
+          <div {...stylex.props(pvpStyles.duelLabel)}>Соперник</div>
+          <div {...stylex.props(pvpStyles.duelNameRow)}>
             <span>{opponent.nickname}</span>
             <PrefixBadge prefix={opponent.prefix} variant="compact" />
           </div>
@@ -152,18 +154,18 @@ function MatchCard({
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-        <div className="text-sm text-gray-400">
-          Твой отчет: <span className="text-[#e6eff5]">{match.yourReport ? (match.yourReport === 'win' ? 'Победа' : 'Поражение') : 'не отправлен'}</span>
+      <div {...stylex.props(pvpStyles.reportRow)}>
+        <div {...stylex.props(pvpStyles.reportText)}>
+          Твой отчет: <span {...stylex.props(pvpStyles.reportAccent)}>{match.yourReport ? (match.yourReport === 'win' ? 'Победа' : 'Поражение') : 'не отправлен'}</span>
           {' · '}
-          Отчет соперника: <span className="text-[#e6eff5]">{match.opponentReport ? (match.opponentReport === 'win' ? 'Победа' : 'Поражение') : 'нет'}</span>
+          Отчет соперника: <span {...stylex.props(pvpStyles.reportAccent)}>{match.opponentReport ? (match.opponentReport === 'win' ? 'Победа' : 'Поражение') : 'нет'}</span>
         </div>
         {match.status === 'pending' && (
-          <div className="flex flex-col sm:flex-row gap-3">
-            <button type="button" className="btn-primary px-4 py-2 w-full sm:w-auto" disabled={isReporting} onClick={() => onReport('win')}>
+          <div {...stylex.props(pvpStyles.reportButtons)}>
+            <button type="button" {...mergeStylexProps(stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary), 'px-4 py-2 w-full sm:w-auto')} disabled={isReporting} onClick={() => onReport('win')}>
               {hasReported ? 'Обновить: победа' : 'Сообщить победу'}
             </button>
-            <button type="button" className="btn-secondary px-4 py-2 w-full sm:w-auto" disabled={isReporting} onClick={() => onReport('loss')}>
+            <button type="button" {...mergeStylexProps(stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary), 'px-4 py-2 w-full sm:w-auto')} disabled={isReporting} onClick={() => onReport('loss')}>
               {hasReported ? 'Обновить: поражение' : 'Сообщить поражение'}
             </button>
           </div>
@@ -171,7 +173,7 @@ function MatchCard({
       </div>
 
       {match.status === 'pending' && hasReported && (
-        <div className="rounded-2xl ds-section-panel-soft border-green-700/45 bg-green-950/35 px-4 py-3 text-xs text-green-300">
+        <div {...stylex.props(pvpStyles.reportNotice)}>
           Твой отчет уже отправлен. При необходимости его можно обновить до подтверждения матча.
         </div>
       )}

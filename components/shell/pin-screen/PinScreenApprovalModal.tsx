@@ -2,6 +2,9 @@
 
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { Translations } from '@/lib/i18n';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { mergeStylexProps } from '@/lib/stylex/utils';
 
 interface PinScreenApprovalModalProps {
   message: string;
@@ -39,10 +42,10 @@ export function PinScreenApprovalModal({
         </div>
 
         <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-          <button type="button" className="btn-primary flex-1 px-4 py-3 text-sm font-semibold" onClick={onDismiss}>
+          <button type="button" {...mergeStylexProps(stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary), 'flex-1 px-4 py-3 text-sm font-semibold')} onClick={onDismiss}>
             {t.auth.gotIt}
           </button>
-          <button type="button" className="btn-secondary flex-1 px-4 py-3 text-sm font-semibold" onClick={onBackToLogin}>
+          <button type="button" {...mergeStylexProps(stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary), 'flex-1 px-4 py-3 text-sm font-semibold')} onClick={onBackToLogin}>
             {t.auth.backToLogin}
           </button>
         </div>

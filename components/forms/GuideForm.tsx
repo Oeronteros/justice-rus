@@ -19,6 +19,10 @@ import {
 } from '@/lib/schemas/guide';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { useTranslation } from '@/lib/i18n/context';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { mergeStylexProps } from '@/lib/stylex/utils';
+import { guidesStyles } from '@/components/sections/guides/Guides.stylex';
 
 interface GuideFormProps {
   onSubmit: (data: CreateGuideDto) => Promise<void>;
@@ -295,7 +299,7 @@ export function GuideForm({
           <input
             {...register('title')}
             placeholder={t.guides.titleField}
-            className="input-field w-full text-lg"
+            {...mergeStylexProps(stylex.props(uiStyles.input), 'text-lg')}
           />
           {errors.title && (
             <span className="text-red-400 text-sm mt-1 block">{errors.title.message}</span>
@@ -305,14 +309,14 @@ export function GuideForm({
         <input
           {...register('author')}
           placeholder={t.guides.author}
-          className={joinClasses('input-field w-full', disableAuthor && 'opacity-60 cursor-not-allowed')}
+          className={joinClasses(stylex.props(uiStyles.input).className, disableAuthor && 'opacity-60 cursor-not-allowed')}
           disabled={disableAuthor}
         />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)]">
         <div>
-          <select {...register('category')} className="select-field w-full">
+          <select {...register('category')} {...stylex.props(uiStyles.select)}>
             {guideCategories.map((category) => (
               <option key={category} value={category}>
                 {category}
@@ -326,7 +330,7 @@ export function GuideForm({
 
         <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
           {!focusMode && (
-          <div className="inline-flex rounded-2xl p-1 bg-[#0b141d]/70 border border-[#223140]/70 w-fit">
+          <div {...stylex.props(guidesStyles.segmented)}>
             {[
               ['write', 'Editor'],
               ['split', 'Split'],
@@ -336,12 +340,7 @@ export function GuideForm({
                 key={mode}
                 type="button"
                 onClick={() => setEditorMode(mode as EditorMode)}
-                className={joinClasses(
-                  'px-3 py-2 text-sm rounded-2xl transition-colors',
-                  editorMode === mode
-                    ? 'bg-[#183244]/80 text-[#e6eff5]'
-                    : 'text-gray-400 hover:text-[#bcd6e5]'
-                )}
+                {...stylex.props(guidesStyles.segmentedButton, editorMode === mode && guidesStyles.segmentedButtonActive)}
               >
                 {label}
               </button>
@@ -360,31 +359,31 @@ export function GuideForm({
             />
             <button
               type="button"
-              className="btn-secondary px-4 py-2.5"
+              {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}
               onClick={() => markdownInputRef.current?.click()}
             >
               <WuxiaIcon name="upload" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
               Import Obsidian .md
             </button>
-            <button type="button" className="dc-icon-btn p-2.5 rounded-xl" onClick={handleImageUrlInsert} title="Image URL">
+            <button type="button" {...mergeStylexProps(stylex.props(uiStyles.iconButton), 'p-2.5 rounded-xl')} onClick={handleImageUrlInsert} title="Image URL">
               <WuxiaIcon name="image" className="w-4 h-4" />
             </button>
-            <button type="button" className="dc-icon-btn dc-icon-btn-accent p-2.5 rounded-xl" onClick={handleImageUpload} title="Upload image">
+            <button type="button" {...mergeStylexProps(stylex.props(uiStyles.iconButton), 'p-2.5 rounded-xl')} onClick={handleImageUpload} title="Upload image">
               <WuxiaIcon name="upload" className="w-4 h-4" />
             </button>
           </div>
         </div>
       </div>
 
-      <div className={`rounded-3xl border border-[#223140]/70 bg-[#091019]/70 p-4 md:p-5 space-y-4 ${focusMode ? 'guide-form-focus-wrap' : ''}`}>
+      <div {...stylex.props(guidesStyles.editorFrame)} className={focusMode ? 'guide-form-focus-wrap' : undefined}>
         {!focusMode && (
-        <div className="toolbar-surface">
+        <div {...stylex.props(guidesStyles.toolbarSurface)}>
           <div className="flex flex-wrap items-center gap-2">
           {GUIDE_TEMPLATES.map((template) => (
             <button
               key={template.label}
               type="button"
-              className="ui-chip ui-badge-accent"
+              {...stylex.props(uiStyles.chip, uiStyles.chipActive)}
               onClick={() => insertMarkdown(template.snippet)}
             >
               {template.label}
@@ -392,28 +391,28 @@ export function GuideForm({
           ))}
           <button
             type="button"
-            className="ui-chip"
+            {...stylex.props(uiStyles.chip)}
             onClick={() => insertMarkdown('\n> [!tip] Key takeaway\n> \n')}
           >
             Callout
           </button>
           <button
             type="button"
-            className="ui-chip"
+            {...stylex.props(uiStyles.chip)}
             onClick={() => insertMarkdown('\n| Item | Value | Notes |\n| --- | --- | --- |\n|  |  |  |\n')}
           >
             Table
           </button>
           <button
             type="button"
-            className="ui-chip"
+            {...stylex.props(uiStyles.chip)}
             onClick={() => insertMarkdown('\n- [ ] Step one\n- [ ] Step two\n- [ ] Step three\n')}
           >
             Checklist
           </button>
           <button
             type="button"
-            className="ui-chip"
+            {...stylex.props(uiStyles.chip)}
             onClick={() => insertMarkdown('[[Related Guide]]', true)}
           >
             Wikilink
@@ -457,11 +456,11 @@ export function GuideForm({
                 <div className="text-[11px] uppercase tracking-[0.2em] text-[#6f8799]">Obsidian-friendly</div>
               </div>
 
-              <div className="card min-h-[420px] p-6 overflow-auto">
+              <div {...mergeStylexProps(stylex.props(uiStyles.card), 'min-h-[420px] p-6 overflow-auto')}>
                 {content.trim() ? (
                   <MarkdownRenderer content={content} />
                 ) : (
-                  <div className="rounded-2xl border border-dashed border-[#2c4154] bg-[#0b141d]/65 px-5 py-10 text-sm text-[#89a2b5]">
+                  <div {...stylex.props(guidesStyles.previewEmpty)}>
                     Start writing or import a markdown note from Obsidian to preview the final guide layout.
                   </div>
                 )}
@@ -480,17 +479,17 @@ export function GuideForm({
       />
 
       {notice && (
-        <div className="text-sm text-[#bcd6e5] p-4 bg-[#16202b]/65 rounded-2xl border border-[#2f6e8d]/40">
+        <div {...stylex.props(uiStyles.notice, guidesStyles.subtleNotice)}>
           <WuxiaIcon name="checkCircle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
           {notice}
         </div>
       )}
 
-      <div className="mt-2 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end">
-        <button type="button" className="btn-secondary px-5 py-3" onClick={onCancel} disabled={isSubmitting}>
+      <div {...stylex.props(guidesStyles.actionRow)}>
+        <button type="button" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)} onClick={onCancel} disabled={isSubmitting}>
           {t.common.cancel}
         </button>
-        <button type="submit" className="btn-primary px-5 py-3" disabled={isSubmitting}>
+        <button type="submit" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)} disabled={isSubmitting}>
           {isSubmitting ? (
             <span className="inline-flex items-center justify-center">
               <WuxiaIcon name="spinner" className="spinner-icon w-4 h-4 mr-3" />

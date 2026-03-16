@@ -477,7 +477,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
               title={t.news.empty}
               description={t.news.emptyDescription}
               action={
-                <button onClick={() => refetch()} className="btn-secondary">
+                <button onClick={() => refetch()} {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}>
                   <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
                   {t.common.refresh}
                 </button>

@@ -3,6 +3,9 @@
 import { ClassBadge } from '@/components/ClassIcon';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { Translations } from '@/lib/i18n';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { mergeStylexProps } from '@/lib/stylex/utils';
 
 type Mode = 'login' | 'register';
 
@@ -79,14 +82,14 @@ export function PinScreenForm({
         <button
           type="button"
           onClick={() => onModeChange('login')}
-          className={`ui-chip min-h-[48px] rounded-2xl px-5 ${isLogin ? 'is-active' : ''}`}
+          {...mergeStylexProps(stylex.props(uiStyles.chip, isLogin && uiStyles.chipActive), 'min-h-[48px] rounded-2xl px-5')}
         >
           {t.auth.loginTab}
         </button>
         <button
           type="button"
           onClick={() => onModeChange('register')}
-          className={`ui-chip min-h-[48px] rounded-2xl px-5 ${!isLogin ? 'is-active' : ''}`}
+          {...mergeStylexProps(stylex.props(uiStyles.chip, !isLogin && uiStyles.chipActive), 'min-h-[48px] rounded-2xl px-5')}
         >
           {t.auth.registerTab}
         </button>
@@ -96,7 +99,7 @@ export function PinScreenForm({
         <input
           value={nickname}
           onChange={(event) => onNicknameChange(event.target.value)}
-          className="input-field w-full"
+          {...stylex.props(uiStyles.input)}
           placeholder={t.auth.nickname}
           autoFocus
           disabled={loading}
@@ -109,7 +112,7 @@ export function PinScreenForm({
             type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={(event) => onPasswordChange(event.target.value)}
-            className="input-field w-full"
+            {...stylex.props(uiStyles.input)}
             placeholder={t.auth.password}
             disabled={loading}
             autoComplete={isLogin ? 'current-password' : 'new-password'}
@@ -117,7 +120,7 @@ export function PinScreenForm({
           />
           <button
             type="button"
-            className="dc-icon-btn h-[52px] min-w-[52px] shrink-0 rounded-2xl px-3"
+            {...mergeStylexProps(stylex.props(uiStyles.iconButton), 'h-[52px] min-w-[52px] shrink-0 rounded-2xl px-3')}
             onClick={onTogglePassword}
             title={showPassword ? t.auth.hidePassword : t.auth.showPassword}
             aria-label={showPassword ? t.auth.hidePassword : t.auth.showPassword}
@@ -132,7 +135,7 @@ export function PinScreenForm({
             <select
               value={selectedClassName}
               onChange={(event) => onClassNameChange(event.target.value)}
-              className="select-field w-full"
+                {...stylex.props(uiStyles.select)}
               disabled={loading}
             >
               <option value="">{t.auth.chooseClass}</option>
@@ -150,7 +153,7 @@ export function PinScreenForm({
             <input
               value={discordHandle}
               onChange={(event) => onDiscordHandleChange(event.target.value)}
-              className="input-field w-full"
+                {...stylex.props(uiStyles.input)}
               placeholder={t.auth.discordHandle}
               disabled={loading}
               autoComplete="off"
@@ -160,7 +163,7 @@ export function PinScreenForm({
               type={showPassword ? 'text' : 'password'}
               value={confirmPassword}
               onChange={(event) => onConfirmPasswordChange(event.target.value)}
-              className="input-field w-full"
+                {...stylex.props(uiStyles.input)}
               placeholder={t.auth.confirmPassword}
               disabled={loading}
               autoComplete="new-password"
@@ -169,7 +172,7 @@ export function PinScreenForm({
           </>
         ) : null}
 
-        <button type="submit" disabled={loading} className="btn-primary w-full py-4 text-base font-bold shadow-[0_20px_34px_rgba(7,16,24,0.42)] sm:text-lg">
+        <button type="submit" disabled={loading} {...mergeStylexProps(stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary), 'w-full py-4 text-base font-bold shadow-[0_20px_34px_rgba(7,16,24,0.42)] sm:text-lg')}>
           {loading ? (
             <span className="inline-flex items-center justify-center">
               <WuxiaIcon name="spinner" className="spinner-icon mr-3 h-4 w-4" />
@@ -200,7 +203,7 @@ export function PinScreenForm({
             <div className="flex flex-col gap-2 sm:flex-row">
               <input
                 type="password"
-                className="input-field min-w-0 flex-1"
+                {...mergeStylexProps(stylex.props(uiStyles.input), 'min-w-0 flex-1')}
                 value={adminPin}
                 onChange={(event) => onAdminPinChange(event.target.value)}
                 placeholder={t.auth.adminPinPlaceholder}
@@ -208,7 +211,7 @@ export function PinScreenForm({
                 autoComplete="one-time-code"
                 enterKeyHint="go"
               />
-              <button type="button" className="btn-secondary w-full px-4 sm:w-auto" onClick={onAdminPinLogin} disabled={loading}>
+              <button type="button" {...mergeStylexProps(stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary), 'w-full px-4 sm:w-auto')} onClick={onAdminPinLogin} disabled={loading}>
                 {t.auth.loginSubmit}
               </button>
             </div>

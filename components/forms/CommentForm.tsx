@@ -6,6 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { createCommentSchema, type CreateCommentDto } from '@/lib/schemas/guide';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { useTranslation } from '@/lib/i18n/context';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { mergeStylexProps } from '@/lib/stylex/utils';
 
 interface CommentFormProps {
   onSubmit: (data: CreateCommentDto) => Promise<void>;
@@ -33,13 +36,13 @@ export function CommentForm({ onSubmit, isSubmitting = false }: CommentFormProps
   };
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit(handleFormSubmit)} className="card section-card p-5 sm:p-6">
+    <form ref={formRef} onSubmit={handleSubmit(handleFormSubmit)} {...mergeStylexProps(stylex.props(uiStyles.card, uiStyles.sectionCard), 'p-5 sm:p-6')}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="text-sm text-gray-400 flex items-center">{t.guides.yourNick}</div>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn-primary py-3"
+          {...mergeStylexProps(stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary), 'py-3')}
         >
           {isSubmitting ? (
             <span className="inline-flex items-center justify-center">
@@ -58,7 +61,7 @@ export function CommentForm({ onSubmit, isSubmitting = false }: CommentFormProps
       <textarea
         {...register('comment')}
         placeholder={t.guides.yourComment}
-        className="input-field min-h-[120px] mt-4 w-full"
+        {...mergeStylexProps(stylex.props(uiStyles.input), 'min-h-[120px] mt-4 w-full')}
         maxLength={3000}
         enterKeyHint="send"
         onKeyDown={(event) => {

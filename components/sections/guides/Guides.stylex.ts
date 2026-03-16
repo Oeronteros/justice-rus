@@ -2,6 +2,73 @@ import * as stylex from '@stylexjs/stylex';
 import { radius, typography } from '../../../lib/stylex/tokens.stylex';
 
 export const guidesStyles = stylex.create({
+  segmented: {
+    display: 'inline-flex',
+    borderRadius: '20px',
+    padding: '6px',
+    backgroundColor: 'rgba(11,20,29,0.7)',
+    border: '1px solid rgba(34,49,64,0.7)',
+    width: 'fit-content',
+  },
+  segmentedButton: {
+    padding: '8px 12px',
+    fontSize: '0.875rem',
+    borderRadius: '16px',
+    transitionProperty: 'background-color, color',
+    transitionDuration: '160ms',
+    color: 'rgba(156,163,175,0.95)',
+    backgroundColor: 'transparent',
+  },
+  segmentedButtonActive: {
+    backgroundColor: 'rgba(24,50,68,0.8)',
+    color: '#e6eff5',
+  },
+  editorFrame: {
+    borderRadius: '24px',
+    border: '1px solid rgba(34,49,64,0.7)',
+    backgroundColor: 'rgba(9,16,25,0.7)',
+    padding: {
+      default: '16px',
+      '@media (min-width: 768px)': '20px',
+    },
+    display: 'grid',
+    gap: '16px',
+  },
+  toolbarSurface: {
+    borderRadius: '20px',
+    border: '1px solid rgba(42,60,76,0.72)',
+    backgroundColor: 'rgba(12,21,29,0.78)',
+    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02)',
+    padding: '12px',
+  },
+  previewEmpty: {
+    borderRadius: '16px',
+    border: '1px dashed #2c4154',
+    backgroundColor: 'rgba(11,20,29,0.65)',
+    padding: '40px 20px',
+    fontSize: '0.875rem',
+    color: '#89a2b5',
+  },
+  subtleNotice: {
+    fontSize: '0.875rem',
+  },
+  actionRow: {
+    marginTop: '8px',
+    display: 'flex',
+    flexDirection: {
+      default: 'column',
+      '@media (min-width: 640px)': 'row',
+    },
+    gap: '12px',
+    alignItems: {
+      default: 'stretch',
+      '@media (min-width: 640px)': 'center',
+    },
+    justifyContent: {
+      default: 'flex-start',
+      '@media (min-width: 640px)': 'flex-end',
+    },
+  },
   dropzone: {
     borderRadius: '24px',
     border: '1px dashed rgba(143,185,204,0.35)',

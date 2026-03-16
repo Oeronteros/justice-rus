@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { AutoApproveRule } from '@/lib/schemas/workflow';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { mergeStylexProps } from '@/lib/stylex/utils';
 
 interface AutoApproveRuleEditorProps {
   rule?: AutoApproveRule;
@@ -40,7 +43,7 @@ export function AutoApproveRuleEditor({ rule, onSave, onCancel }: AutoApproveRul
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="input-field w-full"
+          {...stylex.props(uiStyles.input)}
           placeholder="Например: Авто-одобрение на 1 день"
           required
         />
@@ -66,7 +69,7 @@ export function AutoApproveRuleEditor({ rule, onSave, onCancel }: AutoApproveRul
           type="number"
           value={maxDuration}
           onChange={(e) => setMaxDuration(e.target.value)}
-          className="input-field w-full"
+          {...stylex.props(uiStyles.input)}
           placeholder="24"
           min="1"
         />
@@ -95,10 +98,10 @@ export function AutoApproveRuleEditor({ rule, onSave, onCancel }: AutoApproveRul
       </div>
 
       <div className="flex items-center gap-2 pt-4 border-t border-[#2a3c4c]/60">
-        <button type="submit" className="btn-primary">
+        <button type="submit" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>
           Сохранить
         </button>
-        <button type="button" onClick={onCancel} className="btn-secondary">
+        <button type="button" onClick={onCancel} {...mergeStylexProps(stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary), undefined)}>
           Отмена
         </button>
       </div>

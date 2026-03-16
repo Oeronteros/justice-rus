@@ -5,6 +5,7 @@ import * as stylex from '@stylexjs/stylex';
 import WuxiaIcon, { type IconName } from '@/components/WuxiaIcons';
 import { asyncStateStyles } from '@/components/shared/AsyncState.stylex';
 import { mergeStylexProps } from '@/lib/stylex/utils';
+import { uiStyles } from '@/components/shared/Ui.stylex';
 
 interface ActionButton {
   label: string;
@@ -39,7 +40,7 @@ export function EmptyState({
     if (typeof action === 'object' && action !== null && 'label' in action && 'onClick' in action) {
       const btn = action as ActionButton;
       return (
-        <button onClick={btn.onClick} className="btn-primary">
+        <button onClick={btn.onClick} {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>
           {btn.label}
         </button>
       );
@@ -48,7 +49,6 @@ export function EmptyState({
     return action as ReactNode;
   };
 
-  const badgeTone = variant === 'error' ? 'ui-badge ui-badge-danger' : 'ui-badge ui-badge-muted';
   const rootProps = mergeStylexProps(stylex.props(asyncStateStyles.emptyRoot), 'card section-card');
 
   return (

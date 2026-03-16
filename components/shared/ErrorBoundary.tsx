@@ -5,6 +5,7 @@ import * as stylex from '@stylexjs/stylex';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { asyncStateStyles } from '@/components/shared/AsyncState.stylex';
 import { useTranslation } from '@/lib/i18n/context';
+import { uiStyles } from '@/components/shared/Ui.stylex';
 
 interface ErrorFallbackProps {
   error: Error | null;
@@ -27,7 +28,7 @@ function ErrorFallback({ error, onRetry }: ErrorFallbackProps) {
           <p {...stylex.props(asyncStateStyles.errorText)}>
             {error?.message || t.errors.unknown}
           </p>
-          <button onClick={onRetry} className="btn-primary">
+          <button onClick={onRetry} {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>
             <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
             {t.errors.tryAgain}
           </button>
