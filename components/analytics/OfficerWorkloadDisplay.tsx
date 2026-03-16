@@ -2,6 +2,9 @@
 
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { OfficerWorkload } from '@/lib/schemas/analytics';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { analyticsStyles } from './Analytics.stylex';
 
 interface OfficerWorkloadDisplayProps {
   data: OfficerWorkload[];
@@ -17,10 +20,10 @@ function getWorkloadLevel(score: number): { label: string; color: string } {
 export function OfficerWorkloadDisplay({ data }: OfficerWorkloadDisplayProps) {
   if (!data || data.length === 0) {
     return (
-      <div className="card section-card p-6">
-        <div className="text-center text-gray-400 py-8">
+      <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, analyticsStyles.card)}>
+        <div {...stylex.props(analyticsStyles.empty)}>
           <WuxiaIcon name="profile" className="w-12 h-12 mx-auto mb-3 opacity-30" />
-          <p className="text-sm">Нет данных о нагрузке офицеров</p>
+          <p {...stylex.props(analyticsStyles.emptyText)}>Нет данных о нагрузке офицеров</p>
         </div>
       </div>
     );
@@ -30,30 +33,30 @@ export function OfficerWorkloadDisplay({ data }: OfficerWorkloadDisplayProps) {
   const averageScore = Math.round(data.reduce((sum, o) => sum + o.workloadScore, 0) / data.length);
 
   return (
-    <div className="card section-card p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-[#bcd6e5]">Нагрузка офицеров</h3>
-        <div className="text-xs text-gray-400">{data.length} офицеров</div>
+    <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, analyticsStyles.card)}>
+      <div {...stylex.props(analyticsStyles.header)}>
+        <h3 {...stylex.props(analyticsStyles.title)}>Нагрузка офицеров</h3>
+        <div {...stylex.props(analyticsStyles.meta)}>{data.length} офицеров</div>
       </div>
 
       {/* Officers Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div {...stylex.props(analyticsStyles.grid2)}>
         {sortedData.map((officer) => {
           const level = getWorkloadLevel(officer.workloadScore);
 
           return (
             <div
               key={officer.officerId}
-              className="rounded-xl border border-[#2a3c4c]/60 bg-[#101a23]/65 p-4 hover:border-[#2f6e8d]/50 transition-colors"
+              {...stylex.props(analyticsStyles.personCard)}
             >
-              <div className="flex items-start justify-between mb-3">
+              <div {...stylex.props(analyticsStyles.personHeader)}>
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2d5a3f] to-[#1a3a2f] flex items-center justify-center text-xs font-bold text-[#e6eff5]">
+                  <div {...stylex.props(analyticsStyles.avatar)}>
                     {officer.officerName.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-[#e6eff5]">{officer.officerName}</div>
-                    <div className="text-xs text-gray-400">{officer.role}</div>
+                    <div {...stylex.props(analyticsStyles.personName)}>{officer.officerName}</div>
+                    <div {...stylex.props(analyticsStyles.personRole)}>{officer.role}</div>
                   </div>
                 </div>
 
@@ -65,38 +68,34 @@ export function OfficerWorkloadDisplay({ data }: OfficerWorkloadDisplayProps) {
               {/* Workload Score Bar */}
               <div className="mb-3">
                 <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="text-gray-400">Нагрузка</span>
-                  <span className="text-[#e6eff5] font-medium">{officer.workloadScore}%</span>
+                  <span {...stylex.props(analyticsStyles.label)}>Нагрузка</span>
+                  <span {...stylex.props(analyticsStyles.personName)}>{officer.workloadScore}%</span>
                 </div>
-                <div className="h-2 rounded-full bg-[#1a2a3a]/80 overflow-hidden">
+                <div {...stylex.props(analyticsStyles.progressTrack)}>
                   <div
-                    className={`h-full transition-all ${
-                      officer.workloadScore >= 80 ? 'bg-gradient-to-r from-[#b96f6f] to-[#ff8888]' :
-                      officer.workloadScore >= 60 ? 'bg-gradient-to-r from-[#b9a56f] to-[#ffd888]' :
-                      'bg-gradient-to-r from-[#6fb98f] to-[#88ffbb]'
-                    }`}
+                    {...stylex.props(officer.workloadScore >= 80 ? analyticsStyles.progressFillBad : officer.workloadScore >= 60 ? analyticsStyles.progressFillWarn : analyticsStyles.progressFillGood)}
                     style={{ width: `${officer.workloadScore}%` }}
                   />
                 </div>
               </div>
 
               {/* Metrics */}
-              <div className="grid grid-cols-3 gap-2 text-xs">
-                <div className="text-center p-2 rounded-lg bg-[#1a2a3a]/60">
-                  <div className="text-gray-400 mb-0.5">Одобрено</div>
-                  <div className="text-sm font-semibold text-[#e6eff5]">
+              <div {...stylex.props(analyticsStyles.grid3)}>
+                <div {...stylex.props(analyticsStyles.statBox)}>
+                  <div {...stylex.props(analyticsStyles.label)}>Одобрено</div>
+                  <div {...stylex.props(analyticsStyles.statBoxValue)}>
                     {officer.metrics.approvalsProcessed}
                   </div>
                 </div>
-                <div className="text-center p-2 rounded-lg bg-[#1a2a3a]/60">
-                  <div className="text-gray-400 mb-0.5">Помощь</div>
-                  <div className="text-sm font-semibold text-[#e6eff5]">
+                <div {...stylex.props(analyticsStyles.statBox)}>
+                  <div {...stylex.props(analyticsStyles.label)}>Помощь</div>
+                  <div {...stylex.props(analyticsStyles.statBoxValue)}>
                     {officer.metrics.helpRequestsHandled}
                   </div>
                 </div>
-                <div className="text-center p-2 rounded-lg bg-[#1a2a3a]/60">
-                  <div className="text-gray-400 mb-0.5">Отсутствия</div>
-                  <div className="text-sm font-semibold text-[#e6eff5]">
+                <div {...stylex.props(analyticsStyles.statBox)}>
+                  <div {...stylex.props(analyticsStyles.label)}>Отсутствия</div>
+                  <div {...stylex.props(analyticsStyles.statBoxValue)}>
                     {officer.metrics.absencesReviewed}
                   </div>
                 </div>
@@ -105,8 +104,8 @@ export function OfficerWorkloadDisplay({ data }: OfficerWorkloadDisplayProps) {
               {/* Response Time */}
               {officer.metrics.averageResponseTime > 0 && (
                 <div className="mt-3 pt-3 border-t border-[#2a3c4c]/60 flex items-center justify-between text-xs">
-                  <span className="text-gray-400">Среднее время ответа</span>
-                  <span className="text-[#bcd6e5] font-medium">
+                  <span {...stylex.props(analyticsStyles.label)}>Среднее время ответа</span>
+                  <span {...stylex.props(analyticsStyles.personName)}>
                     {officer.metrics.averageResponseTime < 1
                       ? '< 1 ч'
                       : `${Math.round(officer.metrics.averageResponseTime)} ч`}
@@ -119,26 +118,26 @@ export function OfficerWorkloadDisplay({ data }: OfficerWorkloadDisplayProps) {
       </div>
 
       {/* Summary */}
-      <div className="mt-4 pt-4 border-t border-[#2a3c4c]/60 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+      <div {...stylex.props(analyticsStyles.summaryGrid4)}>
         <div>
-          <div className="text-gray-400 mb-1">Средняя нагрузка</div>
-          <div className="text-lg font-semibold text-[#e6eff5]">{averageScore}%</div>
+          <div {...stylex.props(analyticsStyles.summaryLabel)}>Средняя нагрузка</div>
+          <div {...stylex.props(analyticsStyles.summaryValue)}>{averageScore}%</div>
         </div>
         <div>
-          <div className="text-gray-400 mb-1">Максимальная</div>
-          <div className="text-sm font-medium text-[#b96f6f]">
+          <div {...stylex.props(analyticsStyles.summaryLabel)}>Максимальная</div>
+          <div {...stylex.props(analyticsStyles.summaryValueWarn)}>
             {sortedData[0]?.officerName || '—'}
           </div>
         </div>
         <div>
-          <div className="text-gray-400 mb-1">Минимальная</div>
-          <div className="text-sm font-medium text-[#6fb98f]">
+          <div {...stylex.props(analyticsStyles.summaryLabel)}>Минимальная</div>
+          <div {...stylex.props(analyticsStyles.summaryValueGood)}>
             {sortedData[sortedData.length - 1]?.officerName || '—'}
           </div>
         </div>
         <div>
-          <div className="text-gray-400 mb-1">Перегружены</div>
-          <div className="text-lg font-semibold text-[#b96f6f]">
+          <div {...stylex.props(analyticsStyles.summaryLabel)}>Перегружены</div>
+          <div {...stylex.props(analyticsStyles.summaryValueBad)}>
             {data.filter(o => o.workloadScore >= 80).length}
           </div>
         </div>

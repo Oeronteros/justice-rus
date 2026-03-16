@@ -12,6 +12,9 @@ import type { User } from '@/lib/schemas/auth';
 import type { Language } from '@/lib/i18n';
 import type { Rsvp } from '@/lib/schemas/rsvp';
 import type { Schedule } from '@/lib/schemas/schedule';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { rsvpStyles } from './Rsvp.stylex';
 
 interface CalendarViewProps {
   user: User;
@@ -115,8 +118,8 @@ export function CalendarView({ user, language }: CalendarViewProps) {
 
   if (isLoading) {
     return (
-      <section className="section-shell py-10 sm:py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section {...stylex.props(uiStyles.sectionShell)}>
+        <div {...stylex.props(uiStyles.sectionContainer)}>
           <SectionHero
             icon={<WuxiaIcon name="calendar" className="w-5 h-5" />}
             title={copy.title}
@@ -131,8 +134,8 @@ export function CalendarView({ user, language }: CalendarViewProps) {
 
   if (totalRsvps === 0) {
     return (
-      <section className="section-shell py-10 sm:py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section {...stylex.props(uiStyles.sectionShell)}>
+        <div {...stylex.props(uiStyles.sectionContainer)}>
           <SectionHero
             icon={<WuxiaIcon name="calendar" className="w-5 h-5" />}
             title={copy.title}
@@ -155,19 +158,14 @@ export function CalendarView({ user, language }: CalendarViewProps) {
     const statusLabel = copy[statusKey as keyof typeof copy] as string;
 
     return (
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <div className={`w-2 h-2 rounded-full ${
-            statusKey === 'going' ? 'bg-[#2d5a3f]' :
-            statusKey === 'maybe' ? 'bg-[#5a4a2d]' :
-            statusKey === 'not_going' ? 'bg-[#5a2d2d]' :
-            'bg-[#2d3a5a]'
-          }`} />
-          <h3 className="text-sm font-semibold text-[#bcd6e5]">{statusLabel}</h3>
-          <span className="text-xs text-gray-400">({events.length})</span>
+      <div {...stylex.props(rsvpStyles.section)}>
+        <div {...stylex.props(rsvpStyles.sectionHead)}>
+          <div {...stylex.props(rsvpStyles.statusDot, statusKey === 'going' ? rsvpStyles.statusGoing : statusKey === 'maybe' ? rsvpStyles.statusMaybe : statusKey === 'not_going' ? rsvpStyles.statusNo : rsvpStyles.statusPending)} />
+          <h3 {...stylex.props(rsvpStyles.sectionTitle)}>{statusLabel}</h3>
+          <span {...stylex.props(rsvpStyles.sectionMeta)}>({events.length})</span>
         </div>
 
-        <div className="space-y-2">
+        <div {...stylex.props(rsvpStyles.events)}>
           {events.map((event) => {
             const handleExport = (platform: 'google' | 'outlook' | 'ical') => {
               const scheduleEvent = event as unknown as Schedule;
@@ -192,28 +190,28 @@ export function CalendarView({ user, language }: CalendarViewProps) {
             return (
               <article
                 key={event.id}
-                className="rounded-xl border border-[#2a3c4c]/60 bg-[#101a23]/65 p-4 hover:border-[#2f6e8d]/50 transition-colors"
+                {...stylex.props(rsvpStyles.eventCard)}
               >
-                <div className="flex items-start justify-between gap-3">
+                <div {...stylex.props(rsvpStyles.eventHead)}>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-medium text-[#2d5a3f]">
+                      <span {...stylex.props(rsvpStyles.sectionMeta)} style={{ color: '#2d5a3f', fontWeight: 600 }}>
                         {event.dayType}
                       </span>
                       {event.time && (
                         <>
                           <span className="text-gray-500">•</span>
-                          <span className="text-xs text-gray-400">{formatTime(event.time)}</span>
+                          <span {...stylex.props(rsvpStyles.muted)}>{formatTime(event.time)}</span>
                         </>
                       )}
                     </div>
-                    <h4 className="text-sm font-medium text-[#e6eff5] truncate">
+                    <h4 {...stylex.props(rsvpStyles.eventTitle)}>
                       {language === 'zh' ? event.titleZh || event.titleRu :
                        language === 'en' ? event.titleEn || event.titleRu :
                        event.titleRu}
                     </h4>
                     {event.date && (
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p {...stylex.props(rsvpStyles.muted)} style={{ marginTop: 4 }}>
                         {formatDate(event.date, language)}
                       </p>
                     )}
@@ -221,11 +219,7 @@ export function CalendarView({ user, language }: CalendarViewProps) {
 
                   <div className="flex flex-col items-end gap-2">
                     {event.rsvp && event.rsvp.status !== 'pending' && (
-                      <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs ${
-                        event.rsvp.status === 'going' ? 'bg-[#2d5a3f]/30 text-[#6fb98f]' :
-                        event.rsvp.status === 'maybe' ? 'bg-[#5a4a2d]/30 text-[#b9a56f]' :
-                        'bg-[#5a2d2d]/30 text-[#b96f6f]'
-                      }`}>
+                      <div {...stylex.props(rsvpStyles.eventBadge, event.rsvp.status === 'going' ? rsvpStyles.eventBadgeGoing : event.rsvp.status === 'maybe' ? rsvpStyles.eventBadgeMaybe : rsvpStyles.eventBadgeNo)}>
                         <WuxiaIcon
                           name={
                             event.rsvp.status === 'going' ? 'checkCircle' :
@@ -240,11 +234,11 @@ export function CalendarView({ user, language }: CalendarViewProps) {
                       </div>
                     )}
                     
-                    <div className="flex items-center gap-1">
+                    <div {...stylex.props(rsvpStyles.exportRow)}>
                       <button
                         type="button"
                         onClick={() => handleExport('google')}
-                        className="p-1.5 rounded-lg text-[#8fb9cc] hover:bg-[#1a2a3a]/60 transition-colors"
+                        {...stylex.props(rsvpStyles.exportBtn)}
                         title={language === 'ru' ? 'Добавить в Google Calendar' : language === 'zh' ? '添加到 Google 日历' : 'Add to Google Calendar'}
                       >
                         <WuxiaIcon name="link" className="w-3.5 h-3.5" />
@@ -252,7 +246,7 @@ export function CalendarView({ user, language }: CalendarViewProps) {
                       <button
                         type="button"
                         onClick={() => handleExport('outlook')}
-                        className="p-1.5 rounded-lg text-[#8fb9cc] hover:bg-[#1a2a3a]/60 transition-colors"
+                        {...stylex.props(rsvpStyles.exportBtn)}
                         title={language === 'ru' ? 'Добавить в Outlook' : language === 'zh' ? '添加到 Outlook' : 'Add to Outlook'}
                       >
                         <WuxiaIcon name="calendar" className="w-3.5 h-3.5" />
@@ -260,7 +254,7 @@ export function CalendarView({ user, language }: CalendarViewProps) {
                       <button
                         type="button"
                         onClick={() => handleExport('ical')}
-                        className="p-1.5 rounded-lg text-[#8fb9cc] hover:bg-[#1a2a3a]/60 transition-colors"
+                        {...stylex.props(rsvpStyles.exportBtn)}
                         title={language === 'ru' ? 'Скачать .ics файл' : language === 'zh' ? '下载 .ics 文件' : 'Download .ics file'}
                       >
                         <WuxiaIcon name="upload" className="w-3.5 h-3.5" />
@@ -277,8 +271,8 @@ export function CalendarView({ user, language }: CalendarViewProps) {
   };
 
   return (
-    <section className="section-shell py-10 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section {...stylex.props(uiStyles.sectionShell)}>
+      <div {...stylex.props(uiStyles.sectionContainer)}>
         <SectionHero
           icon={<WuxiaIcon name="calendar" className="w-5 h-5" />}
           title={copy.title}
@@ -286,7 +280,7 @@ export function CalendarView({ user, language }: CalendarViewProps) {
           chips={['Personal', 'Schedule', `${totalRsvps} events`]}
         />
 
-        <div className="space-y-8">
+        <div {...stylex.props(rsvpStyles.list)}>
           {renderEventList(groupedEvents.going, 'going')}
           {renderEventList(groupedEvents.maybe, 'maybe')}
           {renderEventList(groupedEvents.not_going, 'notGoing')}
