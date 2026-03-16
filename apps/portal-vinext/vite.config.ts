@@ -16,6 +16,7 @@ export default defineConfig({
               '@stylexjs/babel-plugin',
               {
                 dev: process.env.NODE_ENV !== 'production',
+                test: process.env.NODE_ENV === 'test',
                 runtimeInjection: false,
                 enableInlinedConditionalMerge: true,
                 treeshakeCompensation: true,

@@ -171,6 +171,13 @@ test.describe('vinext pilot smoke', () => {
     await page.goto('/news');
     await expect(page.getByText('Боевой сбор')).toBeVisible({ timeout: 15000 });
 
+    await page.evaluate(async () => {
+      await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+    });
+
     await page.context().clearCookies();
     await page.reload();
 
