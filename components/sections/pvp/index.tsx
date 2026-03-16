@@ -12,6 +12,9 @@ import { useJoinPvpQueue, useLeavePvpQueue, usePvpState, useReportPvpResult } fr
 import type { PvpMatch } from '@/lib/schemas/pvp';
 import type { User } from '@/lib/schemas/auth';
 import { handleApiError } from '@/lib/api/errors';
+import * as stylex from '@stylexjs/stylex';
+import { uiStyles } from '@/components/shared/Ui.stylex';
+import { opsStyles } from '@/components/sections/ops/Ops.stylex';
 
 interface PvpSectionProps {
   user: User;
@@ -240,7 +243,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
         icon={<WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />}
         title="PvP недоступно"
         description={error instanceof Error ? error.message : 'Не удалось загрузить PvP-секцию'}
-        action={<button onClick={() => refetch()} className="btn-primary">Повторить</button>}
+        action={<button onClick={() => refetch()} {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>Повторить</button>}
         variant="error"
       />
     );
@@ -251,9 +254,9 @@ function PvpSectionContent({ user }: PvpSectionProps) {
   const currentQueueEntry = data.queue.find((entry) => entry.playerId === viewerId || entry.nickname === user.nickname);
 
   return (
-    <section className="section-shell py-10 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="section-stack-lg">
+    <section {...stylex.props(uiStyles.sectionShell)}>
+      <div {...stylex.props(uiStyles.sectionContainer)}>
+        <div {...stylex.props(uiStyles.stackLg)}>
         <SectionHero
           icon={<WuxiaIcon name="sword" className="w-5 h-5" />}
           title="PvP-комната"
@@ -263,11 +266,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
 
         {actionNotice && (
           <div
-            className={`ds-notice ${
-              actionNotice.tone === 'error'
-                ? 'ds-notice-error'
-                : 'ds-notice-success'
-            }`}
+            {...stylex.props(uiStyles.notice, actionNotice.tone === 'error' ? uiStyles.noticeError : uiStyles.noticeSuccess)}
           >
             <WuxiaIcon
               name={actionNotice.tone === 'error' ? 'alertTriangle' : 'checkCircle'}
@@ -277,38 +276,39 @@ function PvpSectionContent({ user }: PvpSectionProps) {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 sm:gap-6 lg:gap-8 items-start">
-          <div className="lg:col-span-2 section-stack-md">
-            <div className="card section-card ds-section-panel p-5 sm:p-6 space-y-5">
+        <div {...stylex.props(opsStyles.splitGrid)}>
+          <div {...stylex.props(opsStyles.sideCol, opsStyles.listStack)}>
+            <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, opsStyles.panel, opsStyles.listStack)}>
               {data.userInQueue && currentQueueEntry?.joinedAt && !data.activeMatch && (
                 <QueueSearchBanner joinedAt={currentQueueEntry.joinedAt} queueSize={data.queue.length} />
               )}
 
               <div>
-                <div className="text-sm uppercase tracking-widest text-green-300 mb-2">Твой статус</div>
-                <div className="text-2xl font-bold font-orbitron text-[#e6eff5]">
+                <div {...stylex.props(opsStyles.fieldLabel)} style={{ color: '#86efac', textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 8 }}>Твой статус</div>
+                <div {...stylex.props(opsStyles.panelTitle)}>
                   {data.activeMatch ? 'Матч найден' : data.userInQueue ? 'В очереди' : 'Готов к подбору'}
                 </div>
-                <div className="text-sm text-gray-400 mt-2">
+                <div {...stylex.props(opsStyles.helperInline)} style={{ marginTop: 8 }}>
                   Очередь сейчас: {data.queue.length} {data.queue.length === 1 ? 'игрок' : 'игроков'}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                <div className="rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4">
-                  <div className="text-gray-400 mb-1">Рейтинг</div>
-                  <div className="text-[#e6eff5] font-semibold">{data.userRating?.rating ?? 1000}</div>
+              <div {...stylex.props(opsStyles.fieldGrid2)}>
+                <div {...stylex.props(opsStyles.statCard)}>
+                  <div {...stylex.props(opsStyles.statLabel)}>Рейтинг</div>
+                  <div {...stylex.props(opsStyles.statValue)}>{data.userRating?.rating ?? 1000}</div>
                 </div>
-                <div className="rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4">
-                  <div className="text-gray-400 mb-1">W / L</div>
-                  <div className="text-[#e6eff5] font-semibold">{data.userRating?.wins ?? 0} / {data.userRating?.losses ?? 0}</div>
+                <div {...stylex.props(opsStyles.statCard)}>
+                  <div {...stylex.props(opsStyles.statLabel)}>W / L</div>
+                  <div {...stylex.props(opsStyles.statValue)}>{data.userRating?.wins ?? 0} / {data.userRating?.losses ?? 0}</div>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div {...stylex.props(opsStyles.actionRow)}>
                 <button
                   type="button"
-                  className="btn-primary flex-1 py-3"
+                  {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}
+                  style={{ flex: 1, minHeight: 48 }}
                   disabled={!canJoinQueue || joinQueue.isPending}
                   onClick={() => void joinQueueAction()}
                 >
@@ -316,7 +316,8 @@ function PvpSectionContent({ user }: PvpSectionProps) {
                 </button>
                 <button
                   type="button"
-                  className="btn-secondary flex-1 py-3"
+                  {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}
+                  style={{ flex: 1, minHeight: 48 }}
                   disabled={(!data.userInQueue && !data.activeMatch) || leaveQueue.isPending}
                   onClick={() => void leaveQueueAction()}
                 >
@@ -325,26 +326,26 @@ function PvpSectionContent({ user }: PvpSectionProps) {
               </div>
 
               {data.activeMatch && (
-                <div className="rounded-2xl ds-section-panel-soft ds-notice-warning border-yellow-700/40 bg-yellow-900/15 p-4 text-xs">
+                <div {...stylex.props(uiStyles.notice, uiStyles.badgeWarning)}>
                   Новый вход в очередь временно заблокирован, пока активный матч не будет подтвержден или закрыт.
                 </div>
               )}
 
-              <div className="rounded-2xl ds-section-panel-soft border-dashed border-green-700/45 bg-green-950/30 p-4 text-sm text-gray-300">
+              <div {...stylex.props(opsStyles.bodyCard)}>
                 Если второй игрок уже ждет, матч появится сразу. Если оба игрока отправят одинаковый результат, ELO обновится автоматически.
               </div>
             </div>
 
-            <div className="card section-card ds-section-panel p-5 sm:p-6">
-              <div className="text-sm uppercase tracking-widest text-green-300 mb-4">Очередь</div>
-              <div className="space-y-3">
+            <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, opsStyles.panel)}>
+              <div {...stylex.props(opsStyles.fieldLabel)} style={{ color: '#86efac', textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 16 }}>Очередь</div>
+              <div {...stylex.props(opsStyles.listStack)}>
                 {data.queue.length === 0 ? (
-                  <div className="text-sm text-gray-400">Очередь пуста — можно стартовать первым.</div>
+                  <div {...stylex.props(opsStyles.helperInline)}>Очередь пуста — можно стартовать первым.</div>
                 ) : (
                   data.queue.map((entry, index) => (
-                    <div key={`${entry.playerId}-${entry.joinedAt}`} className="rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div key={`${entry.playerId}-${entry.joinedAt}`} {...stylex.props(opsStyles.toolbarSurface)}>
                       <div>
-                        <div className="flex flex-wrap items-center gap-2 text-[#e6eff5] font-medium">
+                        <div {...stylex.props(opsStyles.actionRow)} style={{ color: '#e6eff5', fontWeight: 500 }}>
                           <span>#{index + 1} {entry.nickname}</span>
                           <PrefixBadge prefix={entry.prefix} variant="compact" />
                         </div>
@@ -352,7 +353,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
                           <ClassBadge className={entry.className} emptyLabel="Класс не указан" textClassName="text-xs text-green-300" iconSizeClassName="h-7 w-7" />
                         </div>
                       </div>
-                      <div className="text-xs text-gray-400 whitespace-nowrap">{formatDateTime(entry.joinedAt)}</div>
+                      <div {...stylex.props(opsStyles.helperInline)} style={{ whiteSpace: 'nowrap' }}>{formatDateTime(entry.joinedAt)}</div>
                     </div>
                   ))
                 )}
@@ -360,7 +361,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
             </div>
           </div>
 
-          <div className="lg:col-span-3 section-stack-md">
+          <div {...stylex.props(opsStyles.mainCol, opsStyles.listStack)}>
             {data.activeMatch ? (
               <MatchCard
                 match={data.activeMatch}
@@ -371,53 +372,53 @@ function PvpSectionContent({ user }: PvpSectionProps) {
                 }}
               />
             ) : (
-              <div className="card section-card ds-section-panel p-5 sm:p-6 text-sm text-gray-400">
+              <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, opsStyles.panel)}>
                 Активного матча нет. Вставай в очередь, чтобы система подобрала ближайшего соперника по FIFO.
               </div>
             )}
 
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
-              <div className="card section-card ds-section-panel p-5 sm:p-6">
-                <div className="text-sm uppercase tracking-widest text-green-300 mb-4">Топ рейтинга</div>
-                <div className="space-y-3">
+            <div {...stylex.props(opsStyles.fieldGrid2)}>
+              <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, opsStyles.panel)}>
+                <div {...stylex.props(opsStyles.fieldLabel)} style={{ color: '#86efac', textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 16 }}>Топ рейтинга</div>
+                <div {...stylex.props(opsStyles.listStack)}>
                   {data.leaderboard.length === 0 ? (
-                    <div className="text-sm text-gray-400">Рейтинг еще не заполнен.</div>
+                    <div {...stylex.props(opsStyles.helperInline)}>Рейтинг еще не заполнен.</div>
                   ) : (
                     data.leaderboard.map((entry, index) => (
-                      <div key={entry.playerId} className="rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4 flex items-center justify-between gap-4">
+                      <div key={entry.playerId} {...stylex.props(opsStyles.toolbarSurface)}>
                         <div>
-                          <div className="flex flex-wrap items-center gap-2 text-[#e6eff5] font-medium">
+                          <div {...stylex.props(opsStyles.actionRow)} style={{ color: '#e6eff5', fontWeight: 500 }}>
                             <span>#{index + 1} {entry.nickname}</span>
                             <PrefixBadge prefix={entry.prefix} variant="compact" />
                           </div>
-                          <div className="text-xs text-gray-400 mt-1">W {entry.wins} / L {entry.losses}</div>
+                          <div {...stylex.props(opsStyles.helperInline)} style={{ marginTop: 4 }}>W {entry.wins} / L {entry.losses}</div>
                         </div>
-                        <div className="text-lg font-semibold text-green-300">{entry.rating}</div>
+                        <div {...stylex.props(opsStyles.statValue)} style={{ color: '#86efac' }}>{entry.rating}</div>
                       </div>
                     ))
                   )}
                 </div>
               </div>
 
-              <div className="card section-card ds-section-panel p-5 sm:p-6">
-                <div className="text-sm uppercase tracking-widest text-green-300 mb-4">Последние подтвержденные матчи</div>
-                <div className="space-y-3">
+              <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, opsStyles.panel)}>
+                <div {...stylex.props(opsStyles.fieldLabel)} style={{ color: '#86efac', textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 16 }}>Последние подтвержденные матчи</div>
+                <div {...stylex.props(opsStyles.listStack)}>
                   {data.recentMatches.length === 0 ? (
-                    <div className="text-sm text-gray-400">Пока нет завершенных дуэлей.</div>
+                    <div {...stylex.props(opsStyles.helperInline)}>Пока нет завершенных дуэлей.</div>
                   ) : (
                     data.recentMatches.map((match) => (
-                      <div key={match.id} className="rounded-2xl ds-section-panel-soft border-green-700/40 bg-green-950/35 p-4">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                          <div className="flex flex-wrap items-center gap-2 text-[#e6eff5] font-medium">
+                      <div key={match.id} {...stylex.props(opsStyles.bodyCard)}>
+                        <div {...stylex.props(opsStyles.toolbar)}>
+                          <div {...stylex.props(opsStyles.actionRow)} style={{ color: '#e6eff5', fontWeight: 500 }}>
                             <span>{match.playerOne.nickname}</span>
                             <PrefixBadge prefix={match.playerOne.prefix} variant="compact" />
                             <span className="text-gray-500">vs</span>
                             <span>{match.playerTwo.nickname}</span>
                             <PrefixBadge prefix={match.playerTwo.prefix} variant="compact" />
                           </div>
-                          <div className="text-xs text-gray-400">{formatDateTime(match.confirmedAt || match.updatedAt)}</div>
+                          <div {...stylex.props(opsStyles.helperInline)}>{formatDateTime(match.confirmedAt || match.updatedAt)}</div>
                         </div>
-                        <div className="text-xs text-green-300 mt-2">
+                        <div {...stylex.props(opsStyles.helperInline)} style={{ color: '#86efac', marginTop: 8 }}>
                           Победитель: {match.winnerId === match.playerOne.id ? match.playerOne.nickname : match.winnerId === match.playerTwo.id ? match.playerTwo.nickname : '—'}
                         </div>
                       </div>
