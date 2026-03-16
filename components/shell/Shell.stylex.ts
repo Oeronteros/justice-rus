@@ -51,19 +51,10 @@ export const shellStyles = stylex.create({
   },
   headerTop: {
     display: 'flex',
-    flexDirection: {
-      default: 'column',
-      '@media (min-width: 1024px)': 'row',
-    },
-    alignItems: {
-      default: 'stretch',
-      '@media (min-width: 1024px)': 'flex-start',
-    },
-    justifyContent: {
-      default: 'flex-start',
-      '@media (min-width: 1024px)': 'space-between',
-    },
-    gap: '16px',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '12px',
   },
   brandBlock: {
     display: 'flex',
@@ -109,8 +100,8 @@ export const shellStyles = stylex.create({
   brandTitle: {
     margin: 0,
     fontSize: {
-      default: '1.9rem',
-      '@media (min-width: 640px)': '1.5rem',
+      default: '1.45rem',
+      '@media (min-width: 640px)': '1.35rem',
     },
     fontWeight: 700,
     fontFamily: typography.display,
@@ -119,8 +110,8 @@ export const shellStyles = stylex.create({
   brandSubtitle: {
     marginTop: '4px',
     fontSize: {
-      default: '0.75rem',
-      '@media (min-width: 640px)': '0.875rem',
+      default: '0.7rem',
+      '@media (min-width: 640px)': '0.8rem',
     },
     lineHeight: 1.35,
     whiteSpace: {
@@ -150,16 +141,10 @@ export const shellStyles = stylex.create({
   },
   toolbar: {
     display: 'flex',
-    width: {
-      default: '100%',
-      '@media (min-width: 640px)': 'auto',
-    },
+    width: 'auto',
     flexWrap: 'wrap',
     alignItems: 'center',
-    justifyContent: {
-      default: 'space-between',
-      '@media (min-width: 640px)': 'flex-end',
-    },
+    justifyContent: 'flex-end',
     gap: '8px',
     padding: '8px',
     borderRadius: '20px',
@@ -168,16 +153,16 @@ export const shellStyles = stylex.create({
     boxShadow: 'inset 0 1px 0 rgba(238, 232, 218, 0.03)',
   },
   select: {
-    minWidth: '102px',
+    minWidth: '74px',
     flex: {
       default: '1 1 0%',
       '@media (min-width: 640px)': '0 0 auto',
     },
     borderRadius: '12px',
-    padding: '10px 16px',
+    padding: '8px 10px',
     fontSize: '0.875rem',
     fontWeight: 500,
-    minHeight: '42px',
+    minHeight: '38px',
     backgroundColor: 'rgba(18, 20, 26, 0.9)',
     border: '1px solid rgba(184, 160, 111, 0.34)',
     color: colors.paperStrong,
@@ -189,7 +174,7 @@ export const shellStyles = stylex.create({
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '10px',
+    padding: '8px',
     borderRadius: '12px',
     backgroundColor: 'rgba(18, 20, 26, 0.9)',
     border: '1px solid rgba(184, 160, 111, 0.34)',
@@ -344,9 +329,9 @@ export const shellStyles = stylex.create({
     gap: '8px',
   },
   coreLinkContent: {
-    minHeight: '58px',
+    minHeight: '50px',
     justifyContent: 'center',
-    padding: '0 14px',
+    padding: '0 12px',
   },
   commandDeck: {
     display: 'grid',

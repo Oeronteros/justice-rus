@@ -169,7 +169,8 @@ body {
 
 .theme-wuxia .wuxia-scroll-grid {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='70' height='70'><path d='M35 0V70M0 35H70M7 7L63 63M7 63L63 7' stroke='%238fb9cc' stroke-opacity='0.18' stroke-width='1'/></svg>");
-  mix-blend-mode: screen;
+  mix-blend-mode: soft-light;
+  opacity: 0.08;
 }
 
 .theme-wuxia[data-input-active='true'] {
