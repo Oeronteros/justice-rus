@@ -116,32 +116,32 @@ export default function Header({
         <div {...stylex.props(shellStyles.headerTop)}>
           <Link href="/" {...stylex.props(shellStyles.brandBlock)}>
             <div {...stylex.props(shellStyles.brandSealWrap)}>
-              <div className={`seal-ring ${headerCompact ? stylex.props(shellStyles.compactSeal).className : ''}`}>
-                <div className="seal-core">
+              <div {...stylex.props(shellStyles.sealRing, headerCompact && shellStyles.compactSeal)}>
+                <div {...stylex.props(shellStyles.sealCore)}>
                   <WuxiaIcon name="skull" className="w-5 h-5 text-white" />
                 </div>
               </div>
               <div {...stylex.props(shellStyles.brandStatusDot)} />
             </div>
             <div {...stylex.props(shellStyles.brandTextWrap)}>
-              <h1 {...mergeStylexProps(stylex.props(shellStyles.brandTitle), 'dc-text drop-shadow')}>
+              <h1 {...stylex.props(shellStyles.brandTitle, shellStyles.brandTitleGlow)}>
                 Silent Moonfall
               </h1>
-              <p {...mergeStylexProps(stylex.props(shellStyles.brandSubtitle), 'dc-muted font-roboto')}>{labels.brandSubtitle}</p>
+              <p {...stylex.props(shellStyles.brandSubtitle)}>{labels.brandSubtitle}</p>
               <div {...headerOathProps}>
-                <span className="wuxia-tag wuxia-tag-compact">
+                <span {...stylex.props(shellStyles.tag, shellStyles.tagCompact)}>
                   <WuxiaIcon name="eye" className="w-4 h-4" />
-                  <span className="wuxia-tag-text">{portalCopy[language].oath}</span>
+                  <span {...stylex.props(shellStyles.tagText)}>{portalCopy[language].oath}</span>
                 </span>
-                <span className="wuxia-tag wuxia-tag-compact">
+                <span {...stylex.props(shellStyles.tag, shellStyles.tagCompact)}>
                   <WuxiaIcon name="seal" className="w-4 h-4" />
-                  <span className="wuxia-tag-text">{labels.activeSection}: {sectionLabel}</span>
+                  <span {...stylex.props(shellStyles.tagText)}>{labels.activeSection}: {sectionLabel}</span>
                 </span>
               </div>
               <div {...stylex.props(shellStyles.mobileSectionTag)}>
-                <span className="wuxia-tag wuxia-tag-compact">
+                <span {...stylex.props(shellStyles.tag, shellStyles.tagCompact)}>
                   <WuxiaIcon name="seal" className="w-4 h-4" />
-                  <span className="wuxia-tag-text">{sectionLabel}</span>
+                  <span {...stylex.props(shellStyles.tagText)}>{sectionLabel}</span>
                 </span>
               </div>
             </div>
@@ -230,7 +230,7 @@ export default function Header({
                         >
                           {isActive ? <motion.span layoutId="desktop-core-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
                           <span {...stylex.props(shellStyles.navLinkContent, shellStyles.coreLinkContent)}>
-                            <span {...mergeStylexProps(stylex.props(shellStyles.orderDot), 'dc-accent')}>
+                            <span {...stylex.props(shellStyles.orderDot)}>
                               <WuxiaIcon name={item.icon} className="w-4 h-4" />
                             </span>
                             <span {...stylex.props(shellStyles.orderLabel)}>{orderLabels[item.section]}</span>
@@ -302,7 +302,7 @@ export default function Header({
                                   >
                                     {isActive ? <motion.span layoutId="desktop-command-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
                                     <span {...stylex.props(shellStyles.navLinkContent, shellStyles.commandLinkContent)}>
-                                      <span {...mergeStylexProps(stylex.props(shellStyles.orderDot), 'dc-accent')}>
+                                      <span {...stylex.props(shellStyles.orderDot)}>
                                         <WuxiaIcon name={item.icon} className="w-4 h-4" />
                                       </span>
                                       <span {...stylex.props(shellStyles.orderLabel)}>{orderLabels[item.section]}</span>

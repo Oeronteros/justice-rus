@@ -9,7 +9,6 @@ import { Section } from '@/types';
 import { Language, sectionLabels } from '@/lib/i18n';
 import { mobileGroupedNavItems, mobilePrimaryNavItems, mobileSecondaryNavItems } from '@/lib/nav';
 import WuxiaIcon from '../WuxiaIcons';
-import { mergeStylexProps } from '@/lib/stylex/utils';
 import { shellStyles } from './Shell.stylex';
 
 interface MobileNavProps {
@@ -126,7 +125,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
                           title={sectionLabels[language][item.section]}
                           onClick={closeMoreMenu}
                         >
-                          <span {...mergeStylexProps(stylex.props(shellStyles.mobileSheetIcon), 'dc-accent')}>
+                          <span {...stylex.props(shellStyles.mobileSheetIcon)}>
                             <WuxiaIcon name={item.icon} className="h-5 w-5" />
                           </span>
                           <span className="min-w-0">{sectionLabels[language][item.section]}</span>
@@ -167,7 +166,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
                 >
                   {isActive ? <motion.span layoutId="mobile-bottom-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 420, damping: 32 }} /> : null}
                   <span {...stylex.props(shellStyles.mobileLinkContent)}>
-                    <span className="dc-accent">
+                    <span {...stylex.props(shellStyles.accentIcon)}>
                       <WuxiaIcon name={item.icon} className="w-5 h-5" />
                     </span>
                     <span {...stylex.props(shellStyles.mobileLabel)}>
@@ -188,7 +187,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
             >
               {isMoreOpen || isMoreActive ? <motion.span layoutId="mobile-bottom-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 420, damping: 32 }} /> : null}
               <span {...stylex.props(shellStyles.mobileLinkContent)}>
-                <span className="dc-accent">
+                <span {...stylex.props(shellStyles.accentIcon)}>
                   <WuxiaIcon name="dots" className="w-5 h-5" />
                 </span>
                 <span {...stylex.props(shellStyles.mobileLabel)}>{moreLabel}</span>

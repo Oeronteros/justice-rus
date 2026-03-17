@@ -1,5 +1,5 @@
 import * as stylex from '@stylexjs/stylex';
-import { colors, radius, typography } from '../../lib/stylex/tokens.stylex';
+import { colors, layout, motion, radius, spacing, typography } from '../../lib/stylex/tokens.stylex';
 
 export const shellStyles = stylex.create({
   header: {
@@ -8,8 +8,8 @@ export const shellStyles = stylex.create({
     zIndex: 40,
     overflow: 'visible',
     background:
-      'radial-gradient(circle at 10% 10%, rgba(139, 64, 58, 0.1), transparent 36%), radial-gradient(circle at 88% 12%, rgba(184, 160, 111, 0.1), transparent 40%), linear-gradient(112deg, rgba(12, 15, 19, 0.96), rgba(18, 22, 28, 0.95), rgba(12, 15, 19, 0.96))',
-    borderBottom: '1px solid rgba(184, 160, 111, 0.26)',
+      'radial-gradient(circle at 10% 10%, rgba(139, 64, 58, 0.1), transparent 36%), radial-gradient(circle at 88% 12%, rgba(201, 168, 106, 0.1), transparent 40%), linear-gradient(112deg, rgba(20, 18, 24, 0.96), rgba(25, 22, 29, 0.95), rgba(20, 18, 24, 0.96))',
+    borderBottom: `1px solid ${colors.accentEdge}`,
     boxShadow: '0 10px 24px rgba(2, 3, 5, 0.52)',
     backdropFilter: 'blur(12px)',
     paddingTop: 'var(--safe-top)',
@@ -22,11 +22,11 @@ export const shellStyles = stylex.create({
   headerPanel: {
     position: 'relative',
     width: '100%',
-    maxWidth: '80rem',
+    maxWidth: layout.shellContainer,
     marginInline: 'auto',
     paddingInline: {
-      default: '16px',
-      '@media (min-width: 640px)': '24px',
+      default: spacing.lg,
+      '@media (min-width: 640px)': spacing.xxl,
     },
     paddingTop: {
       default: '12px',
@@ -95,6 +95,43 @@ export const shellStyles = stylex.create({
     backgroundColor: '#82b9ad',
     border: '2px solid #13161c',
   },
+  sealRing: {
+    position: 'relative',
+    display: 'grid',
+    placeItems: 'center',
+    width: {
+      default: '46px',
+      '@media (min-width: 640px)': '56px',
+    },
+    height: {
+      default: '46px',
+      '@media (min-width: 640px)': '56px',
+    },
+    borderRadius: radius.pill,
+    background: `radial-gradient(circle, ${colors.accentMuted}, transparent 65%)`,
+    border: `1px solid ${colors.accentEdge}`,
+    boxShadow: `inset 0 0 12px ${colors.accentGlow}, 0 0 12px rgba(184, 160, 111, 0.08)`,
+    '::after': {
+      content: "''",
+      position: 'absolute',
+      inset: '-6px',
+      borderRadius: radius.pill,
+      border: '1px dashed rgba(184, 160, 111, 0.28)',
+      animationName: 'sigilRotate',
+      animationDuration: '22s',
+      animationTimingFunction: 'linear',
+      animationIterationCount: 'infinite',
+    },
+  },
+  sealCore: {
+    width: '40px',
+    height: '40px',
+    borderRadius: radius.pill,
+    background: `linear-gradient(140deg, ${colors.ember}, ${colors.accent})`,
+    boxShadow: '0 0 10px rgba(139, 64, 58, 0.22)',
+    display: 'grid',
+    placeItems: 'center',
+  },
   compactSeal: {
     transform: 'scale(0.92)',
   },
@@ -112,6 +149,10 @@ export const shellStyles = stylex.create({
     fontFamily: typography.display,
     lineHeight: 1,
   },
+  brandTitleGlow: {
+    color: colors.textPrimary,
+    textShadow: '0 10px 24px rgba(2, 3, 5, 0.42)',
+  },
   brandSubtitle: {
     display: {
       default: 'none',
@@ -122,6 +163,8 @@ export const shellStyles = stylex.create({
       default: '0.7rem',
       '@media (min-width: 640px)': '0.8rem',
     },
+    color: colors.textSecondary,
+    fontFamily: typography.body,
     lineHeight: 1.35,
     whiteSpace: {
       default: 'normal',
@@ -148,12 +191,38 @@ export const shellStyles = stylex.create({
       '@media (min-width: 640px)': 'none',
     },
   },
+  tag: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '6px 12px',
+    borderRadius: radius.pill,
+    border: '1px solid rgba(143, 185, 204, 0.45)',
+    background: 'linear-gradient(120deg, rgba(12, 18, 26, 0.85), rgba(14, 22, 32, 0.9))',
+    color: colors.accent,
+    fontSize: '0.75rem',
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    boxShadow: 'inset 0 0 12px rgba(143, 185, 204, 0.15)',
+  },
+  tagCompact: {
+    letterSpacing: '0.04em',
+    textTransform: 'none',
+    padding: '6px 10px',
+    maxWidth: 'min(520px, 100%)',
+  },
+  tagText: {
+    minWidth: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
   utilityMeta: {
     display: 'flex',
     alignItems: 'center',
     gap: '10px',
     minHeight: '20px',
-    paddingInline: '8px',
+    paddingInline: spacing.sm,
   },
   utilityKicker: {
     fontSize: '0.68rem',
@@ -174,10 +243,10 @@ export const shellStyles = stylex.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
     gap: '8px',
-    padding: '10px',
-    borderRadius: '22px',
-    background: `linear-gradient(135deg, ${colors.surfaceRaised}, ${colors.surfaceBase})`,
-    border: `1px solid ${colors.lineSoft}`,
+    padding: spacing.sm,
+    borderRadius: radius.xxl,
+    background: `linear-gradient(135deg, ${colors.bgPanelAlt}, ${colors.bgPanel})`,
+    border: `1px solid ${colors.borderSubtle}`,
     boxShadow: `inset 0 1px 0 rgba(238, 232, 218, 0.03), 0 12px 24px ${colors.shadowSoft}`,
   },
   select: {
@@ -191,9 +260,9 @@ export const shellStyles = stylex.create({
     fontSize: '0.875rem',
     fontWeight: 500,
     minHeight: '38px',
-    backgroundColor: 'rgba(18, 20, 26, 0.9)',
-    border: '1px solid rgba(184, 160, 111, 0.34)',
-    color: colors.paperStrong,
+      backgroundColor: colors.bgField,
+      border: `1px solid ${colors.borderDefault}`,
+      color: colors.textPrimary,
     backdropFilter: 'blur(8px)',
     transitionProperty: 'background-color, border-color, transform, box-shadow',
     transitionDuration: '200ms',
@@ -204,8 +273,8 @@ export const shellStyles = stylex.create({
     justifyContent: 'center',
     padding: '8px',
     borderRadius: '12px',
-    backgroundColor: 'rgba(18, 20, 26, 0.9)',
-    border: '1px solid rgba(184, 160, 111, 0.34)',
+      backgroundColor: colors.bgField,
+      border: `1px solid ${colors.borderDefault}`,
     backdropFilter: 'blur(8px)',
     transitionProperty: 'background-color, border-color, transform, box-shadow',
     transitionDuration: '200ms',
@@ -240,10 +309,10 @@ export const shellStyles = stylex.create({
     marginTop: '12px',
   },
   navShell: {
-    padding: '10px',
-    borderRadius: '22px',
-    background: 'linear-gradient(160deg, rgba(16, 18, 23, 0.94), rgba(20, 23, 30, 0.9))',
-    border: '1px solid rgba(184, 160, 111, 0.2)',
+    padding: spacing.sm,
+    borderRadius: radius.xxl,
+    background: `linear-gradient(160deg, ${colors.bgPanel}, ${colors.bgPanelAlt})`,
+    border: `1px solid ${colors.borderSubtle}`,
     boxShadow: 'inset 0 1px 0 rgba(245, 237, 222, 0.04), 0 12px 24px rgba(2, 3, 5, 0.32)',
   },
   navShellEnhanced: {
@@ -448,6 +517,9 @@ export const shellStyles = stylex.create({
     backgroundColor: 'rgba(32, 30, 34, 0.9)',
     color: colors.accentStrong,
   },
+  accentIcon: {
+    color: colors.accentStrong,
+  },
   orderLabel: {
     fontSize: '0.84rem',
     lineHeight: 1.15,
@@ -463,7 +535,7 @@ export const shellStyles = stylex.create({
   },
   translateTransition: {
     transitionProperty: 'transform',
-    transitionDuration: '300ms',
+    transitionDuration: motion.slow,
   },
   hideTop: {
     transform: 'translateY(-100%)',
@@ -483,13 +555,13 @@ export const shellStyles = stylex.create({
   },
   mainInner: {
     width: '100%',
-    maxWidth: '1280px',
+    maxWidth: layout.container,
     marginInline: 'auto',
     overflowX: 'clip',
     paddingInline: {
-      default: '12px',
-      '@media (min-width: 640px)': '20px',
-      '@media (min-width: 1024px)': '32px',
+      default: spacing.md,
+      '@media (min-width: 640px)': spacing.xl,
+      '@media (min-width: 1024px)': spacing.xxxl,
     },
     paddingTop: {
       default: '16px',
@@ -497,10 +569,10 @@ export const shellStyles = stylex.create({
     },
   },
   pageShell: {
-    borderRadius: '18px',
+    borderRadius: radius.xl,
     overflow: 'hidden',
-    border: '1px solid rgba(192, 167, 121, 0.14)',
-    background: 'linear-gradient(160deg, rgba(16, 20, 26, 0.86), rgba(12, 15, 20, 0.88))',
+    border: `1px solid ${colors.borderSubtle}`,
+    background: `linear-gradient(160deg, ${colors.bgPanel}, ${colors.panelBottom})`,
     boxShadow: '0 12px 24px rgba(2, 3, 5, 0.3)',
   },
   mobileNavRoot: {
@@ -621,19 +693,20 @@ export const shellStyles = stylex.create({
     borderRadius: '12px',
     border: '1px solid rgba(192, 167, 121, 0.22)',
     backgroundColor: 'rgba(20, 18, 24, 0.86)',
+    color: colors.accentStrong,
     flex: '0 0 auto',
   },
   mobileDock: {
     position: 'relative',
     width: 'min(100%, 560px)',
     marginInline: 'auto',
-    padding: '8px',
-    borderTopLeftRadius: '22px',
-    borderTopRightRadius: '22px',
+    padding: spacing.sm,
+    borderTopLeftRadius: radius.xxl,
+    borderTopRightRadius: radius.xxl,
     boxShadow: '0 -12px 24px rgba(2, 3, 5, 0.5)',
     overflow: 'hidden',
-    background: 'linear-gradient(to top, rgba(15, 17, 22, 0.97), rgba(26, 29, 36, 0.9))',
-    border: '1px solid rgba(110, 94, 68, 0.44)',
+    background: `linear-gradient(to top, ${colors.bgPanel}, ${colors.bgPanelAlt})`,
+    border: `1px solid ${colors.borderDefault}`,
     backdropFilter: 'blur(12px)',
     '::before': {
       content: "''",

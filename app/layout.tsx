@@ -7,6 +7,7 @@ import "./globals.css";
 import InputPerformanceMode from "@/components/InputPerformanceMode";
 import AppTelemetry from "@/components/platform/AppTelemetry";
 import { rootLayoutStyles } from '@/app/layout.stylex';
+import { wuxiaTheme } from '@/lib/stylex/theme.stylex';
 import { QueryProvider } from "@/lib/providers/QueryProvider";
 import { I18nProvider } from "@/lib/i18n/context";
 import { shouldEnableTelemetry } from "@/lib/platform/runtime";
@@ -59,7 +60,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const bodyProps = mergeStylexProps(stylex.props(rootLayoutStyles.body), 'theme-wuxia');
+  const bodyProps = mergeStylexProps(stylex.props(wuxiaTheme, rootLayoutStyles.body), 'theme-wuxia');
 
   return (
     <html lang={defaultLanguage} className={`${bodyFont.variable} ${displayFont.variable}`}>
