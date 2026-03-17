@@ -664,11 +664,12 @@ function MiniSkeleton() {
   );
 }
 
-function MetricTile({ label, value, tone = 'steady' }: { label: string; value: string | number; tone?: LiveTone }) {
+function MetricTile({ label, value, tone = 'steady', hint }: { label: string; value: string | number; tone?: LiveTone; hint?: string }) {
   return (
     <div {...stylex.props(dashboardStyles.metricTile, tone === 'alert' && dashboardStyles.metricTileAlert, tone === 'active' && dashboardStyles.metricTileActive)}>
       <div {...stylex.props(dashboardStyles.metricValue)}>{value}</div>
       <div {...stylex.props(dashboardStyles.metricLabel)}>{label}</div>
+      {hint ? <div {...stylex.props(dashboardStyles.metricHint)}>{hint}</div> : null}
     </div>
   );
 }
@@ -678,6 +679,21 @@ function SignalBadge({ tone, children }: { tone: LiveTone; children: React.React
     <span {...stylex.props(uiStyles.badge, tone === 'alert' ? uiStyles.badgeDanger : tone === 'active' ? uiStyles.badgeSuccess : uiStyles.badgeMuted)}>
       {children}
     </span>
+  );
+}
+
+function HeroActionLink({ href, label, tone = 'primary' }: { href: string; label: string; tone?: 'primary' | 'secondary' | 'ghost' }) {
+  return (
+    <Link
+      href={href}
+      {...stylex.props(
+        uiStyles.buttonBase,
+        tone === 'primary' ? uiStyles.buttonPrimary : tone === 'secondary' ? uiStyles.buttonSecondary : uiStyles.buttonGhost,
+        dashboardStyles.heroActionButton
+      )}
+    >
+      {label}
+    </Link>
   );
 }
 
@@ -779,16 +795,32 @@ function DashboardHeroRegion({
   return (
     <div {...stylex.props(dashboardStyles.heroGrid)}>
       <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, dashboardStyles.commandCard)}>
-        <div {...stylex.props(dashboardStyles.headerRow)}>
-          <div>
-            <div {...stylex.props(dashboardStyles.kicker)}>{copy.liveStatus}</div>
-            <h3 {...stylex.props(dashboardStyles.title)}>{copy.situationRoom}</h3>
-          </div>
-          <SignalBadge tone={liveTone}>{liveLabel}</SignalBadge>
-        </div>
+        <div {...stylex.props(dashboardStyles.heroTopRow)}>
+          <div {...stylex.props(dashboardStyles.heroLeadStack)}>
+            <div {...stylex.props(dashboardStyles.headerRow)}>
+              <div>
+                <div {...stylex.props(dashboardStyles.kicker)}>{copy.liveStatus}</div>
+                <h3 {...stylex.props(dashboardStyles.title)}>{copy.situationRoom}</h3>
+              </div>
+              <SignalBadge tone={liveTone}>{liveLabel}</SignalBadge>
+            </div>
 
-        <p {...stylex.props(dashboardStyles.lede)}>{copy.openingLine}</p>
-        <p {...stylex.props(dashboardStyles.body, dashboardStyles.commandBody)}>{copy.liveSnapshot}</p>
+            <p {...stylex.props(dashboardStyles.lede)}>{copy.openingLine}</p>
+            <p {...stylex.props(dashboardStyles.body, dashboardStyles.commandBody)}>{copy.liveSnapshot}</p>
+          </div>
+
+          <div {...stylex.props(dashboardStyles.heroActionRail)}>
+            <div {...stylex.props(dashboardStyles.heroActionMeta)}>
+              <span {...stylex.props(dashboardStyles.heroActionKicker)}>{copy.quickRoutes}</span>
+              <span {...stylex.props(dashboardStyles.heroActionHint)}>{copy.quickRoutesBody}</span>
+            </div>
+            <div {...stylex.props(dashboardStyles.heroActionButtons)}>
+              <HeroActionLink href="/schedule" label={copy.openSchedule} />
+              <HeroActionLink href="/help" label={copy.openHelp} tone="secondary" />
+              <HeroActionLink href="/news" label={copy.openNews} tone="ghost" />
+            </div>
+          </div>
+        </div>
 
         <div {...stylex.props(dashboardStyles.signalGrid)}>
           <div {...stylex.props(dashboardStyles.signalCard)}>
@@ -809,10 +841,10 @@ function DashboardHeroRegion({
         </div>
 
         <div {...stylex.props(dashboardStyles.metricGrid)}>
-          <MetricTile label={copy.activeMembers} value={rosterSnapshot.active} tone={liveTone === 'steady' ? 'active' : liveTone} />
-          <MetricTile label={copy.unattendedRequests} value={helpSnapshot.unattended} tone={helpSnapshot.unattended > 0 ? 'alert' : 'steady'} />
-          <MetricTile label={copy.pendingAbsences} value={absenceSnapshot.pending.length} tone={absenceSnapshot.pending.length > 0 ? 'alert' : 'steady'} />
-          <MetricTile label={copy.activeAnnouncements} value={newsSnapshot.activeCount} tone="active" />
+          <MetricTile label={copy.activeMembers} value={rosterSnapshot.active} tone={liveTone === 'steady' ? 'active' : liveTone} hint={`${rosterSnapshot.readinessPercent}% ${copy.readyCore.toLowerCase()}`} />
+          <MetricTile label={copy.unattendedRequests} value={helpSnapshot.unattended} tone={helpSnapshot.unattended > 0 ? 'alert' : 'steady'} hint={helpSnapshot.unattended > 0 ? copy.activeAlerts : copy.allClear} />
+          <MetricTile label={copy.pendingAbsences} value={absenceSnapshot.pending.length} tone={absenceSnapshot.pending.length > 0 ? 'alert' : 'steady'} hint={absenceSnapshot.pending.length > 0 ? copy.pendingAbsencesLabel : copy.stable} />
+          <MetricTile label={copy.activeAnnouncements} value={newsSnapshot.activeCount} tone="active" hint={newsSnapshot.activeCount > 0 ? copy.live : copy.latest} />
         </div>
       </article>
 
@@ -825,7 +857,13 @@ function DashboardHeroRegion({
           <SignalBadge tone={user.isActive ? 'active' : 'alert'}>{user.isActive ? copy.activeState : copy.inactiveState}</SignalBadge>
         </div>
 
-        <p {...stylex.props(dashboardStyles.body)}>{copy.personalStationBody}</p>
+        <div {...stylex.props(dashboardStyles.stationSummaryRow)}>
+          <p {...stylex.props(dashboardStyles.body, dashboardStyles.stationSummaryBody)}>{copy.personalStationBody}</p>
+          <div {...stylex.props(dashboardStyles.stationQuickLinkRow)}>
+            <HeroActionLink href="/profile" label={copy.openProfile} tone="secondary" />
+            <HeroActionLink href="/pvp" label={copy.openPvp} tone="ghost" />
+          </div>
+        </div>
 
         <div {...stylex.props(uiStyles.inlineTags, dashboardStyles.stationChips)}>
           <span {...stylex.props(dashboardStyles.stationChip)}>{roleLabels[language][user.role]}</span>

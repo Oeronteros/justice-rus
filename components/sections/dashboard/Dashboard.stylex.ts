@@ -84,6 +84,57 @@ export const dashboardStyles = stylex.create({
     marginTop: '10px',
     maxWidth: '62ch',
   },
+  heroTopRow: {
+    display: 'grid',
+    gap: '16px',
+    alignItems: 'stretch',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 1200px)': 'minmax(0, 1.2fr) minmax(320px, 0.8fr)',
+    },
+  },
+  heroLeadStack: {
+    display: 'grid',
+    gap: '10px',
+  },
+  heroActionRail: {
+    display: 'grid',
+    gap: '12px',
+    padding: '16px',
+    borderRadius: '20px',
+    border: '1px solid rgba(85, 119, 138, 0.26)',
+    background: 'linear-gradient(160deg, rgba(8, 15, 22, 0.88), rgba(12, 20, 28, 0.84))',
+  },
+  heroActionMeta: {
+    display: 'grid',
+    gap: '4px',
+  },
+  heroActionKicker: {
+    fontSize: '0.72rem',
+    lineHeight: 1,
+    letterSpacing: '0.16em',
+    textTransform: 'uppercase',
+    color: 'rgba(159, 184, 198, 0.88)',
+    fontWeight: 700,
+  },
+  heroActionHint: {
+    color: 'rgba(224, 238, 247, 0.92)',
+    lineHeight: 1.55,
+    fontSize: '0.9rem',
+  },
+  heroActionButtons: {
+    display: 'grid',
+    gap: '10px',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 640px)': 'repeat(3, minmax(0, 1fr))',
+      '@media (min-width: 1200px)': '1fr',
+    },
+  },
+  heroActionButton: {
+    width: '100%',
+    justifyContent: 'center',
+  },
   stack: {
     display: 'grid',
     gap: '12px',
@@ -150,6 +201,28 @@ export const dashboardStyles = stylex.create({
     marginTop: '6px',
     color: 'rgba(159, 184, 198, 0.9)',
     fontSize: '0.84rem',
+  },
+  metricHint: {
+    marginTop: '4px',
+    color: 'rgba(224, 238, 247, 0.78)',
+    fontSize: '0.76rem',
+    lineHeight: 1.35,
+  },
+  stationSummaryRow: {
+    marginTop: '14px',
+    display: 'grid',
+    gap: '14px',
+  },
+  stationSummaryBody: {
+    margin: 0,
+  },
+  stationQuickLinkRow: {
+    display: 'grid',
+    gap: '10px',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 640px)': 'repeat(2, minmax(0, 1fr))',
+    },
   },
   stationChips: {
     marginTop: '14px',

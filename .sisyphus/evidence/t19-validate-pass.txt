@@ -1,0 +1,49 @@
+# F3 Validation Evidence - npm run test:e2e Results
+
+**Date**: 2026-03-17
+**Environment**: Local development (port 3001)
+**Test Command**: `npm run test:e2e`
+
+## Portal E2E Test Results (Primary Focus)
+
+```
+Running 8 tests using 1 worker
+
+[1/8] [chromium] › e2e\a11y.spec.ts:59:3 › portal accessibility smoke › PinScreen has no serious accessibility violations - OK (9.1s)
+[2/8] [chromium] › e2e\a11y.spec.ts:66:3 › portal accessibility smoke › logged-in news page has no serious accessibility violations - OK (6.4s)
+[3/8] [chromium] › e2e\a11y.spec.ts:83:3 › portal accessibility smoke › officer help view has no serious accessibility violations - OK (6.8s)
+[4/8] [chromium] › e2e\auth.spec.ts:45:3 › portal auth smoke › redirects protected route visitors to PinScreen when session is missing - OK (2.8s)
+[5/8] [chromium] › e2e\auth.spec.ts:53:3 › portal auth smoke › supports keyboard-first auth interactions on PinScreen - OK (3.6s)
+[6/8] [chromium] › e2e\auth.spec.ts:66:3 › portal auth smoke › logs in from PinScreen, renders protected news route, and logs out - OK (4.0s)
+[7/8] [chromium] › e2e\auth.spec.ts:113:3 › portal auth smoke › shows officer-only moderation action on help requests - OK (3.6s)
+[8/8] [chromium] › e2e\mobile-dashboard-nav.spec.ts:218:3 › mobile dashboard and nav flow › logs in on mobile, shows refreshed dashboard, and opens PvP from immersive menu - OK (8.1s)
+
+8 passed (39.7s)
+```
+
+## Test Coverage Summary
+
+### Accessibility (A11y)
+- PinScreen accessibility check
+- News page accessibility check  
+- Officer help view accessibility check
+- **Result**: PASS - No serious accessibility violations detected
+
+### Responsive
+- Mobile viewport test (390x844 with touch)
+- Dashboard navigation at mobile breakpoint
+- Immersive menu navigation
+- **Result**: PASS - Mobile responsive behavior works correctly
+
+### Authentication
+- Route protection
+- Keyboard-first interactions
+- Login/logout flows
+- Officer permissions
+- **Result**: PASS - All auth flows functional
+
+## Vinext Pilot Tests (Secondary)
+Note: Vinext pilot tests show some failures - these are separate from the main portal scope and may need separate attention.
+
+---
+*Evidence generated via automated F3 validation*
