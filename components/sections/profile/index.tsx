@@ -343,13 +343,13 @@ const AccountsPanel = memo(function AccountsPanel({
           title="Обновить"
           aria-label="Обновить"
         >
-          <WuxiaIcon name="refresh" className="w-5 h-5" />
+          <WuxiaIcon name="refresh" {...stylex.props(uiStyles.iconMd)} />
         </button>
       </div>
 
       {accountsError && (
         <div {...mergeStylexProps(stylex.props(uiStyles.notice), 'mb-4')}>
-          <WuxiaIcon name="alertTriangle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
+          <WuxiaIcon name="alertTriangle" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
           {accountsError}
         </div>
       )}
@@ -620,18 +620,18 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
       <div {...stylex.props(uiStyles.sectionContainer)}>
         <div {...stylex.props(uiStyles.stackLg)}>
         <SectionHero
-          icon={<WuxiaIcon name="profile" className="w-5 h-5" />}
+          icon={<WuxiaIcon name="profile" {...stylex.props(uiStyles.iconMd)} />}
           title={language === 'ru' ? 'Личный кабинет' : language === 'zh' ? '个人中枢' : 'Profile hub'}
           subtitle={language === 'ru' ? 'Твой профиль и управление учетками. Новые участники создаются неактивными и включаются админом.' : language === 'zh' ? '管理你的个人资料与账号状态。新成员默认处于未激活状态，由管理员启用。' : 'Manage your profile and account state. New members are created inactive and enabled by an admin.'}
           chips={['Account', 'Security', 'Admin Control']}
           actions={
             <div {...stylex.props(profileStyles.heroActionRow)}>
               <Link href="/" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}>
-                <WuxiaIcon name="eye" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                <WuxiaIcon name="eye" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
                 {language === 'ru' ? 'Дашборд' : language === 'zh' ? '总览' : 'Dashboard'}
               </Link>
               <Link href="/news" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}>
-                <WuxiaIcon name="news" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                <WuxiaIcon name="news" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
                 {language === 'ru' ? 'Новости' : language === 'zh' ? '公告' : 'News'}
               </Link>
             </div>
@@ -688,7 +688,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
 
           {profileNotice && (
             <div {...stylex.props(uiStyles.notice, uiStyles.noticeSuccess)}>
-              <WuxiaIcon name="checkCircle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
+              <WuxiaIcon name="checkCircle" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
               {profileNotice}
             </div>
           )}

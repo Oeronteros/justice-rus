@@ -80,7 +80,7 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
       <LoadingState
         title={t.registration.title}
         subtitle={t.registration.loading}
-        icon={<WuxiaIcon name="registration" className="w-6 h-6 text-red-400" />}
+        icon={<WuxiaIcon name="registration" {...stylex.props(uiStyles.iconLg, uiStyles.iconDanger)} />}
         skeletonCount={3}
         layout="cards"
       />
@@ -90,12 +90,12 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
   if (error) {
     return (
       <EmptyState
-        icon={<WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />}
+        icon={<WuxiaIcon name="alertTriangle" {...stylex.props(uiStyles.iconXl, uiStyles.iconDanger)} />}
         title={t.registration.error}
         description={error instanceof Error ? error.message : t.errors.server}
         action={
           <button onClick={() => refetch()} {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>
-            <WuxiaIcon name="redo" className="inline-block w-4 h-4 mr-2" />
+            <WuxiaIcon name="redo" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
             {t.errors.tryAgain}
           </button>
         }
@@ -109,7 +109,7 @@ function RegistrationSectionContent({ user }: RegistrationSectionProps) {
       <div {...stylex.props(uiStyles.sectionContainer)}>
         <div {...stylex.props(uiStyles.stackLg)}>
           <SectionHero
-            icon={<WuxiaIcon name="registration" className="w-5 h-5" />}
+            icon={<WuxiaIcon name="registration" {...stylex.props(uiStyles.iconMd)} />}
             title={t.registration.title}
             subtitle={t.registration.subtitle}
             chips={['Roster', 'Readiness', 'Roles']}

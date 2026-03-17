@@ -163,7 +163,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
       <div {...stylex.props(uiStyles.sectionContainer)}>
         <div {...stylex.props(uiStyles.stackLg)}>
           <SectionHero
-            icon={<WuxiaIcon name="help" className="w-5 h-5" />}
+            icon={<WuxiaIcon name="help" {...stylex.props(uiStyles.iconMd)} />}
             title={t.help.title}
             subtitle={t.help.subtitle}
             chips={['Support Board', 'Open / Closed', 'Officer Review']}
@@ -186,7 +186,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
             <div {...stylex.props(opsStyles.sideCol, uiStyles.card, uiStyles.sectionCard, opsStyles.panel)}>
             <div {...stylex.props(opsStyles.iconTitleRow)}>
               <div {...stylex.props(opsStyles.iconWrap)}>
-                <WuxiaIcon name="plus" className="w-7 h-7 text-[#8fb9cc]" />
+                <WuxiaIcon name="plus" {...stylex.props(uiStyles.iconXl, uiStyles.iconAccent)} />
               </div>
               <h3 {...stylex.props(opsStyles.panelTitle)}>{t.help.createRequest}</h3>
             </div>
@@ -259,13 +259,13 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 disabled={createRequest.isPending}
               >
                 {createRequest.isPending ? (
-                  <span className="inline-flex items-center justify-center">
-                    <WuxiaIcon name="spinner" className="spinner-icon w-4 h-4 mr-3" />
+                  <span {...stylex.props(uiStyles.inlineCenter)}>
+                    <WuxiaIcon name="spinner" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon, uiStyles.iconSpin)} />
                     {t.help.submitting}
                   </span>
                 ) : (
-                  <span className="inline-flex items-center justify-center">
-                    <WuxiaIcon name="seal" className="w-4 h-4 mr-3" />
+                  <span {...stylex.props(uiStyles.inlineCenter)}>
+                    <WuxiaIcon name="seal" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
                     {t.help.submit}
                   </span>
                 )}
@@ -273,7 +273,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
 
               {createRequest.error && (
                 <div {...stylex.props(uiStyles.notice, uiStyles.noticeError)}>
-                  <WuxiaIcon name="alertTriangle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
+                  <WuxiaIcon name="alertTriangle" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
                   {createRequest.error instanceof Error ? createRequest.error.message : t.help.createFailed}
                 </div>
               )}
@@ -304,7 +304,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 onClick={() => refetch()}
                 title={t.common.refresh}
               >
-                <WuxiaIcon name="refresh" className="w-5 h-5" />
+                <WuxiaIcon name="refresh" {...stylex.props(uiStyles.iconMd)} />
               </button>
             </div>
 
@@ -312,13 +312,13 @@ function HelpSectionContent({ user }: HelpSectionProps) {
               <LoadingState
                 title={t.help.title}
                 subtitle="Собираем активные запросы и отклики..."
-                icon={<WuxiaIcon name="help" className="w-6 h-6 text-[#8fb9cc]" />}
+                icon={<WuxiaIcon name="help" {...stylex.props(uiStyles.iconLg, uiStyles.iconAccent)} />}
                 skeletonCount={3}
                 layout="list"
               />
             ) : requests.length === 0 ? (
               <EmptyState
-                icon={<WuxiaIcon name="seal" className="w-8 h-8 text-[#8fb9cc]" />}
+                icon={<WuxiaIcon name="seal" {...stylex.props(uiStyles.iconXl, uiStyles.iconAccent)} />}
                 title={t.help.noRequestsTitle}
                 description={t.help.noRequestsDescription}
                 badgeLabel={status === 'closed' ? t.help.closed : status === 'all' ? t.help.all : t.help.open}
@@ -338,7 +338,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                         <div className="min-w-0">
                           <div {...stylex.props(opsStyles.actionRow)} style={{ marginBottom: 12 }}>
                             <span {...stylex.props(uiStyles.badge, uiStyles.badgeMuted)}>
-                              <WuxiaIcon name="tag" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                              <WuxiaIcon name="tag" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
                               {req.category}
                             </span>
                             <span
@@ -350,7 +350,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
 
                           <div {...stylex.props(opsStyles.toolbar)} style={{ marginBottom: 12 }}>
                             <div {...stylex.props(opsStyles.helperInline)} style={{ color: 'rgba(209,213,219,0.95)' }}>
-                              <WuxiaIcon name="calendar" className="w-4 h-4 text-[#8fb9cc]" />
+                              <WuxiaIcon name="calendar" {...stylex.props(uiStyles.iconSm, uiStyles.iconAccent)} />
                               <span style={{ color: '#d2e5ef' }}>{t.help.gatheringLabel} {formatDateTimeRange(req.gatheringStart, req.gatheringEnd)}</span>
                             </div>
                             {canEditTime && editingTimeId !== req.id && (
@@ -467,11 +467,11 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                         <div {...stylex.props(opsStyles.listStack)} style={{ fontSize: '0.875rem', color: 'rgba(156,163,175,0.95)' }}>
                           <div>
                             <div {...stylex.props(opsStyles.helperInline)}>
-                              <WuxiaIcon name="user" className="w-4 h-4" />
+                              <WuxiaIcon name="user" {...stylex.props(uiStyles.iconSm, uiStyles.iconMuted)} />
                               <span>{req.author}</span>
                             </div>
                             <div {...stylex.props(opsStyles.helperInline)} style={{ marginTop: 4 }}>
-                              <WuxiaIcon name="calendar" className="w-4 h-4" />
+                              <WuxiaIcon name="calendar" {...stylex.props(uiStyles.iconSm, uiStyles.iconMuted)} />
                               <span>{formatDate(req.createdAt)}</span>
                             </div>
                           </div>
@@ -487,7 +487,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                                 >
                                   <WuxiaIcon
                                     name={req.status === 'closed' ? 'redo' : 'checkCircle'}
-                                    className="inline-block w-4 h-4 mr-2 align-text-bottom"
+                                    {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)}
                                   />
                                   {req.status === 'closed' ? 'Открыть снова' : 'Закрыть'}
                                 </button>
@@ -499,7 +499,7 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                                   onClick={() => deleteRequest(req.id)}
                                   disabled={deleteHelpRequest.isPending}
                                 >
-                                  <WuxiaIcon name="trash" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                                  <WuxiaIcon name="trash" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
                                   Удалить
                                 </button>
                               )}

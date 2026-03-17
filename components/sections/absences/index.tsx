@@ -74,7 +74,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
       <LoadingState
         title={t.absences.title}
         subtitle={t.absences.loading}
-        icon={<WuxiaIcon name="absences" className="w-6 h-6 text-red-400" />}
+        icon={<WuxiaIcon name="absences" {...stylex.props(uiStyles.iconLg, uiStyles.iconDanger)} />}
         skeletonCount={3}
         layout="list"
       />
@@ -84,12 +84,12 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
   if (error) {
     return (
       <EmptyState
-        icon={<WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />}
+        icon={<WuxiaIcon name="alertTriangle" {...stylex.props(uiStyles.iconXl, uiStyles.iconDanger)} />}
         title={t.absences.error}
         description={error instanceof Error ? error.message : t.absences.error}
         action={
           <button onClick={() => refetch()} {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>
-            <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
+            <WuxiaIcon name="redo" {...stylex.props(uiStyles.iconMd, uiStyles.inlineIcon)} />
             {t.errors.tryAgain}
           </button>
         }
@@ -103,7 +103,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
       <div {...stylex.props(uiStyles.sectionContainer)}>
         <div {...stylex.props(uiStyles.stackLg)}>
           <SectionHero
-            icon={<WuxiaIcon name="absences" className="w-5 h-5" />}
+            icon={<WuxiaIcon name="absences" {...stylex.props(uiStyles.iconMd)} />}
             title={t.absences.title}
             subtitle={t.absences.subtitle}
             chips={['Roster Health', 'Requests', 'Status Tracking']}
@@ -113,7 +113,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
           <div {...stylex.props(opsStyles.sideCol, uiStyles.card, uiStyles.sectionCard, opsStyles.panel)}>
             <div {...stylex.props(opsStyles.iconTitleRow)}>
               <div {...stylex.props(opsStyles.iconWrap)}>
-                <WuxiaIcon name="plus" className="w-7 h-7 text-[#8fb9cc]" />
+                <WuxiaIcon name="plus" {...stylex.props(uiStyles.iconXl, uiStyles.iconAccent)} />
               </div>
               <h3 {...stylex.props(opsStyles.panelTitle)}>{t.absences.createRequest}</h3>
             </div>
@@ -161,13 +161,13 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                 disabled={createAbsence.isPending}
               >
                 {createAbsence.isPending ? (
-                  <span className="inline-flex items-center justify-center">
-                    <WuxiaIcon name="spinner" className="spinner-icon w-4 h-4 mr-3" />
+                  <span {...stylex.props(uiStyles.inlineCenter)}>
+                    <WuxiaIcon name="spinner" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon, uiStyles.iconSpin)} />
                     {t.absences.submitting}
                   </span>
                 ) : (
-                  <span className="inline-flex items-center justify-center">
-                    <WuxiaIcon name="seal" className="w-4 h-4 mr-3" />
+                  <span {...stylex.props(uiStyles.inlineCenter)}>
+                    <WuxiaIcon name="seal" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
                     {t.absences.submit}
                   </span>
                 )}
@@ -175,7 +175,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
 
               {createAbsence.error && (
                 <div {...stylex.props(opsStyles.errorBox)}>
-                  <WuxiaIcon name="alertTriangle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
+                  <WuxiaIcon name="alertTriangle" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
                   {createAbsence.error instanceof Error ? createAbsence.error.message : t.absences.createFailed}
                 </div>
               )}
@@ -205,14 +205,14 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                 onClick={() => refetch()}
                 title={t.common.refresh}
               >
-                <WuxiaIcon name="refresh" className="w-5 h-5" />
+                <WuxiaIcon name="refresh" {...stylex.props(uiStyles.iconMd)} />
               </button>
             </div>
 
             <div {...stylex.props(opsStyles.listStack)}>
               {filteredAbsences.length === 0 ? (
                 <EmptyState
-                  icon={<WuxiaIcon name="calendarX" className="w-10 h-10 text-gray-500" />}
+                  icon={<WuxiaIcon name="calendarX" {...stylex.props(uiStyles.icon2xl, uiStyles.iconMuted)} />}
                   title={t.absences.emptyFiltered}
                   description={t.absences.emptyFilteredDescription}
                 />
@@ -228,7 +228,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                         {absence.member}
                       </h3>
                       <span {...stylex.props(opsStyles.statusBadge, getStatusClass(absence.status))}>
-                        <span className="inline-block w-2 h-2 rounded-full bg-current mr-2 opacity-80" />
+                        <span {...stylex.props(uiStyles.statusDot)} />
                         {statusLabels[absence.status] || absence.status}
                       </span>
                     </div>
@@ -258,7 +258,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                             onClick={() => void handleStatusChange(absence.id, 'approved')}
                             disabled={updateAbsenceStatus.isPending}
                           >
-                              <WuxiaIcon name="check" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                              <WuxiaIcon name="check" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
                             {updateAbsenceStatus.isPending && updateAbsenceStatus.variables?.id === absence.id && updateAbsenceStatus.variables?.status === 'approved'
                               ? t.absences.approving
                               : t.absences.approve}
@@ -269,7 +269,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                             onClick={() => void handleStatusChange(absence.id, 'rejected')}
                             disabled={updateAbsenceStatus.isPending}
                           >
-                              <WuxiaIcon name="x" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                              <WuxiaIcon name="x" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
                             {updateAbsenceStatus.isPending && updateAbsenceStatus.variables?.id === absence.id && updateAbsenceStatus.variables?.status === 'rejected'
                               ? t.absences.rejecting
                               : t.absences.reject}

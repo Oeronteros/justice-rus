@@ -28,6 +28,11 @@ export const uiStyles = stylex.create({
     display: 'grid',
     gap: spacing.lg,
   },
+  inlineCenter: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   card: {
     position: 'relative',
     borderRadius: radius.lg,
@@ -229,6 +234,15 @@ export const uiStyles = stylex.create({
     display: 'inline-block',
     marginRight: spacing.sm,
     verticalAlign: 'text-bottom',
+  },
+  statusDot: {
+    display: 'inline-block',
+    width: '8px',
+    height: '8px',
+    borderRadius: radius.pill,
+    backgroundColor: 'currentColor',
+    marginRight: spacing.sm,
+    opacity: 0.8,
   },
   iconSpin: {
     animationName: 'spin',

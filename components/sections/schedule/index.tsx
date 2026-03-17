@@ -686,7 +686,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
       <LoadingState
         title={language === 'ru' ? 'Расписание' : language === 'zh' ? '日程' : 'Schedule'}
         subtitle={language === 'ru' ? 'Собираем слоты дня...' : language === 'zh' ? '正在整理当天活动...' : 'Organizing the day slots...'}
-        icon={<WuxiaIcon name="schedule" className="w-6 h-6 text-[#8fb9cc]" />}
+        icon={<WuxiaIcon name="schedule" {...stylex.props(uiStyles.iconLg, uiStyles.iconAccent)} />}
         skeletonCount={4}
         layout="list"
       />
@@ -696,12 +696,12 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
   if (error) {
     return (
       <EmptyState
-        icon={<WuxiaIcon name="alertTriangle" className="w-8 h-8 text-red-400" />}
+        icon={<WuxiaIcon name="alertTriangle" {...stylex.props(uiStyles.iconXl, uiStyles.iconDanger)} />}
         title={language === 'ru' ? 'Расписание недоступно' : language === 'zh' ? '日程暂时不可用' : 'Schedule is unavailable'}
         description={error instanceof Error ? error.message : language === 'ru' ? 'Не удалось загрузить' : language === 'zh' ? '加载失败' : 'Failed to load'}
         action={
           <button onClick={() => refetch()} {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>
-            <WuxiaIcon name="refresh" className="w-4 h-4 mr-2" />
+            <WuxiaIcon name="refresh" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
             {language === 'ru' ? 'Повторить' : language === 'zh' ? '重试' : 'Retry'}
           </button>
         }
@@ -715,7 +715,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
       <div {...stylex.props(uiStyles.sectionContainer, scheduleStyles.shell)}>
         <div {...stylex.props(uiStyles.stackLg)}>
         <SectionHero
-          icon={<WuxiaIcon name="schedule" className="w-5 h-5" />}
+          icon={<WuxiaIcon name="schedule" {...stylex.props(uiStyles.iconMd)} />}
           title={language === 'ru' ? `Расписание — ${selectedDay.labels.ru}` : language === 'zh' ? `日程 - ${selectedDay.labels.zh}` : `Schedule - ${selectedDay.labels.en}`}
           subtitle={language === 'ru' ? 'Один день за раз' : language === 'zh' ? '一次只看一天' : 'One day at a time'}
           chips={[
@@ -755,7 +755,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                   onClick={openCreator}
                   {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}
                 >
-                  <WuxiaIcon name="plus" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                  <WuxiaIcon name="plus" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
                   {language === 'ru' ? 'Добавить событие' : language === 'zh' ? '添加活动' : 'Add event'}
                 </button>
               )}
@@ -765,7 +765,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                 title={language === 'ru' ? 'Обновить' : language === 'zh' ? '刷新' : 'Refresh'}
                 aria-label={language === 'ru' ? 'Обновить расписание' : language === 'zh' ? '刷新日程' : 'Refresh schedule'}
               >
-                <WuxiaIcon name="refresh" className="w-5 h-5" />
+                <WuxiaIcon name="refresh" {...stylex.props(uiStyles.iconMd)} />
               </button>
             </>
           }
@@ -786,7 +786,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
 
         {scheduleNotice && (
           <div {...stylex.props(uiStyles.notice, uiStyles.noticeSuccess)}>
-            <WuxiaIcon name="checkCircle" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+            <WuxiaIcon name="checkCircle" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
             {scheduleNotice}
           </div>
         )}
@@ -863,7 +863,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
 
         {selectedSchedules.length === 0 ? (
           <EmptyState
-            icon={<WuxiaIcon name="schedule" className="w-8 h-8 text-[#8fb9cc]" />}
+            icon={<WuxiaIcon name="schedule" {...stylex.props(uiStyles.iconXl, uiStyles.iconAccent)} />}
             title={language === 'ru' ? `Нет событий на ${selectedDay.labels.ru.toLowerCase()}` : language === 'zh' ? `${selectedDay.labels.zh}没有活动` : `No events for ${selectedDay.labels.en}`}
             description={language === 'ru' ? 'Отдыхай, воин! Переключи день, чтобы посмотреть другие слоты недели.' : language === 'zh' ? '好好休息，勇士！切换日期可以查看本周其他活动。' : 'Rest well, warrior! Switch the day to inspect the rest of the weekly schedule.'}
             badgeLabel={language === 'ru' ? 'Свободное окно' : language === 'zh' ? '当前空档' : 'Open window'}

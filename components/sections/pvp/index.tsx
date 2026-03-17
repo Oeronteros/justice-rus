@@ -232,7 +232,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
       <LoadingState
         title="PvP-комната"
         subtitle="Ищем соперников и обновляем таблицу дуэлей..."
-        icon={<WuxiaIcon name="sword" className="w-6 h-6 text-green-300" />}
+        icon={<WuxiaIcon name="sword" {...stylex.props(uiStyles.iconLg, uiStyles.iconSuccess)} />}
         skeletonCount={3}
         layout="list"
       />
@@ -242,7 +242,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
   if (error || !data) {
     return (
       <EmptyState
-        icon={<WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />}
+        icon={<WuxiaIcon name="alertTriangle" {...stylex.props(uiStyles.iconXl, uiStyles.iconDanger)} />}
         title="PvP недоступно"
         description={error instanceof Error ? error.message : 'Не удалось загрузить PvP-секцию'}
         action={<button onClick={() => refetch()} {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>Повторить</button>}
@@ -260,7 +260,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
       <div {...stylex.props(uiStyles.sectionContainer)}>
         <div {...stylex.props(uiStyles.stackLg)}>
         <SectionHero
-          icon={<WuxiaIcon name="sword" className="w-5 h-5" />}
+          icon={<WuxiaIcon name="sword" {...stylex.props(uiStyles.iconMd)} />}
           title="PvP-комната"
           subtitle="Очередь дуэлей по модели DiscordBot2: встаешь в очередь, получаешь соперника, оба подтверждают итог — рейтинг обновляется только после совпадения отчетов."
           chips={['Queue', 'Matchmaking', 'ELO']}
@@ -272,7 +272,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
           >
             <WuxiaIcon
               name={actionNotice.tone === 'error' ? 'alertTriangle' : 'checkCircle'}
-              className="inline-block w-4 h-4 mr-2 align-text-bottom"
+              {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)}
             />
             {actionNotice.message}
           </div>

@@ -1,6 +1,8 @@
 'use client';
 
+import * as stylex from '@stylexjs/stylex';
 import { getClassVisual, getKnownClassName } from '@/lib/classes';
+import { classIconStyles } from '@/components/ClassIcon.stylex';
 
 interface ClassIconProps {
   className: string | null | undefined;
@@ -11,6 +13,43 @@ interface ClassIconProps {
 
 function joinClasses(...values: Array<string | false | null | undefined>): string {
   return values.filter(Boolean).join(' ');
+}
+
+function resolveIconSize(sizeClassName?: string) {
+  if (sizeClassName?.includes('h-11') || sizeClassName?.includes('w-11')) return classIconStyles.sizeXl;
+  if (sizeClassName?.includes('h-10') || sizeClassName?.includes('w-10')) return classIconStyles.sizeXl;
+  if (sizeClassName?.includes('h-9') || sizeClassName?.includes('w-9')) return classIconStyles.sizeLg;
+  if (sizeClassName?.includes('h-8') || sizeClassName?.includes('w-8')) return classIconStyles.sizeLg;
+  if (sizeClassName?.includes('h-7') || sizeClassName?.includes('w-7')) return classIconStyles.sizeMd;
+  if (sizeClassName?.includes('h-6') || sizeClassName?.includes('w-6')) return classIconStyles.sizeMd;
+  return classIconStyles.sizeLg;
+}
+
+function resolveBadgeTone(textClassName?: string) {
+  if (textClassName?.includes('text-green-300')) return classIconStyles.labelSuccess;
+  if (textClassName?.includes('text-[#d2e5ef]')) return classIconStyles.labelMuted;
+  return classIconStyles.label;
+}
+
+function resolveBadgeTextSize(textClassName?: string) {
+  if (textClassName?.includes('text-xs') || textClassName?.includes('text-[11px]')) return classIconStyles.labelXs;
+  return classIconStyles.labelBase;
+}
+
+function resolveBadgeWeight(textClassName?: string) {
+  return textClassName?.includes('font-medium') ? classIconStyles.labelMedium : null;
+}
+
+function resolveBadgeWidth(badgeClassName?: string) {
+  return badgeClassName?.includes('w-full') ? classIconStyles.badgeFull : null;
+}
+
+function resolveBadgeGap(badgeClassName?: string) {
+  return badgeClassName?.includes('w-8') ? classIconStyles.badgeTight : null;
+}
+
+function resolveMarginTop(wrapperClassName?: string) {
+  return wrapperClassName?.includes('mt-2') ? classIconStyles.marginTopSm : null;
 }
 
 function ClassGlyph({ className }: { className: string }) {
@@ -108,16 +147,18 @@ export function ClassIcon({
 
   return (
     <span
-      className={joinClasses(
-        'inline-flex shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br shadow-[0_14px_28px_rgba(0,0,0,0.26)] ring-1',
-        sizeClassName,
-        visual.surfaceClassName,
-        visual.ringClassName,
-        wrapperClassName
-      )}
+      {...stylex.props(resolveIconSize(sizeClassName), classIconStyles.wrapper, resolveMarginTop(wrapperClassName))}
+      style={{
+        backgroundImage: `linear-gradient(135deg, ${visual.gradientStart}, ${visual.gradientMid}, ${visual.gradientEnd})`,
+        borderColor: visual.ringColor,
+      }}
       aria-hidden="true"
     >
-      <span className={joinClasses('block', visual.accentClassName, iconClassName || 'h-[72%] w-[72%]')}>
+      <span
+        {...stylex.props(classIconStyles.icon)}
+        style={{ color: visual.accentColor }}
+        className={iconClassName}
+      >
         <ClassGlyph className={resolvedClassName} />
       </span>
     </span>
@@ -142,13 +183,13 @@ export function ClassBadge({
   const resolvedClassName = getKnownClassName(className);
 
   if (!resolvedClassName) {
-    return <span className={textClassName}>{className || emptyLabel}</span>;
+    return <span {...stylex.props(resolveBadgeTone(textClassName), resolveBadgeTextSize(textClassName), resolveBadgeWeight(textClassName))}>{className || emptyLabel}</span>;
   }
 
   return (
-    <span className={joinClasses('inline-flex items-center gap-3 min-w-0', badgeClassName)}>
+    <span {...stylex.props(classIconStyles.badge, resolveBadgeWidth(badgeClassName), resolveBadgeGap(badgeClassName))}>
       <ClassIcon className={resolvedClassName} sizeClassName={iconSizeClassName} />
-      <span className={joinClasses('truncate', textClassName)}>{resolvedClassName}</span>
+      <span {...stylex.props(resolveBadgeTone(textClassName), resolveBadgeTextSize(textClassName), resolveBadgeWeight(textClassName))}>{resolvedClassName}</span>
     </span>
   );
 }

@@ -140,7 +140,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
       <LoadingState
         title={t.guides.title}
         subtitle={t.guides.loading}
-        icon={<WuxiaIcon name="guides" className="w-6 h-6 text-red-400" />}
+        icon={<WuxiaIcon name="guides" {...stylex.props(uiStyles.iconLg, uiStyles.iconDanger)} />}
         skeletonCount={3}
         layout="cards"
       />
@@ -150,12 +150,12 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
   if (error) {
     return (
       <EmptyState
-        icon={<WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />}
+        icon={<WuxiaIcon name="alertTriangle" {...stylex.props(uiStyles.iconXl, uiStyles.iconDanger)} />}
         title={t.guides.error}
         description={error instanceof Error ? error.message : t.errors.server}
         action={
           <button onClick={() => refetch()} {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>
-            <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
+            <WuxiaIcon name="redo" {...stylex.props(uiStyles.iconMd, uiStyles.inlineIcon)} />
             {t.errors.tryAgain}
           </button>
         }
@@ -165,9 +165,9 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
   }
 
   return (
-    <div className="section-stack-lg">
+    <div {...stylex.props(uiStyles.stackLg)}>
       <SectionHero
-        icon={<WuxiaIcon name="guides" className="w-5 h-5" />}
+        icon={<WuxiaIcon name="guides" {...stylex.props(uiStyles.iconMd)} />}
         title={t.guides.title}
         subtitle={t.guides.subtitle}
         chips={['Obsidian Import', 'Milkdown Writing', 'Comments']}
@@ -201,7 +201,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
               onClick={() => markdownInputRef.current?.click()}
               disabled={isImporting}
             >
-              <WuxiaIcon name="upload" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+              <WuxiaIcon name="upload" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
               {isImporting ? 'Импорт...' : 'Импорт .md'}
             </button>
             <button
@@ -210,7 +210,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
               onClick={() => markdownFolderInputRef.current?.click()}
               disabled={isImporting}
             >
-              <WuxiaIcon name="guides" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+              <WuxiaIcon name="guides" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
               Папка vault
             </button>
             <button
@@ -219,10 +219,10 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
               onClick={() => refetch()}
               title="Обновить"
             >
-              <WuxiaIcon name="refresh" className="w-5 h-5" />
+              <WuxiaIcon name="refresh" {...stylex.props(uiStyles.iconMd)} />
             </button>
             <button type="button" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)} onClick={onCreateClick}>
-              <WuxiaIcon name="edit" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
+              <WuxiaIcon name="edit" {...stylex.props(uiStyles.iconMd, uiStyles.inlineIcon)} />
               {t.guides.create}
             </button>
           </>
@@ -259,7 +259,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
           onDrop={handleDrop}
         >
           <div {...stylex.props(guidesStyles.dropzoneText)}>
-            <WuxiaIcon name="upload" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+            <WuxiaIcon name="upload" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
             {language === 'ru' ? 'Перетащи `.md` вместе с вложениями или выбери целую папку из Obsidian.' : language === 'zh' ? '拖入带附件的 `.md` 文件，或直接选择整个 Obsidian 文件夹。' : 'Drop `.md` files with attachments or choose an entire Obsidian folder.'}
           </div>
         </div>
@@ -316,7 +316,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
 
       {notice && (
         <div {...stylex.props(uiStyles.notice, uiStyles.noticeSuccess)}>
-          <WuxiaIcon name="checkCircle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
+          <WuxiaIcon name="checkCircle" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
           {notice}
         </div>
       )}
@@ -324,7 +324,7 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
         {filteredGuides.length === 0 ? (
           <div className="col-span-full">
             <EmptyState
-              icon={<WuxiaIcon name="guides" className="w-10 h-10 text-gray-500" />}
+              icon={<WuxiaIcon name="guides" {...stylex.props(uiStyles.icon2xl, uiStyles.iconMuted)} />}
               title={t.guides.empty}
               description={t.guides.emptyDescription}
             />
