@@ -16,7 +16,6 @@ import type { User } from '@/lib/schemas/auth';
 import { Section } from '@/types';
 import type { Language } from '@/lib/i18n';
 import { useLanguage } from '@/lib/i18n/context';
-import { mergeStylexProps } from '@/lib/stylex/utils';
 import { shellStyles } from './Shell.stylex';
 
 interface MainLayoutProps {
@@ -61,6 +60,40 @@ function resolveSection(pathname: string): Section {
   return pathToSection[pathname] || 'about';
 }
 
+function resolvePageShellTone(section: Section) {
+  switch (section) {
+    case 'registration':
+      return shellStyles.pageShellRegistration;
+    case 'schedule':
+      return shellStyles.pageShellSchedule;
+    case 'calendar':
+      return shellStyles.pageShellCalendar;
+    case 'analytics':
+      return shellStyles.pageShellAnalytics;
+    case 'workflow':
+      return shellStyles.pageShellWorkflow;
+    case 'integrations':
+      return shellStyles.pageShellIntegrations;
+    case 'pvp':
+      return shellStyles.pageShellPvp;
+    case 'guides':
+      return shellStyles.pageShellGuides;
+    case 'help':
+      return shellStyles.pageShellHelp;
+    case 'absences':
+      return shellStyles.pageShellAbsences;
+    case 'news':
+      return shellStyles.pageShellNews;
+    case 'calculator':
+      return shellStyles.pageShellCalculator;
+    case 'profile':
+      return shellStyles.pageShellProfile;
+    case 'about':
+    default:
+      return shellStyles.pageShellAbout;
+  }
+}
+
 function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
   const pathname = usePathname();
   const prefersReducedMotion = useReducedMotion();
@@ -73,6 +106,7 @@ function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
   const prefetchAbsences = usePrefetchAbsences();
 
   const currentSection = useMemo(() => resolveSection(pathname), [pathname]);
+  const pageShellTone = useMemo(() => resolvePageShellTone(currentSection), [currentSection]);
   const handleNavPrefetch = useCallback(
     (section: Section) => {
       switch (section) {
@@ -132,13 +166,13 @@ function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={pathname}
-              {...mergeStylexProps(stylex.props(shellStyles.pageShell), `wuxia-section wuxia-section-${currentSection} dc-page-shell`)}
+              {...stylex.props(shellStyles.pageShell, pageShellTone)}
               initial={prefersReducedMotion ? false : { opacity: 0, y: 18, scale: 0.992 }}
               animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
               exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 10, scale: 0.996 }}
               transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
             >
-              {children}
+              <div {...stylex.props(shellStyles.pageShellContent)}>{children}</div>
             </motion.div>
           </AnimatePresence>
         </div>

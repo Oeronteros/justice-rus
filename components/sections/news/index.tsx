@@ -347,7 +347,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
       <LoadingState
         title={t.news.title}
         subtitle={t.news.loading}
-        icon={<WuxiaIcon name="news" className="w-6 h-6 text-red-400" />}
+        icon={<WuxiaIcon name="news" {...stylex.props(newsStyles.iconStateMd)} />}
         skeletonCount={6}
         layout="cards"
       />
@@ -357,12 +357,12 @@ function NewsSectionContent({ user }: NewsSectionProps) {
   if (error) {
     return (
       <EmptyState
-        icon={<WuxiaIcon name="alertTriangle" className="w-7 h-7 text-red-400" />}
+        icon={<WuxiaIcon name="alertTriangle" {...stylex.props(newsStyles.iconStateLg)} />}
         title={t.news.error}
         description={error instanceof Error ? error.message : t.news.error}
         action={
           <button onClick={() => refetch()} {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>
-            <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
+            <WuxiaIcon name="redo" {...stylex.props(newsStyles.inlineButtonIconMd)} />
             {t.errors.tryAgain}
           </button>
         }
@@ -376,18 +376,18 @@ function NewsSectionContent({ user }: NewsSectionProps) {
       <div {...stylex.props(uiStyles.sectionContainer)}>
         <div {...stylex.props(uiStyles.stackLg)}>
           <SectionHero
-            icon={<WuxiaIcon name="news" className="w-5 h-5" />}
+            icon={<WuxiaIcon name="news" {...stylex.props(newsStyles.iconMd)} />}
             title={t.news.title}
             subtitle={t.news.subtitle}
             chips={['Announcements', 'Raid Plans', 'Updates']}
             actions={
               <div {...stylex.props(newsStyles.heroActionRow)}>
                 <button type="button" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)} onClick={() => refetch()}>
-                  <WuxiaIcon name="redo" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                  <WuxiaIcon name="redo" {...stylex.props(newsStyles.inlineButtonIconSm)} />
                   {t.common.refresh}
                 </button>
                 <Link href="/guides" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}>
-                  <WuxiaIcon name="guides" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                  <WuxiaIcon name="guides" {...stylex.props(newsStyles.inlineButtonIconSm)} />
                   {sectionLabels[language].guides}
                 </Link>
               </div>
@@ -502,15 +502,15 @@ function NewsSectionContent({ user }: NewsSectionProps) {
           </div>
         ) : null}
 
-        <div className="section-stack-lg">
+        <div {...stylex.props(uiStyles.stackLg)}>
           {news.length === 0 ? (
             <EmptyState
-              icon={<WuxiaIcon name="news" className="w-10 h-10 text-gray-500" />}
+              icon={<WuxiaIcon name="news" {...stylex.props(newsStyles.iconEmpty)} />}
               title={t.news.empty}
               description={t.news.emptyDescription}
               action={
                 <button onClick={() => refetch()} {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}>
-                  <WuxiaIcon name="redo" className="inline-block w-5 h-5 mr-2 align-text-bottom" />
+                  <WuxiaIcon name="redo" {...stylex.props(newsStyles.inlineButtonIconMd)} />
                   {t.common.refresh}
                 </button>
               }
@@ -530,12 +530,12 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                       <div {...stylex.props(newsStyles.tagRow)}>
                         {featured.pinned ? (
                           <span {...stylex.props(newsStyles.featuredPinned)}>
-                            <WuxiaIcon name="thumbtack" className="w-3.5 h-3.5" />
+                            <WuxiaIcon name="thumbtack" {...stylex.props(newsStyles.iconXs)} />
                             Featured
                           </span>
                         ) : null}
                         <span {...stylex.props(newsStyles.guildUpdatePill)}>
-                          <WuxiaIcon name="news" className="w-3.5 h-3.5" />
+                          <WuxiaIcon name="news" {...stylex.props(newsStyles.iconXs)} />
                           Guild Update
                         </span>
                         <DeliveryBadge status={featured.discordDeliveryStatus} />
@@ -560,11 +560,11 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                         </button>
                         ) : null}
 
-                      <div {...stylex.props(newsStyles.cardFooter)}>
-                        <div {...stylex.props(newsStyles.authorRow)}>
-                          <WuxiaIcon name="user" className="w-4 h-4 text-gray-400" />
-                          <span>{featured.author || (language === 'ru' ? 'Штаб гильдии' : language === 'zh' ? '公会指挥部' : 'Guild Staff')}</span>
-                        </div>
+                        <div {...stylex.props(newsStyles.cardFooter)}>
+                          <div {...stylex.props(newsStyles.authorRow)}>
+                            <WuxiaIcon name="user" {...stylex.props(newsStyles.iconSm, newsStyles.iconMuted)} />
+                            <span>{featured.author || (language === 'ru' ? 'Штаб гильдии' : language === 'zh' ? '公会指挥部' : 'Guild Staff')}</span>
+                          </div>
 
                         <div {...stylex.props(newsStyles.actionButtons)}>
                           {canPublish ? (
@@ -585,7 +585,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                               rel="noopener noreferrer"
                               {...stylex.props(newsStyles.discordLink)}
                             >
-                              <WuxiaIcon name="link" className="w-4 h-4" />
+                              <WuxiaIcon name="link" {...stylex.props(newsStyles.iconSm)} />
                               Open in Discord
                             </a>
                           ) : null}
@@ -610,7 +610,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                         <div {...stylex.props(newsStyles.cardHeaderRail)}>
                           <div {...stylex.props(newsStyles.tagRow, newsStyles.tagRowCompact)}>
                             <span {...stylex.props(newsStyles.guildUpdatePill)}>
-                              <WuxiaIcon name="news" className="w-3.5 h-3.5" />
+                              <WuxiaIcon name="news" {...stylex.props(newsStyles.iconXs)} />
                               Guild Update
                             </span>
                             <DeliveryBadge status={item.discordDeliveryStatus} />
@@ -638,7 +638,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
 
                         <div {...stylex.props(newsStyles.cardFooter)}>
                           <div {...stylex.props(newsStyles.authorRow)}>
-                            <WuxiaIcon name="user" className="w-4 h-4 text-gray-400" />
+                            <WuxiaIcon name="user" {...stylex.props(newsStyles.iconSm, newsStyles.iconMuted)} />
                             <span>{item.author || 'Guild Staff'}</span>
                           </div>
 
@@ -661,7 +661,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                                 rel="noopener noreferrer"
                                 {...stylex.props(newsStyles.discordLink)}
                               >
-                                <WuxiaIcon name="link" className="w-4 h-4" />
+                                <WuxiaIcon name="link" {...stylex.props(newsStyles.iconSm)} />
                                 Open in Discord
                               </a>
                             ) : null}

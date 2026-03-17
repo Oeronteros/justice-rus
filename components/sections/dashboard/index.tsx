@@ -23,7 +23,6 @@ import type { PvpState } from '@/lib/schemas/pvp';
 import type { Registration } from '@/lib/schemas/registration';
 import type { Schedule } from '@/lib/schemas/schedule';
 import * as stylex from '@stylexjs/stylex';
-import { mergeStylexProps } from '@/lib/stylex/utils';
 import { uiStyles } from '@/components/shared/Ui.stylex';
 import { dashboardStyles } from '@/components/sections/dashboard/Dashboard.stylex';
 
@@ -774,7 +773,7 @@ function StatusCard({
   actionHref,
   actionLabel,
   tone = 'steady',
-  className,
+  variant = 'default',
   children,
 }: {
   title: string;
@@ -783,18 +782,25 @@ function StatusCard({
   actionHref: string;
   actionLabel: string;
   tone?: LiveTone;
-  className?: string;
+  variant?: 'default' | 'feed';
   children: React.ReactNode;
 }) {
   return (
     <article
       data-dashboard-module={moduleId}
-      {...mergeStylexProps(stylex.props(uiStyles.card, uiStyles.sectionCard, dashboardStyles.statusCard, tone === 'alert' && dashboardStyles.statusCardAlert, tone === 'active' && dashboardStyles.statusCardActive, className === 'dashboard-status-card--feed' && dashboardStyles.statusCardFeed), className && className !== 'dashboard-status-card--feed' ? className : undefined)}
+      {...stylex.props(
+        uiStyles.card,
+        uiStyles.sectionCard,
+        dashboardStyles.statusCard,
+        tone === 'alert' && dashboardStyles.statusCardAlert,
+        tone === 'active' && dashboardStyles.statusCardActive,
+        variant === 'feed' && dashboardStyles.statusCardFeed
+      )}
     >
       <div {...stylex.props(dashboardStyles.headerRow)}>
         <div {...stylex.props(dashboardStyles.titleWrap)}>
           <span {...stylex.props(dashboardStyles.titleIcon)}>
-            <WuxiaIcon name={icon} className="h-5 w-5" />
+            <WuxiaIcon name={icon} {...stylex.props(dashboardStyles.iconGlyphMd)} />
           </span>
           <h3 {...stylex.props(dashboardStyles.statusTitle)}>{title}</h3>
         </div>
@@ -968,21 +974,21 @@ function DashboardHeroRegion({
             <div {...stylex.props(dashboardStyles.officerEscalationList)}>
               {absenceSnapshot.pending.length > 0 && (
                 <div {...stylex.props(dashboardStyles.officerEscalationItem)}>
-                  <WuxiaIcon name="calendarX" className="h-4 w-4" />
+                  <WuxiaIcon name="calendarX" {...stylex.props(dashboardStyles.iconGlyphSm)} />
                   <span>{absenceSnapshot.pending.length} {copy.pendingAbsencesLabel}</span>
                   <Link href="/absences" {...stylex.props(dashboardStyles.officerEscalationLink)}>{copy.openAbsences}</Link>
                 </div>
               )}
               {helpSnapshot.unattended > 0 && (
                 <div {...stylex.props(dashboardStyles.officerEscalationItem)}>
-                  <WuxiaIcon name="alertTriangle" className="h-4 w-4" />
+                  <WuxiaIcon name="alertTriangle" {...stylex.props(dashboardStyles.iconGlyphSm)} />
                   <span>{helpSnapshot.unattended} {copy.pendingHelpLabel}</span>
                   <Link href="/help" {...stylex.props(dashboardStyles.officerEscalationLink)}>{copy.openHelp}</Link>
                 </div>
               )}
               {pvpSnapshot.disputed && (
                 <div {...stylex.props(dashboardStyles.officerEscalationItem)}>
-                  <WuxiaIcon name="alertTriangle" className="h-4 w-4" />
+                  <WuxiaIcon name="alertTriangle" {...stylex.props(dashboardStyles.iconGlyphSm)} />
                   <span>1 {copy.disputedMatchesLabel}</span>
                   <Link href="/pvp" {...stylex.props(dashboardStyles.officerEscalationLink)}>{copy.openPvp}</Link>
                 </div>
@@ -1049,7 +1055,7 @@ function DashboardPrimaryRegion({
         ) : <div {...stylex.props(dashboardStyles.body)}>{copy.announcementsEmpty}</div>}
       </StatusCard>
 
-      <StatusCard title={copy.activityFeed} icon="list" moduleId="activity_feed" actionHref="/news" actionLabel={copy.openNews} tone="steady" className="dashboard-status-card--feed">
+      <StatusCard title={copy.activityFeed} icon="list" moduleId="activity_feed" actionHref="/news" actionLabel={copy.openNews} tone="steady" variant="feed">
         <div {...stylex.props(dashboardStyles.stack)}>
           <p {...stylex.props(dashboardStyles.body)}>{copy.activityFeedBody}</p>
           {activityFeed.length > 0 ? (
@@ -1057,7 +1063,7 @@ function DashboardPrimaryRegion({
               {activityFeed.map((event) => (
                 <div key={event.id} {...stylex.props(dashboardStyles.activityItem, activityTone(event.type) === 'active' && dashboardStyles.activityItemActive, activityTone(event.type) === 'alert' && dashboardStyles.activityItemAlert)}>
                   <div {...stylex.props(dashboardStyles.activityIcon)}>
-                    <WuxiaIcon name={activityIcon(event.type)} className="h-4 w-4" />
+                    <WuxiaIcon name={activityIcon(event.type)} {...stylex.props(dashboardStyles.iconGlyphSm)} />
                   </div>
                   <div {...stylex.props(dashboardStyles.activityContent)}>
                     <div {...stylex.props(dashboardStyles.activityHead)}>
@@ -1361,7 +1367,7 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
     <section {...stylex.props(uiStyles.sectionShell)}>
       <div {...stylex.props(uiStyles.sectionContainer)}>
         <div {...stylex.props(uiStyles.stackLg)}>
-          <SectionHero icon={<WuxiaIcon name="eye" className="h-5 w-5" />} title={copy.title} subtitle={copy.subtitle} chips={copy.chips} actions={
+          <SectionHero icon={<WuxiaIcon name="eye" {...stylex.props(dashboardStyles.iconGlyphMd)} />} title={copy.title} subtitle={copy.subtitle} chips={copy.chips} actions={
             <>
               <Link href="/schedule" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>{copy.openSchedule}</Link>
               <Link href="/help" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}>{copy.openHelp}</Link>

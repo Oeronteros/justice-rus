@@ -159,9 +159,7 @@ body {
 .theme-wuxia[data-input-active='true'] .moonfall-meteor,
 .theme-wuxia[data-input-active='true'] .wuxia-glow,
 .theme-wuxia[data-input-active='true'] .wuxia-moon,
-.theme-wuxia[data-input-active='true'] .wuxia-ink,
-.theme-wuxia[data-input-active='true'] .wuxia-section::before,
-.theme-wuxia[data-input-active='true'] .wuxia-section::after {
+.theme-wuxia[data-input-active='true'] .wuxia-ink {
   animation: none !important;
   opacity: 0 !important;
 }
@@ -1178,12 +1176,6 @@ body {
   }
 }
 
-.theme-wuxia .wuxia-section {
-  --reveal-x: 0px;
-  --reveal-y: 12px;
-  animation: sectionReveal 0.52s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
 @keyframes sectionMist {
   0% {
     opacity: 0;
@@ -1209,174 +1201,6 @@ body {
     transform: translate(calc(-50% + var(--seal-shift-x)), calc(-50% + var(--seal-shift-y))) scale(1) rotate(var(--seal-rotate));
   }
 }
-
-.theme-wuxia .wuxia-section::before,
-.theme-wuxia .wuxia-section::after {
-  display: none;
-}
-
-.theme-wuxia .wuxia-section {
-  position: relative;
-  --mist-color: rgba(143, 185, 204, 0.2);
-  --mist-duration: 0.7s;
-  --seal-duration: 0.8s;
-  --seal-rotate: 0deg;
-  --seal-shift-x: 0px;
-  --seal-shift-y: 0px;
-  --scene-symbol: none;
-  --scene-symbol-size: 480px;
-}
-
-.theme-wuxia .wuxia-section > * {
-  position: relative;
-  z-index: 2;
-}
-
-.theme-wuxia .wuxia-section::before {
-  inset: 12px 6%;
-  border-radius: 999px;
-  background:
-    var(--scene-symbol),
-    radial-gradient(circle, var(--mist-color), transparent 70%);
-  background-repeat: no-repeat, no-repeat;
-  background-position: 88% 24%, center;
-  background-size: var(--scene-symbol-size) var(--scene-symbol-size), auto;
-  filter: blur(16px);
-  opacity: 0;
-  animation: sectionMist var(--mist-duration) ease forwards;
-}
-
-.theme-wuxia .wuxia-section::after {
-  top: 10%;
-  left: 50%;
-  width: 120px;
-  height: 120px;
-  border-radius: 999px;
-  border: 1px solid rgba(143, 185, 204, 0.35);
-  background: radial-gradient(circle, rgba(143, 185, 204, 0.2), transparent 70%);
-  box-shadow: inset 0 0 20px rgba(143, 185, 204, 0.2);
-  opacity: 0;
-  animation: sealBloom var(--seal-duration) ease forwards;
-}
-
-.theme-wuxia .wuxia-section-registration {
-  --mist-color: rgba(143, 185, 204, 0.25);
-  --scene-symbol: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><circle cx='100' cy='100' r='70' fill='none' stroke='%238fb9cc' stroke-opacity='0.22' stroke-width='5'/><circle cx='100' cy='100' r='34' fill='none' stroke='%238fb9cc' stroke-opacity='0.15' stroke-width='4'/><path d='M100 28v24M100 148v24M28 100h24M148 100h24' stroke='%238fb9cc' stroke-opacity='0.18' stroke-width='5' stroke-linecap='round'/></svg>");
-  --scene-symbol-size: 460px;
-  --reveal-x: 0px;
-  --reveal-y: 12px;
-}
-
-.theme-wuxia .wuxia-section-registration::after {
-  border-color: rgba(143, 185, 204, 0.45);
-}
-
-.theme-wuxia .wuxia-section-about {
-  --mist-color: rgba(143, 185, 204, 0.18);
-  --scene-symbol: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><circle cx='100' cy='100' r='74' fill='none' stroke='%238fb9cc' stroke-opacity='0.18' stroke-width='5'/><circle cx='100' cy='78' r='6' fill='%238fb9cc' fill-opacity='0.18'/><path d='M100 92v56' stroke='%238fb9cc' stroke-opacity='0.18' stroke-width='6' stroke-linecap='round'/></svg>");
-  --scene-symbol-size: 480px;
-  --reveal-x: 0px;
-  --reveal-y: 14px;
-}
-
-.theme-wuxia .wuxia-section-about::after {
-  border-style: solid;
-  border-color: rgba(143, 185, 204, 0.35);
-}
-
-.theme-wuxia .wuxia-section-schedule {
-  --mist-color: rgba(127, 163, 138, 0.35);
-  --scene-symbol: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><rect x='40' y='48' width='120' height='112' rx='18' fill='none' stroke='%238fb9cc' stroke-opacity='0.2' stroke-width='5'/><path d='M60 40v24M140 40v24M40 82h120' stroke='%238fb9cc' stroke-opacity='0.18' stroke-width='5' stroke-linecap='round'/><path d='M72 110h56M72 134h46' stroke='%238fb9cc' stroke-opacity='0.14' stroke-width='5' stroke-linecap='round'/></svg>");
-  --scene-symbol-size: 470px;
-  --reveal-x: -10px;
-  --reveal-y: 16px;
-  --mist-duration: 0.9s;
-  --seal-duration: 1s;
-  --seal-rotate: -6deg;
-  --seal-shift-x: -16px;
-}
-
-.theme-wuxia .wuxia-section-schedule::after {
-  border-color: rgba(127, 163, 138, 0.5);
-}
-
-.theme-wuxia .wuxia-section-help {
-  --mist-color: rgba(35, 80, 107, 0.35);
-  --reveal-x: 10px;
-  --reveal-y: 14px;
-  --mist-duration: 0.75s;
-  --seal-duration: 0.95s;
-  --seal-rotate: 8deg;
-  --seal-shift-x: 18px;
-}
-
-.theme-wuxia .wuxia-section-help::after {
-  border-color: rgba(35, 80, 107, 0.5);
-}
-
-.theme-wuxia .wuxia-section-news {
-  --mist-color: rgba(143, 185, 204, 0.2);
-  --reveal-x: 0px;
-  --reveal-y: 10px;
-  --mist-duration: 0.65s;
-  --seal-duration: 0.8s;
-  --seal-rotate: -12deg;
-  --seal-shift-y: -10px;
-}
-
-.theme-wuxia .wuxia-section-news::after {
-  border-style: dashed;
-}
-
-.theme-wuxia .wuxia-section-guides {
-  --mist-color: rgba(74, 144, 176, 0.3);
-  --scene-symbol: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><path d='M100 68c-22-14-44-20-74-20v112c30 0 52 6 74 20' fill='none' stroke='%238fb9cc' stroke-opacity='0.2' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/><path d='M100 68c22-14 44-20 74-20v112c-30 0-52 6-74 20' fill='none' stroke='%238fb9cc' stroke-opacity='0.2' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/><path d='M100 68v112' fill='none' stroke='%238fb9cc' stroke-opacity='0.14' stroke-width='5' stroke-linecap='round'/></svg>");
-  --scene-symbol-size: 520px;
-  --reveal-x: 12px;
-  --reveal-y: 16px;
-  --mist-duration: 0.8s;
-  --seal-duration: 1.05s;
-  --seal-rotate: 10deg;
-  --seal-shift-x: -10px;
-  --seal-shift-y: 6px;
-}
-
-.theme-wuxia .wuxia-section-guides::after {
-  border-color: rgba(74, 144, 176, 0.55);
-}
-
-.theme-wuxia .wuxia-section-absences {
-  --mist-color: rgba(143, 185, 204, 0.18);
-  --scene-symbol: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><rect x='40' y='48' width='120' height='112' rx='18' fill='none' stroke='%238fb9cc' stroke-opacity='0.18' stroke-width='5'/><path d='M60 40v24M140 40v24M40 82h120' stroke='%238fb9cc' stroke-opacity='0.16' stroke-width='5' stroke-linecap='round'/><path d='M78 118l44 44M122 118l-44 44' stroke='%238fb9cc' stroke-opacity='0.16' stroke-width='5' stroke-linecap='round'/></svg>");
-  --scene-symbol-size: 500px;
-  --reveal-x: -8px;
-  --reveal-y: 18px;
-  --mist-duration: 1s;
-  --seal-duration: 1.2s;
-  --seal-rotate: -4deg;
-  --seal-shift-x: 8px;
-  --seal-shift-y: 10px;
-}
-
-.theme-wuxia .wuxia-section-absences::after {
-  border-color: rgba(143, 185, 204, 0.35);
-  box-shadow: inset 0 0 20px rgba(143, 185, 204, 0.15);
-}
-
-.theme-wuxia .wuxia-section-calculator {
-  --mist-color: rgba(127, 163, 138, 0.25);
-  --reveal-x: 0px;
-  --reveal-y: 14px;
-  --mist-duration: 0.7s;
-  --seal-duration: 0.9s;
-  --seal-rotate: 6deg;
-  --seal-shift-x: -14px;
-}
-
-.theme-wuxia .wuxia-section-calculator::after {
-  border-color: rgba(127, 163, 138, 0.45);
-}
-
 
 /* Кастомные стили */
 @layer components {
@@ -3470,12 +3294,6 @@ table td, table th {
     filter: blur(24px);
   }
 
-  .theme-wuxia .wuxia-section::before,
-  .theme-wuxia .wuxia-section::after {
-    opacity: 0.18 !important;
-    animation: none;
-  }
-
   .theme-wuxia .wuxia-pillar,
   .theme-wuxia .wuxia-ritual,
   .card {
@@ -3777,11 +3595,6 @@ table td, table th {
   background:
     radial-gradient(circle at 100% 0%, rgba(143, 185, 204, 0.1), transparent 38%),
     linear-gradient(180deg, rgba(9, 16, 24, 0.96), rgba(7, 12, 18, 0.94));
-}
-
-.dc-page-shell {
-  transform-origin: top center;
-  will-change: opacity, transform;
 }
 
 .dashboard-status-card--active {

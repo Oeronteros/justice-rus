@@ -569,11 +569,202 @@ export const shellStyles = stylex.create({
     },
   },
   pageShell: {
+    position: 'relative',
     borderRadius: radius.xl,
     overflow: 'hidden',
+    isolation: 'isolate',
     border: `1px solid ${colors.borderSubtle}`,
     background: `linear-gradient(160deg, ${colors.bgPanel}, ${colors.panelBottom})`,
     boxShadow: '0 12px 24px rgba(2, 3, 5, 0.3)',
+    transformOrigin: 'top center',
+    willChange: 'opacity, transform',
+    '::before': {
+      content: "''",
+      position: 'absolute',
+      inset: '12px 6%',
+      borderRadius: radius.pill,
+      background:
+        'radial-gradient(circle at 86% 24%, rgba(169, 208, 226, 0.14), transparent 16%), radial-gradient(circle, rgba(116, 167, 217, 0.16), transparent 68%)',
+      filter: 'blur(16px)',
+      opacity: 0,
+      animationName: 'sectionMist',
+      animationDuration: '0.7s',
+      animationTimingFunction: 'ease',
+      animationFillMode: 'forwards',
+      pointerEvents: 'none',
+      zIndex: 0,
+    },
+    '::after': {
+      content: "''",
+      position: 'absolute',
+      top: '10%',
+      left: '50%',
+      width: '120px',
+      height: '120px',
+      borderRadius: radius.pill,
+      border: '1px solid rgba(143, 185, 204, 0.35)',
+      background: 'radial-gradient(circle, rgba(143, 185, 204, 0.2), transparent 70%)',
+      boxShadow: 'inset 0 0 20px rgba(143, 185, 204, 0.2)',
+      opacity: 0,
+      transform: 'translate(-50%, -50%)',
+      animationName: 'sealBloom',
+      animationDuration: '0.8s',
+      animationTimingFunction: 'ease',
+      animationFillMode: 'forwards',
+      pointerEvents: 'none',
+      zIndex: 0,
+    },
+  },
+  pageShellContent: {
+    position: 'relative',
+    zIndex: 1,
+  },
+  pageShellAbout: {
+    '::before': {
+      background:
+        'radial-gradient(circle at 84% 22%, rgba(143, 185, 204, 0.18), transparent 18%), radial-gradient(circle, rgba(143, 185, 204, 0.14), transparent 68%)',
+    },
+    '::after': {
+      borderColor: 'rgba(143, 185, 204, 0.35)',
+    },
+  },
+  pageShellRegistration: {
+    '::before': {
+      background:
+        'radial-gradient(circle at 86% 24%, rgba(143, 185, 204, 0.12) 0 10%, transparent 14%), radial-gradient(circle at 86% 24%, rgba(143, 185, 204, 0.1) 0 20%, transparent 24%), radial-gradient(circle, rgba(143, 185, 204, 0.18), transparent 70%)',
+    },
+    '::after': {
+      borderColor: 'rgba(143, 185, 204, 0.45)',
+    },
+  },
+  pageShellSchedule: {
+    '::before': {
+      background:
+        'radial-gradient(circle at 86% 24%, rgba(127, 163, 138, 0.18), transparent 20%), radial-gradient(circle, rgba(127, 163, 138, 0.2), transparent 70%)',
+      animationDuration: '0.9s',
+    },
+    '::after': {
+      borderColor: 'rgba(127, 163, 138, 0.5)',
+      transform: 'translate(calc(-50% - 16px), -50%) rotate(-6deg)',
+      animationDuration: '1s',
+    },
+  },
+  pageShellCalendar: {
+    '::before': {
+      background:
+        'radial-gradient(circle at 82% 24%, rgba(127, 163, 138, 0.14), transparent 22%), radial-gradient(circle, rgba(127, 163, 138, 0.16), transparent 70%)',
+    },
+    '::after': {
+      borderColor: 'rgba(127, 163, 138, 0.42)',
+    },
+  },
+  pageShellAnalytics: {
+    '::before': {
+      background:
+        'radial-gradient(circle at 82% 20%, rgba(116, 167, 217, 0.16), transparent 18%), radial-gradient(circle, rgba(116, 167, 217, 0.18), transparent 70%)',
+    },
+    '::after': {
+      borderColor: 'rgba(116, 167, 217, 0.45)',
+    },
+  },
+  pageShellWorkflow: {
+    '::before': {
+      background:
+        'radial-gradient(circle at 82% 24%, rgba(201, 168, 106, 0.16), transparent 18%), radial-gradient(circle, rgba(201, 168, 106, 0.16), transparent 70%)',
+    },
+    '::after': {
+      borderColor: 'rgba(201, 168, 106, 0.42)',
+      transform: 'translate(calc(-50% - 8px), -50%) rotate(6deg)',
+    },
+  },
+  pageShellIntegrations: {
+    '::before': {
+      background:
+        'radial-gradient(circle at 82% 20%, rgba(124, 163, 142, 0.18), transparent 18%), radial-gradient(circle, rgba(116, 167, 217, 0.12), transparent 70%)',
+    },
+    '::after': {
+      borderColor: 'rgba(124, 163, 142, 0.42)',
+    },
+  },
+  pageShellPvp: {
+    '::before': {
+      background:
+        'radial-gradient(circle at 84% 20%, rgba(139, 64, 58, 0.18), transparent 18%), radial-gradient(circle, rgba(139, 64, 58, 0.18), transparent 70%)',
+    },
+    '::after': {
+      borderColor: 'rgba(208, 122, 114, 0.42)',
+      transform: 'translate(calc(-50% + 10px), -50%) rotate(-8deg)',
+    },
+  },
+  pageShellGuides: {
+    '::before': {
+      background:
+        'radial-gradient(circle at 84% 20%, rgba(74, 144, 176, 0.18), transparent 18%), radial-gradient(circle, rgba(74, 144, 176, 0.22), transparent 70%)',
+      animationDuration: '0.8s',
+    },
+    '::after': {
+      borderColor: 'rgba(74, 144, 176, 0.55)',
+      transform: 'translate(calc(-50% - 10px), calc(-50% + 6px)) rotate(10deg)',
+      animationDuration: '1.05s',
+    },
+  },
+  pageShellHelp: {
+    '::before': {
+      background:
+        'radial-gradient(circle at 84% 24%, rgba(35, 80, 107, 0.22), transparent 20%), radial-gradient(circle, rgba(35, 80, 107, 0.22), transparent 70%)',
+      animationDuration: '0.75s',
+    },
+    '::after': {
+      borderColor: 'rgba(35, 80, 107, 0.5)',
+      transform: 'translate(calc(-50% + 18px), -50%) rotate(8deg)',
+      animationDuration: '0.95s',
+    },
+  },
+  pageShellAbsences: {
+    '::before': {
+      background:
+        'radial-gradient(circle at 84% 22%, rgba(143, 185, 204, 0.16), transparent 18%), radial-gradient(circle, rgba(143, 185, 204, 0.14), transparent 70%)',
+      animationDuration: '1s',
+    },
+    '::after': {
+      borderColor: 'rgba(143, 185, 204, 0.35)',
+      boxShadow: 'inset 0 0 20px rgba(143, 185, 204, 0.15)',
+      transform: 'translate(calc(-50% + 8px), calc(-50% + 10px)) rotate(-4deg)',
+      animationDuration: '1.2s',
+    },
+  },
+  pageShellNews: {
+    '::before': {
+      background:
+        'radial-gradient(circle at 84% 24%, rgba(143, 185, 204, 0.18), transparent 18%), radial-gradient(circle, rgba(143, 185, 204, 0.14), transparent 68%)',
+      animationDuration: '0.65s',
+    },
+    '::after': {
+      borderStyle: 'dashed',
+      transform: 'translate(-50%, calc(-50% - 10px)) rotate(-12deg)',
+      animationDuration: '0.8s',
+    },
+  },
+  pageShellCalculator: {
+    '::before': {
+      background:
+        'radial-gradient(circle at 84% 24%, rgba(127, 163, 138, 0.16), transparent 18%), radial-gradient(circle, rgba(127, 163, 138, 0.18), transparent 68%)',
+      animationDuration: '0.7s',
+    },
+    '::after': {
+      borderColor: 'rgba(127, 163, 138, 0.45)',
+      transform: 'translate(calc(-50% - 14px), -50%) rotate(6deg)',
+      animationDuration: '0.9s',
+    },
+  },
+  pageShellProfile: {
+    '::before': {
+      background:
+        'radial-gradient(circle at 84% 24%, rgba(201, 168, 106, 0.16), transparent 18%), radial-gradient(circle, rgba(201, 168, 106, 0.14), transparent 68%)',
+    },
+    '::after': {
+      borderColor: 'rgba(201, 168, 106, 0.42)',
+    },
   },
   mobileNavRoot: {
     display: {

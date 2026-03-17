@@ -24,6 +24,10 @@ export const uiStyles = stylex.create({
     display: 'grid',
     gap: spacing.xxl,
   },
+  stackMd: {
+    display: 'grid',
+    gap: spacing.lg,
+  },
   card: {
     position: 'relative',
     borderRadius: radius.lg,
@@ -184,6 +188,53 @@ export const uiStyles = stylex.create({
     background: `linear-gradient(135deg, ${colors.accentSoft}, ${colors.accentMuted})`,
     color: colors.paperBright,
     boxShadow: colors.shadowCard,
+  },
+  iconXs: {
+    width: '14px',
+    height: '14px',
+  },
+  iconSm: {
+    width: '16px',
+    height: '16px',
+  },
+  iconMd: {
+    width: '20px',
+    height: '20px',
+  },
+  iconLg: {
+    width: '24px',
+    height: '24px',
+  },
+  iconXl: {
+    width: '28px',
+    height: '28px',
+  },
+  icon2xl: {
+    width: '40px',
+    height: '40px',
+  },
+  iconMuted: {
+    color: colors.textMuted,
+  },
+  iconAccent: {
+    color: colors.accentStrong,
+  },
+  iconDanger: {
+    color: colors.danger,
+  },
+  iconSuccess: {
+    color: colors.success,
+  },
+  inlineIcon: {
+    display: 'inline-block',
+    marginRight: spacing.sm,
+    verticalAlign: 'text-bottom',
+  },
+  iconSpin: {
+    animationName: 'spin',
+    animationDuration: '1s',
+    animationTimingFunction: 'linear',
+    animationIterationCount: 'infinite',
   },
   notice: {
     borderRadius: '16px',
