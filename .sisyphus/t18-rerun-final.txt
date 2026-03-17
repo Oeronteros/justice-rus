@@ -1,0 +1,31 @@
+
+> justice-ru@2.0.0 test:e2e
+> playwright test
+
+
+Running 21 tests using 1 worker
+
+  ok  1 [chromium] › e2e\a11y.spec.ts:61:3 › portal accessibility smoke › PinScreen has no serious accessibility violations (16.0s)
+  ok  2 [chromium] › e2e\a11y.spec.ts:68:3 › portal accessibility smoke › logged-in news page has no serious accessibility violations (4.8s)
+  ok  3 [chromium] › e2e\a11y.spec.ts:85:3 › portal accessibility smoke › officer help view has no serious accessibility violations (6.2s)
+  ok  4 [chromium] › e2e\auth.spec.ts:45:3 › portal auth smoke › redirects protected route visitors to PinScreen when session is missing (3.4s)
+  ok  5 [chromium] › e2e\auth.spec.ts:53:3 › portal auth smoke › supports keyboard-first auth interactions on PinScreen (3.9s)
+  ok  6 [chromium] › e2e\auth.spec.ts:66:3 › portal auth smoke › logs in from PinScreen, renders protected news route, and logs out (4.1s)
+  ok  7 [chromium] › e2e\auth.spec.ts:113:3 › portal auth smoke › shows officer-only moderation action on help requests (3.8s)
+  ok  8 [chromium] › e2e\core-route-regression.spec.ts:135:3 › desktop core route regression › logs in and reaches news, help, and profile from the refreshed shell (7.9s)
+  ok  9 [chromium] › e2e\mobile-dashboard-nav.spec.ts:218:3 › mobile dashboard and nav flow › logs in on mobile, shows refreshed dashboard, and opens PvP from immersive menu (4.7s)
+  ok 10 [vinext-chromium] › e2e\vinext-pilot-a11y.spec.ts:64:3 › vinext pilot accessibility smoke › PinScreen on /news has no serious accessibility violations (2.6s)
+  -  11 [vinext-chromium] › e2e\vinext-pilot-a11y.spec.ts:71:8 › vinext pilot accessibility smoke › logged-in /news has no serious accessibility violations
+  ok 12 [vinext-chromium] › e2e\vinext-pilot.spec.ts:153:3 › vinext pilot smoke › shows PinScreen on /news when session is missing (2.1s)
+  -  13 [vinext-chromium] › e2e\vinext-pilot.spec.ts:161:8 › vinext pilot smoke › logs in on /news and renders protected content
+  -  14 [vinext-chromium] › e2e\vinext-pilot.spec.ts:180:8 › vinext pilot smoke › logs out from vinext /news back to PinScreen
+  -  15 [vinext-chromium] › e2e\vinext-pilot.spec.ts:207:8 › vinext pilot smoke › shows officer moderation action on vinext /help
+  -  16 [vinext-chromium] › e2e\vinext-pilot.spec.ts:224:8 › vinext pilot smoke › renders authenticated vinext /guides view
+  -  17 [vinext-chromium] › e2e\vinext-pilot.spec.ts:240:8 › vinext pilot smoke › renders authenticated vinext /absences view
+  -  18 [vinext-chromium] › e2e\vinext-pilot.spec.ts:256:8 › vinext pilot smoke › renders authenticated vinext /pvp view
+  -  19 [vinext-chromium] › e2e\vinext-pilot.spec.ts:272:8 › vinext pilot smoke › renders authenticated vinext /schedule view
+  -  20 [vinext-chromium] › e2e\vinext-pilot.spec.ts:288:8 › vinext pilot smoke › renders authenticated vinext /calendar empty-state shell
+  -  21 [vinext-chromium] › e2e\vinext-pilot.spec.ts:311:8 › vinext pilot smoke › supports keyboard-first auth interactions on vinext pilot route
+
+  10 skipped
+  11 passed (1.2m)

@@ -1,0 +1,707 @@
+
+> justice-ru@2.0.0 test:e2e
+> playwright test
+
+[2m[WebServer] [22m
+[2m[WebServer] [22m<--- Last few GCs --->
+[2m[WebServer] [22m
+[2m[WebServer] [22m[28292:0000027908169000]     3662 ms: Scavenge (interleaved) 39.1 (59.6) -> 32.0 (94.1) MB, pooled: 0 MB, 74.60 / 0.00 ms  (average mu = 0.993, current mu = 0.993) allocation failure; 
+[2m[WebServer] [22m
+[2m[WebServer] [22mFATAL ERROR: Zone Allocation failed - process out of memory
+[2m[WebServer] [22m----- Native stack trace -----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m<--- Last few GCs --->
+[2m[WebServer] [22m
+[2m[WebServer] [22m[18592:000001D56E510000]     4757 ms: Scavenge (interleaved) 39.3 (60.1) -> 32.4 (94.9) MB, pooled: 0 MB, 6.80 / 0.00 ms  (average mu = 0.996, current mu = 0.996) allocation failure; 
+[2m[WebServer] [22m
+[2m[WebServer] [22mFATAL ERROR: Zone Allocation failed - process out of memory
+[2m[WebServer] [22m----- Native stack trace -----
+[2m[WebServer] [22m
+[2m[WebServer] [22m 1: 00007FF7E41EAD5F node::OnFatalError+1343
+[2m[WebServer] [22m 2: 00007FF7E4E332D7 v8::Function::NewInstance+423
+[2m[WebServer] [22m 3: 00007FF7E47AE076 v8::SnapshotCreator::GetIsolate+56566
+[2m[WebServer] [22m 4: 00007FF7E55D1C1D v8::internal::compiler::CompilationDependencies::FieldTypeDependencyOffTheRecord+60765
+[2m[WebServer] [22m 5: 00007FF7E55CF7EB v8::internal::compiler::CompilationDependencies::FieldTypeDependencyOffTheRecord+51499
+[2m[WebServer] [22m 6: 00007FF7E45FFD73 SSL_CTX_get_client_CA_list+174419
+[2m[WebServer] [22m 7: 00007FF7E46007FF SSL_CTX_get_client_CA_list+177119
+[2m[WebServer] [22m 8: 00007FF7E463952A SSL_CTX_get_client_CA_list+409866
+[2m[WebServer] [22m 9: 00007FF7E460F1EB SSL_CTX_get_client_CA_list+237003
+[2m[WebServer] [22m10: 00007FF7E4687356 SSL_CTX_get_client_CA_list+728886
+[2m[WebServer] [22m11: 00007FF7E4686070 SSL_CTX_get_client_CA_list+724048
+[2m[WebServer] [22m12: 00007FF7E4683E6A SSL_CTX_get_client_CA_list+715338
+[2m[WebServer] [22m13: 00007FF7E4DA6F0F X509_STORE_set_get_issuer+200559
+[2m[WebServer] [22m14: 00007FF7E468594B SSL_CTX_get_client_CA_list+722219
+[2m[WebServer] [22m15: 00007FF7E560593F v8::base::SysInfo::AddressSpaceEnd+3167
+[2m[WebServer] [22m16: 00007FF7E413ADCE node::GetNodeReport+89326
+[2m[WebServer] [22m17: 00007FF7E4E88646 uv_thread_detach+150
+[2m[WebServer] [22m18: 00007FF7E60C9FB3 v8::base::UnsignedDivisionByConstant<unsigned __int64>+2903939
+[2m[WebServer] [22m19: 00007FFFE08EE8D7 BaseThreadInitThunk+23
+[2m[WebServer] [22m20: 00007FFFE189FBCC RtlUserThreadStart+44
+[2m[WebServer] [22m 1: 00007FF7E41EAD5F 
+[2m[WebServer] [22m 2: 00007FF7E4E332D7 
+[2m[WebServer] [22m 3: 00007FF7E47AE076 
+[2m[WebServer] [22m 4: 00007FF7E48DC9A9 
+[2m[WebServer] [22m 5: 00007FF7E48F996F 
+[2m[WebServer] [22m 6: 00007FF7E48DFF85 
+[2m[WebServer] [22m 7: 00007FF7E48F6B62 
+[2m[WebServer] [22m 8: 00007FF7E48E28E2 
+[2m[WebServer] [22m 9: 00007FF7E48E99EB 
+[2m[WebServer] [22m10: 00007FF7E48DF42A 
+[2m[WebServer] [22m11: 00007FF7E48F0160 
+[2m[WebServer] [22m12: 00007FF7E48EF484 
+[2m[WebServer] [22m13: 00007FF7E48EF0F9 
+[2m[WebServer] [22m14: 00007FF7E48F78C0 
+[2m[WebServer] [22m15: 00007FF7E48EEB66 
+[2m[WebServer] [22m16: 00007FF7E48F026B 
+[2m[WebServer] [22m17: 00007FF7E48EF43E 
+[2m[WebServer] [22m18: 00007FF7E4901312 
+[2m[WebServer] [22m19: 00007FF7E48E0DE5 
+[2m[WebServer] [22m20: 00007FF7E48E99EB 
+[2m[WebServer] [22m21: 00007FF7E48DF42A 
+[2m[WebServer] [22m22: 00007FF7E48F0160 
+[2m[WebServer] [22m23: 00007FF7E48EF484 
+[2m[WebServer] [22m24: 00007FF7E48F4E04 
+[2m[WebServer] [22m25: 00007FF7E48F328E 
+[2m[WebServer] [22m26: 00007FF7E48F026B 
+[2m[WebServer] [22m27: 00007FF7E48EF43E 
+[2m[WebServer] [22m28: 00007FF7E48F4E04 
+[2m[WebServer] [22m29: 00007FF7E490021F 
+[2m[WebServer] [22m30: 00007FF7E48E99EB 
+[2m[WebServer] [22m31: 00007FF7E48E8EEA 
+[2m[WebServer] [22m32: 00007FF7E48DC5E7 
+[2m[WebServer] [22m33: 00007FF7E48DB7B4 
+[2m[WebServer] [22m34: 00007FF7E48DAAA2 
+[2m[WebServer] [22m35: 00007FF7E48DA74A 
+[2m[WebServer] [22m36: 00007FF7E48D5D79 
+[2m[WebServer] [22m37: 00007FF7E4DB0C7F 
+[2m[WebServer] [22m38: 00007FF7E4DB3A81 
+[2m[WebServer] [22m39: 00007FF7E4E3C793 
+[2m[WebServer] [22m40: 00007FF7E4207733 
+[2m[WebServer] [22m41: 00007FF7E4205ECD 
+[2m[WebServer] [22m42: 000001D527DCF64D 
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m[2m[WebServer] [22m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[2m[WebServer] [22m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-d4af4e52437d389c23c89d6c8056de36.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28portal%29%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+Error: Timed out waiting 120000ms from config.webServer.
+

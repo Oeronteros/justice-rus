@@ -1,0 +1,326 @@
+
+Running 12 tests using 1 worker
+
+  ok  1 [vinext-chromium] › e2e\vinext-pilot-a11y.spec.ts:45:3 › vinext pilot accessibility smoke › PinScreen on /news has no serious accessibility violations (8.3s)
+  x   2 [vinext-chromium] › e2e\vinext-pilot-a11y.spec.ts:52:3 › vinext pilot accessibility smoke › logged-in /news has no serious accessibility violations (16.8s)
+  ok  3 [vinext-chromium] › e2e\vinext-pilot.spec.ts:134:3 › vinext pilot smoke › shows PinScreen on /news when session is missing (1.4s)
+  x   4 [vinext-chromium] › e2e\vinext-pilot.spec.ts:142:3 › vinext pilot smoke › logs in on /news and renders protected content (16.8s)
+  x   5 [vinext-chromium] › e2e\vinext-pilot.spec.ts:161:3 › vinext pilot smoke › logs out from vinext /news back to PinScreen (17.0s)
+  x   6 [vinext-chromium] › e2e\vinext-pilot.spec.ts:188:3 › vinext pilot smoke › shows officer moderation action on vinext /help (16.9s)
+  x   7 [vinext-chromium] › e2e\vinext-pilot.spec.ts:205:3 › vinext pilot smoke › renders authenticated vinext /guides view (16.7s)
+  x   8 [vinext-chromium] › e2e\vinext-pilot.spec.ts:221:3 › vinext pilot smoke › renders authenticated vinext /absences view (17.0s)
+  x   9 [vinext-chromium] › e2e\vinext-pilot.spec.ts:237:3 › vinext pilot smoke › renders authenticated vinext /pvp view (16.8s)
+  x  10 [vinext-chromium] › e2e\vinext-pilot.spec.ts:253:3 › vinext pilot smoke › renders authenticated vinext /schedule view (16.8s)
+  x  11 [vinext-chromium] › e2e\vinext-pilot.spec.ts:269:3 › vinext pilot smoke › renders authenticated vinext /calendar empty-state shell (16.9s)
+  -  12 [vinext-chromium] › e2e\vinext-pilot.spec.ts:292:8 › vinext pilot smoke › supports keyboard-first auth interactions on vinext pilot route
+
+
+  1) [vinext-chromium] › e2e\vinext-pilot-a11y.spec.ts:52:3 › vinext pilot accessibility smoke › logged-in /news has no serious accessibility violations 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: 'Боевой сбор' }).first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByRole('heading', { name: 'Боевой сбор' }).first()[22m
+
+
+      62 |     await loginThroughPinScreen(page);
+      63 |
+    > 64 |     await expect(page.getByRole('heading', { name: 'Боевой сбор' }).first()).toBeVisible({ timeout: 15000 });
+         |                                                                              ^
+      65 |     await expectNoSeriousA11yViolations(page);
+      66 |   });
+      67 | });
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot-a11y.spec.ts:64:78
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-a11y-vinext-p-f095a-us-accessibility-violations-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-a11y-vinext-p-f095a-us-accessibility-violations-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\vinext-pilot-a11y-vinext-p-f095a-us-accessibility-violations-vinext-chromium\error-context.md
+
+  2) [vinext-chromium] › e2e\vinext-pilot.spec.ts:142:3 › vinext pilot smoke › logs in on /news and renders protected content 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: 'Боевой сбор' }).first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByRole('heading', { name: 'Боевой сбор' }).first()[22m
+
+
+      152 |     await loginThroughPinScreen(page, authResponse.user);
+      153 |
+    > 154 |     await expect(page.getByRole('heading', { name: 'Боевой сбор' }).first()).toBeVisible({ timeout: 15000 });
+          |                                                                              ^
+      155 |     await expect(page.getByRole('navigation', { name: 'Основная навигация' })).toBeVisible();
+      156 |     await expect(
+      157 |       page.getByRole('navigation', { name: 'Основная навигация' }).getByRole('link', { name: 'Новости', exact: true })
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:154:78
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--b9de8-d-renders-protected-content-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--b9de8-d-renders-protected-content-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\vinext-pilot-vinext-pilot--b9de8-d-renders-protected-content-vinext-chromium\error-context.md
+
+  3) [vinext-chromium] › e2e\vinext-pilot.spec.ts:161:3 › vinext pilot smoke › logs out from vinext /news back to PinScreen 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: 'Боевой сбор' }).first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByRole('heading', { name: 'Боевой сбор' }).first()[22m
+
+
+      178 |     await page.goto('/news');
+      179 |     await loginThroughPinScreen(page, authResponse.user);
+    > 180 |     await expect(page.getByRole('heading', { name: 'Боевой сбор' }).first()).toBeVisible({ timeout: 15000 });
+          |                                                                              ^
+      181 |
+      182 |     await page.getByRole('button', { name: 'Выйти' }).click();
+      183 |
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:180:78
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--17054-next-news-back-to-PinScreen-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--17054-next-news-back-to-PinScreen-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\vinext-pilot-vinext-pilot--17054-next-news-back-to-PinScreen-vinext-chromium\error-context.md
+
+  4) [vinext-chromium] › e2e\vinext-pilot.spec.ts:188:3 › vinext pilot smoke › shows officer moderation action on vinext /help 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText('Нужен лидер на вечерний сбор').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByText('Нужен лидер на вечерний сбор').first()[22m
+
+
+      198 |     await loginThroughPinScreen(page, officerAuthResponse.user);
+      199 |
+    > 200 |     await expect(page.getByText('Нужен лидер на вечерний сбор').first()).toBeVisible({ timeout: 15000 });
+          |                                                                          ^
+      201 |     await expect(page.getByRole('button', { name: 'Закрыть' })).toBeVisible();
+      202 |     await expect(page.getByRole('button', { name: 'Удалить' })).toHaveCount(0);
+      203 |   });
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:200:74
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--13515-ation-action-on-vinext-help-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--13515-ation-action-on-vinext-help-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\vinext-pilot-vinext-pilot--13515-ation-action-on-vinext-help-vinext-chromium\error-context.md
+
+  5) [vinext-chromium] › e2e\vinext-pilot.spec.ts:205:3 › vinext pilot smoke › renders authenticated vinext /guides view 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText('Гайд по вечернему сбору').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByText('Гайд по вечернему сбору').first()[22m
+
+
+      215 |     await loginThroughPinScreen(page, authResponse.user);
+      216 |
+    > 217 |     await expect(page.getByText('Гайд по вечернему сбору').first()).toBeVisible({ timeout: 15000 });
+          |                                                                     ^
+      218 |     await expect(page.getByRole('navigation', { name: 'Основная навигация' })).toBeVisible();
+      219 |   });
+      220 |
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:217:69
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--5f9f9-nticated-vinext-guides-view-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--5f9f9-nticated-vinext-guides-view-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\vinext-pilot-vinext-pilot--5f9f9-nticated-vinext-guides-view-vinext-chromium\error-context.md
+
+  6) [vinext-chromium] › e2e\vinext-pilot.spec.ts:221:3 › vinext pilot smoke › renders authenticated vinext /absences view 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText('Командировка').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByText('Командировка').first()[22m
+
+
+      231 |     await loginThroughPinScreen(page, authResponse.user);
+      232 |
+    > 233 |     await expect(page.getByText('Командировка').first()).toBeVisible({ timeout: 15000 });
+          |                                                          ^
+      234 |     await expect(page.getByRole('heading', { name: 'Smoke Member' })).toBeVisible();
+      235 |   });
+      236 |
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:233:58
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--e77a7-icated-vinext-absences-view-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--e77a7-icated-vinext-absences-view-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\vinext-pilot-vinext-pilot--e77a7-icated-vinext-absences-view-vinext-chromium\error-context.md
+
+  7) [vinext-chromium] › e2e\vinext-pilot.spec.ts:237:3 › vinext pilot smoke › renders authenticated vinext /pvp view 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: 'PvP-комната' })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByRole('heading', { name: 'PvP-комната' })[22m
+
+
+      247 |     await loginThroughPinScreen(page, authResponse.user);
+      248 |
+    > 249 |     await expect(page.getByRole('heading', { name: 'PvP-комната' })).toBeVisible({ timeout: 15000 });
+          |                                                                      ^
+      250 |     await expect(page.getByRole('button', { name: 'Встать в очередь' })).toBeVisible();
+      251 |   });
+      252 |
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:249:70
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--8fe31-thenticated-vinext-pvp-view-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--8fe31-thenticated-vinext-pvp-view-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\vinext-pilot-vinext-pilot--8fe31-thenticated-vinext-pvp-view-vinext-chromium\error-context.md
+
+  8) [vinext-chromium] › e2e\vinext-pilot.spec.ts:253:3 › vinext pilot smoke › renders authenticated vinext /schedule view 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: /Расписание —/ })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByRole('heading', { name: /Расписание —/ })[22m
+
+
+      263 |     await loginThroughPinScreen(page, authResponse.user);
+      264 |
+    > 265 |     await expect(page.getByRole('heading', { name: /Расписание —/ })).toBeVisible({ timeout: 15000 });
+          |                                                                       ^
+      266 |     await expect(page.getByRole('button', { name: /Воскресенье 1 событий/ })).toBeVisible();
+      267 |   });
+      268 |
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:265:71
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--f8ca6-icated-vinext-schedule-view-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--f8ca6-icated-vinext-schedule-view-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\vinext-pilot-vinext-pilot--f8ca6-icated-vinext-schedule-view-vinext-chromium\error-context.md
+
+  9) [vinext-chromium] › e2e\vinext-pilot.spec.ts:269:3 › vinext pilot smoke › renders authenticated vinext /calendar empty-state shell 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: 'Мой календарь' }).first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByRole('heading', { name: 'Мой календарь' }).first()[22m
+
+
+      287 |     await loginThroughPinScreen(page, authResponse.user);
+      288 |
+    > 289 |     await expect(page.getByRole('heading', { name: 'Мой календарь' }).first()).toBeVisible({ timeout: 15000 });
+          |                                                                                ^
+      290 |   });
+      291 |
+      292 |   test.fixme('supports keyboard-first auth interactions on vinext pilot route', async ({ page }) => {
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:289:80
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--b81e8--calendar-empty-state-shell-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--b81e8--calendar-empty-state-shell-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\vinext-pilot-vinext-pilot--b81e8--calendar-empty-state-shell-vinext-chromium\error-context.md
+
+  9 failed
+    [vinext-chromium] › e2e\vinext-pilot-a11y.spec.ts:52:3 › vinext pilot accessibility smoke › logged-in /news has no serious accessibility violations 
+    [vinext-chromium] › e2e\vinext-pilot.spec.ts:142:3 › vinext pilot smoke › logs in on /news and renders protected content 
+    [vinext-chromium] › e2e\vinext-pilot.spec.ts:161:3 › vinext pilot smoke › logs out from vinext /news back to PinScreen 
+    [vinext-chromium] › e2e\vinext-pilot.spec.ts:188:3 › vinext pilot smoke › shows officer moderation action on vinext /help 
+    [vinext-chromium] › e2e\vinext-pilot.spec.ts:205:3 › vinext pilot smoke › renders authenticated vinext /guides view 
+    [vinext-chromium] › e2e\vinext-pilot.spec.ts:221:3 › vinext pilot smoke › renders authenticated vinext /absences view 
+    [vinext-chromium] › e2e\vinext-pilot.spec.ts:237:3 › vinext pilot smoke › renders authenticated vinext /pvp view 
+    [vinext-chromium] › e2e\vinext-pilot.spec.ts:253:3 › vinext pilot smoke › renders authenticated vinext /schedule view 
+    [vinext-chromium] › e2e\vinext-pilot.spec.ts:269:3 › vinext pilot smoke › renders authenticated vinext /calendar empty-state shell 
+  1 skipped
+  2 passed (3.3m)

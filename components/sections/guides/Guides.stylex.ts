@@ -82,6 +82,63 @@ export const guidesStyles = stylex.create({
     background: 'linear-gradient(145deg, rgba(20,35,47,0.92), rgba(8,12,18,0.86))',
     transform: 'translateY(-1px)',
   },
+  overviewRail: {
+    display: 'grid',
+    gap: '14px',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 768px)': 'repeat(3, minmax(0, 1fr))',
+    },
+  },
+  overviewCard: {
+    display: 'grid',
+    gap: '8px',
+    padding: '18px 20px',
+  },
+  overviewKicker: {
+    fontSize: '0.72rem',
+    lineHeight: 1,
+    letterSpacing: '0.16em',
+    textTransform: 'uppercase',
+    color: '#8fb9cc',
+    fontWeight: 700,
+  },
+  overviewValue: {
+    fontSize: '1.8rem',
+    lineHeight: 1,
+    fontFamily: typography.display,
+    color: '#e6eff5',
+  },
+  overviewLabel: {
+    color: '#b8ccd8',
+    fontSize: '0.88rem',
+    lineHeight: 1.55,
+  },
+  commandDeck: {
+    display: 'grid',
+    gap: '16px',
+  },
+  filterDeck: {
+    display: 'grid',
+    gap: '14px',
+    borderRadius: '24px',
+    border: '1px solid rgba(34,49,64,0.7)',
+    backgroundColor: 'rgba(9,16,25,0.74)',
+    padding: '18px 20px',
+  },
+  filterDeckHeader: {
+    display: 'flex',
+    flexDirection: {
+      default: 'column',
+      '@media (min-width: 640px)': 'row',
+    },
+    alignItems: {
+      default: 'flex-start',
+      '@media (min-width: 640px)': 'center',
+    },
+    justifyContent: 'space-between',
+    gap: '12px',
+  },
   dropzoneText: {
     fontSize: '0.875rem',
     color: '#bdd5e4',

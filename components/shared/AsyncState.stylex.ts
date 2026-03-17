@@ -224,6 +224,13 @@ export const asyncStateStyles = stylex.create({
     color: colors.paperSubtle,
     lineHeight: 1.75,
   },
+  actionRow: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: '12px',
+    marginTop: '8px',
+  },
   errorIconSurface: {
     width: '64px',
     height: '64px',

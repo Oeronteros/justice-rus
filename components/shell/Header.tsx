@@ -15,6 +15,7 @@ import { shellStyles } from './Shell.stylex';
 interface HeaderProps {
   currentSection: Section;
   onLogout: () => void;
+  onRefresh: () => void;
   language: Language;
   onLanguageChange: (language: Language) => void;
   onNavPrefetch?: (section: Section) => void;
@@ -23,6 +24,7 @@ interface HeaderProps {
 export default function Header({
   currentSection,
   onLogout,
+  onRefresh,
   language,
   onLanguageChange,
   onNavPrefetch,
@@ -31,9 +33,11 @@ export default function Header({
   const [isDesktopMenuOpen, setIsDesktopMenuOpen] = useState(false);
   const desktopDeckRef = useRef<HTMLDivElement | null>(null);
 
-  const handleRefresh = () => {
-    window.location.reload();
-  };
+  const navPrefetchProps = (section: Section) => ({
+    onMouseEnter: () => onNavPrefetch?.(section),
+    onFocus: () => onNavPrefetch?.(section),
+    onTouchStart: () => onNavPrefetch?.(section),
+  });
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -70,6 +74,7 @@ export default function Header({
   const secondaryNavLabel = language === 'ru' ? 'Командная навигация' : language === 'zh' ? '指挥导航' : 'Command navigation';
   const immersiveMenuLabel = language === 'ru' ? 'Разделы' : language === 'zh' ? '分区菜单' : 'Sections';
   const immersiveMenuHint = language === 'ru' ? 'Быстрый переход по всем модулям' : language === 'zh' ? '快速跳转到全部模块' : 'Quick jump across all modules';
+  const utilityStripLabel = language === 'ru' ? 'Быстрый доступ' : language === 'zh' ? '快速控制' : 'Quick access';
 
   const sectionLabel = orderLabels[currentSection];
 
@@ -78,9 +83,6 @@ export default function Header({
     autoAnimate(desktopDeckRef.current, { duration: 220, easing: 'ease-out' });
   }, [isDesktopMenuOpen]);
 
-  useEffect(() => {
-    setIsDesktopMenuOpen(false);
-  }, [currentSection]);
 
   useEffect(() => {
     if (!isDesktopMenuOpen) return;
@@ -145,7 +147,12 @@ export default function Header({
             </div>
           </Link>
 
-          <div {...stylex.props(shellStyles.toolbar)}>
+          <div {...stylex.props(shellStyles.toolbarShell)}>
+            <div {...stylex.props(shellStyles.utilityMeta)}>
+              <span {...stylex.props(shellStyles.utilityKicker)}>{utilityStripLabel}</span>
+              <span {...stylex.props(shellStyles.utilityCurrent)}>{labels.activeSection}: {sectionLabel}</span>
+            </div>
+            <div {...stylex.props(shellStyles.toolbar)}>
             <select
               id="langSwitch"
               value={language}
@@ -177,7 +184,7 @@ export default function Header({
             </Link>
 
             <button
-              onClick={handleRefresh}
+              onClick={onRefresh}
               {...stylex.props(shellStyles.iconButton)}
               title={labels.refresh}
               aria-label={labels.refresh}
@@ -193,28 +200,33 @@ export default function Header({
             >
               <WuxiaIcon name="logout" className="w-5 h-5" />
             </button>
+            </div>
           </div>
         </div>
 
         <nav {...stylex.props(shellStyles.desktopNav)} aria-label={primaryNavLabel}>
           <div {...stylex.props(shellStyles.navShell, shellStyles.navShellEnhanced)}>
             <div {...stylex.props(shellStyles.navHeadRow)}>
-              <LayoutGroup id="desktop-core-nav">
-                <div {...stylex.props(shellStyles.coreRail, headerCompact && shellStyles.coreRailCompact)}>
-                  {desktopPrimaryNavItems.map((item) => {
+              <div {...stylex.props(shellStyles.coreRailShell)}>
+                <div {...stylex.props(shellStyles.navSectionMeta)}>
+                  <span {...stylex.props(shellStyles.navSectionKicker)}>{primaryNavLabel}</span>
+                  <span {...stylex.props(shellStyles.navSectionHint)}>{portalCopy[language].oath}</span>
+                </div>
+                <LayoutGroup id="desktop-core-nav">
+                  <div {...stylex.props(shellStyles.coreRail, headerCompact && shellStyles.coreRailCompact)}>
+                    {desktopPrimaryNavItems.map((item) => {
                     const isActive = currentSection === item.section;
 
                     return (
                       <motion.div key={item.section} layout whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }} transition={{ type: 'spring', stiffness: 420, damping: 28 }}>
                         <Link
                           href={item.href}
-                          onMouseEnter={() => onNavPrefetch?.(item.section)}
-                          onFocus={() => onNavPrefetch?.(item.section)}
-                          onTouchStart={() => onNavPrefetch?.(item.section)}
+                          {...navPrefetchProps(item.section)}
                           {...stylex.props(shellStyles.navLinkBase, !isActive && shellStyles.navLinkInactive)}
                           aria-label={orderLabels[item.section]}
                           aria-current={isActive ? 'page' : undefined}
                           title={orderLabels[item.section]}
+                          onClick={() => setIsDesktopMenuOpen(false)}
                         >
                           {isActive ? <motion.span layoutId="desktop-core-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
                           <span {...stylex.props(shellStyles.navLinkContent, shellStyles.coreLinkContent)}>
@@ -226,9 +238,16 @@ export default function Header({
                         </Link>
                       </motion.div>
                     );
-                  })}
+                    })}
+                  </div>
+                </LayoutGroup>
+              </div>
+
+              <div {...stylex.props(shellStyles.desktopMenuWrap)}>
+                <div {...stylex.props(shellStyles.navSectionMeta, shellStyles.navSectionMetaCompact)}>
+                  <span {...stylex.props(shellStyles.navSectionKicker)}>{secondaryNavLabel}</span>
+                  <span {...stylex.props(shellStyles.navSectionHint)}>{immersiveMenuHint}</span>
                 </div>
-              </LayoutGroup>
 
               <button
                 type="button"
@@ -242,6 +261,7 @@ export default function Header({
                 <WuxiaIcon name="dots" className="w-5 h-5" />
                 <span {...stylex.props(shellStyles.desktopMenuLabel)}>{immersiveMenuLabel}</span>
               </button>
+              </div>
             </div>
 
             <AnimatePresence initial={false}>
@@ -273,13 +293,12 @@ export default function Header({
                                 <motion.div key={item.section} layout whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }} transition={{ type: 'spring', stiffness: 420, damping: 30 }}>
                                   <Link
                                     href={item.href}
-                                    onMouseEnter={() => onNavPrefetch?.(item.section)}
-                                    onFocus={() => onNavPrefetch?.(item.section)}
-                                    onTouchStart={() => onNavPrefetch?.(item.section)}
+                                    {...navPrefetchProps(item.section)}
                                     {...stylex.props(shellStyles.navLinkBase, !isActive && shellStyles.navLinkInactive)}
                                     aria-label={orderLabels[item.section]}
                                     aria-current={isActive ? 'page' : undefined}
                                     title={orderLabels[item.section]}
+                                    onClick={() => setIsDesktopMenuOpen(false)}
                                   >
                                     {isActive ? <motion.span layoutId="desktop-command-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
                                     <span {...stylex.props(shellStyles.navLinkContent, shellStyles.commandLinkContent)}>

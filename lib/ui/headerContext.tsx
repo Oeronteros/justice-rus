@@ -1,9 +1,10 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState, ReactNode } from 'react';
 
-interface HeaderContextType {
+export interface HeaderContextType {
   isHeaderHidden: boolean;
+  setHeaderHidden: (hidden: boolean) => void;
   hideHeader: () => void;
   showHeader: () => void;
 }
@@ -13,20 +14,38 @@ const HeaderContext = createContext<HeaderContextType | undefined>(undefined);
 export function HeaderProvider({ children }: { children: ReactNode }) {
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
 
-  const hideHeader = () => setIsHeaderHidden(true);
-  const showHeader = () => setIsHeaderHidden(false);
+  const setHeaderHidden = useCallback((hidden: boolean) => {
+    setIsHeaderHidden(hidden);
+  }, []);
+
+  const hideHeader = useCallback(() => {
+    setHeaderHidden(true);
+  }, [setHeaderHidden]);
+
+  const showHeader = useCallback(() => {
+    setHeaderHidden(false);
+  }, [setHeaderHidden]);
+
+  const contextValue = useMemo<HeaderContextType>(
+    () => ({ isHeaderHidden, setHeaderHidden, hideHeader, showHeader }),
+    [hideHeader, isHeaderHidden, setHeaderHidden, showHeader]
+  );
 
   return (
-    <HeaderContext.Provider value={{ isHeaderHidden, hideHeader, showHeader }}>
+    <HeaderContext.Provider value={contextValue}>
       {children}
     </HeaderContext.Provider>
   );
 }
 
-export function useHeader() {
+export function useHeaderVisibility() {
   const context = useContext(HeaderContext);
   if (context === undefined) {
-    throw new Error('useHeader must be used within a HeaderProvider');
+    throw new Error('useHeaderVisibility must be used within a HeaderProvider');
   }
   return context;
+}
+
+export function useHeader() {
+  return useHeaderVisibility();
 }

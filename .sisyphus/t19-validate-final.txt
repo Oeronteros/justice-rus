@@ -1,0 +1,10 @@
+
+> justice-ru@2.0.0 validate
+> npm run guardrails && npm run lint && npm run test && npm run test:e2e && npm run build && npm run type-check
+
+
+> justice-ru@2.0.0 guardrails
+> node scripts/check-a-level-guardrails.mjs
+
+Playwright vinext guardrails failed:
+- missing vinext webServer command in Playwright config

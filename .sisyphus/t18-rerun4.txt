@@ -1,0 +1,379 @@
+
+> justice-ru@2.0.0 test:e2e
+> playwright test
+
+
+Running 21 tests using 1 worker
+
+  x   1 [chromium] › e2e\a11y.spec.ts:59:3 › portal accessibility smoke › PinScreen has no serious accessibility violations (0ms)
+[2m[WebServer] [22mRoute /news is rendering with server caches disabled. For this navigation, Component Metadata in React DevTools will not accurately reflect what is statically prerenderable and runtime prefetchable. See more info here: https://nextjs.org/docs/messages/cache-bypass-in-dev
+  x   2 [chromium] › e2e\a11y.spec.ts:66:3 › portal accessibility smoke › logged-in news page has no serious accessibility violations (43.6s)
+[2m[WebServer] [22mRoute /help is rendering with server caches disabled. For this navigation, Component Metadata in React DevTools will not accurately reflect what is statically prerenderable and runtime prefetchable. See more info here: https://nextjs.org/docs/messages/cache-bypass-in-dev
+  x   3 [chromium] › e2e\a11y.spec.ts:83:3 › portal accessibility smoke › officer help view has no serious accessibility violations (41.7s)
+  ok  4 [chromium] › e2e\auth.spec.ts:45:3 › portal auth smoke › redirects protected route visitors to PinScreen when session is missing (1.8s)
+  ok  5 [chromium] › e2e\auth.spec.ts:53:3 › portal auth smoke › supports keyboard-first auth interactions on PinScreen (3.0s)
+  ok  6 [chromium] › e2e\auth.spec.ts:66:3 › portal auth smoke › logs in from PinScreen, renders protected news route, and logs out (3.5s)
+  ok  7 [chromium] › e2e\auth.spec.ts:113:3 › portal auth smoke › shows officer-only moderation action on help requests (2.9s)
+[2m[WebServer] [22mRoute / is rendering with server caches disabled. For this navigation, Component Metadata in React DevTools will not accurately reflect what is statically prerenderable and runtime prefetchable. See more info here: https://nextjs.org/docs/messages/cache-bypass-in-dev
+  x   8 [chromium] › e2e\core-route-regression.spec.ts:135:3 › desktop core route regression › logs in and reaches news, help, and profile from the refreshed shell (2.6s)
+[2m[WebServer] [22mRoute /pvp is rendering with server caches disabled. For this navigation, Component Metadata in React DevTools will not accurately reflect what is statically prerenderable and runtime prefetchable. See more info here: https://nextjs.org/docs/messages/cache-bypass-in-dev
+  ok  9 [chromium] › e2e\mobile-dashboard-nav.spec.ts:218:3 › mobile dashboard and nav flow › logs in on mobile, shows refreshed dashboard, and opens PvP from immersive menu (4.8s)
+  ok 10 [vinext-chromium] › e2e\vinext-pilot-a11y.spec.ts:31:3 › vinext pilot accessibility smoke › PinScreen on /news has no serious accessibility violations (2.4s)
+  x  11 [vinext-chromium] › e2e\vinext-pilot-a11y.spec.ts:38:3 › vinext pilot accessibility smoke › logged-in /news has no serious accessibility violations (307ms)
+  ok 12 [vinext-chromium] › e2e\vinext-pilot.spec.ts:124:3 › vinext pilot smoke › shows PinScreen on /news when session is missing (2.0s)
+  x  13 [vinext-chromium] › e2e\vinext-pilot.spec.ts:132:3 › vinext pilot smoke › logs in on /news and renders protected content (374ms)
+  x  14 [vinext-chromium] › e2e\vinext-pilot.spec.ts:152:3 › vinext pilot smoke › logs out from vinext /news back to PinScreen (319ms)
+  x  15 [vinext-chromium] › e2e\vinext-pilot.spec.ts:188:3 › vinext pilot smoke › shows officer moderation action on vinext /help (330ms)
+  x  16 [vinext-chromium] › e2e\vinext-pilot.spec.ts:206:3 › vinext pilot smoke › renders authenticated vinext /guides view (326ms)
+  x  17 [vinext-chromium] › e2e\vinext-pilot.spec.ts:223:3 › vinext pilot smoke › renders authenticated vinext /absences view (321ms)
+  x  18 [vinext-chromium] › e2e\vinext-pilot.spec.ts:240:3 › vinext pilot smoke › renders authenticated vinext /pvp view (312ms)
+  x  19 [vinext-chromium] › e2e\vinext-pilot.spec.ts:257:3 › vinext pilot smoke › renders authenticated vinext /schedule view (327ms)
+  x  20 [vinext-chromium] › e2e\vinext-pilot.spec.ts:274:3 › vinext pilot smoke › renders authenticated vinext /calendar empty-state shell (315ms)
+  -  21 [vinext-chromium] › e2e\vinext-pilot.spec.ts:298:8 › vinext pilot smoke › supports keyboard-first auth interactions on vinext pilot route
+
+
+  1) [chromium] › e2e\a11y.spec.ts:59:3 › portal accessibility smoke › PinScreen has no serious accessibility violations 
+
+    Error: worker process exited unexpectedly (code=3221226505, signal=null)
+
+  2) [chromium] › e2e\a11y.spec.ts:66:3 › portal accessibility smoke › logged-in news page has no serious accessibility violations 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:3001/news", waiting until "load"[22m
+
+
+      72 |     });
+      73 |
+    > 74 |     await page.goto('/news');
+         |                ^
+      75 |     await page.getByPlaceholder('Ник в гильдии').fill('Smoke Member');
+      76 |     await page.getByPlaceholder('Пароль').fill('very-secret-password');
+      77 |     await page.locator('form').getByRole('button', { name: 'Войти' }).click();
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\a11y.spec.ts:74:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\a11y-portal-accessibility--94163-us-accessibility-violations-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › e2e\a11y.spec.ts:83:3 › portal accessibility smoke › officer help view has no serious accessibility violations 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator:  getByText('Нужен лидер на вечерний сбор')
+    Expected: visible
+    Received: undefined
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByText('Нужен лидер на вечерний сбор')[22m
+
+
+      94 |     await page.locator('form').getByRole('button', { name: 'Войти' }).click();
+      95 |
+    > 96 |     await expect(page.getByText('Нужен лидер на вечерний сбор')).toBeVisible();
+         |                                                                  ^
+      97 |     await expectNoSeriousA11yViolations(page);
+      98 |   });
+      99 | });
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\a11y.spec.ts:96:66
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\a11y-portal-accessibility--8fbe2-us-accessibility-violations-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › e2e\core-route-regression.spec.ts:135:3 › desktop core route regression › logs in and reaches news, help, and profile from the refreshed shell 
+
+    Error: locator.click: Error: strict mode violation: getByRole('link', { name: 'Новости' }) resolved to 6 elements:
+        1) <a href="/news" title="Новости" aria-label="Новости" data-style-src="justice-ru:components\shell\Shell.stylex.ts:370; justice-ru:components\shell\Shell.stylex.ts:378" class="Shell__shellStyles.navLinkBase x1n2onr6 x1lliihq xb3r6kr x152jcrl xxdxoka x1hl2dhg Shell__shellStyles.navLinkInactive x1t5wmf8 xyu5cur x19w4lcd x10ppj6c">…</a> aka getByRole('link', { name: 'Новости', exact: true })
+        2) <a href="/news" data-style-src="justice-ru:components\shared\Ui.stylex.ts:55; justice-ru:components\shared\Ui.stylex.ts:97; justice-ru:components\sections\dashboard\Dashboard.stylex.ts:134; justice-ru:components\sections\dashboard\Dashboard.stylex.ts:138" class="Ui__uiStyles.buttonBase x3nfvp2 x6s0dn4 x1hl2dhg x4pepcl xdfu9ks x1gg8mnh x1s688f x113gla x9i6iqp x1ve3uh7 x7s97pk x1ar62m4 xsjp0iz x1gl3shj Ui__uiStyles.buttonSecondary xt3i6p4 xyu5cur x19w4lcd xzhkdzh x1d1pdye x9ma724 Dashboard__dashboa…>Открыть новости</a> aka getByRole('link', { name: 'Открыть новости' }).first()
+        3) <a href="/news" data-style-src="justice-ru:components\sections\dashboard\Dashboard.stylex.ts:347" class="Dashboard__dashboardStyles.inlineLink x1v7bc5y xfl4wtl x1s688f x1bvjpef x750q5o xxxd787 xj0a0fe x13faqbe x3df2br x10z035o">Открыть новости</a> aka getByRole('link', { name: 'Открыть новости' }).nth(1)
+        4) <a href="/news" data-style-src="justice-ru:components\sections\dashboard\Dashboard.stylex.ts:347" class="Dashboard__dashboardStyles.inlineLink x1v7bc5y xfl4wtl x1s688f x1bvjpef x750q5o xxxd787 xj0a0fe x13faqbe x3df2br x10z035o">Открыть новости</a> aka getByRole('link', { name: 'Открыть новости' }).nth(2)
+        5) <a href="/news" data-style-src="justice-ru:components\sections\dashboard\Dashboard.stylex.ts:369" class="Dashboard__dashboardStyles.denseActionLink x3nfvp2 x6s0dn4 xl56j7k x1ba4aug x1csxjeb xke6jgc xxwf1bl xgi31nt x1hl2dhg xym1t2f x1s688f x1sphahp x9dyr19 x14ow2ja x1e3z91m xtfvbuu">Открыть новости</a> aka getByRole('link', { name: 'Открыть новости' }).nth(3)
+        6) <a href="/news" data-style-src="justice-ru:components\sections\dashboard\Dashboard.stylex.ts:369" class="Dashboard__dashboardStyles.denseActionLink x3nfvp2 x6s0dn4 xl56j7k x1ba4aug x1csxjeb xke6jgc xxwf1bl xgi31nt x1hl2dhg xym1t2f x1s688f x1sphahp x9dyr19 x14ow2ja x1e3z91m xtfvbuu">Открыть новости</a> aka getByRole('link', { name: 'Открыть новости' }).nth(4)
+
+    Call log:
+    [2m  - waiting for getByRole('link', { name: 'Новости' })[22m
+
+
+      146 |     await expect(page.getByRole('link', { name: 'Открыть кабинет' })).toBeVisible();
+      147 |
+    > 148 |     await page.getByRole('link', { name: 'Новости' }).click();
+          |                                                       ^
+      149 |     await expect(page.getByText('Боевой сбор')).toBeVisible();
+      150 |
+      151 |     await page.getByRole('link', { name: 'Помощь' }).click();
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\core-route-regression.spec.ts:148:55
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\core-route-regression-desk-fb0a9-le-from-the-refreshed-shell-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\core-route-regression-desk-fb0a9-le-from-the-refreshed-shell-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\core-route-regression-desk-fb0a9-le-from-the-refreshed-shell-chromium\error-context.md
+
+  5) [vinext-chromium] › e2e\vinext-pilot-a11y.spec.ts:38:3 › vinext pilot accessibility smoke › logged-in /news has no serious accessibility violations 
+
+    Error: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.env.local'
+
+       at utils\vinext-auth.ts:27
+
+      25 |
+      26 |   const envPath = path.join(process.cwd(), '.env.local');
+    > 27 |   const envSource = readFileSync(envPath, 'utf8');
+         |                     ^
+      28 |   const envLine = envSource
+      29 |     .split(/\r?\n/)
+      30 |     .map((line) => line.trim())
+        at getEnvValue (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:27:21)
+        at ensurePortalAccount (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:63:23)
+        at addVinextAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:113:9)
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot-a11y.spec.ts:39:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-a11y-vinext-p-f095a-us-accessibility-violations-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-a11y-vinext-p-f095a-us-accessibility-violations-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [vinext-chromium] › e2e\vinext-pilot.spec.ts:132:3 › vinext pilot smoke › logs in on /news and renders protected content 
+
+    Error: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.env.local'
+
+       at utils\vinext-auth.ts:27
+
+      25 |
+      26 |   const envPath = path.join(process.cwd(), '.env.local');
+    > 27 |   const envSource = readFileSync(envPath, 'utf8');
+         |                     ^
+      28 |   const envLine = envSource
+      29 |     .split(/\r?\n/)
+      30 |     .map((line) => line.trim())
+        at getEnvValue (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:27:21)
+        at ensurePortalAccount (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:63:23)
+        at addVinextAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:113:9)
+        at addAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:120:9)
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:133:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--b9de8-d-renders-protected-content-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--b9de8-d-renders-protected-content-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) [vinext-chromium] › e2e\vinext-pilot.spec.ts:152:3 › vinext pilot smoke › logs out from vinext /news back to PinScreen 
+
+    Error: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.env.local'
+
+       at utils\vinext-auth.ts:27
+
+      25 |
+      26 |   const envPath = path.join(process.cwd(), '.env.local');
+    > 27 |   const envSource = readFileSync(envPath, 'utf8');
+         |                     ^
+      28 |   const envLine = envSource
+      29 |     .split(/\r?\n/)
+      30 |     .map((line) => line.trim())
+        at getEnvValue (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:27:21)
+        at ensurePortalAccount (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:63:23)
+        at addVinextAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:113:9)
+        at addAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:120:9)
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:153:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--17054-next-news-back-to-PinScreen-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--17054-next-news-back-to-PinScreen-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8) [vinext-chromium] › e2e\vinext-pilot.spec.ts:188:3 › vinext pilot smoke › shows officer moderation action on vinext /help 
+
+    Error: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.env.local'
+
+       at utils\vinext-auth.ts:27
+
+      25 |
+      26 |   const envPath = path.join(process.cwd(), '.env.local');
+    > 27 |   const envSource = readFileSync(envPath, 'utf8');
+         |                     ^
+      28 |   const envLine = envSource
+      29 |     .split(/\r?\n/)
+      30 |     .map((line) => line.trim())
+        at getEnvValue (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:27:21)
+        at ensurePortalAccount (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:63:23)
+        at addVinextAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:113:9)
+        at addAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:120:9)
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:189:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--13515-ation-action-on-vinext-help-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--13515-ation-action-on-vinext-help-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  9) [vinext-chromium] › e2e\vinext-pilot.spec.ts:206:3 › vinext pilot smoke › renders authenticated vinext /guides view 
+
+    Error: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.env.local'
+
+       at utils\vinext-auth.ts:27
+
+      25 |
+      26 |   const envPath = path.join(process.cwd(), '.env.local');
+    > 27 |   const envSource = readFileSync(envPath, 'utf8');
+         |                     ^
+      28 |   const envLine = envSource
+      29 |     .split(/\r?\n/)
+      30 |     .map((line) => line.trim())
+        at getEnvValue (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:27:21)
+        at ensurePortalAccount (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:63:23)
+        at addVinextAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:113:9)
+        at addAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:120:9)
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:207:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--5f9f9-nticated-vinext-guides-view-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--5f9f9-nticated-vinext-guides-view-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  10) [vinext-chromium] › e2e\vinext-pilot.spec.ts:223:3 › vinext pilot smoke › renders authenticated vinext /absences view 
+
+    Error: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.env.local'
+
+       at utils\vinext-auth.ts:27
+
+      25 |
+      26 |   const envPath = path.join(process.cwd(), '.env.local');
+    > 27 |   const envSource = readFileSync(envPath, 'utf8');
+         |                     ^
+      28 |   const envLine = envSource
+      29 |     .split(/\r?\n/)
+      30 |     .map((line) => line.trim())
+        at getEnvValue (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:27:21)
+        at ensurePortalAccount (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:63:23)
+        at addVinextAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:113:9)
+        at addAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:120:9)
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:224:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--e77a7-icated-vinext-absences-view-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--e77a7-icated-vinext-absences-view-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  11) [vinext-chromium] › e2e\vinext-pilot.spec.ts:240:3 › vinext pilot smoke › renders authenticated vinext /pvp view 
+
+    Error: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.env.local'
+
+       at utils\vinext-auth.ts:27
+
+      25 |
+      26 |   const envPath = path.join(process.cwd(), '.env.local');
+    > 27 |   const envSource = readFileSync(envPath, 'utf8');
+         |                     ^
+      28 |   const envLine = envSource
+      29 |     .split(/\r?\n/)
+      30 |     .map((line) => line.trim())
+        at getEnvValue (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:27:21)
+        at ensurePortalAccount (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:63:23)
+        at addVinextAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:113:9)
+        at addAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:120:9)
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:241:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--8fe31-thenticated-vinext-pvp-view-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--8fe31-thenticated-vinext-pvp-view-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  12) [vinext-chromium] › e2e\vinext-pilot.spec.ts:257:3 › vinext pilot smoke › renders authenticated vinext /schedule view 
+
+    Error: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.env.local'
+
+       at utils\vinext-auth.ts:27
+
+      25 |
+      26 |   const envPath = path.join(process.cwd(), '.env.local');
+    > 27 |   const envSource = readFileSync(envPath, 'utf8');
+         |                     ^
+      28 |   const envLine = envSource
+      29 |     .split(/\r?\n/)
+      30 |     .map((line) => line.trim())
+        at getEnvValue (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:27:21)
+        at ensurePortalAccount (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:63:23)
+        at addVinextAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:113:9)
+        at addAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:120:9)
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:258:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--f8ca6-icated-vinext-schedule-view-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--f8ca6-icated-vinext-schedule-view-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  13) [vinext-chromium] › e2e\vinext-pilot.spec.ts:274:3 › vinext pilot smoke › renders authenticated vinext /calendar empty-state shell 
+
+    Error: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.env.local'
+
+       at utils\vinext-auth.ts:27
+
+      25 |
+      26 |   const envPath = path.join(process.cwd(), '.env.local');
+    > 27 |   const envSource = readFileSync(envPath, 'utf8');
+         |                     ^
+      28 |   const envLine = envSource
+      29 |     .split(/\r?\n/)
+      30 |     .map((line) => line.trim())
+        at getEnvValue (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:27:21)
+        at ensurePortalAccount (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:63:23)
+        at addVinextAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\utils\vinext-auth.ts:113:9)
+        at addAuthCookie (D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:120:9)
+        at D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\e2e\vinext-pilot.spec.ts:275:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--b81e8--calendar-empty-state-shell-vinext-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\vinext-pilot-vinext-pilot--b81e8--calendar-empty-state-shell-vinext-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  13 failed
+    [chromium] › e2e\a11y.spec.ts:59:3 › portal accessibility smoke › PinScreen has no serious accessibility violations 
+    [chromium] › e2e\a11y.spec.ts:66:3 › portal accessibility smoke › logged-in news page has no serious accessibility violations 
+    [chromium] › e2e\a11y.spec.ts:83:3 › portal accessibility smoke › officer help view has no serious accessibility violations 
+    [chromium] › e2e\core-route-regression.spec.ts:135:3 › desktop core route regression › logs in and reaches news, help, and profile from the refreshed shell 
+    [vinext-chromium] › e2e\vinext-pilot-a11y.spec.ts:38:3 › vinext pilot accessibility smoke › logged-in /news has no serious accessibility violations 
+    [vinext-chromium] › e2e\vinext-pilot.spec.ts:132:3 › vinext pilot smoke › logs in on /news and renders protected content 
+    [vinext-chromium] › e2e\vinext-pilot.spec.ts:152:3 › vinext pilot smoke › logs out from vinext /news back to PinScreen 
+    [vinext-chromium] › e2e\vinext-pilot.spec.ts:188:3 › vinext pilot smoke › shows officer moderation action on vinext /help 
+    [vinext-chromium] › e2e\vinext-pilot.spec.ts:206:3 › vinext pilot smoke › renders authenticated vinext /guides view 
+    [vinext-chromium] › e2e\vinext-pilot.spec.ts:223:3 › vinext pilot smoke › renders authenticated vinext /absences view 
+    [vinext-chromium] › e2e\vinext-pilot.spec.ts:240:3 › vinext pilot smoke › renders authenticated vinext /pvp view 
+    [vinext-chromium] › e2e\vinext-pilot.spec.ts:257:3 › vinext pilot smoke › renders authenticated vinext /schedule view 
+    [vinext-chromium] › e2e\vinext-pilot.spec.ts:274:3 › vinext pilot smoke › renders authenticated vinext /calendar empty-state shell 
+  1 skipped
+  7 passed (3.2m)

@@ -19,7 +19,7 @@ interface GuidesListProps {
 }
 
 export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { data: guides = [], isLoading, error, refetch } = useGuides();
   const createGuide = useCreateGuide();
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -226,22 +226,91 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
               {t.guides.create}
             </button>
           </>
-        }
-      />
+          }
+        />
 
-      <div
-        {...stylex.props(guidesStyles.dropzone, isDragOver && guidesStyles.dropzoneActive)}
-        data-over={isDragOver ? 'true' : 'false'}
-        onDragOver={(event) => {
-          event.preventDefault();
-          setIsDragOver(true);
-        }}
-        onDragLeave={() => setIsDragOver(false)}
-        onDrop={handleDrop}
-      >
-        <div {...stylex.props(guidesStyles.dropzoneText)}>
-          <WuxiaIcon name="upload" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
-          Перетащи `.md` вместе с вложениями или выбери целую папку из Obsidian.
+      <div {...stylex.props(guidesStyles.overviewRail)}>
+        <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, guidesStyles.overviewCard)}>
+          <span {...stylex.props(guidesStyles.overviewKicker)}>{language === 'ru' ? 'База знаний' : language === 'zh' ? '知识库' : 'Knowledge base'}</span>
+          <strong {...stylex.props(guidesStyles.overviewValue)}>{guides.length}</strong>
+          <span {...stylex.props(guidesStyles.overviewLabel)}>{language === 'ru' ? 'Опубликованные гайды для рейдов, PvP и онбординга.' : language === 'zh' ? '适用于团本、PvP 与新人引导的已发布攻略。' : 'Published guides ready for raid, PvP, and onboarding flows.'}</span>
+        </article>
+        <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, guidesStyles.overviewCard)}>
+          <span {...stylex.props(guidesStyles.overviewKicker)}>{language === 'ru' ? 'Категории' : language === 'zh' ? '分类' : 'Categories'}</span>
+          <strong {...stylex.props(guidesStyles.overviewValue)}>{categoryStats.length}</strong>
+          <span {...stylex.props(guidesStyles.overviewLabel)}>{language === 'ru' ? 'Структурированные треки для поиска и точной фильтрации.' : language === 'zh' ? '为浏览式发现与精细筛选准备的结构化路径。' : 'Structured paths for browse-first discovery and focused filtering.'}</span>
+        </article>
+        <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, guidesStyles.overviewCard)}>
+          <span {...stylex.props(guidesStyles.overviewKicker)}>{language === 'ru' ? 'Авторы' : language === 'zh' ? '贡献者' : 'Contributors'}</span>
+          <strong {...stylex.props(guidesStyles.overviewValue)}>{authorStats.length}</strong>
+          <span {...stylex.props(guidesStyles.overviewLabel)}>{language === 'ru' ? 'Видимый авторский сигнал помогает быстро узнавать надежные гайды.' : language === 'zh' ? '明确作者信号让可信攻略更容易被快速识别。' : 'Visible author signal keeps trusted guides easy to recognize at a glance.'}</span>
+        </article>
+      </div>
+
+      <div {...stylex.props(guidesStyles.commandDeck)}>
+        <div
+          {...stylex.props(guidesStyles.dropzone, isDragOver && guidesStyles.dropzoneActive)}
+          data-over={isDragOver ? 'true' : 'false'}
+          onDragOver={(event) => {
+            event.preventDefault();
+            setIsDragOver(true);
+          }}
+          onDragLeave={() => setIsDragOver(false)}
+          onDrop={handleDrop}
+        >
+          <div {...stylex.props(guidesStyles.dropzoneText)}>
+            <WuxiaIcon name="upload" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+            {language === 'ru' ? 'Перетащи `.md` вместе с вложениями или выбери целую папку из Obsidian.' : language === 'zh' ? '拖入带附件的 `.md` 文件，或直接选择整个 Obsidian 文件夹。' : 'Drop `.md` files with attachments or choose an entire Obsidian folder.'}
+          </div>
+        </div>
+
+        <div {...stylex.props(guidesStyles.filterDeck)}>
+          <div {...stylex.props(guidesStyles.filterDeckHeader)}>
+            <span {...stylex.props(guidesStyles.overviewKicker)}>{language === 'ru' ? 'Фильтры навигации' : language === 'zh' ? '筛选导航' : 'Discovery filters'}</span>
+            <span {...stylex.props(guidesStyles.statsText)}>
+              {language === 'ru' ? 'Показано:' : language === 'zh' ? '当前显示：' : 'Showing:'} <span className="text-gray-300 font-medium">{filteredGuides.length}</span> {language === 'ru' ? 'из' : language === 'zh' ? '/' : 'of'} <span className="text-gray-300 font-medium">{guides.length}</span>
+            </span>
+          </div>
+
+          <div {...stylex.props(uiStyles.inlineTags)}>
+            <button
+              type="button"
+              {...stylex.props(uiStyles.chip, selectedCategory === 'all' && uiStyles.chipActive)}
+              onClick={() => setSelectedCategory('all')}
+            >
+              {language === 'ru' ? 'Все категории' : language === 'zh' ? '全部分类' : 'All categories'} · {guides.length}
+            </button>
+            {categoryStats.map(({ category, count }) => (
+              <button
+                key={category}
+                type="button"
+                {...stylex.props(uiStyles.chip, selectedCategory === category && uiStyles.chipActive)}
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category} · {count}
+              </button>
+            ))}
+          </div>
+
+          <div {...stylex.props(uiStyles.inlineTags)}>
+            <button
+              type="button"
+              {...stylex.props(uiStyles.chip, selectedAuthor === 'all' && uiStyles.chipActive)}
+              onClick={() => setSelectedAuthor('all')}
+            >
+              {language === 'ru' ? 'Все авторы' : language === 'zh' ? '全部作者' : 'All authors'}
+            </button>
+            {authorStats.map(({ author, count }) => (
+              <button
+                key={author}
+                type="button"
+                {...stylex.props(uiStyles.chip, selectedAuthor === author && uiStyles.chipActive)}
+                onClick={() => setSelectedAuthor(author)}
+              >
+                {author} · {count}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -251,60 +320,13 @@ export function GuidesList({ onGuideClick, onCreateClick }: GuidesListProps) {
           {notice}
         </div>
       )}
-
-      <div {...stylex.props(uiStyles.stackLg)}>
-        <div {...stylex.props(uiStyles.inlineTags)}>
-          <button
-            type="button"
-            {...stylex.props(uiStyles.chip, selectedCategory === 'all' && uiStyles.chipActive)}
-            onClick={() => setSelectedCategory('all')}
-          >
-            Все категории · {guides.length}
-          </button>
-          {categoryStats.map(({ category, count }) => (
-            <button
-              key={category}
-              type="button"
-              {...stylex.props(uiStyles.chip, selectedCategory === category && uiStyles.chipActive)}
-              onClick={() => setSelectedCategory(category)}
-            >
-              {category} · {count}
-            </button>
-          ))}
-        </div>
-
-        <div {...stylex.props(uiStyles.inlineTags)}>
-          <button
-            type="button"
-            {...stylex.props(uiStyles.chip, selectedAuthor === 'all' && uiStyles.chipActive)}
-            onClick={() => setSelectedAuthor('all')}
-          >
-            Все авторы
-          </button>
-          {authorStats.map(({ author, count }) => (
-            <button
-              key={author}
-              type="button"
-              {...stylex.props(uiStyles.chip, selectedAuthor === author && uiStyles.chipActive)}
-              onClick={() => setSelectedAuthor(author)}
-            >
-              {author} · {count}
-            </button>
-          ))}
-        </div>
-
-        <div {...stylex.props(guidesStyles.statsText)}>
-          Показано: <span className="text-gray-300 font-medium">{filteredGuides.length}</span> из <span className="text-gray-300 font-medium">{guides.length}</span>
-        </div>
-      </div>
-
       <div {...stylex.props(guidesStyles.cardGrid)}>
         {filteredGuides.length === 0 ? (
           <div className="col-span-full">
             <EmptyState
               icon={<WuxiaIcon name="guides" className="w-10 h-10 text-gray-500" />}
-              title="Ничего не найдено"
-              description="Измени фильтр или напиши новый гайд."
+              title={t.guides.empty}
+              description={t.guides.emptyDescription}
             />
           </div>
         ) : (

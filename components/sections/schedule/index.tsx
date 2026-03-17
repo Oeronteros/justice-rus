@@ -771,6 +771,19 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
           }
         />
 
+        <div {...stylex.props(opsStyles.statGrid2)}>
+          <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, opsStyles.statCard)}>
+            <div {...stylex.props(opsStyles.statLabel)}>{language === 'ru' ? 'Дневной ритм' : language === 'zh' ? '今日节奏' : 'Day rhythm'}</div>
+            <div {...stylex.props(opsStyles.statValue)}>{selectedSchedules.length}</div>
+            <div {...stylex.props(opsStyles.helperInline)}>{language === 'ru' ? 'Событий в текущем окне обзора' : language === 'zh' ? '当前视图中的活动数量' : 'Events in the current overview window'}</div>
+          </article>
+          <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, opsStyles.statCard)}>
+            <div {...stylex.props(opsStyles.statLabel)}>{language === 'ru' ? 'Оперативный фокус' : language === 'zh' ? '行动焦点' : 'Action focus'}</div>
+            <div {...stylex.props(opsStyles.statValue)}>{currentEvent ? (language === 'ru' ? 'Сейчас' : language === 'zh' ? '进行中' : 'Now') : nextEvent ? formatCountdown(nextEvent.parsedTime!.start - currentMinutes, language) : '—'}</div>
+            <div {...stylex.props(opsStyles.helperInline)}>{currentEvent ? getDisplayTitle(currentEvent, language) : nextEvent ? getDisplayTitle(nextEvent, language) : (language === 'ru' ? 'Нет ближайшего события' : language === 'zh' ? '暂无后续活动' : 'No immediate event')}</div>
+          </article>
+        </div>
+
         {scheduleNotice && (
           <div {...stylex.props(uiStyles.notice, uiStyles.noticeSuccess)}>
             <WuxiaIcon name="checkCircle" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
@@ -849,15 +862,12 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
         )}
 
         {selectedSchedules.length === 0 ? (
-          <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, scheduleStyles.emptyCard)}>
-            <WuxiaIcon name="schedule" className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <p style={{ color: 'rgba(156,163,175,0.95)', fontSize: '1.125rem' }}>
-              {language === 'ru' ? `Нет событий на ${selectedDay.labels.ru.toLowerCase()}` : language === 'zh' ? `${selectedDay.labels.zh}没有活动` : `No events for ${selectedDay.labels.en}`}
-            </p>
-            <p style={{ color: 'rgba(107,114,128,0.95)', fontSize: '0.875rem', marginTop: 8 }}>
-              {language === 'ru' ? 'Отдыхай, воин!' : language === 'zh' ? '好好休息，勇士！' : 'Rest well, warrior!'}
-            </p>
-          </div>
+          <EmptyState
+            icon={<WuxiaIcon name="schedule" className="w-8 h-8 text-[#8fb9cc]" />}
+            title={language === 'ru' ? `Нет событий на ${selectedDay.labels.ru.toLowerCase()}` : language === 'zh' ? `${selectedDay.labels.zh}没有活动` : `No events for ${selectedDay.labels.en}`}
+            description={language === 'ru' ? 'Отдыхай, воин! Переключи день, чтобы посмотреть другие слоты недели.' : language === 'zh' ? '好好休息，勇士！切换日期可以查看本周其他活动。' : 'Rest well, warrior! Switch the day to inspect the rest of the weekly schedule.'}
+            badgeLabel={language === 'ru' ? 'Свободное окно' : language === 'zh' ? '当前空档' : 'Open window'}
+          />
         ) : (
           <div {...stylex.props(scheduleStyles.groupGrid)}>
             {sortedGroups.map((groupName) => {

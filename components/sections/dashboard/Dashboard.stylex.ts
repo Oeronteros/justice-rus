@@ -135,6 +135,11 @@ export const dashboardStyles = stylex.create({
     width: '100%',
     justifyContent: 'center',
   },
+  heroActionButtonGhost: {
+    backgroundColor: 'rgba(10, 18, 26, 0.82)',
+    borderColor: 'rgba(143, 185, 204, 0.24)',
+    color: 'rgba(224, 238, 247, 0.96)',
+  },
   stack: {
     display: 'grid',
     gap: '12px',
@@ -351,6 +356,43 @@ export const dashboardStyles = stylex.create({
     ':hover': {
       color: 'rgba(220, 238, 247, 0.98)',
       textDecorationColor: 'rgba(205, 236, 248, 0.88)',
+    },
+  },
+  denseActionRow: {
+    display: 'grid',
+    gap: '10px',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 640px)': 'repeat(2, minmax(0, 1fr))',
+    },
+  },
+  denseActionLink: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '40px',
+    padding: '0 14px',
+    borderRadius: radius.pill,
+    border: '1px solid rgba(143, 185, 204, 0.24)',
+    backgroundColor: 'rgba(11, 21, 30, 0.86)',
+    color: 'rgba(224, 238, 247, 0.96)',
+    textDecoration: 'none',
+    fontSize: '0.82rem',
+    fontWeight: 600,
+    transitionProperty: 'transform, border-color, background-color',
+    transitionDuration: '180ms',
+    ':hover': {
+      transform: 'translateY(-1px)',
+      borderColor: 'rgba(205, 236, 248, 0.52)',
+      backgroundColor: 'rgba(20, 31, 42, 0.92)',
+    },
+  },
+  quickRouteGrid: {
+    display: 'grid',
+    gap: '10px',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 640px)': 'repeat(2, minmax(0, 1fr))',
     },
   },
   listItem: {

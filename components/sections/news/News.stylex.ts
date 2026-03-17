@@ -54,6 +54,39 @@ export const newsStyles = stylex.create({
       '@media (min-width: 1280px)': '1.15fr 0.85fr',
     },
   },
+  heroActionRow: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '12px',
+    justifyContent: {
+      default: 'flex-start',
+      '@media (min-width: 768px)': 'flex-end',
+    },
+  },
+  overviewRail: {
+    display: 'grid',
+    gap: '14px',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 768px)': 'repeat(3, minmax(0, 1fr))',
+    },
+  },
+  overviewCard: {
+    display: 'grid',
+    gap: '8px',
+    padding: '18px 20px',
+  },
+  overviewValue: {
+    fontSize: '1.8rem',
+    lineHeight: 1,
+    color: 'rgba(240, 232, 218, 0.98)',
+    fontFamily: typography.display,
+  },
+  overviewLabel: {
+    color: 'rgba(199, 219, 231, 0.86)',
+    lineHeight: 1.55,
+    fontSize: '0.88rem',
+  },
   composerCard: {
     padding: {
       default: '20px',
@@ -219,6 +252,23 @@ export const newsStyles = stylex.create({
       default: '0.75rem',
       '@media (min-width: 640px)': '0.875rem',
     },
+  },
+  tagRowCompact: {
+    marginBottom: 0,
+  },
+  cardHeaderRail: {
+    display: 'flex',
+    alignItems: {
+      default: 'flex-start',
+      '@media (max-width: 639px)': 'flex-start',
+    },
+    justifyContent: 'space-between',
+    gap: '12px',
+    flexDirection: {
+      default: 'row',
+      '@media (max-width: 639px)': 'column',
+    },
+    marginBottom: '10px',
   },
   featuredPinned: {
     display: 'inline-flex',

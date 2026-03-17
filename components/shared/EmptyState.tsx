@@ -6,6 +6,7 @@ import WuxiaIcon, { type IconName } from '@/components/WuxiaIcons';
 import { asyncStateStyles } from '@/components/shared/AsyncState.stylex';
 import { mergeStylexProps } from '@/lib/stylex/utils';
 import { uiStyles } from '@/components/shared/Ui.stylex';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface ActionButton {
   label: string;
@@ -18,6 +19,7 @@ interface EmptyStateProps {
   description?: string;
   action?: ReactNode | ActionButton;
   variant?: 'default' | 'error';
+  badgeLabel?: string;
 }
 
 export function EmptyState({ 
@@ -25,8 +27,11 @@ export function EmptyState({
   title, 
   description, 
   action,
-  variant = 'default'
+  variant = 'default',
+  badgeLabel,
 }: EmptyStateProps) {
+  const { language } = useTranslation();
+
   const renderIcon = () => {
     if (typeof icon === 'string') {
       return <WuxiaIcon name={icon as IconName} className="w-10 h-10 text-gray-500" />;
@@ -50,6 +55,9 @@ export function EmptyState({
   };
 
   const rootProps = mergeStylexProps(stylex.props(asyncStateStyles.emptyRoot), 'card section-card');
+  const resolvedBadgeLabel = badgeLabel ?? (variant === 'error'
+    ? language === 'ru' ? 'Нужно внимание' : language === 'zh' ? '需要关注' : 'Need attention'
+    : language === 'ru' ? 'Пока пусто' : language === 'zh' ? '暂时为空' : 'No data yet');
 
   return (
     <div {...rootProps}>
@@ -59,7 +67,7 @@ export function EmptyState({
         </div>
       </div>
       <div {...stylex.props(asyncStateStyles.badgeWrap)}>
-        <span {...stylex.props(asyncStateStyles.badge, variant === 'error' && asyncStateStyles.badgeError)}>{variant === 'error' ? 'Need attention' : 'No data yet'}</span>
+        <span {...stylex.props(asyncStateStyles.badge, variant === 'error' && asyncStateStyles.badgeError)}>{resolvedBadgeLabel}</span>
       </div>
       <h3 {...stylex.props(asyncStateStyles.title, variant === 'error' && asyncStateStyles.titleError)}>
         {title}
@@ -67,7 +75,7 @@ export function EmptyState({
       {description && (
         <p {...stylex.props(asyncStateStyles.description)}>{description}</p>
       )}
-      {renderAction()}
+      {action ? <div {...stylex.props(asyncStateStyles.actionRow)}>{renderAction()}</div> : null}
     </div>
   );
 }

@@ -29,6 +29,7 @@ describe('Header navigation accessibility', () => {
       <Header
         currentSection="guides"
         onLogout={vi.fn()}
+        onRefresh={vi.fn()}
         language="en"
         onLanguageChange={vi.fn()}
       />
@@ -57,6 +58,7 @@ describe('Header navigation accessibility', () => {
       <Header
         currentSection="guides"
         onLogout={vi.fn()}
+        onRefresh={vi.fn()}
         language="en"
         onLanguageChange={vi.fn()}
       />

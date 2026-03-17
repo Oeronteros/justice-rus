@@ -34,7 +34,7 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'npm run dev -- --hostname 127.0.0.1 --port 3001',
+      command: 'set NODE_OPTIONS=--max-old-space-size=4096 && set JWT_SECRET=e2e-secret && npm run dev -- --hostname 127.0.0.1 --port 3001',
       url: baseURL,
       reuseExistingServer: !process.env.CI,
       stdout: 'ignore',

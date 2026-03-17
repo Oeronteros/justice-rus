@@ -1,0 +1,96 @@
+
+> justice-ru@2.0.0 validate
+> npm run guardrails && npm run lint && npm run test && npm run test:e2e && npm run build && npm run type-check
+
+
+> justice-ru@2.0.0 guardrails
+> node scripts/check-a-level-guardrails.mjs
+
+A-level guardrails passed
+
+> justice-ru@2.0.0 lint
+> eslint .
+
+
+> justice-ru@2.0.0 test
+> vitest run
+
+
+[1m[46m RUN [49m[22m [36mv4.0.16 [39m[90mD:/Desktop/justice-ru-silent-moonfall-core-portal-redesign[39m
+
+ [32m✓[39m tests/hooks/optimistic-updates.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 480[2mms[22m[39m
+ [32m✓[39m tests/forms/GuideForm.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 4638[2mms[22m[39m
+       [33m[2m✓[22m[39m should not call onSubmit with invalid data [33m 897[2mms[22m[39m
+       [33m[2m✓[22m[39m should call onSubmit with valid data [33m 464[2mms[22m[39m
+       [33m[2m✓[22m[39m should display error message for empty title [33m 1183[2mms[22m[39m
+       [33m[2m✓[22m[39m should display error message for short content [33m 683[2mms[22m[39m
+       [33m[2m✓[22m[39m should reset form after successful submission [33m 1209[2mms[22m[39m
+ [32m✓[39m tests/i18n/context.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 2161[2mms[22m[39m
+       [33m[2m✓[22m[39m should persist language to localStorage on change [33m 674[2mms[22m[39m
+       [33m[2m✓[22m[39m should restore language from localStorage on mount [33m 1432[2mms[22m[39m
+ [32m✓[39m tests/hooks/useGuides.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 3391[2mms[22m[39m
+       [33m[2m✓[22m[39m should deduplicate simultaneous requests for the same query key [33m 1730[2mms[22m[39m
+       [33m[2m✓[22m[39m should invalidate guides list after creating a guide [33m 1656[2mms[22m[39m
+ [32m✓[39m tests/lib/schedule-source.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 299[2mms[22m[39m
+ [32m✓[39m tests/lib/route-helpers.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+ [32m✓[39m tests/components/ErrorBoundary.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 4121[2mms[22m[39m
+       [33m[2m✓[22m[39m should catch any error and render fallback UI [33m 1622[2mms[22m[39m
+       [33m[2m✓[22m[39m should log error details when catching an error [33m 984[2mms[22m[39m
+       [33m[2m✓[22m[39m should call onError callback when provided [33m 966[2mms[22m[39m
+ [32m✓[39m tests/hooks/useSchedule.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 357[2mms[22m[39m
+ [32m✓[39m tests/lib/news-service.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 183[2mms[22m[39m
+ [32m✓[39m tests/components/NewsSection.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 1140[2mms[22m[39m
+     [33m[2m✓[22m[39m renders inline URLs as clickable links and preserves the Discord CTA [33m 848[2mms[22m[39m
+ [32m✓[39m tests/api/admin-accounts-route.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+ [32m✓[39m tests/lib/registration-read.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 224[2mms[22m[39m
+ [32m✓[39m tests/lib/auth-session.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m tests/api/schedule-route.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m tests/components/ProfileSection.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 1514[2mms[22m[39m
+     [33m[2m✓[22m[39m gives each activity switch a discernible name and updates its state [33m 605[2mms[22m[39m
+     [33m[2m✓[22m[39m resets all activity switches with the reset button [33m 536[2mms[22m[39m
+ [32m✓[39m tests/hooks/usePvp.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 172[2mms[22m[39m
+ [32m✓[39m tests/lib/read-model-runtime.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+ [32m✓[39m tests/api/pvp-route.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 40[2mms[22m[39m
+ [32m✓[39m tests/components/RegistrationTable.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 847[2mms[22m[39m
+     [33m[2m✓[22m[39m edits guild in modal flow and submits trimmed value [33m 802[2mms[22m[39m
+ [32m✓[39m tests/components/RegistrationSection.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 837[2mms[22m[39m
+     [33m[2m✓[22m[39m shows edit controls to officers and above [33m 573[2mms[22m[39m
+ [32m✓[39m tests/lib/classes.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m tests/components/Header.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 1073[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps nav links and icon buttons accessible when labels collapse visually [33m 929[2mms[22m[39m
+ [32m✓[39m tests/components/ScheduleHelpSection.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 339[2mms[22m[39m
+ [32m✓[39m tests/components/PvpSection.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 334[2mms[22m[39m
+     [33m[2m✓[22m[39m renders shared prefixes in queue, leaderboard, and recent matches [33m 330[2mms[22m[39m
+ [32m✓[39m tests/components/DashboardSection.test.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 196[2mms[22m[39m
+ [32m✓[39m tests/lib/auth-token.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 40[2mms[22m[39m
+ [32m✓[39m tests/components/registration-sort.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 37[2mms[22m[39m
+ [32m✓[39m tests/lib/pvp-logic.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m tests/lib/vinext-cutover.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m tests/lib/auth-request.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 26[2mms[22m[39m
+ [32m✓[39m tests/components/PinScreen.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 809[2mms[22m[39m
+     [33m[2m✓[22m[39m renders English auth copy when the provider language is en [33m 669[2mms[22m[39m
+ [32m✓[39m tests/api/openapi-client.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m tests/components/GuidesList.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 740[2mms[22m[39m
+     [33m[2m✓[22m[39m renders localized discovery filters and empty state in english [33m 737[2mms[22m[39m
+ [32m✓[39m tests/lib/nav.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m tests/lib/authz.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m tests/lib/roles.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m tests/lib/message-url.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m tests/api/errors.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m tests/components/MarkdownRenderer.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 71[2mms[22m[39m
+ [32m✓[39m tests/i18n/copy.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/lib/registration-column-labels.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/lib/error-payload.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m tests/components/PrefixBadge.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 67[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m43 passed[39m[22m[90m (43)[39m
+[2m      Tests [22m [1m[32m149 passed[39m[22m[90m (149)[39m
+[2m   Start at [22m 09:20:22
+[2m   Duration [22m 234.17s[2m (transform 22.25s, setup 41.81s, import 31.31s, tests 24.41s, environment 113.84s)[22m
+
+
+> justice-ru@2.0.0 test:e2e
+> playwright test
+
+Error: http://127.0.0.1:3101/news is already used, make sure that nothing is running on the port/url or set reuseExistingServer:true in config.webServer.
+

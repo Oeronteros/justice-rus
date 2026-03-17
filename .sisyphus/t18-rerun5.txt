@@ -1,0 +1,12 @@
+
+> justice-ru@2.0.0 test:e2e
+> playwright test
+
+
+Running 21 tests using 1 worker
+
+  ok  1 [chromium] › e2e\a11y.spec.ts:61:3 › portal accessibility smoke › PinScreen has no serious accessibility violations (3.4s)
+[2m[WebServer] [22mRoute /news is rendering with server caches disabled. For this navigation, Component Metadata in React DevTools will not accurately reflect what is statically prerenderable and runtime prefetchable. See more info here: https://nextjs.org/docs/messages/cache-bypass-in-dev
+  ok  2 [chromium] › e2e\a11y.spec.ts:68:3 › portal accessibility smoke › logged-in news page has no serious accessibility violations (2.5s)
+[2m[WebServer] [22mRoute /help is rendering with server caches disabled. For this navigation, Component Metadata in React DevTools will not accurately reflect what is statically prerenderable and runtime prefetchable. See more info here: https://nextjs.org/docs/messages/cache-bypass-in-dev
+  ok  3 [chromium] › e2e\a11y.spec.ts:85:3 › portal accessibility smoke › officer help view has no serious accessibility violations (3.2s)

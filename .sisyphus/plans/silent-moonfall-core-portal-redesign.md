@@ -169,7 +169,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
 
 ## TODOs
 
-- [ ] T1. Core portal IA and menu architecture contract
+- [x] T1. Core portal IA and menu architecture contract
 
   **What to do**:
   - Define the new top-level portal information architecture for the Core Portal scope only.
@@ -227,7 +227,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
 
   **Commit**: NO
 
-- [ ] T2. StyleX token and shared-surface refresh brief
+- [x] T2. StyleX token and shared-surface refresh brief
 
   **What to do**:
   - Extend the existing StyleX visual system for the redesign: surfaces, states, accent depth, hierarchy, and shell affordances.
@@ -286,7 +286,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
   **Commit**: YES
   - Message: `refactor(ui): extend shared wuxia surface system`
 
-- [ ] T3. Shell layout and behavior seam mapping
+- [x] T3. Shell layout and behavior seam mapping
 
   **What to do**:
   - Isolate shell responsibilities so desktop header, mobile nav, and page chrome can be redesigned without touching auth/session logic.
@@ -344,7 +344,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
   **Commit**: YES
   - Message: `refactor(shell): prepare behavior-safe redesign seams`
 
-- [ ] T4. Dashboard region split and content-priority map
+- [x] T4. Dashboard region split and content-priority map
 
   **What to do**:
   - Break the current dashboard into stable redesign regions: hero/status, summary/actions, and dense lower-content zones.
@@ -403,7 +403,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
   **Commit**: YES
   - Message: `refactor(dashboard): map redesign regions and priorities`
 
-- [ ] T5. Core module redesign inventory (`news`, `schedule`, `guides`, `help`, `profile`)
+- [x] T5. Core module redesign inventory (`news`, `schedule`, `guides`, `help`, `profile`)
 
   **What to do**:
   - Inventory the exact page sections, key actions, critical data blocks, and obvious UX pain points for each in-scope module.
@@ -461,7 +461,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
 
   **Commit**: NO
 
-- [ ] T6. Test target and breakpoint matrix
+- [x] T6. Test target and breakpoint matrix
 
   **What to do**:
   - Map existing component and Playwright coverage for the shell, dashboard, and in-scope modules.
@@ -519,7 +519,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
 
   **Commit**: NO
 
-- [ ] T7. Next/vinext shell compatibility guardrail map
+- [x] T7. Next/vinext shell compatibility guardrail map
 
   **What to do**:
   - Identify which redesign decisions must remain portable to the vinext pilot shell and which are main-portal-only.
@@ -576,7 +576,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
 
   **Commit**: NO
 
-- [ ] T8. Desktop header and command menu redesign
+- [x] T8. Desktop header and command menu redesign
 
   **What to do**:
   - Redesign the desktop header, brand block, primary navigation rail, and secondary command menu.
@@ -635,7 +635,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
   **Commit**: YES
   - Message: `feat(shell): redesign desktop header and command menu`
 
-- [ ] T9. Mobile dock and overflow-sheet redesign
+- [x] T9. Mobile dock and overflow-sheet redesign
 
   **What to do**:
   - Redesign the mobile bottom dock and overflow sheet for clearer grouping, larger touch targets, and better route discoverability.
@@ -693,7 +693,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
   **Commit**: YES
   - Message: `feat(shell): redesign mobile dock and overflow nav`
 
-- [ ] T10. Dashboard hero, summary, and first-screen actions redesign
+- [x] T10. Dashboard hero, summary, and first-screen actions redesign
 
   **What to do**:
   - Redesign the top dashboard experience so guild status, readiness, key actions, and first-glance signals are visible and compelling.
@@ -750,7 +750,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
   **Commit**: YES
   - Message: `feat(dashboard): redesign hero and first-screen actions`
 
-- [ ] T11. Dashboard dense content zones redesign
+- [x] T11. Dashboard dense content zones redesign
 
   **What to do**:
   - Redesign lower dashboard regions such as action center, officer-focused areas, and activity feeds.
@@ -808,7 +808,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
   **Commit**: YES
   - Message: `feat(dashboard): redesign dense content zones`
 
-- [ ] T12. News and guides module refresh
+- [x] T12. News and guides module refresh
 
   **What to do**:
   - Refresh the presentation of `news` and `guides` so they feel editorial, premium, and easier to scan.
@@ -866,7 +866,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
   **Commit**: YES
   - Message: `feat(portal): refresh news and guides surfaces`
 
-- [ ] T13. Schedule and help module refresh
+- [x] T13. Schedule and help module refresh
 
   **What to do**:
   - Refresh `schedule` and `help` so time-sensitive actions, statuses, and response flows are easier to scan and complete.
@@ -924,7 +924,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
   **Commit**: YES
   - Message: `feat(portal): refresh schedule and help surfaces`
 
-- [ ] T14. Profile module refresh and shell cohesion pass
+- [x] T14. Profile module refresh and shell cohesion pass
 
   **What to do**:
   - Refresh the `profile` surface so identity, status, and personal actions align with the redesigned shell.
@@ -982,7 +982,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
   **Commit**: YES
   - Message: `feat(profile): refresh profile shell cohesion`
 
-- [ ] T15. Shared loading, empty, error, and CTA language unification
+- [x] T15. Shared loading, empty, error, and CTA language unification
 
   **What to do**:
   - Unify state presentation across shell/dashboard/core modules so loading, empty, error, and primary CTA patterns look like one system.
@@ -1041,7 +1041,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
   **Commit**: YES
   - Message: `refactor(ui): unify state and CTA language`
 
-- [ ] T16. Copy, i18n, responsive, and overflow polish
+- [x] T16. Copy, i18n, responsive, and overflow polish
 
   **What to do**:
   - Polish final labels, section text, spacing, overflow handling, and breakpoint behavior across the redesigned shell and modules.
@@ -1100,7 +1100,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
   **Commit**: YES
   - Message: `refactor(portal): polish copy locales and responsive behavior`
 
-- [ ] T17. Unit/component coverage for shell and core modules
+- [x] T17. Unit/component coverage for shell and core modules
 
   **What to do**:
   - Update or add Vitest/Testing Library coverage for redesigned shell surfaces, dashboard regions, and in-scope modules.
@@ -1158,7 +1158,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
   **Commit**: YES
   - Message: `test(portal): cover redesigned shell dashboard and modules`
 
-- [ ] T18. Playwright regression, accessibility, and breakpoint evidence
+- [x] T18. Playwright regression, accessibility, and breakpoint evidence
 
   **What to do**:
   - Update or add Playwright coverage for shell, dashboard, and in-scope modules at the agreed breakpoint matrix.
@@ -1218,7 +1218,7 @@ Wave FINAL (After all implementation tasks - independent review, 4 parallel):
   **Commit**: YES
   - Message: `test(e2e): verify redesigned portal shell and core flows`
 
-- [ ] T19. Validation and cutover smoke verification
+- [x] T19. Validation and cutover smoke verification
 
   **What to do**:
   - Run the full validation gate and a focused cutover-aware smoke check so the redesign does not quietly break the vinext transition path.

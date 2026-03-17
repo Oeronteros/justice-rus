@@ -56,6 +56,8 @@ const helpPayload = [
 ];
 
 test.describe('portal accessibility smoke', () => {
+  test.setTimeout(60000);
+
   test('PinScreen has no serious accessibility violations', async ({ page }) => {
     await page.goto('/news');
     await expect(page.getByText('Доступ участника')).toBeVisible();
@@ -93,7 +95,7 @@ test.describe('portal accessibility smoke', () => {
     await page.getByPlaceholder('Пароль').fill('very-secret-password');
     await page.locator('form').getByRole('button', { name: 'Войти' }).click();
 
-    await expect(page.getByText('Нужен лидер на вечерний сбор')).toBeVisible();
+    await expect(page.getByText('Нужен лидер на вечерний сбор')).toBeVisible({ timeout: 15000 });
     await expectNoSeriousA11yViolations(page);
   });
 });

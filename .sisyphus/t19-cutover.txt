@@ -1,0 +1,8 @@
+
+> justice-ru@2.0.0 cutover:verify
+> node scripts/verify-cutover-config.mjs
+
+VINEXT_CUTOVER_SCOPE=off
+VINEXT_CUTOVER_ORIGIN=
+OWNED_ROUTES=
+REWRITE_COUNT=0

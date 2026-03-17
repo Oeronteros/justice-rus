@@ -6,7 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import * as stylex from '@stylexjs/stylex';
 import Header from './Header';
 import MobileNav from './MobileNav';
-import { HeaderProvider, useHeader } from '@/lib/ui/headerContext';
+import { HeaderProvider, useHeaderVisibility } from '@/lib/ui/headerContext';
 import { usePrefetchAbsences } from '@/lib/absences/hooks';
 import { usePrefetchGuides } from '@/lib/guides/hooks';
 import { usePrefetchNews } from '@/lib/news/hooks';
@@ -14,6 +14,7 @@ import { usePrefetchRegistrations } from '@/lib/registration/hooks';
 import { usePrefetchSchedule } from '@/lib/schedule/hooks';
 import type { User } from '@/lib/schemas/auth';
 import { Section } from '@/types';
+import type { Language } from '@/lib/i18n';
 import { useLanguage } from '@/lib/i18n/context';
 import { mergeStylexProps } from '@/lib/stylex/utils';
 import { shellStyles } from './Shell.stylex';
@@ -44,20 +45,34 @@ const pathToSection: Record<string, Section> = {
   '/profile': 'profile',
 };
 
+interface ShellNavigationContract {
+  currentSection: Section;
+  onNavPrefetch: (section: Section) => void;
+}
+
+interface ShellSessionContract {
+  language: Language;
+  onLanguageChange: (language: Language) => void;
+  onRefresh: () => void;
+  onLogout: () => void;
+}
+
+function resolveSection(pathname: string): Section {
+  return pathToSection[pathname] || 'about';
+}
+
 function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
   const pathname = usePathname();
   const prefersReducedMotion = useReducedMotion();
   const { language, setLanguage } = useLanguage();
-  const { isHeaderHidden } = useHeader();
+  const { isHeaderHidden } = useHeaderVisibility();
   const prefetchNews = usePrefetchNews();
   const prefetchRegistrations = usePrefetchRegistrations();
   const prefetchSchedule = usePrefetchSchedule();
   const prefetchGuides = usePrefetchGuides();
   const prefetchAbsences = usePrefetchAbsences();
 
-  const currentSection = useMemo(() => pathToSection[pathname] || 'about', [pathname]);
-
-  const handleLanguageChange = setLanguage;
+  const currentSection = useMemo(() => resolveSection(pathname), [pathname]);
   const handleNavPrefetch = useCallback(
     (section: Section) => {
       switch (section) {
@@ -83,15 +98,33 @@ function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
     [language, prefetchAbsences, prefetchGuides, prefetchNews, prefetchRegistrations, prefetchSchedule]
   );
 
+  const sessionContract = useMemo<ShellSessionContract>(
+    () => ({
+      language,
+      onLanguageChange: setLanguage,
+      onRefresh: () => {
+        window.location.reload();
+      },
+      onLogout,
+    }),
+    [language, onLogout, setLanguage]
+  );
+
+  const navigationContract = useMemo<ShellNavigationContract>(
+    () => ({ currentSection, onNavPrefetch: handleNavPrefetch }),
+    [currentSection, handleNavPrefetch]
+  );
+
   return (
     <div {...stylex.props(shellStyles.layoutRoot)}>
       <div {...stylex.props(shellStyles.translateTransition, isHeaderHidden && shellStyles.hideTop)}>
         <Header
-          currentSection={currentSection}
-          onLogout={onLogout}
-          language={language}
-          onLanguageChange={handleLanguageChange}
-          onNavPrefetch={handleNavPrefetch}
+          currentSection={navigationContract.currentSection}
+          onLogout={sessionContract.onLogout}
+          onRefresh={sessionContract.onRefresh}
+          language={sessionContract.language}
+          onLanguageChange={sessionContract.onLanguageChange}
+          onNavPrefetch={navigationContract.onNavPrefetch}
         />
       </div>
       <main id="portal-main" {...stylex.props(shellStyles.main, isHeaderHidden && shellStyles.mainShifted)}>
@@ -111,7 +144,11 @@ function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
         </div>
       </main>
       <div {...stylex.props(shellStyles.translateTransition, isHeaderHidden && shellStyles.hideBottom)}>
-        <MobileNav currentSection={currentSection} language={language} onNavPrefetch={handleNavPrefetch} />
+        <MobileNav
+          currentSection={navigationContract.currentSection}
+          language={sessionContract.language}
+          onNavPrefetch={navigationContract.onNavPrefetch}
+        />
       </div>
     </div>
   );

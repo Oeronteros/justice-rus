@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import type { PortalAccount } from '@/lib/schemas/account';
 import type { User, UserRole } from '@/lib/schemas/auth';
@@ -14,6 +15,7 @@ import { useAccounts, useKnownClasses, useUpdateAccount } from '@/lib/auth/hooks
 import { useRegistrations, useUpdateRegistrationStats } from '@/lib/registration/hooks';
 import { useNotifications } from '@/lib/notifications/context';
 import type { UpdateRegistrationStatsPayload } from '@/lib/api/registrations';
+import { useTranslation } from '@/lib/i18n/context';
 import * as stylex from '@stylexjs/stylex';
 import { mergeStylexProps } from '@/lib/stylex/utils';
 import { uiStyles } from '@/components/shared/Ui.stylex';
@@ -429,6 +431,7 @@ const AccountsPanel = memo(function AccountsPanel({
 });
 
 export default function ProfileSection({ user }: ProfileSectionProps) {
+  const { language } = useTranslation();
   const isAdmin = canManageAccounts(user.role);
   const canChangeRoles = canAssignRoles(user.role);
   const { data: knownClasses = [] } = useKnownClasses();
@@ -618,10 +621,40 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
         <div {...stylex.props(uiStyles.stackLg)}>
         <SectionHero
           icon={<WuxiaIcon name="profile" className="w-5 h-5" />}
-          title="Личный кабинет"
-          subtitle="Твой профиль и управление учетками. Новые участники создаются неактивными и включаются админом."
+          title={language === 'ru' ? 'Личный кабинет' : language === 'zh' ? '个人中枢' : 'Profile hub'}
+          subtitle={language === 'ru' ? 'Твой профиль и управление учетками. Новые участники создаются неактивными и включаются админом.' : language === 'zh' ? '管理你的个人资料与账号状态。新成员默认处于未激活状态，由管理员启用。' : 'Manage your profile and account state. New members are created inactive and enabled by an admin.'}
           chips={['Account', 'Security', 'Admin Control']}
+          actions={
+            <div {...stylex.props(profileStyles.heroActionRow)}>
+              <Link href="/" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}>
+                <WuxiaIcon name="eye" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                {language === 'ru' ? 'Дашборд' : language === 'zh' ? '总览' : 'Dashboard'}
+              </Link>
+              <Link href="/news" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}>
+                <WuxiaIcon name="news" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                {language === 'ru' ? 'Новости' : language === 'zh' ? '公告' : 'News'}
+              </Link>
+            </div>
+          }
         />
+
+        <div {...stylex.props(profileStyles.overviewRail)}>
+          <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, profileStyles.overviewRailCard)}>
+            <span {...stylex.props(profileStyles.headingKicker)}>{language === 'ru' ? 'Статус' : language === 'zh' ? '状态' : 'Status'}</span>
+            <strong {...stylex.props(profileStyles.metricValue)}>{user.isActive ? 'active' : 'inactive'}</strong>
+            <span {...stylex.props(profileStyles.mutedText)}>{language === 'ru' ? 'Состояние аккаунта и роль теперь читаются как отдельный командный блок.' : language === 'zh' ? '账号状态与角色现在作为独立指挥模块显示。' : 'Account state and role now read as a dedicated command block.'}</span>
+          </article>
+          <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, profileStyles.overviewRailCard)}>
+            <span {...stylex.props(profileStyles.headingKicker)}>{language === 'ru' ? 'Роль' : language === 'zh' ? '身份' : 'Role'}</span>
+            <strong {...stylex.props(profileStyles.metricValue)}>{roleLabels[user.role]}</strong>
+            <span {...stylex.props(profileStyles.mutedText)}>{language === 'ru' ? 'Права доступа и административные действия остаются заметными без смешивания с личными настройками.' : language === 'zh' ? '权限与管理动作保持清晰可见，不再与个人设置混杂。' : 'Permissions and administrative actions stay visible without blending into personal settings.'}</span>
+          </article>
+          <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, profileStyles.overviewRailCard)}>
+            <span {...stylex.props(profileStyles.headingKicker)}>{language === 'ru' ? 'Боевой профиль' : language === 'zh' ? '战斗档案' : 'Combat profile'}</span>
+            <strong {...stylex.props(profileStyles.metricValue)}>{profileRegistration?.class || user.className || '—'}</strong>
+            <span {...stylex.props(profileStyles.mutedText)}>{language === 'ru' ? 'Класс, префикс и PvP-статус вынесены в быстрый обзор перед детальными настройками.' : language === 'zh' ? '职业、前缀和 PvP 状态先进入快速概览，再进入详细设置。' : 'Class, prefix, and PvP status now sit in a quick overview before the detailed settings.'}</span>
+          </article>
+        </div>
 
         <ProfileOverview profileRegistration={profileRegistration} user={user} />
 

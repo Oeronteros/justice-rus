@@ -23,7 +23,7 @@ vi.mock('@/lib/news/hooks', () => ({
 }));
 
 function renderWithI18n(node: ReactNode) {
-  return render(<I18nProvider>{node}</I18nProvider>);
+  return render(<I18nProvider defaultLanguage="en">{node}</I18nProvider>);
 }
 
 describe('NewsSection link rendering', () => {
@@ -126,7 +126,10 @@ describe('NewsSection link rendering', () => {
       'https://example.com/patch-notes'
     );
 
-    const inlineLinks = screen.getAllByRole('link').filter((link) => link.textContent !== 'Open in Discord');
+    const inlineLinks = screen.getAllByRole('link').filter((link) => {
+      const href = link.getAttribute('href') ?? '';
+      return href.startsWith('https://example.com') || href.startsWith('https://guild.example');
+    });
     expect(inlineLinks).toHaveLength(2);
   });
 

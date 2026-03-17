@@ -37,13 +37,14 @@ function pickNavItems(sections: readonly Section[]): NavItem[] {
     .filter((item): item is NavItem => Boolean(item));
 }
 
-export const desktopPrimarySections: readonly Section[] = ['about', 'news', 'registration', 'schedule', 'help', 'profile'];
-export const desktopSecondarySections: readonly Section[] = ['guides', 'absences', 'analytics', 'workflow', 'integrations', 'pvp', 'calculator'];
+export const desktopPrimarySections: readonly Section[] = ['about', 'news', 'schedule', 'help', 'profile'];
+export const desktopSecondarySections: readonly Section[] = ['registration', 'guides', 'absences', 'pvp', 'analytics', 'workflow', 'integrations', 'calculator'];
 export const mobilePrimarySections: readonly Section[] = ['about', 'news', 'schedule', 'help'];
-export const mobileSecondarySections: readonly Section[] = ['registration', 'profile', 'guides', 'absences', 'analytics', 'workflow', 'integrations', 'pvp', 'calculator'];
+export const mobileSecondarySections: readonly Section[] = ['registration', 'profile', 'guides', 'absences', 'pvp', 'analytics', 'workflow', 'integrations', 'calculator'];
 
 export const desktopNavGroups: readonly NavGroup[] = [
-  { key: 'guild', sections: ['registration', 'guides', 'absences', 'pvp'] },
+  { key: 'core', sections: ['registration'] },
+  { key: 'guild', sections: ['guides', 'absences', 'pvp'] },
   { key: 'command', sections: ['analytics', 'workflow', 'integrations'] },
   { key: 'tools', sections: ['calculator'] },
 ];

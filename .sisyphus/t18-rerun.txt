@@ -1,0 +1,17 @@
+
+> justice-ru@2.0.0 test:e2e
+> playwright test
+
+[2m[WebServer] [22m[BABEL] Note: The code generator has deoptimised the styling of D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\node_modules\next\dist\compiled\next-devtools\index.js as it exceeds the max of 500KB.
+[2m[WebServer] [22m[31m[1m⨯[22m[39m ./app/layout.tsx:3:1
+[2m[WebServer] [22m[31m[1mSyntax error[22m[39m: "next/font" requires SWC although Babel is being used due to a custom babel config being present.
+[2m[WebServer] [22mRead more: https://nextjs.org/docs/messages/babel-font-loader-conflict
+[2m[WebServer] [22m[31m[1m⨯[22m[39m ./app/layout.tsx:3:1
+[2m[WebServer] [22m[31m[1mSyntax error[22m[39m: "next/font" requires SWC although Babel is being used due to a custom babel config being present.
+[2m[WebServer] [22mRead more: https://nextjs.org/docs/messages/babel-font-loader-conflict
+[2m[WebServer] [22m[BABEL] Note: The code generator has deoptimised the styling of D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\node_modules\next\dist\compiled\next-devtools\index.js as it exceeds the max of 500KB.
+[2m[WebServer] [22m[31m[1m⨯[22m[39m ./app/layout.tsx:3:1
+[2m[WebServer] [22m[31m[1mSyntax error[22m[39m: "next/font" requires SWC although Babel is being used due to a custom babel config being present.
+[2m[WebServer] [22mRead more: https://nextjs.org/docs/messages/babel-font-loader-conflict
+Error: Timed out waiting 120000ms from config.webServer.
+

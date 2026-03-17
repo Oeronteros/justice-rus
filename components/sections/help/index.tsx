@@ -169,6 +169,19 @@ function HelpSectionContent({ user }: HelpSectionProps) {
             chips={['Support Board', 'Open / Closed', 'Officer Review']}
           />
 
+          <div {...stylex.props(opsStyles.statGrid2)}>
+            <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, opsStyles.statCard)}>
+              <div {...stylex.props(opsStyles.statLabel)}>{t.help.open}</div>
+              <div {...stylex.props(opsStyles.statValue)}>{requests.filter((req) => req.status === 'open').length}</div>
+              <div {...stylex.props(opsStyles.helperInline)}>{status === 'open' ? 'Текущий фильтр показывает активные запросы' : 'Активные запросы остаются главной очередью'}</div>
+            </article>
+            <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, opsStyles.statCard)}>
+              <div {...stylex.props(opsStyles.statLabel)}>{t.help.closed}</div>
+              <div {...stylex.props(opsStyles.statValue)}>{requests.filter((req) => req.status === 'closed').length}</div>
+              <div {...stylex.props(opsStyles.helperInline)}>{t.help.show} · {t.help.all}</div>
+            </article>
+          </div>
+
           <div {...stylex.props(opsStyles.splitGrid)}>
             <div {...stylex.props(opsStyles.sideCol, uiStyles.card, uiStyles.sectionCard, opsStyles.panel)}>
             <div {...stylex.props(opsStyles.iconTitleRow)}>
@@ -304,15 +317,12 @@ function HelpSectionContent({ user }: HelpSectionProps) {
                 layout="list"
               />
             ) : requests.length === 0 ? (
-              <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, opsStyles.emptyCard)}>
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-                  <div {...stylex.props(opsStyles.emptyIconSurface)}>
-                    <WuxiaIcon name="seal" className="w-8 h-8 text-[#8fb9cc]" />
-                  </div>
-                </div>
-                <div {...stylex.props(opsStyles.emptyTitle)}>{t.help.noRequestsTitle}</div>
-                <p {...stylex.props(opsStyles.emptyDescription)}>{t.help.noRequestsDescription}</p>
-              </div>
+              <EmptyState
+                icon={<WuxiaIcon name="seal" className="w-8 h-8 text-[#8fb9cc]" />}
+                title={t.help.noRequestsTitle}
+                description={t.help.noRequestsDescription}
+                badgeLabel={status === 'closed' ? t.help.closed : status === 'all' ? t.help.all : t.help.open}
+              />
             ) : (
               <div {...stylex.props(opsStyles.listStack)}>
                 {requests.map((req) => {

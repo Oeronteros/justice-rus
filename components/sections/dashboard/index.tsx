@@ -119,6 +119,31 @@ type ActivityEvent = {
   details?: string;
 };
 
+type DashboardRegionId = 'priority_summary' | 'dense_follow_up';
+type DashboardRegionPriority = 'above_fold' | 'below_fold';
+
+type DashboardRegionSpec = {
+  id: DashboardRegionId;
+  priority: DashboardRegionPriority;
+  label: string;
+  modules: readonly string[];
+};
+
+const DASHBOARD_REGION_MAP: readonly DashboardRegionSpec[] = [
+  {
+    id: 'priority_summary',
+    priority: 'above_fold',
+    label: 'Summary and action runway',
+    modules: ['hero', 'member_station', 'action_center', 'announcements', 'activity_feed'],
+  },
+  {
+    id: 'dense_follow_up',
+    priority: 'below_fold',
+    label: 'Dense monitoring and deep links',
+    modules: ['next_event', 'urgent_help', 'readiness', 'absence_radar', 'pvp_pulse', 'quick_routes'],
+  },
+];
+
 type DashboardCopy = {
   title: string;
   subtitle: string;
@@ -581,6 +606,42 @@ function formatTimeAgo(value: string, copy: DashboardCopy, language: Language): 
   return `${diffDays} ${copy.daysAgo}`;
 }
 
+function resolveScheduleHeadline(item: Schedule, language: Language): string {
+  if (language === 'zh') {
+    return item.titleZh || item.titleEn || item.titleRu || item.registration || item.type || '';
+  }
+
+  if (language === 'en') {
+    return item.titleEn || item.titleRu || item.titleZh || item.registration || item.type || '';
+  }
+
+  return item.titleRu || item.titleEn || item.titleZh || item.registration || item.type || '';
+}
+
+function resolveDashboardRegion(regionId: DashboardRegionId): DashboardRegionSpec {
+  return DASHBOARD_REGION_MAP.find((region) => region.id === regionId) ?? DASHBOARD_REGION_MAP[0];
+}
+
+function DashboardRegionShell({
+  region,
+  children,
+}: {
+  region: DashboardRegionSpec;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      aria-label={region.label}
+      data-dashboard-region={region.id}
+      data-region-priority={region.priority}
+      data-region-modules={region.modules.join(',')}
+      {...stylex.props(uiStyles.stackLg)}
+    >
+      {children}
+    </section>
+  );
+}
+
 function generateSyntheticActivity(
   help: { id: string; title: string; author: string; createdAt: string; responders: any[] }[],
   absences: Absence[],
@@ -688,10 +749,19 @@ function HeroActionLink({ href, label, tone = 'primary' }: { href: string; label
       href={href}
       {...stylex.props(
         uiStyles.buttonBase,
-        tone === 'primary' ? uiStyles.buttonPrimary : tone === 'secondary' ? uiStyles.buttonSecondary : uiStyles.buttonGhost,
-        dashboardStyles.heroActionButton
+        tone === 'primary' ? uiStyles.buttonPrimary : uiStyles.buttonSecondary,
+        dashboardStyles.heroActionButton,
+        tone === 'ghost' && dashboardStyles.heroActionButtonGhost
       )}
     >
+      {label}
+    </Link>
+  );
+}
+
+function DenseActionLink({ href, label }: { href: string; label: string }) {
+  return (
+    <Link href={href} {...stylex.props(dashboardStyles.denseActionLink)}>
       {label}
     </Link>
   );
@@ -700,6 +770,7 @@ function HeroActionLink({ href, label, tone = 'primary' }: { href: string; label
 function StatusCard({
   title,
   icon,
+  moduleId,
   actionHref,
   actionLabel,
   tone = 'steady',
@@ -708,6 +779,7 @@ function StatusCard({
 }: {
   title: string;
   icon: IconName;
+  moduleId?: string;
   actionHref: string;
   actionLabel: string;
   tone?: LiveTone;
@@ -715,7 +787,10 @@ function StatusCard({
   children: React.ReactNode;
 }) {
   return (
-    <article {...mergeStylexProps(stylex.props(uiStyles.card, uiStyles.sectionCard, dashboardStyles.statusCard, tone === 'alert' && dashboardStyles.statusCardAlert, tone === 'active' && dashboardStyles.statusCardActive, className === 'dashboard-status-card--feed' && dashboardStyles.statusCardFeed), className && className !== 'dashboard-status-card--feed' ? className : undefined)}>
+    <article
+      data-dashboard-module={moduleId}
+      {...mergeStylexProps(stylex.props(uiStyles.card, uiStyles.sectionCard, dashboardStyles.statusCard, tone === 'alert' && dashboardStyles.statusCardAlert, tone === 'active' && dashboardStyles.statusCardActive, className === 'dashboard-status-card--feed' && dashboardStyles.statusCardFeed), className && className !== 'dashboard-status-card--feed' ? className : undefined)}
+    >
       <div {...stylex.props(dashboardStyles.headerRow)}>
         <div {...stylex.props(dashboardStyles.titleWrap)}>
           <span {...stylex.props(dashboardStyles.titleIcon)}>
@@ -794,7 +869,7 @@ function DashboardHeroRegion({
 }) {
   return (
     <div {...stylex.props(dashboardStyles.heroGrid)}>
-      <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, dashboardStyles.commandCard)}>
+      <article data-dashboard-module="hero" {...stylex.props(uiStyles.card, uiStyles.sectionCard, dashboardStyles.commandCard)}>
         <div {...stylex.props(dashboardStyles.heroTopRow)}>
           <div {...stylex.props(dashboardStyles.heroLeadStack)}>
             <div {...stylex.props(dashboardStyles.headerRow)}>
@@ -848,7 +923,7 @@ function DashboardHeroRegion({
         </div>
       </article>
 
-      <aside {...stylex.props(uiStyles.card, uiStyles.sectionCard, dashboardStyles.stationCard)}>
+      <aside data-dashboard-module="member_station" {...stylex.props(uiStyles.card, uiStyles.sectionCard, dashboardStyles.stationCard)}>
         <div {...stylex.props(dashboardStyles.headerRow)}>
           <div>
             <div {...stylex.props(dashboardStyles.kicker)}>{copy.personalStation}</div>
@@ -937,7 +1012,7 @@ function DashboardPrimaryRegion({
 }) {
   return (
     <div {...stylex.props(dashboardStyles.primaryGrid)}>
-      <StatusCard title={copy.actionCenter} icon="seal" actionHref="/profile" actionLabel={copy.openProfile} tone={helpSnapshot.myResponses.length > 0 ? 'active' : 'steady'}>
+      <StatusCard title={copy.actionCenter} icon="seal" moduleId="action_center" actionHref="/profile" actionLabel={copy.openProfile} tone={helpSnapshot.myResponses.length > 0 ? 'active' : 'steady'}>
         <div {...stylex.props(dashboardStyles.stack)}>
           <p {...stylex.props(dashboardStyles.body)}>{copy.actionCenterBody}</p>
           {helpSnapshot.myResponses.length > 0 ? (
@@ -958,7 +1033,7 @@ function DashboardPrimaryRegion({
         </div>
       </StatusCard>
 
-      <StatusCard title={copy.announcements} icon="news" actionHref="/news" actionLabel={copy.openNews} tone={newsSnapshot.activeCount > 0 ? 'active' : 'steady'}>
+      <StatusCard title={copy.announcements} icon="news" moduleId="announcements" actionHref="/news" actionLabel={copy.openNews} tone={newsSnapshot.activeCount > 0 ? 'active' : 'steady'}>
         {newsLoading ? <MiniSkeleton /> : newsSnapshot.featured.length > 0 ? (
           <div {...stylex.props(dashboardStyles.stack)}>
             {newsSnapshot.featured.map((item, index) => (
@@ -974,7 +1049,7 @@ function DashboardPrimaryRegion({
         ) : <div {...stylex.props(dashboardStyles.body)}>{copy.announcementsEmpty}</div>}
       </StatusCard>
 
-      <StatusCard title={copy.activityFeed} icon="list" actionHref="/news" actionLabel={copy.openNews} tone="steady" className="dashboard-status-card--feed">
+      <StatusCard title={copy.activityFeed} icon="list" moduleId="activity_feed" actionHref="/news" actionLabel={copy.openNews} tone="steady" className="dashboard-status-card--feed">
         <div {...stylex.props(dashboardStyles.stack)}>
           <p {...stylex.props(dashboardStyles.body)}>{copy.activityFeedBody}</p>
           {activityFeed.length > 0 ? (
@@ -999,6 +1074,178 @@ function DashboardPrimaryRegion({
               ))}
             </div>
           ) : <div {...stylex.props(dashboardStyles.body)}>{copy.noActivity}</div>}
+        </div>
+      </StatusCard>
+    </div>
+  );
+}
+
+function formatScheduleBucket(value: string, copy: DashboardCopy): string {
+  const date = new Date(value);
+  const time = date.getTime();
+  if (!Number.isFinite(time)) {
+    return copy.soon;
+  }
+
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const startOfTarget = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+  const dayDelta = Math.round((startOfTarget - startOfToday) / 86400000);
+
+  if (dayDelta <= 0) return copy.today;
+  if (dayDelta === 1) return copy.tomorrow;
+  if (dayDelta <= 7) return copy.thisWeek;
+  return copy.soon;
+}
+
+function DashboardDenseRegion({
+  copy,
+  language,
+  schedule,
+  scheduleLoading,
+  helpSnapshot,
+  rosterSnapshot,
+  absenceSnapshot,
+  pvpSnapshot,
+}: {
+  copy: DashboardCopy;
+  language: Language;
+  schedule: Schedule[];
+  scheduleLoading: boolean;
+  helpSnapshot: { urgent: Array<{ id: string; title: string; gatheringStart: string; responders: Array<{ nickname?: string | null }> }>; unattended: number; total: number };
+  rosterSnapshot: { total: number; active: number; readyCore: number; avgKpi: string; readinessPercent: number };
+  absenceSnapshot: { pending: Absence[]; approvedNow: Absence[] };
+  pvpSnapshot: { queueSize: number; activeMatch: PvpState['activeMatch']; disputed: boolean; userInQueue: boolean; topPlayer: { nickname: string; rating: number } | null };
+}) {
+  const nextEvent = useMemo(() => {
+    const upcoming = [...schedule]
+      .filter((item) => Number.isFinite(new Date(item.date).getTime()))
+      .sort((left, right) => new Date(left.date).getTime() - new Date(right.date).getTime());
+    return upcoming[0] ?? null;
+  }, [schedule]);
+
+  return (
+    <div {...stylex.props(dashboardStyles.primaryGrid)}>
+      <StatusCard title={copy.nextEvent} icon="calendar" moduleId="next_event" actionHref="/schedule" actionLabel={copy.openSchedule} tone={nextEvent ? 'active' : 'steady'}>
+        {scheduleLoading ? <MiniSkeleton /> : nextEvent ? (
+          <div {...stylex.props(dashboardStyles.stack)}>
+            <div {...stylex.props(dashboardStyles.listItem)}>
+              <div>
+                <div {...stylex.props(dashboardStyles.emphasis)}>{resolveScheduleHeadline(nextEvent, language)}</div>
+                <div {...stylex.props(dashboardStyles.metaText)}>{formatTimeAgo(nextEvent.date, copy, language)}</div>
+              </div>
+              <SignalBadge tone="active">{formatScheduleBucket(nextEvent.date, copy)}</SignalBadge>
+            </div>
+            <div {...stylex.props(dashboardStyles.denseActionRow)}>
+              <DenseActionLink href="/schedule" label={copy.openSchedule} />
+              <DenseActionLink href="/profile" label={copy.openProfile} />
+            </div>
+          </div>
+        ) : <div {...stylex.props(dashboardStyles.body)}>{copy.nextEventEmpty}</div>}
+      </StatusCard>
+
+      <StatusCard title={copy.urgentHelp} icon="help" moduleId="urgent_help" actionHref="/help" actionLabel={copy.openHelp} tone={helpSnapshot.unattended > 0 ? 'alert' : 'steady'}>
+        {helpSnapshot.urgent.length > 0 ? (
+          <div {...stylex.props(dashboardStyles.stack)}>
+            {helpSnapshot.urgent.map((request) => (
+              <div key={request.id} {...stylex.props(dashboardStyles.listItem)}>
+                <div>
+                  <div {...stylex.props(dashboardStyles.emphasis)}>{request.title}</div>
+                  <div {...stylex.props(dashboardStyles.metaText)}>{formatTimeAgo(request.gatheringStart, copy, language)}</div>
+                </div>
+                <SignalBadge tone={request.responders.length === 0 ? 'alert' : request.responders.length === 1 ? 'active' : 'steady'}>
+                  {request.responders.length === 0
+                    ? copy.noResponder
+                    : request.responders.length === 1
+                      ? copy.responderOne
+                      : `${request.responders.length} ${copy.responderMany}`}
+                </SignalBadge>
+              </div>
+            ))}
+            <div {...stylex.props(dashboardStyles.denseActionRow)}>
+              <DenseActionLink href="/help" label={copy.openHelp} />
+              <DenseActionLink href="/profile" label={copy.openProfile} />
+            </div>
+          </div>
+        ) : <div {...stylex.props(dashboardStyles.body)}>{copy.urgentHelpEmpty}</div>}
+      </StatusCard>
+
+      <StatusCard title={copy.readiness} icon="usersSlash" moduleId="readiness" actionHref="/members" actionLabel={copy.openMembers} tone={rosterSnapshot.readinessPercent >= 60 ? 'active' : 'alert'}>
+        {rosterSnapshot.total > 0 ? (
+          <div {...stylex.props(dashboardStyles.stack)}>
+            <div {...stylex.props(dashboardStyles.metricGrid)}>
+              <MetricTile label={copy.totalMembers} value={rosterSnapshot.total} tone="steady" hint={copy.activeMembers} />
+              <MetricTile label={copy.activeMembers} value={rosterSnapshot.active} tone={rosterSnapshot.active > 0 ? 'active' : 'steady'} hint={`${rosterSnapshot.readinessPercent}% ${copy.stable.toLowerCase()}`} />
+              <MetricTile label={copy.readyCore} value={rosterSnapshot.readyCore} tone={rosterSnapshot.readyCore > 0 ? 'active' : 'steady'} hint={copy.quickRoutesBody} />
+              <MetricTile label={copy.avgKpi} value={rosterSnapshot.avgKpi} tone="steady" hint={copy.liveSnapshot} />
+            </div>
+            <div {...stylex.props(dashboardStyles.denseActionRow)}>
+              <DenseActionLink href="/members" label={copy.openMembers} />
+              <DenseActionLink href="/guides" label={copy.openGuides} />
+            </div>
+          </div>
+        ) : <div {...stylex.props(dashboardStyles.body)}>{copy.readinessEmpty}</div>}
+      </StatusCard>
+
+      <StatusCard title={copy.absences} icon="calendarX" moduleId="absence_radar" actionHref="/absences" actionLabel={copy.openAbsences} tone={absenceSnapshot.pending.length > 0 ? 'alert' : 'steady'}>
+        {absenceSnapshot.pending.length > 0 ? (
+          <div {...stylex.props(dashboardStyles.stack)}>
+            {absenceSnapshot.pending.slice(0, 3).map((absence) => (
+              <div key={absence.id} {...stylex.props(dashboardStyles.listItem)}>
+                <div>
+                  <div {...stylex.props(dashboardStyles.emphasis)}>{absence.member}</div>
+                  <div {...stylex.props(dashboardStyles.metaText)}>{absence.reason || copy.pendingAbsencesLabel}</div>
+                </div>
+                <SignalBadge tone="alert">{copy.pendingApprovals}</SignalBadge>
+              </div>
+            ))}
+            <div {...stylex.props(dashboardStyles.denseActionRow)}>
+              <DenseActionLink href="/absences" label={copy.openAbsences} />
+              <DenseActionLink href="/profile" label={copy.openProfile} />
+            </div>
+          </div>
+        ) : (
+          <div {...stylex.props(dashboardStyles.stack)}>
+            <div {...stylex.props(dashboardStyles.body)}>{copy.absencesEmpty}</div>
+            {absenceSnapshot.approvedNow.length > 0 ? <div {...stylex.props(dashboardStyles.metaText)}>{absenceSnapshot.approvedNow.length} {copy.activeMembers.toLowerCase()}</div> : null}
+          </div>
+        )}
+      </StatusCard>
+
+      <StatusCard title={copy.pvpPulse} icon="sword" moduleId="pvp_pulse" actionHref="/pvp" actionLabel={copy.openPvp} tone={pvpSnapshot.disputed ? 'alert' : pvpSnapshot.queueSize > 0 ? 'active' : 'steady'}>
+        <div {...stylex.props(dashboardStyles.stack)}>
+          <div {...stylex.props(dashboardStyles.listItem)}>
+            <div>
+              <div {...stylex.props(dashboardStyles.emphasis)}>{copy.activeQueue}</div>
+              <div {...stylex.props(dashboardStyles.metaText)}>{pvpSnapshot.queueSize > 0 ? `${pvpSnapshot.queueSize}` : copy.noQueue}</div>
+            </div>
+            <SignalBadge tone={pvpSnapshot.queueSize > 0 ? 'active' : 'steady'}>{pvpSnapshot.userInQueue ? copy.live : copy.stable}</SignalBadge>
+          </div>
+          <div {...stylex.props(dashboardStyles.listItem)}>
+            <div>
+              <div {...stylex.props(dashboardStyles.emphasis)}>{copy.liveMatch}</div>
+              <div {...stylex.props(dashboardStyles.metaText)}>{pvpSnapshot.activeMatch ? `${pvpSnapshot.activeMatch.playerOne.nickname} vs ${pvpSnapshot.activeMatch.playerTwo.nickname}` : copy.noLiveMatch}</div>
+            </div>
+            <SignalBadge tone={pvpSnapshot.disputed ? 'alert' : pvpSnapshot.activeMatch ? 'active' : 'steady'}>{pvpSnapshot.disputed ? copy.contestedMatch : copy.now}</SignalBadge>
+          </div>
+          <div {...stylex.props(dashboardStyles.denseActionRow)}>
+            <DenseActionLink href="/pvp" label={copy.openPvp} />
+            <DenseActionLink href="/news" label={copy.openNews} />
+          </div>
+        </div>
+      </StatusCard>
+
+      <StatusCard title={copy.quickRoutes} icon="link" moduleId="quick_routes" actionHref="/profile" actionLabel={copy.openProfile} tone="active">
+        <div {...stylex.props(dashboardStyles.stack)}>
+          <p {...stylex.props(dashboardStyles.body)}>{copy.quickRoutesBody}</p>
+          <div {...stylex.props(dashboardStyles.quickRouteGrid)}>
+            <DenseActionLink href="/schedule" label={copy.openSchedule} />
+            <DenseActionLink href="/help" label={copy.openHelp} />
+            <DenseActionLink href="/news" label={copy.openNews} />
+            <DenseActionLink href="/guides" label={copy.openGuides} />
+            <DenseActionLink href="/pvp" label={copy.openPvp} />
+            <DenseActionLink href="/absences" label={copy.openAbsences} />
+          </div>
         </div>
       </StatusCard>
     </div>
@@ -1121,29 +1368,44 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
             </>
           } />
 
-          <DashboardHeroRegion
-            copy={copy}
-            liveTone={liveTone}
-            liveLabel={liveLabel}
-            rosterSnapshot={rosterSnapshot}
-            helpSnapshot={helpSnapshot}
-            absenceSnapshot={absenceSnapshot}
-            newsSnapshot={newsSnapshot}
-            user={user}
-            language={language}
-            pvpSnapshot={pvpSnapshot}
-            isOfficer={isOfficer}
-            officerSignals={officerSignals}
-          />
+          <DashboardRegionShell region={resolveDashboardRegion('priority_summary')}>
+            <DashboardHeroRegion
+              copy={copy}
+              liveTone={liveTone}
+              liveLabel={liveLabel}
+              rosterSnapshot={rosterSnapshot}
+              helpSnapshot={helpSnapshot}
+              absenceSnapshot={absenceSnapshot}
+              newsSnapshot={newsSnapshot}
+              user={user}
+              language={language}
+              pvpSnapshot={pvpSnapshot}
+              isOfficer={isOfficer}
+              officerSignals={officerSignals}
+            />
 
-          <DashboardPrimaryRegion
-            copy={copy}
-            helpSnapshot={helpSnapshot}
-            newsSnapshot={newsSnapshot}
-            newsLoading={newsLoading}
-            activityFeed={activityFeed}
-            language={language}
-          />
+            <DashboardPrimaryRegion
+              copy={copy}
+              helpSnapshot={helpSnapshot}
+              newsSnapshot={newsSnapshot}
+              newsLoading={newsLoading}
+              activityFeed={activityFeed}
+              language={language}
+            />
+          </DashboardRegionShell>
+
+          <DashboardRegionShell region={resolveDashboardRegion('dense_follow_up')}>
+            <DashboardDenseRegion
+              copy={copy}
+              language={language}
+              schedule={schedule}
+              scheduleLoading={scheduleLoading}
+              helpSnapshot={helpSnapshot}
+              rosterSnapshot={rosterSnapshot}
+              absenceSnapshot={absenceSnapshot}
+              pvpSnapshot={pvpSnapshot}
+            />
+          </DashboardRegionShell>
         </div>
       </div>
     </section>

@@ -1,0 +1,873 @@
+
+Running 12 tests using 1 worker
+
+  ok  1 [vinext-chromium] › e2e\vinext-pilot-a11y.spec.ts:56:3 › vinext pilot accessibility smoke › PinScreen on /news has no serious accessibility violations (16.3s)
+  x   2 [vinext-chromium] › e2e\vinext-pilot-a11y.spec.ts:63:3 › vinext pilot accessibility smoke › logged-in /news has no serious accessibility violations (1.1m)
+  ok  3 [vinext-chromium] › e2e\vinext-pilot.spec.ts:145:3 › vinext pilot smoke › shows PinScreen on /news when session is missing (2.9s)
+  x   4 [vinext-chromium] › e2e\vinext-pilot.spec.ts:153:3 › vinext pilot smoke › logs in on /news and renders protected content (1.1m)
+  x   5 [vinext-chromium] › e2e\vinext-pilot.spec.ts:172:3 › vinext pilot smoke › logs out from vinext /news back to PinScreen (1.1m)
+  x   6 [vinext-chromium] › e2e\vinext-pilot.spec.ts:199:3 › vinext pilot smoke › shows officer moderation action on vinext /help (1.0m)
+  x   7 [vinext-chromium] › e2e\vinext-pilot.spec.ts:216:3 › vinext pilot smoke › renders authenticated vinext /guides view (1.0m)
+  x   8 [vinext-chromium] › e2e\vinext-pilot.spec.ts:232:3 › vinext pilot smoke › renders authenticated vinext /absences view (1.1m)
+  x   9 [vinext-chromium] › e2e\vinext-pilot.spec.ts:248:3 › vinext pilot smoke › renders authenticated vinext /pvp view (1.0m)
+  x  10 [vinext-chromium] › e2e\vinext-pilot.spec.ts:264:3 › vinext pilot smoke › renders authenticated vinext /schedule view (1.0m)
+  x  11 [vinext-chromium] › e2e\vinext-pilot.spec.ts:280:3 › vinext pilot smoke › renders authenticated vinext /calendar empty-state shell (1.0m)
+  -  12 [vinext-chromium] › e2e\vinext-pilot.spec.ts:303:8 › vinext pilot smoke › supports keyboard-first auth interactions on vinext pilot route
+[2m[WebServer] [22mRoute /news is rendering with server caches disabled. For this navigation, Component Metadata in React DevTools will not accurately reflect what is statically prerenderable and runtime prefetchable. See more info here: https://nextjs.org/docs/messages/cache-bypass-in-dev
+[2m[WebServer] [22mRoute /help is rendering with server caches disabled. For this navigation, Component Metadata in React DevTools will not accurately reflect what is statically prerenderable and runtime prefetchable. See more info here: https://nextjs.org/docs/messages/cache-bypass-in-dev
+[2m[WebServer] [22mRoute / is rendering with server caches disabled. For this navigation, Component Metadata in React DevTools will not accurately reflect what is statically prerenderable and runtime prefetchable. See more info here: https://nextjs.org/docs/messages/cache-bypass-in-dev
+[2m[WebServer] [22mRoute /profile is rendering with server caches disabled. For this navigation, Component Metadata in React DevTools will not accurately reflect what is statically prerenderable and runtime prefetchable. See more info here: https://nextjs.org/docs/messages/cache-bypass-in-dev
+[2m[WebServer] [22mRoute /pvp is rendering with server caches disabled. For this navigation, Component Metadata in React DevTools will not accurately reflect what is statically prerenderable and runtime prefetchable. See more info here: https://nextjs.org/docs/messages/cache-bypass-in-dev
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.next\dev\server\app\(portal)\page\build-manifest.json'
+[2m[WebServer] [22m    at [3mignore-listed frames[23m {
+[2m[WebServer] [22m  errno: [33m-4058[39m,
+[2m[WebServer] [22m  code: [32m'ENOENT'[39m,
+[2m[WebServer] [22m  syscall: [32m'open'[39m,
+[2m[WebServer] [22m  path: [32m'D:\\Desktop\\justice-ru-silent-moonfall-core-portal-redesign\\.next\\dev\\server\\app\\(portal)\\page\\build-manifest.json'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m
+[2m[WebServer] [22mthread 'tokio-runtime-worker' (8428) panicked at C:\actions-runner\_work\next.js\next.js\turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:156:17:
+[2m[WebServer] [22mFailed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m    0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m    1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m    2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m    3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22mnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-a7ef11beaf913773211912ad2a51e3cc.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20page%20endpoint%20%2F_app&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20page%20endpoint%20%2F_app%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22mError: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.next\dev\server\app\(portal)\page\build-manifest.json'
+[2m[WebServer] [22m    at [3mignore-listed frames[23m {
+[2m[WebServer] [22m  errno: [33m-4058[39m,
+[2m[WebServer] [22m  code: [32m'ENOENT'[39m,
+[2m[WebServer] [22m  syscall: [32m'open'[39m,
+[2m[WebServer] [22m  path: [32m'D:\\Desktop\\justice-ru-silent-moonfall-core-portal-redesign\\.next\\dev\\server\\app\\(portal)\\page\\build-manifest.json'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22mError [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.next\dev\server\app\(portal)\page\build-manifest.json'
+[2m[WebServer] [22m    at [3mignore-listed frames[23m {
+[2m[WebServer] [22m  errno: [33m-4058[39m,
+[2m[WebServer] [22m  code: [32m'ENOENT'[39m,
+[2m[WebServer] [22m  syscall: [32m'open'[39m,
+[2m[WebServer] [22m  path: [32m'D:\\Desktop\\justice-ru-silent-moonfall-core-portal-redesign\\.next\\dev\\server\\app\\(portal)\\page\\build-manifest.json'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22mError: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.next\dev\server\app\(portal)\page\build-manifest.json'
+[2m[WebServer] [22m    at [3mignore-listed frames[23m {
+[2m[WebServer] [22m  errno: [33m-4058[39m,
+[2m[WebServer] [22m  code: [32m'ENOENT'[39m,
+[2m[WebServer] [22m  syscall: [32m'open'[39m,
+[2m[WebServer] [22m  path: [32m'D:\\Desktop\\justice-ru-silent-moonfall-core-portal-redesign\\.next\\dev\\server\\app\\(portal)\\page\\build-manifest.json'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22mError [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.next\dev\server\app\(portal)\page\build-manifest.json'
+[2m[WebServer] [22m    at [3mignore-listed frames[23m {
+[2m[WebServer] [22m  errno: [33m-4058[39m,
+[2m[WebServer] [22m  code: [32m'ENOENT'[39m,
+[2m[WebServer] [22m  syscall: [32m'open'[39m,
+[2m[WebServer] [22m  path: [32m'D:\\Desktop\\justice-ru-silent-moonfall-core-portal-redesign\\.next\\dev\\server\\app\\(portal)\\page\\build-manifest.json'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22mError: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.next\dev\server\app\(portal)\page\build-manifest.json'
+[2m[WebServer] [22m    at [3mignore-listed frames[23m {
+[2m[WebServer] [22m  errno: [33m-4058[39m,
+[2m[WebServer] [22m  code: [32m'ENOENT'[39m,
+[2m[WebServer] [22m  syscall: [32m'open'[39m,
+[2m[WebServer] [22m  path: [32m'D:\\Desktop\\justice-ru-silent-moonfall-core-portal-redesign\\.next\\dev\\server\\app\\(portal)\\page\\build-manifest.json'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22mError [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.next\dev\server\app\(portal)\page\build-manifest.json'
+[2m[WebServer] [22m    at [3mignore-listed frames[23m {
+[2m[WebServer] [22m  errno: [33m-4058[39m,
+[2m[WebServer] [22m  code: [32m'ENOENT'[39m,
+[2m[WebServer] [22m  syscall: [32m'open'[39m,
+[2m[WebServer] [22m  path: [32m'D:\\Desktop\\justice-ru-silent-moonfall-core-portal-redesign\\.next\\dev\\server\\app\\(portal)\\page\\build-manifest.json'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-a7ef11beaf913773211912ad2a51e3cc.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20page%20endpoint%20%2F_app&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20page%20endpoint%20%2F_app%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22mError: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.next\dev\server\app\(portal)\page\build-manifest.json'
+[2m[WebServer] [22m    at [3mignore-listed frames[23m {
+[2m[WebServer] [22m  errno: [33m-4058[39m,
+[2m[WebServer] [22m  code: [32m'ENOENT'[39m,
+[2m[WebServer] [22m  syscall: [32m'open'[39m,
+[2m[WebServer] [22m  path: [32m'D:\\Desktop\\justice-ru-silent-moonfall-core-portal-redesign\\.next\\dev\\server\\app\\(portal)\\page\\build-manifest.json'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22mError [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.next\dev\server\app\(portal)\page\build-manifest.json'
+[2m[WebServer] [22m    at [3mignore-listed frames[23m {
+[2m[WebServer] [22m  errno: [33m-4058[39m,
+[2m[WebServer] [22m  code: [32m'ENOENT'[39m,
+[2m[WebServer] [22m  syscall: [32m'open'[39m,
+[2m[WebServer] [22m  path: [32m'D:\\Desktop\\justice-ru-silent-moonfall-core-portal-redesign\\.next\\dev\\server\\app\\(portal)\\page\\build-manifest.json'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22mError: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.next\dev\server\app\(portal)\page\build-manifest.json'
+[2m[WebServer] [22m    at [3mignore-listed frames[23m {
+[2m[WebServer] [22m  errno: [33m-4058[39m,
+[2m[WebServer] [22m  code: [32m'ENOENT'[39m,
+[2m[WebServer] [22m  syscall: [32m'open'[39m,
+[2m[WebServer] [22m  path: [32m'D:\\Desktop\\justice-ru-silent-moonfall-core-portal-redesign\\.next\\dev\\server\\app\\(portal)\\page\\build-manifest.json'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22mError [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.next\dev\server\app\(portal)\page\build-manifest.json'
+[2m[WebServer] [22m    at [3mignore-listed frames[23m {
+[2m[WebServer] [22m  errno: [33m-4058[39m,
+[2m[WebServer] [22m  code: [32m'ENOENT'[39m,
+[2m[WebServer] [22m  syscall: [32m'open'[39m,
+[2m[WebServer] [22m  path: [32m'D:\\Desktop\\justice-ru-silent-moonfall-core-portal-redesign\\.next\\dev\\server\\app\\(portal)\\page\\build-manifest.json'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-a7ef11beaf913773211912ad2a51e3cc.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20page%20endpoint%20%2F_app&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20page%20endpoint%20%2F_app%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22mError: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.next\dev\server\app\(portal)\page\build-manifest.json'
+[2m[WebServer] [22m    at [3mignore-listed frames[23m {
+[2m[WebServer] [22m  errno: [33m-4058[39m,
+[2m[WebServer] [22m  code: [32m'ENOENT'[39m,
+[2m[WebServer] [22m  syscall: [32m'open'[39m,
+[2m[WebServer] [22m  path: [32m'D:\\Desktop\\justice-ru-silent-moonfall-core-portal-redesign\\.next\\dev\\server\\app\\(portal)\\page\\build-manifest.json'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22mError [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.next\dev\server\app\(portal)\page\build-manifest.json'
+[2m[WebServer] [22m    at [3mignore-listed frames[23m {
+[2m[WebServer] [22m  errno: [33m-4058[39m,
+[2m[WebServer] [22m  code: [32m'ENOENT'[39m,
+[2m[WebServer] [22m  syscall: [32m'open'[39m,
+[2m[WebServer] [22m  path: [32m'D:\\Desktop\\justice-ru-silent-moonfall-core-portal-redesign\\.next\\dev\\server\\app\\(portal)\\page\\build-manifest.json'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Ie\AppData\Local\Temp\next-panic-a7ef11beaf913773211912ad2a51e3cc.log.
+[2m[WebServer] [22m
+[2m[WebServer] [22mTo help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20page%20endpoint%20%2F_app&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20page%20endpoint%20%2F_app%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[2m[WebServer] [22m-----
+[2m[WebServer] [22m
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22mError: ENOENT: no such file or directory, open 'D:\Desktop\justice-ru-silent-moonfall-core-portal-redesign\.next\dev\server\app\(portal)\page\build-manifest.json'
+[2m[WebServer] [22m    at [3mignore-listed frames[23m {
+[2m[WebServer] [22m  errno: [33m-4058[39m,
+[2m[WebServer] [22m  code: [32m'ENOENT'[39m,
+[2m[WebServer] [22m  syscall: [32m'open'[39m,
+[2m[WebServer] [22m  path: [32m'D:\\Desktop\\justice-ru-silent-moonfall-core-portal-redesign\\.next\\dev\\server\\app\\(portal)\\page\\build-manifest.json'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[31m[1m⨯[22m[39m Error [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22mError [TurbopackInternalError]: Failed to write page endpoint /_app
+[2m[WebServer] [22m
+[2m[WebServer] [22mCaused by:
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m
+[2m[WebServer] [22mDebug info:
+[2m[WebServer] [22m- Execution of get_written_endpoint_with_issues_operation failed
+[2m[WebServer] [22m- Execution of endpoint_write_to_disk failed
+[2m[WebServer] [22m- Execution of <PageEndpoint as Endpoint>::output failed
+[2m[WebServer] [22m- Failed to write page endpoint /_app
+[2m[WebServer] [22m- Execution of PageEndpoint::output failed
+[2m[WebServer] [22m- Execution of *ChunkGroupResult::all_assets failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_chunk_group failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_evaluatable_assets failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of PageEndpoint::client_module failed
+[2m[WebServer] [22m- content is not available as task execution failed
+[2m[WebServer] [22m- Execution of *create_page_loader_entry_module failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_context failed
+[2m[WebServer] [22m- Execution of *ModuleAssetContext::new failed
+[2m[WebServer] [22m- Execution of PagesProject::client_module_options_context failed
+[2m[WebServer] [22m- Execution of PagesProject::pages_dir failed
+[2m[WebServer] [22m- Failed to restore task data (corrupted database or bug): Meta for find_pages_structure (TaskId 473))
+[2m[WebServer] [22m  
+[2m[WebServer] [22m  Caused by:
+[2m[WebServer] [22m      0: Looking up data for TaskId 473 from database failed
+[2m[WebServer] [22m      1: Unable to open static sorted file referenced from 00001243.meta
+[2m[WebServer] [22m      2: Unable to open static sorted file 00001240.sst
+[2m[WebServer] [22m      3: Системе не удается найти указанный путь. (os error 3)
+[2m[WebServer] [22m    at <unknown> (TurbopackInternalError: Failed to write page endpoint /_app) {
+[2m[WebServer] [22m  location: [32m'C:\\actions-runner\\_work\\next.js\\next.js\\turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:156:17'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[2m15:18:49[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[vinext] RSC navigation error: Error: Connection closed.
+[2m[WebServer] [22m    at close (http://127.0.0.1:3101/node_modules/.vite/deps/@vitejs_plugin-rsc_vendor_react-server-dom_client__browser.js?v=be143e0b:2364:36)
+[2m[WebServer] [22m    at progress (http://127.0.0.1:3101/node_modules/.vite/deps/@vitejs_plugin-rsc_vendor_react-server-dom_client__browser.js?v=be143e0b:2437:28)

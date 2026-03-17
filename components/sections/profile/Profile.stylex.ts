@@ -17,6 +17,28 @@ export const profileStyles = stylex.create({
     fontSize: '0.875rem',
     lineHeight: 1.6,
   },
+  heroActionRow: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '12px',
+    justifyContent: {
+      default: 'flex-start',
+      '@media (min-width: 768px)': 'flex-end',
+    },
+  },
+  overviewRail: {
+    display: 'grid',
+    gap: '14px',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 768px)': 'repeat(3, minmax(0, 1fr))',
+    },
+  },
+  overviewRailCard: {
+    display: 'grid',
+    gap: '8px',
+    padding: '18px 20px',
+  },
   overviewGrid: {
     display: 'grid',
     gridTemplateColumns: {

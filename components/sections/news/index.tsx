@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Fragment, useMemo, useState, type ReactNode } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { LoadingState } from '@/components/shared/LoadingState';
@@ -10,6 +11,7 @@ import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/lib/schemas/auth';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { useTranslation } from '@/lib/i18n/context';
+import { sectionLabels } from '@/lib/i18n';
 import { hasRoleAtLeast } from '@/lib/authz';
 import { handleApiError } from '@/lib/api/errors';
 import * as stylex from '@stylexjs/stylex';
@@ -269,7 +271,7 @@ function DeliveryBadge({ status }: { status?: 'pending' | 'sent' | 'failed' }) {
 }
 
 function NewsSectionContent({ user }: NewsSectionProps) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { data: news = [], isLoading, error, refetch } = useNews();
   const createNewsMutation = useCreateNews();
   const deleteNewsMutation = useDeleteNews();
@@ -378,15 +380,45 @@ function NewsSectionContent({ user }: NewsSectionProps) {
             title={t.news.title}
             subtitle={t.news.subtitle}
             chips={['Announcements', 'Raid Plans', 'Updates']}
+            actions={
+              <div {...stylex.props(newsStyles.heroActionRow)}>
+                <button type="button" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)} onClick={() => refetch()}>
+                  <WuxiaIcon name="redo" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                  {t.common.refresh}
+                </button>
+                <Link href="/guides" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}>
+                  <WuxiaIcon name="guides" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                  {sectionLabels[language].guides}
+                </Link>
+              </div>
+            }
           />
+
+        <div {...stylex.props(newsStyles.overviewRail)}>
+          <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, newsStyles.overviewCard)}>
+            <span {...stylex.props(newsStyles.kicker)}>{language === 'ru' ? 'Редакционный ритм' : language === 'zh' ? '内容脉冲' : 'Editorial pulse'}</span>
+            <strong {...stylex.props(newsStyles.overviewValue)}>{news.length}</strong>
+            <span {...stylex.props(newsStyles.overviewLabel)}>{language === 'ru' ? 'Опубликованные материалы' : language === 'zh' ? '已发布条目' : 'Published entries'}</span>
+          </article>
+          <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, newsStyles.overviewCard)}>
+            <span {...stylex.props(newsStyles.kicker)}>{language === 'ru' ? 'Фокус редакции' : language === 'zh' ? '精选焦点' : 'Featured desk'}</span>
+            <strong {...stylex.props(newsStyles.overviewValue)}>{featured ? 1 : 0}</strong>
+            <span {...stylex.props(newsStyles.overviewLabel)}>{featured ? (language === 'ru' ? 'Закрепленный акцент активен' : language === 'zh' ? '精选焦点已激活' : 'Pinned spotlight active') : (language === 'ru' ? 'Закрепленная новость не выбрана' : language === 'zh' ? '暂无置顶精选' : 'No featured item pinned')}</span>
+          </article>
+          <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, newsStyles.overviewCard)}>
+            <span {...stylex.props(newsStyles.kicker)}>{language === 'ru' ? 'Синхрон с Discord' : language === 'zh' ? 'Discord 同步' : 'Discord sync'}</span>
+            <strong {...stylex.props(newsStyles.overviewValue)}>{news.filter((item) => item.messageUrl).length}</strong>
+            <span {...stylex.props(newsStyles.overviewLabel)}>{language === 'ru' ? 'Материалы со ссылкой на Discord' : language === 'zh' ? '已回链到 Discord 的条目' : 'Entries linked back to Discord'}</span>
+          </article>
+        </div>
 
         {canPublish ? (
           <div {...stylex.props(newsStyles.sectionGrid)}>
             <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, newsStyles.composerCard)}>
               <div {...stylex.props(newsStyles.headerRow)}>
                 <div>
-                  <div {...stylex.props(newsStyles.kicker)}>News console</div>
-                  <h3 {...stylex.props(newsStyles.panelTitleLg)}>Публикация в портал и Discord</h3>
+                  <div {...stylex.props(newsStyles.kicker)}>{language === 'ru' ? 'Новостной пульт' : language === 'zh' ? '公告控制台' : 'News console'}</div>
+                  <h3 {...stylex.props(newsStyles.panelTitleLg)}>{language === 'ru' ? 'Публикация в портал и Discord' : language === 'zh' ? '同步发布到门户与 Discord' : 'Publish to portal and Discord'}</h3>
                 </div>
                 <DeliveryBadge status={createNewsMutation.isPending ? 'pending' : undefined} />
               </div>
@@ -420,7 +452,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                     onChange={(event) => setDraftPinned(event.target.checked)}
                     {...stylex.props(newsStyles.checkbox)}
                   />
-                  Закрепить как featured-новость
+                  {language === 'ru' ? 'Закрепить как featured-новость' : language === 'zh' ? '设为精选置顶' : 'Pin as featured news'}
                 </label>
 
                 {composerNotice ? (
@@ -436,34 +468,34 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                     onClick={submitNews}
                     disabled={createNewsMutation.isPending}
                   >
-                    {createNewsMutation.isPending ? 'Публикуем...' : 'Опубликовать новость'}
+                    {createNewsMutation.isPending ? (language === 'ru' ? 'Публикуем...' : language === 'zh' ? '发布中...' : 'Publishing...') : (language === 'ru' ? 'Опубликовать новость' : language === 'zh' ? '发布公告' : 'Publish news')}
                   </button>
-                  <span {...stylex.props(newsStyles.actionHint)}>Публикация создает запись на сайте и сразу отправляет сообщение через бота.</span>
+                  <span {...stylex.props(newsStyles.actionHint)}>{language === 'ru' ? 'Публикация создает запись на сайте и сразу отправляет сообщение через бота.' : language === 'zh' ? '发布会同步生成站内记录，并立即通过机器人发送到 Discord。' : 'Publishing creates a site entry and immediately sends it through the bot.'}</span>
                 </div>
               </div>
             </article>
 
             <article {...stylex.props(uiStyles.card, uiStyles.sectionCard, newsStyles.composerCard)}>
               <div {...stylex.props(newsStyles.kicker)}>Discord preview</div>
-              <h3 {...stylex.props(newsStyles.panelTitleMd)}>Как это будет выглядеть</h3>
+              <h3 {...stylex.props(newsStyles.panelTitleMd)}>{language === 'ru' ? 'Как это будет выглядеть' : language === 'zh' ? '发布后的呈现方式' : 'How it will look'}</h3>
 
               {composerPreview ? (
                 <div {...stylex.props(newsStyles.previewShell)}>
                   <div {...stylex.props(newsStyles.previewTopRow)}>
                     <DeliveryBadge status="sent" />
-                    {draftPinned ? <span {...stylex.props(newsStyles.pinnedPill)}>Pinned</span> : null}
+                    {draftPinned ? <span {...stylex.props(newsStyles.pinnedPill)}>{language === 'ru' ? 'Закреплено' : language === 'zh' ? '置顶' : 'Pinned'}</span> : null}
                   </div>
                   <div {...stylex.props(newsStyles.previewInner)}>
                     <h4 {...stylex.props(newsStyles.previewTitle)}>{composerPreview.title}</h4>
                     <p {...stylex.props(newsStyles.previewBody)}>
                       {renderNewsTextWithLinks(composerPreview.body, 'composer-preview')}
                     </p>
-                    <div {...stylex.props(newsStyles.previewAuthor)}>Автор: {user.nickname || 'Guild Staff'}</div>
+                    <div {...stylex.props(newsStyles.previewAuthor)}>{language === 'ru' ? 'Автор' : language === 'zh' ? '作者' : 'Author'}: {user.nickname || (language === 'ru' ? 'Штаб гильдии' : language === 'zh' ? '公会指挥部' : 'Guild Staff')}</div>
                   </div>
                 </div>
               ) : (
                 <div {...stylex.props(newsStyles.previewShell, newsStyles.previewShellEmpty)}>
-                  Заполни новость слева, и здесь появится Discord-safe превью.
+                  {language === 'ru' ? 'Заполни новость слева, и здесь появится Discord-safe превью.' : language === 'zh' ? '先在左侧填写公告，这里会显示适合 Discord 的预览。' : 'Fill in the news draft on the left and a Discord-safe preview will appear here.'}
                 </div>
               )}
             </article>
@@ -524,14 +556,14 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                           {...stylex.props(newsStyles.expandButton)}
                           onClick={() => setIsFeaturedExpanded((current) => !current)}
                         >
-                          {isFeaturedExpanded ? 'Show less' : 'Read full news'}
+                          {isFeaturedExpanded ? (language === 'ru' ? 'Свернуть' : language === 'zh' ? '收起' : 'Show less') : (language === 'ru' ? 'Читать целиком' : language === 'zh' ? '阅读全文' : 'Read full news')}
                         </button>
                         ) : null}
 
                       <div {...stylex.props(newsStyles.cardFooter)}>
                         <div {...stylex.props(newsStyles.authorRow)}>
                           <WuxiaIcon name="user" className="w-4 h-4 text-gray-400" />
-                          <span>{featured.author || 'Guild Staff'}</span>
+                          <span>{featured.author || (language === 'ru' ? 'Штаб гильдии' : language === 'zh' ? '公会指挥部' : 'Guild Staff')}</span>
                         </div>
 
                         <div {...stylex.props(newsStyles.actionButtons)}>
@@ -542,7 +574,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                               onClick={() => void handleDeleteNews(featured.id)}
                               disabled={deleteNewsMutation.isPending}
                             >
-                              {deleteNewsMutation.isPending ? 'Удаляем...' : 'Удалить'}
+                              {deleteNewsMutation.isPending ? (language === 'ru' ? 'Удаляем...' : language === 'zh' ? '删除中...' : 'Deleting...') : (language === 'ru' ? 'Удалить' : language === 'zh' ? '删除' : 'Delete')}
                             </button>
                           ) : null}
 
@@ -575,18 +607,20 @@ function NewsSectionContent({ user }: NewsSectionProps) {
 
                     return (
                       <article key={item.id} {...stylex.props(uiStyles.card, uiStyles.sectionCard, newsStyles.newsCard)}>
-                        <div {...stylex.props(newsStyles.tagRow)}>
-                          <span {...stylex.props(newsStyles.guildUpdatePill)}>
-                            <WuxiaIcon name="news" className="w-3.5 h-3.5" />
-                            Guild Update
-                          </span>
-                          <DeliveryBadge status={item.discordDeliveryStatus} />
+                        <div {...stylex.props(newsStyles.cardHeaderRail)}>
+                          <div {...stylex.props(newsStyles.tagRow, newsStyles.tagRowCompact)}>
+                            <span {...stylex.props(newsStyles.guildUpdatePill)}>
+                              <WuxiaIcon name="news" className="w-3.5 h-3.5" />
+                              Guild Update
+                            </span>
+                            <DeliveryBadge status={item.discordDeliveryStatus} />
+                          </div>
+                          <span {...stylex.props(newsStyles.meta)}>{formatDate(item.date)}</span>
                         </div>
 
                         <h3 {...stylex.props(newsStyles.newsCardTitle)}>
                           {displayTitle}
                         </h3>
-                        <p {...stylex.props(newsStyles.meta)}>{formatDate(item.date)}</p>
 
                         <p {...stylex.props(newsStyles.previewText, isExpanded && newsStyles.previewExpanded)}>
                           {renderNewsTextWithLinks(preview, `news-${item.id}`)}
@@ -616,7 +650,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                                 onClick={() => void handleDeleteNews(item.id)}
                                 disabled={deleteNewsMutation.isPending}
                               >
-                                {deleteNewsMutation.isPending ? 'Удаляем...' : 'Удалить'}
+                                {deleteNewsMutation.isPending ? (language === 'ru' ? 'Удаляем...' : language === 'zh' ? '删除中...' : 'Deleting...') : (language === 'ru' ? 'Удалить' : language === 'zh' ? '删除' : 'Delete')}
                               </button>
                             ) : null}
 

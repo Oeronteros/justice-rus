@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function POST_test(request: NextRequest) {
+async function postTest(request: NextRequest) {
   try {
     const session = await requireActiveSession(request);
     if (!session.ok) {
@@ -155,7 +155,7 @@ export async function POST_test(request: NextRequest) {
   }
 }
 
-export async function POST_sync(request: NextRequest) {
+async function postSync(request: NextRequest) {
   try {
     const session = await requireActiveSession(request);
     if (!session.ok) {
