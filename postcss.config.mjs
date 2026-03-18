@@ -29,7 +29,6 @@ const config = {
       },
       useCSSLayers: true,
     },
-    '@tailwindcss/postcss': {},
   },
 };
 
