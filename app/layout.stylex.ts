@@ -6,7 +6,7 @@ export const rootLayoutStyles = stylex.create({
     minHeight: '100vh',
     backgroundColor: colors.bgApp,
     backgroundImage:
-      'radial-gradient(circle at 12% 8%, rgba(155, 76, 69, 0.14), transparent 32%), radial-gradient(circle at 88% 12%, rgba(201, 168, 106, 0.12), transparent 38%), linear-gradient(160deg, #141217 0%, #19161d 52%, #141217 100%)',
+      'linear-gradient(160deg, #0B0C1A 0%, #1A1F35 50%, #0B0C1A 100%)',
     color: colors.textPrimary,
     fontFamily: typography.body,
   },

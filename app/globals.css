@@ -3,8 +3,8 @@
 @import "@milkdown/crepe/theme/classic-dark.css";
 
 :root {
-  --wuxia-ink: #0d1014;
-  --wuxia-ink-soft: #191d24;
+  --wuxia-ink: #0B0C1A;
+  --wuxia-ink-soft: #1A1F35;
   --wuxia-paper: #e6dccb;
   --wuxia-vermillion: #8b403a;
   --wuxia-crimson: #5f2b28;
@@ -42,9 +42,7 @@ body {
 
 body {
   background:
-    radial-gradient(circle at 14% 8%, rgba(139, 64, 58, 0.08), transparent 34%),
-    radial-gradient(circle at 84% 10%, rgba(184, 160, 111, 0.08), transparent 38%),
-    linear-gradient(168deg, #0d1014 0%, #171b21 52%, #0d1014 100%);
+    linear-gradient(168deg, #0B0C1A 0%, #1A1F35 50%, #0B0C1A 100%);
   color: var(--wuxia-paper);
   font-family: var(--font-body);
 }
