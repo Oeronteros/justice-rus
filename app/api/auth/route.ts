@@ -163,10 +163,11 @@ export async function POST(request: NextRequest) {
     console.info('[auth] login success', { ip, role: user.role, nickname: user.nickname });
     return response;
   } catch (error) {
-    rateLimiter.registerFailure(ip, now);
     if (error instanceof AuthRateLimitError) {
       return jsonError(error.message, error.status, { headers: error.headers });
     }
+
+    rateLimiter.registerFailure(ip, now);
 
     console.error('Auth error:', error);
     return jsonError('Internal server error', 500);
