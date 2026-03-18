@@ -1,142 +1,30 @@
 // API Route: /api/auth
 import { NextRequest, NextResponse } from 'next/server';
-import { generateToken, getClientIp, safeEqual } from '@/lib/auth';
-import { AUTH_TOKEN_MAX_AGE_SECONDS, PASSWORDS } from '@/lib/constants';
-import type { AuthResponse, UserRole } from '@/lib/schemas/auth';
+import { generateToken, getClientIp } from '@/lib/auth';
+import { AUTH_TOKEN_MAX_AGE_SECONDS } from '@/lib/constants';
+import type { AuthResponse } from '@/lib/schemas/auth';
 import { z } from 'zod';
 import { getPool, hasDatabaseUrl } from '@/lib/neon';
 import { ensureAccountsSchema, normalizeNickname, verifyPassword } from '@/lib/auth/accounts';
-import { getCachedTableColumns } from '@/lib/server/db-cache';
 import { optionsResponse } from '@/lib/server/cors';
 import { jsonError, parseJsonBody, requireDatabase, requireSameOrigin } from '@/lib/server/route-helpers';
+import { buildLegacyUser, canUseDevNicknameFallback, legacyPinRole, resolveClassName } from '@/lib/server/auth/legacy-pin';
+import { AuthRateLimitError, createAuthRateLimiter } from '@/lib/server/auth/rate-limit';
 
 const AUTH_WINDOW_MS = 15 * 60 * 1000;
 const AUTH_MAX_ATTEMPTS = 8;
 const AUTH_BLOCK_MS = 20 * 60 * 1000;
 
-type AttemptState = {
-  count: number;
-  windowStartedAt: number;
-  blockedUntil?: number;
-};
-
-class AuthRateLimitError extends Error {
-  readonly status = 429;
-  readonly headers: HeadersInit;
-
-  constructor(retryAfter: number) {
-    super('Too many login attempts. Try again later.');
-    this.name = 'AuthRateLimitError';
-    this.headers = { 'Retry-After': String(retryAfter || 60) };
-  }
-}
-
-const loginAttempts = new Map<string, AttemptState>();
+const rateLimiter = createAuthRateLimiter({
+  windowMs: AUTH_WINDOW_MS,
+  maxAttempts: AUTH_MAX_ATTEMPTS,
+  blockMs: AUTH_BLOCK_MS,
+});
 
 const authSchema = z.object({
   nickname: z.string().trim().min(3).max(32).optional(),
   password: z.string().min(1).max(128),
 });
-
-function cleanupAttempts(now: number) {
-  for (const [ip, state] of loginAttempts.entries()) {
-    const expiredWindow = now - state.windowStartedAt > AUTH_WINDOW_MS;
-    const unblocked = !state.blockedUntil || state.blockedUntil <= now;
-    if (expiredWindow && unblocked) {
-      loginAttempts.delete(ip);
-    }
-  }
-}
-
-function checkRateLimit(ip: string, now: number): { allowed: boolean; retryAfter?: number } {
-  cleanupAttempts(now);
-  const state = loginAttempts.get(ip);
-  if (!state) return { allowed: true };
-
-  if (state.blockedUntil && state.blockedUntil > now) {
-    const retryAfter = Math.max(1, Math.ceil((state.blockedUntil - now) / 1000));
-    return { allowed: false, retryAfter };
-  }
-
-  if (now - state.windowStartedAt > AUTH_WINDOW_MS) {
-    loginAttempts.set(ip, { count: 0, windowStartedAt: now });
-    return { allowed: true };
-  }
-
-  return { allowed: true };
-}
-
-function registerFailure(ip: string, now: number) {
-  const state = loginAttempts.get(ip);
-  if (!state || now - state.windowStartedAt > AUTH_WINDOW_MS) {
-    loginAttempts.set(ip, { count: 1, windowStartedAt: now });
-    return;
-  }
-
-  const nextCount = state.count + 1;
-  const blockedUntil = nextCount >= AUTH_MAX_ATTEMPTS ? now + AUTH_BLOCK_MS : undefined;
-
-  loginAttempts.set(ip, {
-    count: nextCount,
-    windowStartedAt: state.windowStartedAt,
-    blockedUntil,
-  });
-}
-
-function clearFailures(ip: string) {
-  loginAttempts.delete(ip);
-}
-
-function legacyPinRole(password: string): UserRole | null {
-  if (safeEqual(password, PASSWORDS.member)) return 'member';
-  if (safeEqual(password, PASSWORDS.officer)) return 'officer';
-  if (safeEqual(password, PASSWORDS.head)) return 'head';
-  if (safeEqual(password, PASSWORDS.sysadmin)) return 'sysadmin';
-  return null;
-}
-
-function isLocalHost(value: string | null | undefined): boolean {
-  if (!value) return false;
-
-  return ['localhost', '127.0.0.1', '[::1]', '::1'].some((host) => value.includes(host));
-}
-
-function canUseDevNicknameFallback(request: NextRequest): boolean {
-  if (process.env.NODE_ENV !== 'production') {
-    return true;
-  }
-
-  return isLocalHost(request.headers.get('host')) || isLocalHost(request.headers.get('origin'));
-}
-
-async function buildLegacyUser(role: UserRole, nickname?: string): Promise<AuthResponse['user']> {
-  return {
-    id: `pin-${role}`,
-    nickname: nickname || `${role.toUpperCase()} PIN`,
-    role,
-    isActive: true,
-    authMethod: 'pin',
-    discordHandle: null,
-    className: (await resolveClassName(nickname)) || null,
-    prefix: null,
-  };
-}
-
-async function resolveClassName(nickname: string | undefined): Promise<string | null> {
-  if (!nickname || !hasDatabaseUrl()) return null;
-
-  const pool = getPool();
-  const names = await getCachedTableColumns('registrations');
-  const nickCol = names.has('nick') ? 'nick' : names.has('nickname') ? 'nickname' : null;
-  const classCol = names.has('class_name') ? 'class_name' : names.has('class') ? 'class' : null;
-  if (!nickCol || !classCol) return null;
-
-  const result = await pool.query(
-    `SELECT ${classCol} AS class_name FROM registrations WHERE LOWER(${nickCol}) = LOWER($1) LIMIT 1`,
-    [nickname]
-  );
-  return result.rows[0]?.class_name || null;
-}
 
 export async function POST(request: NextRequest) {
   const now = Date.now();
@@ -148,14 +36,14 @@ export async function POST(request: NextRequest) {
       return sameOrigin.response;
     }
 
-    const rate = checkRateLimit(ip, now);
+    const rate = rateLimiter.checkRateLimit(ip, now);
     if (!rate.allowed) {
       throw new AuthRateLimitError(rate.retryAfter || 60);
     }
 
     const parsed = await parseJsonBody<z.infer<typeof authSchema>>(request, authSchema, 'Invalid request data');
     if (!parsed.ok) {
-      registerFailure(ip, now);
+      rateLimiter.registerFailure(ip, now);
       return parsed.response;
     }
 
@@ -187,7 +75,7 @@ export async function POST(request: NextRequest) {
             if (legacyRole && canUseDevNicknameFallback(request)) {
               user = await buildLegacyUser(legacyRole, nickname);
             } else {
-              registerFailure(ip, now);
+              rateLimiter.registerFailure(ip, now);
               return jsonError('Invalid credentials', 401);
             }
           }
@@ -220,7 +108,7 @@ export async function POST(request: NextRequest) {
         } else if (legacyRole && canUseDevNicknameFallback(request)) {
           user = await buildLegacyUser(legacyRole, nickname);
         } else {
-          registerFailure(ip, now);
+          rateLimiter.registerFailure(ip, now);
           return jsonError('Invalid credentials', 401);
         }
       } else if (legacyRole && canUseDevNicknameFallback(request)) {
@@ -235,12 +123,12 @@ export async function POST(request: NextRequest) {
       if (user?.authMethod === 'account') {
         // already resolved from DB-backed account path above
       } else if (!user) {
-        registerFailure(ip, now);
+        rateLimiter.registerFailure(ip, now);
         return jsonError('Invalid credentials', 401);
       }
     } else {
       if (!legacyRole) {
-        registerFailure(ip, now);
+        rateLimiter.registerFailure(ip, now);
         return jsonError('Invalid credentials', 401);
       }
 
@@ -248,11 +136,11 @@ export async function POST(request: NextRequest) {
     }
 
     if (!user) {
-      registerFailure(ip, now);
+      rateLimiter.registerFailure(ip, now);
       return jsonError('Invalid credentials', 401);
     }
 
-    clearFailures(ip);
+    rateLimiter.clearFailures(ip);
 
     const token = generateToken(user);
     const responseBody: AuthResponse = {
@@ -275,7 +163,7 @@ export async function POST(request: NextRequest) {
     console.info('[auth] login success', { ip, role: user.role, nickname: user.nickname });
     return response;
   } catch (error) {
-    registerFailure(ip, now);
+    rateLimiter.registerFailure(ip, now);
     if (error instanceof AuthRateLimitError) {
       return jsonError(error.message, error.status, { headers: error.headers });
     }

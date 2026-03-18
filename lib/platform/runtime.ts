@@ -17,3 +17,9 @@ export function shouldEnableTelemetry(env: RuntimeEnv = {}) {
 
   return vercel === '1' && isNextRuntime(runtime);
 }
+
+export function isWorkflowAutomationEnabled(
+  value = process.env.NEXT_PUBLIC_WORKFLOW_AUTOMATION_ENABLED
+) {
+  return value === '1' || value === 'true';
+}

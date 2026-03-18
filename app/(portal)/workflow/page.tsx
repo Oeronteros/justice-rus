@@ -17,6 +17,7 @@ import { AutoApproveRuleEditor } from '@/components/workflow';
 import { hasRoleAtLeast } from '@/lib/authz';
 import { useUser } from '@/lib/auth/context';
 import { useLanguage, type Language } from '@/lib/i18n/context';
+import { isWorkflowAutomationEnabled } from '@/lib/platform/runtime';
 
 const copy: Record<Language, {
   title: string;
@@ -60,21 +61,26 @@ const copy: Record<Language, {
   },
 };
 
+const workflowPilotCopy: Record<Language, { title: string; description: string }> = {
+  ru: {
+    title: 'Автоматизация пока в пилоте',
+    description: 'Модуль временно скрыт до подключения серверного workflow API.',
+  },
+  en: {
+    title: 'Automation is in pilot mode',
+    description: 'This section is temporarily hidden until server workflow APIs are enabled.',
+  },
+  zh: {
+    title: '自动化功能处于试点阶段',
+    description: '在服务器端 workflow API 启用前，此模块暂时不可用。',
+  },
+};
+
 export default function WorkflowPage() {
   const { language } = useLanguage();
   const user = useUser();
-  const [showRuleEditor, setShowRuleEditor] = useState(false);
-
   const canManageWorkflow = hasRoleAtLeast(user.role, 'officer');
-
-  const { data: settings, isLoading: settingsLoading } = useWorkflowSettings();
-  const { data: autoApproveRules = [] } = useAutoApproveRules();
-  const { data: autoCloseRules = [] } = useAutoCloseRules();
-  const { data: templates = [] } = useTemplates();
-
-  const updateSettings = useUpdateWorkflowSettings();
-  const createRule = useCreateAutoApproveRule();
-  const createTemplate = useCreateTemplate();
+  const workflowAutomationEnabled = isWorkflowAutomationEnabled();
 
   if (!canManageWorkflow) {
     return (
@@ -95,6 +101,41 @@ export default function WorkflowPage() {
       </section>
     );
   }
+
+  if (!workflowAutomationEnabled) {
+    return (
+      <section className="section-shell py-10 sm:py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHero
+            icon={<WuxiaIcon name="schedule" className="w-5 h-5" />}
+            title={copy[language].title}
+            subtitle={copy[language].subtitle}
+            chips={['Automation', 'Pilot']}
+          />
+          <EmptyState
+            title={workflowPilotCopy[language].title}
+            description={workflowPilotCopy[language].description}
+            icon="clock"
+          />
+        </div>
+      </section>
+    );
+  }
+
+  return <WorkflowAutomationContent language={language} />;
+}
+
+function WorkflowAutomationContent({ language }: { language: Language }) {
+  const [showRuleEditor, setShowRuleEditor] = useState(false);
+
+  const { data: settings, isLoading: settingsLoading } = useWorkflowSettings();
+  const { data: autoApproveRules = [] } = useAutoApproveRules();
+  const { data: autoCloseRules = [] } = useAutoCloseRules();
+  const { data: templates = [] } = useTemplates();
+
+  const updateSettings = useUpdateWorkflowSettings();
+  const createRule = useCreateAutoApproveRule();
+  const createTemplate = useCreateTemplate();
 
   if (settingsLoading) {
     return (
