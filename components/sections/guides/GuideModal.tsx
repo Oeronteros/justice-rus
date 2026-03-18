@@ -264,7 +264,7 @@ export function GuideModal({
       {/* Шапка */}
       <div {...stylex.props(guidesStyles.modalHeaderBar)}>
         <div {...stylex.props(guidesStyles.modalHeaderInner)}>
-          <div className="min-w-0 flex-1">
+          <div {...stylex.props(guidesStyles.modalHeaderLead)}>
             <h3 id="guide-modal-title" {...stylex.props(guidesStyles.modalTitle)}>
               {guideDetail?.guide.title || 'Загрузка...'}
             </h3>
@@ -274,7 +274,7 @@ export function GuideModal({
           </div>
           <div {...stylex.props(guidesStyles.modalActionRow)}>
             {actionNotice && (
-              <span {...stylex.props(uiStyles.badge, uiStyles.badgeMuted)} className="hidden sm:inline-flex">
+              <span {...stylex.props(uiStyles.badge, uiStyles.badgeMuted, guidesStyles.modalActionNotice)}>
                 {actionNotice}
               </span>
             )}
@@ -343,7 +343,7 @@ export function GuideModal({
               {...stylex.props(uiStyles.iconButton)}
               onClick={handleClose}
             >
-              <WuxiaIcon name="x" className="w-5 h-5" />
+              <WuxiaIcon name="x" {...stylex.props(uiStyles.iconMd)} />
             </button>
           </div>
         </div>
@@ -353,18 +353,18 @@ export function GuideModal({
       <div ref={contentRef} {...stylex.props(guidesStyles.modalContentScroll)}>
         <div {...stylex.props(guidesStyles.modalContentWrap)}>
           {isLoading && (
-            <div className="loading-inline" aria-live="polite">
-              <div className="loading-inline-card">
+            <div {...stylex.props(guidesStyles.modalLoadingGrid)} aria-live="polite">
+              <div {...stylex.props(guidesStyles.modalLoadingCard)}>
                 <div className="loading-line loading-line-title" />
-                <div className="mt-4 space-y-3">
+                <div {...stylex.props(guidesStyles.modalLoadingStack)}>
                   <div className="loading-line loading-line-body" />
                   <div className="loading-line loading-line-body loading-line-body-short" />
                   <div className="loading-block" />
                 </div>
               </div>
-              <div className="loading-inline-card">
+              <div {...stylex.props(guidesStyles.modalLoadingCard)}>
                 <div className="loading-line loading-line-short" />
-                <div className="mt-4 space-y-3">
+                <div {...stylex.props(guidesStyles.modalLoadingStack)}>
                   <div className="loading-line loading-line-body" />
                   <div className="loading-line loading-line-body" />
                   <div className="loading-line loading-line-body loading-line-body-short" />
@@ -374,18 +374,18 @@ export function GuideModal({
           )}
 
           {error && (
-            <div className="text-red-400">
+            <div {...stylex.props(guidesStyles.modalError)}>
               {error instanceof Error ? error.message : 'Ошибка загрузки'}
             </div>
           )}
 
           {guideDetail && (
             <>
-              <div className="grid gap-8 xl:grid-cols-[260px_minmax(0,1fr)]">
+              <div {...stylex.props(guidesStyles.modalMainGrid)}>
                 {outline.length > 0 && (
                   <aside {...stylex.props(guidesStyles.outlineAside)}>
                     <div {...stylex.props(guidesStyles.outlineTitle)}>
-                      <WuxiaIcon name="list" className="w-4 h-4 text-[#8fb9cc]" />
+                      <WuxiaIcon name="list" {...stylex.props(uiStyles.iconSm, uiStyles.iconAccent)} />
                       Навигация
                     </div>
                     <div {...stylex.props(guidesStyles.outlineList)}>
@@ -406,7 +406,7 @@ export function GuideModal({
                   </aside>
                 )}
 
-                <div className="section-stack-md">
+                <div {...stylex.props(guidesStyles.contentStack)}>
                   <MarkdownRenderer
                     content={guideDetail.guide.content}
                     guidesIndex={guides}
@@ -415,12 +415,12 @@ export function GuideModal({
                   />
 
                   {backlinks.length > 0 && (
-                    <div className="rounded-3xl border border-[#1f3344] bg-[#0b141d]/82 p-5 shadow-[0_18px_34px_rgba(4,8,12,0.35)]">
-                      <div className="flex items-center gap-2 text-sm font-medium text-[#dceaf4] mb-4">
-                        <WuxiaIcon name="link" className="w-4 h-4 text-[#8fb9cc]" />
+                    <div {...stylex.props(guidesStyles.backlinksPanel)}>
+                      <div {...stylex.props(guidesStyles.backlinksHeader)}>
+                        <WuxiaIcon name="link" {...stylex.props(uiStyles.iconSm, uiStyles.iconAccent)} />
                         Упоминается в гайдах
                       </div>
-                      <div className="grid gap-3 md:grid-cols-2">
+                      <div {...stylex.props(guidesStyles.backlinksGrid)}>
                         {backlinks.map((guide) => (
                           <button
                             key={guide.id}
@@ -439,7 +439,7 @@ export function GuideModal({
                 </div>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-[#1a2a38]">
+              <div {...stylex.props(guidesStyles.commentsSection)}>
                 <GuideComments
                   guideId={guideId}
                   comments={guideDetail.comments}

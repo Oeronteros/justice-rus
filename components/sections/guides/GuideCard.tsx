@@ -21,7 +21,7 @@ export function GuideCard({ guide, onClick }: GuideCardProps) {
     >
       <div {...stylex.props(guidesStyles.cardTop)}>
         <span {...stylex.props(uiStyles.badge, uiStyles.badgeMuted)}>
-          <WuxiaIcon name="tag" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+          <WuxiaIcon name="tag" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
           {guide.category}
         </span>
         <span style={{ fontSize: 12, color: 'rgba(156,163,175,0.95)' }}>{formatDate(guide.updatedAt)}</span>
@@ -33,17 +33,17 @@ export function GuideCard({ guide, onClick }: GuideCardProps) {
 
       <div {...stylex.props(guidesStyles.cardMeta)}>
         <span {...stylex.props(guidesStyles.authorPill)}>
-          <WuxiaIcon name="user" className="w-4 h-4" />
+          <WuxiaIcon name="user" {...stylex.props(uiStyles.iconSm, uiStyles.iconMuted)} />
           {guide.author}
         </span>
 
         <span {...stylex.props(guidesStyles.statPills)}>
           <span {...stylex.props(guidesStyles.statPill)}>
-            <WuxiaIcon name="seal" className="w-4 h-4 text-[#8fb9cc]" />
+            <WuxiaIcon name="seal" {...stylex.props(uiStyles.iconSm, uiStyles.iconAccent)} />
             {guide.votes}
           </span>
           <span {...stylex.props(guidesStyles.statPill)}>
-            <WuxiaIcon name="comment" className="w-4 h-4" />
+            <WuxiaIcon name="comment" {...stylex.props(uiStyles.iconSm, uiStyles.iconMuted)} />
             {guide.commentsCount}
           </span>
         </span>

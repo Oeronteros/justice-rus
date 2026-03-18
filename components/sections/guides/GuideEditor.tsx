@@ -7,7 +7,6 @@ import WuxiaIcon from '@/components/WuxiaIcons';
 import type { CreateGuideDto } from '@/lib/schemas/guide';
 import * as stylex from '@stylexjs/stylex';
 import { uiStyles } from '@/components/shared/Ui.stylex';
-import { mergeStylexProps } from '@/lib/stylex/utils';
 import { guidesStyles } from './Guides.stylex';
 
 interface GuideEditorProps {
@@ -68,13 +67,12 @@ export function GuideEditor({ onClose, onSuccess, mode = 'create', guideId, init
 
   return (
     <div
-      {...stylex.props(uiStyles.modalBackdrop)}
-      style={{ zIndex: 100001, perspective: 'none', transform: 'none' }}
+      {...stylex.props(uiStyles.modalBackdrop, guidesStyles.editorBackdrop)}
     >
-      <div {...stylex.props(uiStyles.modalShell)} className={isFocusMode ? stylex.props(guidesStyles.editorFocusCard).className : 'w-full max-w-7xl p-6 md:p-8 max-h-[92vh]'}>
+      <div {...stylex.props(uiStyles.modalShell, guidesStyles.editorModalShell, isFocusMode && guidesStyles.editorFocusCard)}>
         <div {...stylex.props(uiStyles.modalHeader)}>
           <div>
-            <h3 {...mergeStylexProps(stylex.props(uiStyles.modalTitle), 'font-orbitron')}>
+            <h3 {...stylex.props(uiStyles.modalTitle)}>
               {isEdit ? 'Редактировать гайд' : 'Новый гайд'}
             </h3>
             <p {...stylex.props(uiStyles.modalSubtitle)}>
@@ -83,13 +81,13 @@ export function GuideEditor({ onClose, onSuccess, mode = 'create', guideId, init
                 : 'Пиши как в Obsidian: Milkdown editor, живой reader и импорт .md с вложениями.'}
             </p>
           </div>
-          <div className="flex items-center gap-2 self-start md:self-auto">
+          <div {...stylex.props(guidesStyles.editorHeaderActions)}>
             <button
               type="button"
               {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}
               onClick={() => setIsFocusMode((value) => !value)}
             >
-              <WuxiaIcon name="eye" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+              <WuxiaIcon name="eye" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
               {isFocusMode ? 'Обычный режим' : 'Фокус-режим'}
             </button>
             <button
@@ -97,7 +95,7 @@ export function GuideEditor({ onClose, onSuccess, mode = 'create', guideId, init
               {...stylex.props(uiStyles.iconButton)}
               onClick={onClose}
             >
-              <WuxiaIcon name="x" className="w-5 h-5" />
+              <WuxiaIcon name="x" {...stylex.props(uiStyles.iconMd)} />
             </button>
           </div>
         </div>
@@ -115,7 +113,7 @@ export function GuideEditor({ onClose, onSuccess, mode = 'create', guideId, init
 
         {submitError && (
           <div {...stylex.props(uiStyles.notice, uiStyles.noticeError)}>
-            <WuxiaIcon name="alertTriangle" className="w-4 h-4 mr-2 inline-block align-text-bottom" />
+            <WuxiaIcon name="alertTriangle" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
             {submitError instanceof Error
               ? submitError.message
               : isEdit

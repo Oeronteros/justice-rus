@@ -4,7 +4,7 @@ import AppImage from '@/components/platform/AppImage';
 import { useEffect, useState } from 'react';
 import { handleApiError } from '@/lib/api/errors';
 import { useUpdateRegistrationStats } from '@/lib/registration/hooks';
-import { getKPIClass, getKpiIndicator, getRankClass, getStatusClass } from '@/lib/utils';
+import { getKPIClass } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { ClassBadge } from '@/components/ClassIcon';
 import { PrefixBadge } from '@/components/PrefixBadge';
@@ -14,7 +14,6 @@ import { canSeeNumericKpi, hasRoleAtLeast } from '@/lib/authz';
 import type { UpdateRegistrationStatsPayload } from '@/lib/api/registrations';
 import type { RegistrationColumnLabels } from './columnLabels';
 import * as stylex from '@stylexjs/stylex';
-import { mergeStylexProps } from '@/lib/stylex/utils';
 import { uiStyles } from '@/components/shared/Ui.stylex';
 import { registrationStyles } from './Registration.stylex';
 
@@ -139,7 +138,6 @@ function getAvatarInitials(registration: Registration) {
 function RegistrationIdentity({ registration, compact = false }: { registration: Registration; compact?: boolean }) {
   const initials = getAvatarInitials(registration);
   const displayDiscord = getDisplayDiscord(registration);
-  const sizeClass = compact ? 'h-11 w-11 text-xs' : 'h-9 w-9 text-[11px]';
 
   return (
     <div {...stylex.props(registrationStyles.identityRow)}>
@@ -149,11 +147,19 @@ function RegistrationIdentity({ registration, compact = false }: { registration:
           alt={registration.nickname || displayDiscord || 'Avatar'}
           width={compact ? 44 : 36}
           height={compact ? 44 : 36}
-          className={`${sizeClass} ${stylex.props(registrationStyles.identityAvatar).className}`}
+          className={stylex.props(
+            registrationStyles.identityAvatar,
+            compact ? registrationStyles.identityAvatarCompact : registrationStyles.identityAvatarDefault
+          ).className}
           unoptimized
         />
       ) : (
-        <div className={`${sizeClass} ${stylex.props(registrationStyles.identityAvatarFallback).className}`}>
+        <div
+          {...stylex.props(
+            registrationStyles.identityAvatarFallback,
+            compact ? registrationStyles.identityAvatarFallbackCompact : registrationStyles.identityAvatarFallbackDefault
+          )}
+        >
           {initials}
         </div>
       )}
@@ -164,6 +170,36 @@ function RegistrationIdentity({ registration, compact = false }: { registration:
       </div>
     </div>
   );
+}
+
+function getRankBadgeTone(rank: string) {
+  switch (rank.toLowerCase()) {
+    case 'guest':
+      return uiStyles.badgeMuted;
+    case 'member':
+      return uiStyles.badgeSuccess;
+    case 'officer':
+      return uiStyles.badgeWarning;
+    case 'head':
+    case 'sysadmin':
+      return uiStyles.badgeDanger;
+    default:
+      return uiStyles.badgeMuted;
+  }
+}
+
+function getStatusBadgeTone(status: string) {
+  switch (status.toLowerCase()) {
+    case 'active':
+      return uiStyles.badgeSuccess;
+    case 'pending':
+      return uiStyles.badgeWarning;
+    case 'leave':
+      return uiStyles.badgeDanger;
+    case 'inactive':
+    default:
+      return uiStyles.badgeMuted;
+  }
 }
 
 function renderActivityValue(value: number) {
@@ -185,11 +221,17 @@ function KpiValue({ registration, user }: { registration: Registration; user: Us
     return <span {...stylex.props(tone)}>{registration.kpi}</span>;
   }
 
-  const indicator = getKpiIndicator(registration.kpi);
+  const indicator = getKPIClass(registration.kpi);
+  const indicatorTone = indicator === 'kpi-good'
+    ? registrationStyles.kpiValueGood
+    : indicator === 'kpi-medium'
+      ? registrationStyles.kpiValueMedium
+      : registrationStyles.kpiValueBad;
+  const indicatorLabel = indicator === 'kpi-good' ? 'Green' : indicator === 'kpi-medium' ? 'Yellow' : 'Red';
   return (
-    <span {...mergeStylexProps(stylex.props(registrationStyles.kpiIndicator), indicator.className)}>
+    <span {...stylex.props(registrationStyles.kpiIndicator, indicatorTone)}>
       <span {...stylex.props(registrationStyles.kpiDot)}></span>
-      <span {...stylex.props(registrationStyles.kpiIndicatorText)}>{indicator.label}</span>
+      <span {...stylex.props(registrationStyles.kpiIndicatorText)}>{indicatorLabel}</span>
     </span>
   );
 }
@@ -317,9 +359,9 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
 
   if (registrations.length === 0) {
     return (
-      <div {...mergeStylexProps(stylex.props(uiStyles.card, uiStyles.sectionCard, registrationStyles.emptyCard), 'px-6 py-10')}>
+      <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, registrationStyles.emptyCard)}>
         <div {...stylex.props(registrationStyles.emptyIconSurface)}>
-            <WuxiaIcon name="usersSlash" className="w-8 h-8 text-gray-400" />
+            <WuxiaIcon name="usersSlash" {...stylex.props(uiStyles.iconXl, uiStyles.iconMuted)} />
         </div>
         <span {...stylex.props(uiStyles.badge, uiStyles.badgeMuted)}>Roster empty</span>
         <div {...stylex.props(registrationStyles.emptyTitle)}>Записей не найдено</div>
@@ -346,7 +388,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
                     <div {...stylex.props(registrationStyles.mobileCardDiscord)}>{getDisplayDiscord(registration) || 'Discord не указан'}</div>
                   </div>
                 </div>
-                <span {...mergeStylexProps(stylex.props(uiStyles.badge), getRankClass(registration.rank))}>
+                <span {...stylex.props(uiStyles.badge, getRankBadgeTone(registration.rank))}>
                   {rankLabels[registration.rank] || registration.rank}
                 </span>
               </div>
@@ -374,7 +416,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
                 </div>
                 <div {...stylex.props(registrationStyles.mobileMetricTile)}>
                   <div {...stylex.props(registrationStyles.mobileMetricLabel)}>{columnLabels.status}</div>
-                  <span {...mergeStylexProps(stylex.props(uiStyles.badge), getStatusClass(registration.status))}>
+                  <span {...stylex.props(uiStyles.badge, getStatusBadgeTone(registration.status))}>
                     {statusLabels[registration.status] || registration.status}
                   </span>
                 </div>
@@ -449,7 +491,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
                     </div>
                   </td>
                   <td {...stylex.props(uiStyles.tableCell)}>
-                    <span {...mergeStylexProps(stylex.props(uiStyles.badge), getRankClass(registration.rank))}>
+                    <span {...stylex.props(uiStyles.badge, getRankBadgeTone(registration.rank))}>
                       {rankLabels[registration.rank] || registration.rank}
                     </span>
                   </td>
@@ -467,7 +509,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
                   <td {...stylex.props(uiStyles.tableCell)}>{registration.marks || 0}</td>
                   <td {...stylex.props(uiStyles.tableCell)}><KpiValue registration={registration} user={user} /></td>
                   <td {...stylex.props(uiStyles.tableCell)}>
-                    <span {...mergeStylexProps(stylex.props(uiStyles.badge), getStatusClass(registration.status))}>
+                    <span {...stylex.props(uiStyles.badge, getStatusBadgeTone(registration.status))}>
                       {statusLabels[registration.status] || registration.status}
                     </span>
                   </td>
@@ -487,10 +529,10 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
 
       {canSeeFullStats && editingRegistration && editDraft && (
         <div {...stylex.props(uiStyles.modalBackdrop)} onClick={closeEditor}>
-          <div {...mergeStylexProps(stylex.props(uiStyles.modalShell, uiStyles.modalShellNarrow), 'p-6 md:p-8')} onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="registration-editor-title">
+          <div {...stylex.props(uiStyles.modalShell, uiStyles.modalShellNarrow, registrationStyles.modalShellPadded)} onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="registration-editor-title">
             <div {...stylex.props(uiStyles.modalHeader)}>
               <div>
-                <h3 id="registration-editor-title" {...mergeStylexProps(stylex.props(uiStyles.modalTitle), 'font-orbitron')}>Редактирование записи</h3>
+                <h3 id="registration-editor-title" {...stylex.props(uiStyles.modalTitle)}>Редактирование записи</h3>
                 <p {...stylex.props(uiStyles.modalSubtitle)}>
                   {editingRegistration.nickname} · {getDisplayDiscord(editingRegistration) || 'Discord не указан'}
                 </p>
@@ -502,7 +544,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
                 disabled={updateRegistrationStats.isPending}
                 title="Закрыть"
               >
-                <WuxiaIcon name="x" className="w-5 h-5" />
+                <WuxiaIcon name="x" {...stylex.props(uiStyles.iconMd)} />
               </button>
             </div>
 
@@ -557,7 +599,7 @@ export function RegistrationTable({ registrations, user, onRefresh, columnLabels
 
             {editError && (
               <div {...stylex.props(uiStyles.notice, uiStyles.noticeError, registrationStyles.modalError)}>
-                <WuxiaIcon name="alertTriangle" className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                <WuxiaIcon name="alertTriangle" {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
                 {editError}
               </div>
             )}

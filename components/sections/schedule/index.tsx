@@ -17,7 +17,6 @@ import type { Schedule as ScheduleItem } from '@/lib/schemas/schedule';
 import type { Rsvp } from '@/lib/schemas/rsvp';
 import * as stylex from '@stylexjs/stylex';
 import { uiStyles } from '@/components/shared/Ui.stylex';
-import { mergeStylexProps } from '@/lib/stylex/utils';
 import { opsStyles } from '@/components/sections/ops/Ops.stylex';
 import { scheduleStyles } from './Schedule.stylex';
 
@@ -733,7 +732,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                   title={language === 'ru' ? 'Предыдущий день' : language === 'zh' ? '上一天' : 'Previous day'}
                   aria-label={language === 'ru' ? 'Предыдущий день' : language === 'zh' ? '上一天' : 'Previous day'}
                 >
-                  <span aria-hidden="true" className="text-lg leading-none">&lt;</span>
+                  <span aria-hidden="true" {...stylex.props(scheduleStyles.navChevron)}>&lt;</span>
                 </button>
                 <div {...stylex.props(scheduleStyles.navLabel)}>
                   {selectedDay.labels[language]}
@@ -746,7 +745,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                   title={language === 'ru' ? 'Следующий день' : language === 'zh' ? '下一天' : 'Next day'}
                   aria-label={language === 'ru' ? 'Следующий день' : language === 'zh' ? '下一天' : 'Next day'}
                 >
-                  <span aria-hidden="true" className="text-lg leading-none">&gt;</span>
+                  <span aria-hidden="true" {...stylex.props(scheduleStyles.navChevron)}>&gt;</span>
                 </button>
               </div>
               {canEditSchedule && (
@@ -828,8 +827,8 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
           <div>
             {currentEvent ? (
               <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, scheduleStyles.bannerCard, scheduleStyles.currentBanner)}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#4ade80', fontSize: 14, fontWeight: 500, marginBottom: 8 }}>
-                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                <div {...stylex.props(scheduleStyles.bannerLiveRow)}>
+                  <span {...stylex.props(scheduleStyles.bannerLiveDot, scheduleStyles.liveDotPulse)}></span>
                   {language === 'ru' ? 'Сейчас идёт' : language === 'zh' ? '进行中' : 'Happening now'}
                 </div>
                 <div {...stylex.props(scheduleStyles.bannerTitle)}>{getDisplayTitle(currentEvent, language)}</div>
@@ -839,10 +838,10 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
               </div>
             ) : nextEvent && nextEvent.parsedTime ? (
               <div {...stylex.props(uiStyles.card, uiStyles.sectionCard, scheduleStyles.bannerCard, scheduleStyles.nextBanner)}>
-                <div {...stylex.props(opsStyles.toolbar)}>
+                <div {...stylex.props(scheduleStyles.bannerHeaderRow)}>
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#8fb9cc', fontSize: 14, fontWeight: 500, marginBottom: 8 }}>
-                      <WuxiaIcon name="schedule" className="w-4 h-4" />
+                    <div {...stylex.props(scheduleStyles.bannerInfo)}>
+                      <WuxiaIcon name="schedule" {...stylex.props(uiStyles.iconSm, scheduleStyles.eventIconMuted)} />
                       {language === 'ru' ? 'Следующее событие' : language === 'zh' ? '下一场活动' : 'Next event'}
                     </div>
                     <div {...stylex.props(scheduleStyles.bannerTitle)}>{getDisplayTitle(nextEvent, language)}</div>
@@ -850,8 +849,8 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                       {getDisplayTime(nextEvent)} • {nextEvent.group || (language === 'ru' ? 'Общее' : language === 'zh' ? '综合' : 'General')}
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-[#8fb9cc]">
+                  <div {...stylex.props(scheduleStyles.bannerCountdown)}>
+                    <div {...stylex.props(scheduleStyles.bannerCountdownValue)}>
                       {formatCountdown(nextEvent.parsedTime.start - currentMinutes, language)}
                     </div>
                   </div>
@@ -938,7 +937,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                             </div>
                             {isNow && (
                               <span {...stylex.props(scheduleStyles.liveNow)}>
-                                <span {...stylex.props(scheduleStyles.liveDot)} className="animate-pulse"></span>
+                                <span {...stylex.props(scheduleStyles.liveDot, scheduleStyles.liveDotPulse)}></span>
                                 {language === 'ru' ? 'Сейчас' : language === 'zh' ? '进行中' : 'Now'}
                               </span>
                             )}
@@ -965,13 +964,13 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                               title={language === 'ru' ? 'Редактировать слот' : language === 'zh' ? '编辑活动' : 'Edit slot'}
                               aria-label={language === 'ru' ? 'Редактировать событие' : language === 'zh' ? '编辑活动' : 'Edit event'}
                             >
-                              <WuxiaIcon name="edit" className="w-4 h-4" />
+                              <WuxiaIcon name="edit" {...stylex.props(uiStyles.iconSm, scheduleStyles.eventIconMuted)} />
                             </button>
                           )}
                           
                           {/* Статус */}
                           {isPast && (
-                            <WuxiaIcon name="check" className="w-4 h-4 text-gray-600 flex-shrink-0" />
+                            <WuxiaIcon name="check" {...stylex.props(uiStyles.iconSm, scheduleStyles.eventIconSuccess)} />
                           )}
                         </div>
                       );
@@ -1003,17 +1002,17 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
         {canEditSchedule && editDraft && (
           <div {...stylex.props(uiStyles.modalBackdrop)} onClick={closeEditor}>
             <div
-              {...mergeStylexProps(stylex.props(uiStyles.modalShell), 'w-full max-w-6xl p-0 overflow-hidden')}
+              {...stylex.props(uiStyles.modalShell, scheduleStyles.editorShell)}
               onClick={(event) => event.stopPropagation()}
               role="dialog"
               aria-modal="true"
               aria-labelledby="schedule-editor-title"
             >
-              <div className="grid max-h-[92vh] grid-cols-1 overflow-auto lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.95fr)]">
-                <div className="p-6 md:p-8">
+              <div {...stylex.props(scheduleStyles.editorGrid)}>
+                <div {...stylex.props(scheduleStyles.editorMain)}>
                   <div {...stylex.props(uiStyles.modalHeader)}>
                     <div>
-                      <h3 id="schedule-editor-title" {...mergeStylexProps(stylex.props(uiStyles.modalTitle), 'font-orbitron')}>
+                      <h3 id="schedule-editor-title" {...stylex.props(uiStyles.modalTitle)}>
                         {editingSchedule
                           ? (language === 'ru' ? 'Редактировать слот' : language === 'zh' ? '编辑活动' : 'Edit schedule slot')
                           : (language === 'ru' ? 'Добавить событие' : language === 'zh' ? '添加活动' : 'Add event')}
@@ -1035,11 +1034,11 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                       disabled={updateSchedule.isPending || createSchedule.isPending}
                       aria-label={language === 'ru' ? 'Закрыть редактор расписания' : language === 'zh' ? '关闭日程编辑器' : 'Close schedule editor'}
                     >
-                      <WuxiaIcon name="x" className="w-5 h-5" />
+                      <WuxiaIcon name="x" {...stylex.props(uiStyles.iconMd)} />
                     </button>
                   </div>
 
-                  <div className="mb-6 flex flex-wrap gap-2 text-xs">
+                  <div {...stylex.props(scheduleStyles.editorModeRow)}>
                     <span {...stylex.props(uiStyles.badge)}>
                       {editingSchedule ? (language === 'ru' ? 'Режим: редактирование' : language === 'zh' ? '模式：编辑' : 'Mode: editing') : language === 'ru' ? 'Режим: создание' : language === 'zh' ? '模式：创建' : 'Mode: create'}
                     </span>
@@ -1055,19 +1054,19 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
 
                   <div {...stylex.props(opsStyles.listStack)}>
                     <div {...stylex.props(uiStyles.softPanel)} style={{ padding: 20 }}>
-                      <div className="mb-4 flex items-center justify-between gap-3">
+                      <div {...stylex.props(scheduleStyles.editorSectionHeader)}>
                         <div>
-                          <div className="text-sm font-semibold text-[#e6eff5]">
+                          <div {...stylex.props(scheduleStyles.editorSectionTitle)}>
                             {language === 'ru' ? 'День и повтор' : language === 'zh' ? '日期与重复' : 'Day and recurrence'}
                           </div>
-                          <p className="mt-1 text-xs text-[#7f97a6]">
+                          <p {...stylex.props(scheduleStyles.editorSectionSubtitle)}>
                             {language === 'ru' ? 'Выбери конкретный день недели или быстро переключись на повторяющийся слот.' : language === 'zh' ? '选择具体星期，或一键切换到重复活动。' : 'Pick a specific weekday or switch to a recurring slot in one tap.'}
                           </p>
                         </div>
-                        <WuxiaIcon name="calendar" className="h-5 w-5 text-[#8fb9cc]" />
+                        <WuxiaIcon name="calendar" {...stylex.props(uiStyles.iconMd, uiStyles.iconAccent)} />
                       </div>
 
-                      <div className="mb-3 grid grid-cols-2 gap-2 md:grid-cols-4 xl:grid-cols-7">
+                      <div {...stylex.props(scheduleStyles.weekGrid)} style={{ marginBottom: 12 }}>
                         {weekdays.map((day) => {
                           const isActive = day.aliases.some((alias) => normalizeDayValue(alias) === normalizeDayValue(editDraft.dayType));
 
@@ -1084,7 +1083,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                         })}
                       </div>
 
-                      <div className="mb-4 flex flex-wrap gap-2">
+                      <div {...stylex.props(scheduleStyles.editorPresetRow)} style={{ marginTop: 0, marginBottom: 16 }}>
                         {(['daily', 'weekly'] as const).map((kind) => {
                           const isActive = isRecurringScheduleItem({ dayType: editDraft.dayType } as ScheduleItem, kind);
 
@@ -1101,53 +1100,56 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                         })}
                       </div>
 
-                      <label className="space-y-2 text-sm block">
-                        <span className="text-gray-400">{language === 'ru' ? 'Свободное значение' : language === 'zh' ? '自定义值' : 'Custom value'}</span>
+                      <label {...stylex.props(scheduleStyles.editorLabelStack)}>
+                        <span {...stylex.props(scheduleStyles.editorLabelText)}>{language === 'ru' ? 'Свободное значение' : language === 'zh' ? '自定义值' : 'Custom value'}</span>
                         <input
                           value={editDraft.dayType}
                           onChange={(event) => updateDraft({ dayType: event.target.value })}
                           ref={dayInputRef}
-                          {...mergeStylexProps(stylex.props(uiStyles.input), draftErrors.dayType ? 'border-rose-500/60' : undefined)}
+                          {...stylex.props(uiStyles.input)}
+                          style={draftErrors.dayType ? { borderColor: 'rgba(244, 63, 94, 0.6)' } : undefined}
                           placeholder={language === 'ru' ? 'Например: Понедельник или Еженедельные' : language === 'zh' ? '例如：星期一 或 每周' : 'For example: Monday or Weekly'}
                         />
-                        {draftErrors.dayType && <p className="text-xs text-rose-300">{draftErrors.dayType}</p>}
+                        {draftErrors.dayType && <p {...stylex.props(scheduleStyles.editorFieldError)}>{draftErrors.dayType}</p>}
                       </label>
                     </div>
 
                     <div {...stylex.props(uiStyles.softPanel)} style={{ padding: 20 }}>
-                      <div className="mb-4 flex items-center justify-between gap-3">
+                      <div {...stylex.props(scheduleStyles.editorSectionHeader)}>
                         <div>
-                          <div className="text-sm font-semibold text-[#e6eff5]">
+                          <div {...stylex.props(scheduleStyles.editorSectionTitle)}>
                             {language === 'ru' ? 'Время и порядок' : language === 'zh' ? '时间与顺序' : 'Time and order'}
                           </div>
-                          <p className="mt-1 text-xs text-[#7f97a6]">
+                          <p {...stylex.props(scheduleStyles.editorSectionSubtitle)}>
                             {language === 'ru' ? 'Структурированный ввод ускоряет создание слота и снижает риск ошибки в диапазоне.' : language === 'zh' ? '结构化输入可加快创建活动并减少时间范围错误。' : 'Structured inputs make slot creation faster and reduce range mistakes.'}
                           </p>
                         </div>
-                        <WuxiaIcon name="schedule" className="h-5 w-5 text-[#8fb9cc]" />
+                        <WuxiaIcon name="schedule" {...stylex.props(uiStyles.iconMd, uiStyles.iconAccent)} />
                       </div>
 
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_140px]">
-                        <label className="space-y-2 text-sm">
-                          <span className="text-gray-400">{language === 'ru' ? 'Начало' : language === 'zh' ? '开始' : 'Start'}</span>
+                      <div {...stylex.props(scheduleStyles.editorTimeGrid)}>
+                        <label {...stylex.props(scheduleStyles.editorLabelStack)}>
+                          <span {...stylex.props(scheduleStyles.editorLabelText)}>{language === 'ru' ? 'Начало' : language === 'zh' ? '开始' : 'Start'}</span>
                           <input
                             type="time"
                             value={draftTimeParts.start}
                             onChange={(event) => updateDraftTime('start', event.target.value)}
-                            {...mergeStylexProps(stylex.props(uiStyles.input), draftErrors.time ? 'border-rose-500/60' : undefined)}
+                            {...stylex.props(uiStyles.input)}
+                            style={draftErrors.time ? { borderColor: 'rgba(244, 63, 94, 0.6)' } : undefined}
                           />
                         </label>
-                        <label className="space-y-2 text-sm">
-                          <span className="text-gray-400">{language === 'ru' ? 'Конец' : language === 'zh' ? '结束' : 'End'}</span>
+                        <label {...stylex.props(scheduleStyles.editorLabelStack)}>
+                          <span {...stylex.props(scheduleStyles.editorLabelText)}>{language === 'ru' ? 'Конец' : language === 'zh' ? '结束' : 'End'}</span>
                           <input
                             type="time"
                             value={draftTimeParts.end}
                             onChange={(event) => updateDraftTime('end', event.target.value)}
-                            {...mergeStylexProps(stylex.props(uiStyles.input), draftErrors.time ? 'border-rose-500/60' : undefined)}
+                            {...stylex.props(uiStyles.input)}
+                            style={draftErrors.time ? { borderColor: 'rgba(244, 63, 94, 0.6)' } : undefined}
                           />
                         </label>
-                        <label className="space-y-2 text-sm">
-                          <span className="text-gray-400">{language === 'ru' ? 'Порядок' : language === 'zh' ? '排序' : 'Order'}</span>
+                        <label {...stylex.props(scheduleStyles.editorLabelStack)}>
+                          <span {...stylex.props(scheduleStyles.editorLabelText)}>{language === 'ru' ? 'Порядок' : language === 'zh' ? '排序' : 'Order'}</span>
                           <input
                             type="number"
                             min={0}
@@ -1159,7 +1161,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                         </label>
                       </div>
 
-                      <div className="mt-4 flex flex-wrap gap-2">
+                      <div {...stylex.props(scheduleStyles.editorPresetRow)}>
                         {[60, 90, 120].map((minutes) => (
                           <button
                             key={minutes}
@@ -1179,55 +1181,58 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                         </button>
                       </div>
 
-                      <label className="mt-4 block space-y-2 text-sm">
-                        <span className="text-gray-400">{language === 'ru' ? 'Текстовое значение' : language === 'zh' ? '文本值' : 'Text value'}</span>
+                      <label {...stylex.props(scheduleStyles.editorLabelStack)} style={{ marginTop: 16 }}>
+                        <span {...stylex.props(scheduleStyles.editorLabelText)}>{language === 'ru' ? 'Текстовое значение' : language === 'zh' ? '文本值' : 'Text value'}</span>
                         <input
                           value={editDraft.time}
                           onChange={(event) => updateDraft({ time: event.target.value })}
-                          {...mergeStylexProps(stylex.props(uiStyles.input), draftErrors.time ? 'border-rose-500/60' : undefined)}
+                          {...stylex.props(uiStyles.input)}
+                          style={draftErrors.time ? { borderColor: 'rgba(244, 63, 94, 0.6)' } : undefined}
                           placeholder="19:30 - 20:30"
                         />
-                        <p className="text-xs text-[#7f97a6]">
+                        <p {...stylex.props(scheduleStyles.editorHintText)}>
                           {language === 'ru' ? 'Можно оставить только начало или указать полный диапазон.' : language === 'zh' ? '可以只填写开始时间，也可以填写完整时间范围。' : 'You can keep only the start time or set the full range.'}
                         </p>
-                        {draftErrors.time && <p className="text-xs text-rose-300">{draftErrors.time}</p>}
+                        {draftErrors.time && <p {...stylex.props(scheduleStyles.editorFieldError)}>{draftErrors.time}</p>}
                       </label>
                     </div>
 
                     <div {...stylex.props(uiStyles.softPanel)} style={{ padding: 20 }}>
-                      <div className="mb-4 flex items-center justify-between gap-3">
+                      <div {...stylex.props(scheduleStyles.editorSectionHeader)}>
                         <div>
-                          <div className="text-sm font-semibold text-[#e6eff5]">
+                          <div {...stylex.props(scheduleStyles.editorSectionTitle)}>
                             {language === 'ru' ? 'Названия и доступность' : language === 'zh' ? '标题与可见性' : 'Titles and visibility'}
                           </div>
-                          <p className="mt-1 text-xs text-[#7f97a6]">
+                          <p {...stylex.props(scheduleStyles.editorSectionSubtitle)}>
                             {language === 'ru' ? 'RU и EN обязательны, а китайский вариант можно быстро заполнить из готового текста.' : language === 'zh' ? 'RU 和 EN 为必填，中文标题可快速从现有内容补全。' : 'RU and EN are required, and the Chinese title can be quickly filled from existing text.'}
                           </p>
                         </div>
-                        <WuxiaIcon name="bookOpen" className="h-5 w-5 text-[#8fb9cc]" />
+                        <WuxiaIcon name="bookOpen" {...stylex.props(uiStyles.iconMd, uiStyles.iconAccent)} />
                       </div>
 
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <label className="space-y-2 text-sm">
-                          <span className="text-gray-400">Title RU</span>
+                      <div {...stylex.props(scheduleStyles.editorTitlesGrid)}>
+                        <label {...stylex.props(scheduleStyles.editorLabelStack)}>
+                          <span {...stylex.props(scheduleStyles.editorLabelText)}>Title RU</span>
                           <input
                             value={editDraft.titleRu}
                             onChange={(event) => updateDraft({ titleRu: event.target.value })}
-                            {...mergeStylexProps(stylex.props(uiStyles.input), draftErrors.titleRu ? 'border-rose-500/60' : undefined)}
+                            {...stylex.props(uiStyles.input)}
+                            style={draftErrors.titleRu ? { borderColor: 'rgba(244, 63, 94, 0.6)' } : undefined}
                           />
-                          {draftErrors.titleRu && <p className="text-xs text-rose-300">{draftErrors.titleRu}</p>}
+                          {draftErrors.titleRu && <p {...stylex.props(scheduleStyles.editorFieldError)}>{draftErrors.titleRu}</p>}
                         </label>
-                        <label className="space-y-2 text-sm">
-                          <span className="text-gray-400">Title EN</span>
+                        <label {...stylex.props(scheduleStyles.editorLabelStack)}>
+                          <span {...stylex.props(scheduleStyles.editorLabelText)}>Title EN</span>
                           <input
                             value={editDraft.titleEn}
                             onChange={(event) => updateDraft({ titleEn: event.target.value })}
-                            {...mergeStylexProps(stylex.props(uiStyles.input), draftErrors.titleEn ? 'border-rose-500/60' : undefined)}
+                            {...stylex.props(uiStyles.input)}
+                            style={draftErrors.titleEn ? { borderColor: 'rgba(244, 63, 94, 0.6)' } : undefined}
                           />
-                          {draftErrors.titleEn && <p className="text-xs text-rose-300">{draftErrors.titleEn}</p>}
+                          {draftErrors.titleEn && <p {...stylex.props(scheduleStyles.editorFieldError)}>{draftErrors.titleEn}</p>}
                         </label>
-                        <label className="space-y-2 text-sm md:col-span-2">
-                          <span className="text-gray-400">Title ZH</span>
+                        <label {...stylex.props(scheduleStyles.editorLabelStack, scheduleStyles.editorTitleZh)}>
+                          <span {...stylex.props(scheduleStyles.editorLabelText)}>Title ZH</span>
                           <input
                             value={editDraft.titleZh}
                             onChange={(event) => updateDraft({ titleZh: event.target.value })}
@@ -1236,7 +1241,7 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                         </label>
                       </div>
 
-                      <div className="mt-4 flex flex-wrap gap-2">
+                      <div {...stylex.props(scheduleStyles.editorPresetRow)}>
                         <button
                           type="button"
                           onClick={() => fillDraftTitlesFrom('titleRu')}
@@ -1253,28 +1258,28 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                         </button>
                       </div>
 
-                      <label {...stylex.props(uiStyles.softPanel)} className="mt-4 flex items-center gap-3 text-sm p-4">
+                      <label {...stylex.props(uiStyles.softPanel, scheduleStyles.editorCheckboxRow)}>
                         <input
                           type="checkbox"
                           checked={editDraft.active}
                           onChange={(event) => updateDraft({ active: event.target.checked })}
                         />
-                        <span className="text-gray-300">
+                        <span {...stylex.props(scheduleStyles.editorLabelText)}>
                           {language === 'ru' ? 'Активно в расписании' : language === 'zh' ? '显示在日程中' : 'Visible in the schedule'}
                         </span>
                       </label>
                     </div>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row gap-3 sm:justify-end mt-6">
+                  <div {...stylex.props(scheduleStyles.editorActions)}>
                     {editingSchedule?.id && (
                       <button
                         type="button"
-                      className={`px-5 py-3 rounded-xl font-medium border transition ${editDraft.active ? 'border-red-500/40 bg-red-500/10 text-red-200 hover:bg-red-500/15' : 'border-emerald-500/35 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/15'} w-full sm:w-auto`}
+                        {...stylex.props(editDraft.active ? scheduleStyles.archiveButtonActive : scheduleStyles.archiveButtonInactive)}
                         onClick={() => void archiveScheduleEdit()}
                         disabled={updateSchedule.isPending || createSchedule.isPending}
                       >
-                        <WuxiaIcon name={editDraft.active ? 'trash' : 'redo'} className="inline-block w-4 h-4 mr-2 align-text-bottom" />
+                        <WuxiaIcon name={editDraft.active ? 'trash' : 'redo'} {...stylex.props(uiStyles.iconSm, uiStyles.inlineIcon)} />
                         {editDraft.active
                           ? language === 'ru'
                             ? 'Архивировать'
@@ -1311,77 +1316,77 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
                   </div>
                 </div>
 
-                <aside className="border-t border-[#203342]/80 bg-[radial-gradient(circle_at_top,rgba(47,111,144,0.22),transparent_45%),linear-gradient(180deg,#0d151c,#091017)] p-6 md:p-8 lg:border-l lg:border-t-0">
-                  <div className="mb-6 flex items-center justify-between gap-3">
+                <aside {...stylex.props(scheduleStyles.previewAside)}>
+                  <div {...stylex.props(scheduleStyles.previewHeader)}>
                     <div>
-                      <h4 className="text-lg font-semibold text-[#eff8fd]">
+                      <h4 {...stylex.props(scheduleStyles.previewHeaderTitle)}>
                         {language === 'ru' ? 'Живой предпросмотр' : language === 'zh' ? '实时预览' : 'Live preview'}
                       </h4>
-                      <p className="mt-1 text-sm text-[#8ba4b4]">
+                      <p {...stylex.props(scheduleStyles.previewHeaderSubtitle)}>
                         {language === 'ru' ? 'Так слот будет выглядеть в карточке дня.' : language === 'zh' ? '活动将在日程卡片中这样显示。' : 'This is how the slot will appear inside the day card.'}
                       </p>
                     </div>
-                    <WuxiaIcon name="sparkle" className="h-5 w-5 text-[#8fb9cc]" />
+                    <WuxiaIcon name="sparkle" {...stylex.props(uiStyles.iconMd, uiStyles.iconAccent)} />
                   </div>
 
                   {draftPreviewItem && (
-                    <div className="rounded-[1.75rem] border border-[#2a4454]/75 bg-[#0c151d]/92 p-5 shadow-[0_20px_40px_rgba(3,8,12,0.45)]">
-                      <div className="mb-4 flex items-start justify-between gap-3">
+                    <div {...stylex.props(scheduleStyles.previewCard)}>
+                      <div {...stylex.props(scheduleStyles.previewCardTop)}>
                         <div>
-                          <div className="text-xs uppercase tracking-[0.24em] text-[#7d99aa]">
+                          <div {...stylex.props(scheduleStyles.previewEyebrow)}>
                             {editDraft.dayType || (language === 'ru' ? 'Новый слот' : language === 'zh' ? '新活动' : 'New slot')}
                           </div>
-                          <div className="mt-2 text-lg font-semibold text-[#f1f8fd]">
+                          <div {...stylex.props(scheduleStyles.previewCardTitle)}>
                             {getDisplayTitle(draftPreviewItem, language) || (language === 'ru' ? 'Название появится здесь' : language === 'zh' ? '标题会显示在这里' : 'The title will appear here')}
                           </div>
                         </div>
-                        <div className="rounded-full border border-[#35596a]/70 bg-[#10202a]/80 px-3 py-1 text-xs text-[#9dc5d7]">
+                        <div {...stylex.props(scheduleStyles.previewOrderPill)}>
                           #{Number(editDraft.orderIndex) || 0}
                         </div>
                       </div>
 
-                      <div className="space-y-3 text-sm text-[#c8d9e3]">
-                        <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#223544]/70 bg-[#111c24]/85 px-4 py-3">
-                          <span className="text-[#86a4b5]">{language === 'ru' ? 'Время' : language === 'zh' ? '时间' : 'Time'}</span>
-                          <span className="font-mono text-[#eef9ff]">{draftPreviewItem.time || '--:--'}</span>
+                      <div {...stylex.props(scheduleStyles.previewFacts)}>
+                        <div {...stylex.props(scheduleStyles.previewFactRow)}>
+                          <span {...stylex.props(scheduleStyles.previewFactLabel)}>{language === 'ru' ? 'Время' : language === 'zh' ? '时间' : 'Time'}</span>
+                          <span {...stylex.props(scheduleStyles.previewFactValue, scheduleStyles.previewFactValueMono)}>{draftPreviewItem.time || '--:--'}</span>
                         </div>
-                        <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#223544]/70 bg-[#111c24]/85 px-4 py-3">
-                          <span className="text-[#86a4b5]">{language === 'ru' ? 'Группа' : language === 'zh' ? '分组' : 'Group'}</span>
-                          <span className="text-right text-[#eef9ff]">{draftPreviewItem.group}</span>
+                        <div {...stylex.props(scheduleStyles.previewFactRow)}>
+                          <span {...stylex.props(scheduleStyles.previewFactLabel)}>{language === 'ru' ? 'Группа' : language === 'zh' ? '分组' : 'Group'}</span>
+                          <span {...stylex.props(scheduleStyles.previewFactValue)}>{draftPreviewItem.group}</span>
                         </div>
-                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-                          <div className="rounded-2xl border border-[#223544]/70 bg-[#111c24]/85 px-4 py-3">
-                            <div className="text-xs uppercase tracking-[0.18em] text-[#6f8b9b]">RU</div>
-                            <div className="mt-2 text-sm text-[#eef9ff]">{editDraft.titleRu || '—'}</div>
+                        <div {...stylex.props(scheduleStyles.previewLocalesGrid)}>
+                          <div {...stylex.props(scheduleStyles.previewLocaleCard)}>
+                            <div {...stylex.props(scheduleStyles.previewLocaleLabel)}>RU</div>
+                            <div {...stylex.props(scheduleStyles.previewLocaleValue)}>{editDraft.titleRu || '—'}</div>
                           </div>
-                          <div className="rounded-2xl border border-[#223544]/70 bg-[#111c24]/85 px-4 py-3">
-                            <div className="text-xs uppercase tracking-[0.18em] text-[#6f8b9b]">EN</div>
-                            <div className="mt-2 text-sm text-[#eef9ff]">{editDraft.titleEn || '—'}</div>
+                          <div {...stylex.props(scheduleStyles.previewLocaleCard)}>
+                            <div {...stylex.props(scheduleStyles.previewLocaleLabel)}>EN</div>
+                            <div {...stylex.props(scheduleStyles.previewLocaleValue)}>{editDraft.titleEn || '—'}</div>
                           </div>
-                          <div className="rounded-2xl border border-[#223544]/70 bg-[#111c24]/85 px-4 py-3 sm:col-span-2 lg:col-span-1 xl:col-span-2">
-                            <div className="text-xs uppercase tracking-[0.18em] text-[#6f8b9b]">ZH</div>
-                            <div className="mt-2 text-sm text-[#eef9ff]">{editDraft.titleZh || '—'}</div>
+                          <div {...stylex.props(scheduleStyles.previewLocaleCard, scheduleStyles.previewLocaleWide)}>
+                            <div {...stylex.props(scheduleStyles.previewLocaleLabel)}>ZH</div>
+                            <div {...stylex.props(scheduleStyles.previewLocaleValue)}>{editDraft.titleZh || '—'}</div>
                           </div>
                         </div>
                       </div>
                     </div>
                   )}
 
-                  <div className="mt-6 rounded-[1.5rem] border border-[#223544]/70 bg-[#0c151d]/82 p-5">
-                    <div className="text-sm font-semibold text-[#e6eff5]">
+                  <div {...stylex.props(scheduleStyles.tipsCard)}>
+                    <div {...stylex.props(scheduleStyles.tipsTitle)}>
                       {language === 'ru' ? 'Быстрые подсказки' : language === 'zh' ? '快速提示' : 'Quick tips'}
                     </div>
-                    <div className="mt-3 space-y-3 text-sm text-[#9db3c1]">
-                      <div className="flex gap-3">
-                        <WuxiaIcon name="checkCircle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-300" />
+                    <div {...stylex.props(scheduleStyles.tipsList)}>
+                      <div {...stylex.props(scheduleStyles.tipRow)}>
+                        <WuxiaIcon name="checkCircle" {...stylex.props(uiStyles.iconSm, scheduleStyles.tipIcon)} />
                         <span>{language === 'ru' ? 'Повторяющиеся события лучше помечать как Daily или Weekly, чтобы они автоматически появлялись в нужных днях.' : language === 'zh' ? '重复活动最好标记为 Daily 或 Weekly，这样它们会自动出现在对应日期。' : 'Recurring events work best when marked as Daily or Weekly so they appear automatically on the right days.'}</span>
                       </div>
-                      <div className="flex gap-3">
-                        <WuxiaIcon name="checkCircle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-300" />
+                      <div {...stylex.props(scheduleStyles.tipRow)}>
+                        <WuxiaIcon name="checkCircle" {...stylex.props(uiStyles.iconSm, scheduleStyles.tipIcon)} />
                         <span>{language === 'ru' ? 'Порядок помогает вручную расставить карточки, если время у нескольких слотов совпадает.' : language === 'zh' ? '如果多个活动时间相同，排序字段可以帮助你手动调整顺序。' : 'The order field helps you manually arrange cards when several slots share the same time.'}</span>
                       </div>
-                      <div className="flex gap-3">
-                        <WuxiaIcon name="checkCircle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-300" />
+                      <div {...stylex.props(scheduleStyles.tipRow)}>
+                        <WuxiaIcon name="checkCircle" {...stylex.props(uiStyles.iconSm, scheduleStyles.tipIcon)} />
                         <span>{language === 'ru' ? 'Если событие временно не нужно показывать, его можно скрыть, не теряя данные.' : language === 'zh' ? '如果活动暂时不需要显示，可以隐藏而不必丢失数据。' : 'If an event is temporarily inactive, hide it without losing the data.'}</span>
                       </div>
                     </div>

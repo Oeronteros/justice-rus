@@ -22,4 +22,7 @@ export const prefixBadgeStyles = stylex.create({
     fontSize: '10px',
     letterSpacing: '0.16em',
   },
+  marginTopSm: {
+    marginTop: '8px',
+  },
 });

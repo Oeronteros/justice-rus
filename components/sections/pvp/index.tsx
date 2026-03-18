@@ -15,7 +15,6 @@ import { handleApiError } from '@/lib/api/errors';
 import * as stylex from '@stylexjs/stylex';
 import { uiStyles } from '@/components/shared/Ui.stylex';
 import { opsStyles } from '@/components/sections/ops/Ops.stylex';
-import { mergeStylexProps } from '@/lib/stylex/utils';
 import { pvpStyles } from './Pvp.stylex';
 
 interface PvpSectionProps {
@@ -120,7 +119,7 @@ function MatchCard({
           <div {...stylex.props(pvpStyles.matchMeta)}>Создан: {formatDateTime(match.createdAt)}</div>
         </div>
         <div {...stylex.props(uiStyles.badge, uiStyles.badgeSuccess)}>
-          <WuxiaIcon name="sword" className="w-4 h-4" />
+          <WuxiaIcon name="sword" {...stylex.props(uiStyles.iconSm)} />
           {match.confirmationStatus === 'confirmed'
             ? 'Подтверждено'
             : match.confirmationStatus === 'disputed'
@@ -138,7 +137,7 @@ function MatchCard({
             <span>{you.nickname}</span>
             <PrefixBadge prefix={you.prefix} variant="compact" />
           </div>
-          <div className="mt-2">
+          <div style={{ marginTop: 8 }}>
             <ClassBadge className={you.className} emptyLabel="Класс не указан" textClassName="text-green-300 text-xs" iconSizeClassName="h-7 w-7" />
           </div>
         </div>
@@ -148,7 +147,7 @@ function MatchCard({
             <span>{opponent.nickname}</span>
             <PrefixBadge prefix={opponent.prefix} variant="compact" />
           </div>
-          <div className="mt-2">
+          <div style={{ marginTop: 8 }}>
             <ClassBadge className={opponent.className} emptyLabel="Класс не указан" textClassName="text-green-300 text-xs" iconSizeClassName="h-7 w-7" />
           </div>
         </div>
@@ -162,10 +161,10 @@ function MatchCard({
         </div>
         {match.status === 'pending' && (
           <div {...stylex.props(pvpStyles.reportButtons)}>
-            <button type="button" {...mergeStylexProps(stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary), 'px-4 py-2 w-full sm:w-auto')} disabled={isReporting} onClick={() => onReport('win')}>
+            <button type="button" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)} style={{ padding: '8px 16px', width: '100%' }} disabled={isReporting} onClick={() => onReport('win')}>
               {hasReported ? 'Обновить: победа' : 'Сообщить победу'}
             </button>
-            <button type="button" {...mergeStylexProps(stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary), 'px-4 py-2 w-full sm:w-auto')} disabled={isReporting} onClick={() => onReport('loss')}>
+            <button type="button" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)} style={{ padding: '8px 16px', width: '100%' }} disabled={isReporting} onClick={() => onReport('loss')}>
               {hasReported ? 'Обновить: поражение' : 'Сообщить поражение'}
             </button>
           </div>

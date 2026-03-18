@@ -1,5 +1,5 @@
 import * as stylex from '@stylexjs/stylex';
-import { radius, spacing, typography } from '@/lib/stylex/tokens.stylex';
+import { radius, spacing, typography } from '../lib/stylex/tokens.stylex';
 
 export const classIconStyles = stylex.create({
   wrapper: {

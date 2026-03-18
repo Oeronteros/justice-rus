@@ -15,6 +15,14 @@ export const registrationStyles = stylex.create({
     flexShrink: 0,
     objectFit: 'cover',
   },
+  identityAvatarCompact: {
+    width: '44px',
+    height: '44px',
+  },
+  identityAvatarDefault: {
+    width: '36px',
+    height: '36px',
+  },
   identityAvatarFallback: {
     borderRadius: radius.pill,
     border: '1px solid #385264',
@@ -24,6 +32,16 @@ export const registrationStyles = stylex.create({
     flexShrink: 0,
     display: 'grid',
     placeItems: 'center',
+  },
+  identityAvatarFallbackCompact: {
+    width: '44px',
+    height: '44px',
+    fontSize: '0.75rem',
+  },
+  identityAvatarFallbackDefault: {
+    width: '36px',
+    height: '36px',
+    fontSize: '11px',
   },
   identityMeta: {
     minWidth: 0,
@@ -390,6 +408,12 @@ export const registrationStyles = stylex.create({
     justifyContent: {
       default: 'flex-start',
       '@media (min-width: 640px)': 'flex-end',
+    },
+  },
+  modalShellPadded: {
+    padding: {
+      default: '24px',
+      '@media (min-width: 768px)': '32px',
     },
   },
 });

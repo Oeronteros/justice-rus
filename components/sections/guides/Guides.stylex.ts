@@ -415,4 +415,94 @@ export const guidesStyles = stylex.create({
       '@media (min-width: 768px)': '24px',
     },
   },
+  editorBackdrop: {
+    zIndex: 100001,
+    perspective: 'none',
+    transform: 'none',
+  },
+  editorModalShell: {
+    width: '100%',
+    maxWidth: '80rem',
+    maxHeight: '92vh',
+    padding: {
+      default: '24px',
+      '@media (min-width: 768px)': '32px',
+    },
+  },
+  editorHeaderActions: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    alignSelf: {
+      default: 'flex-start',
+      '@media (min-width: 768px)': 'auto',
+    },
+  },
+  modalHeaderLead: {
+    minWidth: 0,
+    flex: 1,
+  },
+  modalActionNotice: {
+    display: {
+      default: 'none',
+      '@media (min-width: 640px)': 'inline-flex',
+    },
+  },
+  modalLoadingGrid: {
+    display: 'grid',
+    gap: '16px',
+  },
+  modalLoadingCard: {
+    display: 'grid',
+    gap: '16px',
+  },
+  modalLoadingStack: {
+    marginTop: '16px',
+    display: 'grid',
+    gap: '12px',
+  },
+  modalError: {
+    color: '#f87171',
+  },
+  modalMainGrid: {
+    display: 'grid',
+    gap: '32px',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 1280px)': '260px minmax(0, 1fr)',
+    },
+  },
+  contentStack: {
+    display: 'grid',
+    gap: '24px',
+  },
+  backlinksPanel: {
+    borderRadius: '24px',
+    border: '1px solid #1f3344',
+    backgroundColor: 'rgba(11,20,29,0.82)',
+    padding: '20px',
+    boxShadow: '0 18px 34px rgba(4,8,12,0.35)',
+  },
+  backlinksHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    marginBottom: '16px',
+    fontSize: '0.875rem',
+    fontWeight: 500,
+    color: '#dceaf4',
+  },
+  backlinksGrid: {
+    display: 'grid',
+    gap: '12px',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 768px)': 'repeat(2, minmax(0, 1fr))',
+    },
+  },
+  commentsSection: {
+    marginTop: '32px',
+    paddingTop: '24px',
+    borderTop: '1px solid #1a2a38',
+  },
 });

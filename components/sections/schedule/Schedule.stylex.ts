@@ -29,6 +29,10 @@ export const scheduleStyles = stylex.create({
     fontWeight: 600,
     color: '#e6eff5',
   },
+  navChevron: {
+    fontSize: '1.125rem',
+    lineHeight: 1,
+  },
   weekGrid: {
     display: 'grid',
     gridTemplateColumns: {
@@ -105,6 +109,44 @@ export const scheduleStyles = stylex.create({
     marginTop: '4px',
     fontSize: '0.875rem',
     color: 'rgba(156,163,175,0.95)',
+  },
+  bannerLiveRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    color: '#4ade80',
+    fontSize: '14px',
+    fontWeight: 500,
+    marginBottom: '8px',
+  },
+  bannerLiveDot: {
+    width: '8px',
+    height: '8px',
+    borderRadius: radius.pill,
+    backgroundColor: '#4ade80',
+  },
+  bannerHeaderRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '12px',
+  },
+  bannerInfo: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    color: '#8fb9cc',
+    fontSize: '14px',
+    fontWeight: 500,
+    marginBottom: '8px',
+  },
+  bannerCountdown: {
+    textAlign: 'right',
+  },
+  bannerCountdownValue: {
+    fontSize: '1.5rem',
+    fontWeight: 700,
+    color: '#8fb9cc',
   },
   emptyCard: {
     padding: {
@@ -184,6 +226,13 @@ export const scheduleStyles = stylex.create({
   eventTimeNext: {
     color: '#8fb9cc',
   },
+  eventIconMuted: {
+    color: '#8fb9cc',
+  },
+  eventIconSuccess: {
+    color: '#6b7280',
+    flexShrink: 0,
+  },
   eventBody: {
     flex: 1,
     minWidth: 0,
@@ -250,5 +299,305 @@ export const scheduleStyles = stylex.create({
   },
   summaryAccent: {
     color: '#8fb9cc',
+  },
+  editorShell: {
+    width: '100%',
+    maxWidth: '96rem',
+    padding: 0,
+    overflow: 'hidden',
+  },
+  editorGrid: {
+    display: 'grid',
+    maxHeight: '92vh',
+    overflow: 'auto',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 1024px)': 'minmax(0,1.45fr) minmax(320px,0.95fr)',
+    },
+  },
+  editorMain: {
+    padding: {
+      default: '24px',
+      '@media (min-width: 768px)': '32px',
+    },
+  },
+  editorModeRow: {
+    marginBottom: '24px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '8px',
+    fontSize: '12px',
+  },
+  editorSectionHeader: {
+    marginBottom: '16px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '12px',
+  },
+  editorSectionTitle: {
+    fontSize: '0.875rem',
+    fontWeight: 600,
+    color: '#e6eff5',
+  },
+  editorSectionSubtitle: {
+    marginTop: '4px',
+    fontSize: '0.75rem',
+    color: '#7f97a6',
+    lineHeight: 1.5,
+  },
+  editorFieldGrid: {
+    display: 'grid',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 768px)': 'repeat(2, minmax(0, 1fr))',
+    },
+    gap: '16px',
+  },
+  editorTimeGrid: {
+    display: 'grid',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 768px)': 'minmax(0,1fr) minmax(0,1fr) 140px',
+    },
+    gap: '16px',
+  },
+  editorTitlesGrid: {
+    display: 'grid',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 768px)': 'repeat(2, minmax(0, 1fr))',
+    },
+    gap: '16px',
+  },
+  editorTitleZh: {
+    gridColumn: {
+      default: 'auto',
+      '@media (min-width: 768px)': 'span 2',
+    },
+  },
+  editorLabelStack: {
+    display: 'grid',
+    gap: '8px',
+    fontSize: '0.875rem',
+  },
+  editorLabelText: {
+    color: '#9ca3af',
+  },
+  editorFieldError: {
+    fontSize: '0.75rem',
+    color: '#fda4af',
+  },
+  editorHintText: {
+    fontSize: '0.75rem',
+    color: '#7f97a6',
+    lineHeight: 1.5,
+  },
+  editorPresetRow: {
+    marginTop: '16px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '8px',
+  },
+  editorCheckboxRow: {
+    marginTop: '16px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    padding: '16px',
+    fontSize: '0.875rem',
+  },
+  editorActions: {
+    marginTop: '24px',
+    display: 'flex',
+    flexDirection: {
+      default: 'column',
+      '@media (min-width: 640px)': 'row',
+    },
+    gap: '12px',
+    justifyContent: {
+      default: 'flex-start',
+      '@media (min-width: 640px)': 'flex-end',
+    },
+  },
+  archiveButtonActive: {
+    width: {
+      default: '100%',
+      '@media (min-width: 640px)': 'auto',
+    },
+    padding: '12px 20px',
+    borderRadius: '12px',
+    border: '1px solid rgba(239, 68, 68, 0.4)',
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    color: '#fecaca',
+    fontWeight: 500,
+  },
+  archiveButtonInactive: {
+    width: {
+      default: '100%',
+      '@media (min-width: 640px)': 'auto',
+    },
+    padding: '12px 20px',
+    borderRadius: '12px',
+    border: '1px solid rgba(16, 185, 129, 0.35)',
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    color: '#bbf7d0',
+    fontWeight: 500,
+  },
+  previewAside: {
+    borderTop: '1px solid #203342',
+    background: 'radial-gradient(circle at top, rgba(47,111,144,0.22), transparent 45%), linear-gradient(180deg,#0d151c,#091017)',
+    padding: {
+      default: '24px',
+      '@media (min-width: 768px)': '32px',
+    },
+    '@media (min-width: 1024px)': {
+      borderLeft: '1px solid #203342',
+      borderTop: '0',
+    },
+  },
+  previewHeader: {
+    marginBottom: '24px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '12px',
+  },
+  previewHeaderTitle: {
+    fontSize: '1.125rem',
+    fontWeight: 600,
+    color: '#eff8fd',
+  },
+  previewHeaderSubtitle: {
+    marginTop: '4px',
+    fontSize: '0.875rem',
+    color: '#8ba4b4',
+  },
+  previewCard: {
+    borderRadius: '28px',
+    border: '1px solid #2a4454',
+    backgroundColor: 'rgba(12,21,29,0.92)',
+    padding: '20px',
+    boxShadow: '0 20px 40px rgba(3,8,12,0.45)',
+  },
+  previewCardTop: {
+    marginBottom: '16px',
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: '12px',
+  },
+  previewEyebrow: {
+    fontSize: '0.75rem',
+    textTransform: 'uppercase',
+    letterSpacing: '0.24em',
+    color: '#7d99aa',
+  },
+  previewCardTitle: {
+    marginTop: '8px',
+    fontSize: '1.125rem',
+    fontWeight: 600,
+    color: '#f1f8fd',
+  },
+  previewOrderPill: {
+    borderRadius: radius.pill,
+    border: '1px solid #35596a',
+    backgroundColor: 'rgba(16,32,42,0.8)',
+    padding: '4px 12px',
+    fontSize: '0.75rem',
+    color: '#9dc5d7',
+  },
+  previewFacts: {
+    display: 'grid',
+    gap: '12px',
+    fontSize: '0.875rem',
+    color: '#c8d9e3',
+  },
+  previewFactRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '12px',
+    borderRadius: radius.xl,
+    border: '1px solid #223544',
+    backgroundColor: 'rgba(17,28,36,0.85)',
+    padding: '12px 16px',
+  },
+  previewFactLabel: {
+    color: '#86a4b5',
+  },
+  previewFactValue: {
+    color: '#eef9ff',
+  },
+  previewFactValueMono: {
+    fontFamily: typography.mono,
+  },
+  previewLocalesGrid: {
+    display: 'grid',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 640px)': 'repeat(2, minmax(0, 1fr))',
+      '@media (min-width: 1024px)': '1fr',
+      '@media (min-width: 1280px)': 'repeat(2, minmax(0, 1fr))',
+    },
+    gap: '12px',
+  },
+  previewLocaleWide: {
+    gridColumn: {
+      default: 'auto',
+      '@media (min-width: 640px)': 'span 2',
+      '@media (min-width: 1024px)': 'auto',
+      '@media (min-width: 1280px)': 'span 2',
+    },
+  },
+  previewLocaleCard: {
+    borderRadius: radius.xl,
+    border: '1px solid #223544',
+    backgroundColor: 'rgba(17,28,36,0.85)',
+    padding: '12px 16px',
+  },
+  previewLocaleLabel: {
+    fontSize: '0.75rem',
+    textTransform: 'uppercase',
+    letterSpacing: '0.18em',
+    color: '#6f8b9b',
+  },
+  previewLocaleValue: {
+    marginTop: '8px',
+    fontSize: '0.875rem',
+    color: '#eef9ff',
+  },
+  tipsCard: {
+    marginTop: '24px',
+    borderRadius: '24px',
+    border: '1px solid #223544',
+    backgroundColor: 'rgba(12,21,29,0.82)',
+    padding: '20px',
+  },
+  tipsTitle: {
+    fontSize: '0.875rem',
+    fontWeight: 600,
+    color: '#e6eff5',
+  },
+  tipsList: {
+    marginTop: '12px',
+    display: 'grid',
+    gap: '12px',
+    fontSize: '0.875rem',
+    color: '#9db3c1',
+  },
+  tipRow: {
+    display: 'flex',
+    gap: '12px',
+  },
+  tipIcon: {
+    marginTop: '2px',
+    flexShrink: 0,
+    color: '#86efac',
+  },
+  liveDotPulse: {
+    animationName: 'pulseSoft',
+    animationDuration: '1.2s',
+    animationIterationCount: 'infinite',
   },
 });

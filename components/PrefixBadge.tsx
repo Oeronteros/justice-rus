@@ -23,11 +23,16 @@ export function PrefixBadge({ prefix, variant = 'default', className }: PrefixBa
   if (!value) {
     return null;
   }
+  const extraClassName = className?.replace('mt-2', '').trim() || undefined;
 
   return (
     <span
-      {...variantStyles[variant]}
-      className={cn(stylex.props(prefixBadgeStyles.badge).className, variantStyles[variant].className, className)}
+      {...stylex.props(
+        prefixBadgeStyles.badge,
+        variant === 'compact' ? prefixBadgeStyles.compact : prefixBadgeStyles.default,
+        className?.includes('mt-2') && prefixBadgeStyles.marginTopSm
+      )}
+      className={cn(extraClassName)}
     >
       {value}
     </span>

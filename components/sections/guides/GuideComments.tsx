@@ -32,7 +32,7 @@ export function GuideComments({
     <div {...stylex.props(guidesStyles.commentsRoot)}>
       <div {...stylex.props(guidesStyles.commentsHeader)}>
         <h4 {...stylex.props(guidesStyles.commentsTitle)}>
-          <WuxiaIcon name="comment" className="w-5 h-5 text-[#8fb9cc]" />
+          <WuxiaIcon name="comment" {...stylex.props(uiStyles.iconMd, uiStyles.iconAccent)} />
           Комментарии
         </h4>
         <span {...stylex.props(uiStyles.badge, uiStyles.badgeMuted)}>{comments.length}</span>
@@ -48,11 +48,11 @@ export function GuideComments({
             <div key={c.id} {...stylex.props(uiStyles.card, uiStyles.sectionCard, guidesStyles.commentCard)}>
               <div {...stylex.props(guidesStyles.commentTop)}>
                 <span {...stylex.props(guidesStyles.commentAuthor)}>
-                  <WuxiaIcon name="user" className="w-4 h-4" />
+                  <WuxiaIcon name="user" {...stylex.props(uiStyles.iconSm, uiStyles.iconMuted)} />
                   {c.author}
                 </span>
                 <span {...stylex.props(guidesStyles.commentAuthor)}>
-                  <WuxiaIcon name="calendar" className="w-4 h-4" />
+                  <WuxiaIcon name="calendar" {...stylex.props(uiStyles.iconSm, uiStyles.iconMuted)} />
                   {formatDate(c.createdAt)}
                 </span>
               </div>
@@ -72,7 +72,7 @@ export function GuideComments({
         
         {canModerate && userRole && (
           <div {...stylex.props(guidesStyles.moderatorHint)}>
-            Роль: <span className="text-gray-300">{userRole}</span> (можно будет добавить модерацию/редактирование).
+            Роль: <span style={{ color: '#d1d5db' }}>{userRole}</span> (можно будет добавить модерацию/редактирование).
           </div>
         )}
       </div>
