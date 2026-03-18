@@ -25,6 +25,7 @@ import type { Schedule } from '@/lib/schemas/schedule';
 import * as stylex from '@stylexjs/stylex';
 import { uiStyles } from '@/components/shared/Ui.stylex';
 import { dashboardStyles } from '@/components/sections/dashboard/Dashboard.stylex';
+import GuildOperationsDeck from '@/components/sections/dashboard/GuildOperationsDeck';
 
 const DASHBOARD_URL_RE = /https?:\/\/[^\s<>"')\]]+/gi;
 const DASHBOARD_TRAILING_URL_PUNCTUATION_RE = /[.,;!?]+$/;
@@ -1338,6 +1339,18 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
 
   const liveTone: LiveTone = helpSnapshot.unattended > 0 || absenceSnapshot.pending.length > 0 || pvpSnapshot.disputed ? 'alert' : 'steady';
   const liveLabel = liveTone === 'alert' ? copy.activeAlerts : copy.allClear;
+  const nextEventLabel = useMemo(() => {
+    const upcoming = [...schedule]
+      .filter((item) => Number.isFinite(new Date(item.date).getTime()))
+      .sort((left, right) => new Date(left.date).getTime() - new Date(right.date).getTime());
+
+    const item = upcoming[0];
+    if (!item) {
+      return copy.noUpcoming;
+    }
+
+    return resolveScheduleHeadline(item, language);
+  }, [copy.noUpcoming, language, schedule]);
 
   const coreLoading = scheduleLoading || helpLoading || registrationsLoading || newsLoading;
   const coreEmpty = !schedule.length && !openHelp.length && !registrations.length && !news.length;
@@ -1388,6 +1401,16 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
               pvpSnapshot={pvpSnapshot}
               isOfficer={isOfficer}
               officerSignals={officerSignals}
+            />
+
+            <GuildOperationsDeck
+              language={language}
+              scheduleCount={schedule.length}
+              rosterSnapshot={rosterSnapshot}
+              helpSnapshot={{ total: helpSnapshot.total, unattended: helpSnapshot.unattended }}
+              absenceSnapshot={{ pendingCount: absenceSnapshot.pending.length }}
+              pvpSnapshot={{ queueSize: pvpSnapshot.queueSize, disputed: pvpSnapshot.disputed }}
+              nextEventLabel={nextEventLabel}
             />
 
             <DashboardPrimaryRegion

@@ -136,6 +136,10 @@ export function useNotifications() {
   return context;
 }
 
+export function useOptionalNotifications() {
+  return useContext(NotificationsContext);
+}
+
 export function useToast() {
   const { addToast } = useNotifications();
 

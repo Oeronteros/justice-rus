@@ -301,6 +301,52 @@ export const shellStyles = stylex.create({
       borderColor: 'rgba(239, 220, 190, 0.62)',
     },
   },
+  themeToggleGroup: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '4px',
+    borderRadius: '14px',
+    background: 'linear-gradient(135deg, rgba(17, 24, 34, 0.88), rgba(24, 32, 45, 0.84))',
+    border: '1px solid rgba(214, 190, 152, 0.16)',
+  },
+  themeToggleButton: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    minHeight: '34px',
+    padding: '0 10px',
+    borderRadius: '10px',
+    color: colors.textSecondary,
+    border: '1px solid transparent',
+    backgroundColor: 'transparent',
+    transitionProperty: 'background-color, border-color, color, transform',
+    transitionDuration: motion.fast,
+    ':hover': {
+      color: colors.textPrimary,
+      backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    },
+  },
+  themeToggleButtonActive: {
+    color: colors.textPrimary,
+    borderColor: 'rgba(214, 190, 152, 0.28)',
+    background: 'linear-gradient(120deg, rgba(139, 64, 58, 0.24), rgba(184, 160, 111, 0.18))',
+    boxShadow: '0 10px 18px rgba(2, 3, 5, 0.24)',
+  },
+  themeToggleIcon: {
+    width: '14px',
+    height: '14px',
+  },
+  themeToggleLabel: {
+    display: {
+      default: 'none',
+      '@media (min-width: 960px)': 'inline',
+    },
+    fontSize: '0.72rem',
+    fontWeight: 700,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+  },
   desktopNav: {
     display: {
       default: 'none',

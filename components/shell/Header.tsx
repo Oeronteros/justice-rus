@@ -10,6 +10,7 @@ import { headerCopy, Language, portalCopy, sectionLabels } from '@/lib/i18n';
 import { desktopGroupedNavItems, desktopPrimaryNavItems } from '@/lib/nav';
 import { mergeStylexProps } from '@/lib/stylex/utils';
 import WuxiaIcon from '../WuxiaIcons';
+import ThemeModeSwitch from './ThemeModeSwitch';
 import { shellStyles } from './Shell.stylex';
 
 interface HeaderProps {
@@ -153,6 +154,7 @@ export default function Header({
               <span {...stylex.props(shellStyles.utilityCurrent)}>{labels.activeSection}: {sectionLabel}</span>
             </div>
             <div {...stylex.props(shellStyles.toolbar)}>
+            <ThemeModeSwitch language={language} />
             <select
               id="langSwitch"
               value={language}
