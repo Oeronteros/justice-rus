@@ -97,6 +97,10 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
   }, [prefersReducedMotion]);
 
   useEffect(() => {
+    closeMoreMenu();
+  }, [currentSection]);
+
+  useEffect(() => {
     if (!isMoreOpen) return;
 
     const handleEscape = (event: KeyboardEvent) => {
@@ -231,7 +235,6 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
                               aria-label={orderLabels[item.section]}
                               aria-current={isActive ? 'page' : undefined}
                               title={orderLabels[item.section]}
-                              onClick={closeMoreMenu}
                             >
                               <span {...stylex.props(shellStyles.mobileSheetIcon, isActive && shellStyles.mobileSheetIconActive)}>
                                 <WuxiaIcon name={item.icon} className="h-5 w-5" />
@@ -281,7 +284,6 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
                   aria-label={sectionLabels[language][item.section]}
                   aria-current={isActive ? 'page' : undefined}
                   title={orderLabels[item.section]}
-                  onClick={closeMoreMenu}
                 >
                   {isActive ? <motion.span layoutId="mobile-bottom-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 420, damping: 32 }} /> : null}
                   <span {...stylex.props(shellStyles.mobileLinkContent)}>
