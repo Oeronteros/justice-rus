@@ -148,6 +148,28 @@ export default function Header({
             </div>
           </Link>
 
+          <div
+            aria-hidden="true"
+            {...stylex.props(
+              shellStyles.desktopSectionSignal,
+              headerCompact && shellStyles.desktopSectionSignalCompact
+            )}
+          >
+            <span {...stylex.props(shellStyles.desktopSectionSignalKicker)}>{labels.activeSection}</span>
+            <strong {...stylex.props(shellStyles.desktopSectionSignalValue)}>{sectionLabel}</strong>
+            <div {...stylex.props(shellStyles.desktopSectionSignalMeta)}>
+              <span {...stylex.props(shellStyles.desktopSectionSignalStat)}>
+                <span {...stylex.props(shellStyles.desktopSectionSignalStatLabel)}>{primaryNavLabel}</span>
+                <span {...stylex.props(shellStyles.desktopSectionSignalStatValue)}>{String(desktopPrimaryNavItems.length).padStart(2, '0')}</span>
+              </span>
+              <span {...stylex.props(shellStyles.desktopSectionSignalDivider)} />
+              <span {...stylex.props(shellStyles.desktopSectionSignalStat)}>
+                <span {...stylex.props(shellStyles.desktopSectionSignalStatLabel)}>{secondaryNavLabel}</span>
+                <span {...stylex.props(shellStyles.desktopSectionSignalStatValue)}>{String(groupedRouteCount).padStart(2, '0')}</span>
+              </span>
+            </div>
+          </div>
+
           <div {...stylex.props(shellStyles.toolbarShell)}>
             <div {...stylex.props(shellStyles.utilityPanel, headerCompact && shellStyles.utilityPanelCompact)}>
               <div {...stylex.props(shellStyles.utilityMeta)}>
@@ -155,56 +177,60 @@ export default function Header({
                 <span {...stylex.props(shellStyles.utilityCurrent)}>{labels.activeSection}: {sectionLabel}</span>
               </div>
               <div {...stylex.props(shellStyles.toolbar, headerCompact && shellStyles.toolbarCompact)}>
-                <ThemeModeSwitch language={language} />
-                <select
-                  id="langSwitch"
-                  value={language}
-                  onChange={(e) => onLanguageChange(e.target.value as Language)}
-                  aria-label={labels.languageSwitcher}
-                  {...stylex.props(shellStyles.select)}
-                >
-                  <option value="ru">RU</option>
-                  <option value="en">EN</option>
-                  <option value="zh">简体中文</option>
-                </select>
+                <div {...stylex.props(shellStyles.toolbarCluster, shellStyles.toolbarClusterAdaptive)}>
+                  <ThemeModeSwitch language={language} />
+                  <select
+                    id="langSwitch"
+                    value={language}
+                    onChange={(e) => onLanguageChange(e.target.value as Language)}
+                    aria-label={labels.languageSwitcher}
+                    {...stylex.props(shellStyles.select)}
+                  >
+                    <option value="ru">RU</option>
+                    <option value="en">EN</option>
+                    <option value="zh">简体中文</option>
+                  </select>
+                </div>
 
-                <Link
-                  href="/calendar"
-                  {...stylex.props(shellStyles.iconButton)}
-                  title={labels.notifications}
-                  aria-label={labels.notifications}
-                >
-                  <WuxiaIcon name="calendarCheck" className="w-5 h-5" />
-                </Link>
+                <div {...stylex.props(shellStyles.toolbarCluster)}>
+                  <Link
+                    href="/calendar"
+                    {...stylex.props(shellStyles.iconButton)}
+                    title={labels.notifications}
+                    aria-label={labels.notifications}
+                  >
+                    <WuxiaIcon name="calendarCheck" className="w-5 h-5" />
+                  </Link>
 
-                <Link
-                  href="/profile"
-                  {...stylex.props(shellStyles.iconButton, currentSection === 'profile' && shellStyles.iconButtonActive)}
-                  title={labels.profile}
-                  aria-label={labels.profile}
-                >
-                  <WuxiaIcon name="profile" className="w-5 h-5" />
-                </Link>
+                  <Link
+                    href="/profile"
+                    {...stylex.props(shellStyles.iconButton, currentSection === 'profile' && shellStyles.iconButtonActive)}
+                    title={labels.profile}
+                    aria-label={labels.profile}
+                  >
+                    <WuxiaIcon name="profile" className="w-5 h-5" />
+                  </Link>
 
-                <button
-                  type="button"
-                  onClick={onRefresh}
-                  {...stylex.props(shellStyles.iconButton)}
-                  title={labels.refresh}
-                  aria-label={labels.refresh}
-                >
-                  <WuxiaIcon name="refresh" className="w-5 h-5" />
-                </button>
+                  <button
+                    type="button"
+                    onClick={onRefresh}
+                    {...stylex.props(shellStyles.iconButton)}
+                    title={labels.refresh}
+                    aria-label={labels.refresh}
+                  >
+                    <WuxiaIcon name="refresh" className="w-5 h-5" />
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={onLogout}
-                  {...stylex.props(shellStyles.iconButton, shellStyles.iconButtonAccent)}
-                  title={labels.logout}
-                  aria-label={labels.logout}
-                >
-                  <WuxiaIcon name="logout" className="w-5 h-5" />
-                </button>
+                  <button
+                    type="button"
+                    onClick={onLogout}
+                    {...stylex.props(shellStyles.iconButton, shellStyles.iconButtonAccent)}
+                    title={labels.logout}
+                    aria-label={labels.logout}
+                  >
+                    <WuxiaIcon name="logout" className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -280,6 +306,7 @@ export default function Header({
                 </span>
                 <span {...stylex.props(shellStyles.desktopMenuCopy)}>
                   <span {...stylex.props(shellStyles.desktopMenuLabel)}>{immersiveMenuLabel}</span>
+                  <span {...stylex.props(shellStyles.desktopMenuHint)}>{immersiveMenuHint}</span>
                   <span {...stylex.props(shellStyles.desktopMenuValue)}>{String(groupedRouteCount).padStart(2, '0')}</span>
                 </span>
               </button>

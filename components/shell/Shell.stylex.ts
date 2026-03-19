@@ -69,6 +69,70 @@ export const shellStyles = stylex.create({
       '@media (min-width: 768px)': 'min(100%, 460px)',
     },
   },
+  desktopSectionSignal: {
+    display: 'none',
+    '@media (min-width: 960px)': {
+      display: 'grid',
+      gap: spacing.xs,
+      minWidth: '220px',
+      alignSelf: 'stretch',
+      alignContent: 'center',
+      padding: '14px 16px',
+      borderRadius: radius.xl,
+      border: `1px solid ${colors.borderSubtle}`,
+      background:
+        `radial-gradient(circle at 100% 0%, ${colors.infoSurface}, transparent 34%), linear-gradient(155deg, ${colors.bgPanelAlt}, ${colors.bgPanel})`,
+      boxShadow: `inset 0 1px 0 rgba(238, 232, 218, 0.03), 0 14px 24px ${colors.shadowSoft}`,
+    },
+  },
+  desktopSectionSignalCompact: {
+    '@media (min-width: 960px)': {
+      padding: '12px 14px',
+      gap: '2px',
+    },
+  },
+  desktopSectionSignalKicker: {
+    fontSize: '0.68rem',
+    letterSpacing: '0.18em',
+    textTransform: 'uppercase',
+    color: colors.paperMuted,
+    fontWeight: 700,
+  },
+  desktopSectionSignalValue: {
+    fontFamily: typography.display,
+    fontSize: '1.15rem',
+    lineHeight: 1,
+    color: colors.paperBright,
+    letterSpacing: '0.02em',
+  },
+  desktopSectionSignalMeta: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: spacing.sm,
+    flexWrap: 'wrap',
+    marginTop: spacing.xs,
+  },
+  desktopSectionSignalStat: {
+    display: 'inline-flex',
+    alignItems: 'baseline',
+    gap: spacing.xs,
+  },
+  desktopSectionSignalStatLabel: {
+    fontSize: typography.microSize,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    color: colors.textMuted,
+  },
+  desktopSectionSignalStatValue: {
+    fontSize: typography.secondarySize,
+    fontWeight: 700,
+    color: colors.paperStrong,
+  },
+  desktopSectionSignalDivider: {
+    width: '1px',
+    height: '16px',
+    backgroundColor: colors.lineMuted,
+  },
   brandBlock: {
     display: 'flex',
     minWidth: 0,
@@ -288,6 +352,19 @@ export const shellStyles = stylex.create({
     background: `linear-gradient(135deg, ${colors.bgField}, rgba(16, 18, 24, 0.98))`,
     border: `1px solid ${colors.borderDefault}`,
     boxShadow: `inset 0 1px 0 rgba(238, 232, 218, 0.03)`,
+  },
+  toolbarCluster: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: spacing.sm,
+    flexWrap: 'wrap',
+  },
+  toolbarClusterAdaptive: {
+    minWidth: 0,
+    justifyContent: {
+      default: 'flex-end',
+      '@media (min-width: 768px)': 'flex-start',
+    },
   },
   toolbarCompact: {
     padding: '6px',
@@ -541,6 +618,12 @@ export const shellStyles = stylex.create({
     textTransform: 'uppercase',
     color: 'rgba(226, 214, 191, 0.92)',
     fontWeight: 600,
+  },
+  desktopMenuHint: {
+    fontSize: typography.microSize,
+    lineHeight: 1.35,
+    color: colors.paperMuted,
+    maxWidth: '18ch',
   },
   desktopMenuValue: {
     fontSize: typography.titleSize,
