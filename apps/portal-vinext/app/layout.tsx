@@ -74,6 +74,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                     <>
                       <div data-testid="theme-primitives-probe" aria-hidden="true" {...stylex.props(uiThemeProbeStyles.rail)}>
                         <div {...stylex.props(uiThemeProbeStyles.stack)}>
+                          <div data-testid="theme-probe-page" {...stylex.props(...uiPrimitives.pageChromeSurface, uiThemeProbeStyles.page)} />
                           <div data-testid="theme-probe-card" {...stylex.props(...uiPrimitives.cardStatic, uiThemeProbeStyles.surface)} />
                           <div data-testid="theme-probe-panel" {...stylex.props(...uiPrimitives.panel, uiThemeProbeStyles.surface)} />
                           <button data-testid="theme-probe-button" type="button" tabIndex={-1} {...stylex.props(...uiPrimitives.secondaryButton, uiThemeProbeStyles.button)}>

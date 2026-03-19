@@ -57,6 +57,7 @@ async function readThemeProbeState(page: Page) {
 
     return {
       boundary: getState('theme-boundary'),
+      page: getState('theme-probe-page'),
       card: getState('theme-probe-card'),
       panel: getState('theme-probe-panel'),
       button: getState('theme-probe-button'),
@@ -76,11 +77,18 @@ async function switchThemeMode(page: Page, nextMode: 'light' | 'dark') {
         setThemeMode?: (nextMode: 'system' | 'dark' | 'light') => void;
       }) | null;
 
-      if (!harness?.setThemeMode) {
+      if (harness?.setThemeMode) {
+        harness.setThemeMode(mode);
+        return;
+      }
+
+      const button = harness?.querySelector<HTMLButtonElement>(`button[data-theme-mode="${mode}"]`);
+
+      if (!button) {
         throw new Error('Theme toggle harness is not ready');
       }
 
-      harness.setThemeMode(mode);
+      button.click();
     }, nextMode);
 
     try {
@@ -131,6 +139,7 @@ test.describe('vinext theme primitives @theme-primitives', () => {
     expect(lightState.documentTheme).toBe('light');
     expect(lightState.bodyTheme).toBe('light');
     expect(lightProbe.boundary.backgroundImage).not.toBe('none');
+    expect(lightProbe.page.backgroundImage).not.toBe('none');
     expect(lightProbe.card.backgroundImage).not.toBe('none');
     expect(lightProbe.panel.backgroundImage).not.toBe('none');
     expect(lightProbe.button.backgroundImage).not.toBe('none');
@@ -161,6 +170,7 @@ test.describe('vinext theme primitives @theme-primitives', () => {
     expect(darkState.bodyTheme).toBe('dark');
     expect(darkState.boundaryClasses).toContain('theme-wuxia');
     expect(darkProbe.boundary.backgroundImage).not.toBe(lightProbe.boundary.backgroundImage);
+    expect(darkProbe.page.backgroundImage).not.toBe(lightProbe.page.backgroundImage);
     expect(darkProbe.card.backgroundImage).not.toBe(lightProbe.card.backgroundImage);
     expect(darkProbe.panel.backgroundImage).not.toBe(lightProbe.panel.backgroundImage);
     expect(darkProbe.button.backgroundImage).not.toBe(lightProbe.button.backgroundImage);

@@ -10,7 +10,9 @@ import { colors, layout, motion, radius, spacing, typography } from '../../lib/s
 
 export const uiPrimitives = {
   pageChrome: [appShellStyles.page, appShellStyles.contentShell],
+  pageChromeSurface: [appShellStyles.chromeSurface],
   pageContainer: [appShellStyles.container],
+  chromePanel: [surfaceStyles.chrome],
   card: [surfaceStyles.card, surfaceStyles.interactive],
   cardStatic: [surfaceStyles.card],
   panel: [surfaceStyles.panel],
@@ -19,6 +21,7 @@ export const uiPrimitives = {
   subduedPanel: [surfaceStyles.subdued],
   primaryButton: [buttonStyles.base, buttonStyles.primary],
   secondaryButton: [buttonStyles.base, buttonStyles.secondary],
+  touchButton: [buttonStyles.base, buttonStyles.secondary, buttonStyles.touch],
   ghostButton: [buttonStyles.base, buttonStyles.ghost],
   dangerButton: [buttonStyles.base, buttonStyles.danger],
   fieldLabel: [formStyles.label],
@@ -473,6 +476,12 @@ export const uiThemeProbeStyles = stylex.create({
     display: 'grid',
     gap: spacing.sm,
     width: '320px',
+  },
+  page: {
+    width: '320px',
+    minHeight: '180px',
+    borderRadius: radius.xl,
+    overflow: 'hidden',
   },
   surface: {
     padding: spacing.lg,

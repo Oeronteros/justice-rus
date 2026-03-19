@@ -37,26 +37,11 @@ export default function AppThemeBoundary({ children }: { children: React.ReactNo
       return;
     }
 
-    harnessNode.dataset.themeReady = 'true';
     harnessNode.setThemeMode = (nextMode: ThemeMode) => {
       setMode(nextMode);
     };
 
-    const handleClick = (event: MouseEvent) => {
-      const target = event.target as HTMLElement | null;
-      const button = target?.closest<HTMLButtonElement>('[data-theme-mode]');
-      const nextMode = button?.dataset.themeMode;
-
-      if (nextMode === 'system' || nextMode === 'dark' || nextMode === 'light') {
-        setMode(nextMode);
-      }
-    };
-
-    harnessNode.addEventListener('click', handleClick);
-
     return () => {
-      harnessNode.removeEventListener('click', handleClick);
-      delete harnessNode.dataset.themeReady;
       delete harnessNode.setThemeMode;
     };
   }, [setMode]);
@@ -73,11 +58,19 @@ export default function AppThemeBoundary({ children }: { children: React.ReactNo
 
   return (
     <div {...themeProps} data-testid="theme-boundary" data-theme={resolvedTheme} data-theme-mode={mode}>
-      <div ref={themeToggleHarnessRef} style={themeToggleHarnessStyles} aria-hidden="true" data-testid="theme-toggle" data-theme-current={mode}>
+      <div
+        ref={themeToggleHarnessRef}
+        style={themeToggleHarnessStyles}
+        aria-hidden="true"
+        data-testid="theme-toggle"
+        data-theme-current={mode}
+        data-theme-ready="true"
+      >
         {themeModes.map((themeMode) => (
           <button
             key={themeMode}
             type="button"
+            onClick={() => setMode(themeMode)}
             aria-pressed={mode === themeMode}
             data-theme-mode={themeMode}
           >

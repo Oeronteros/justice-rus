@@ -2,6 +2,17 @@ import * as stylex from '@stylexjs/stylex';
 import { colors, layout, motion, radius, spacing, typography } from './tokens.stylex';
 
 export const appShellStyles = stylex.create({
+  chromeSurface: {
+    backgroundColor: colors.bgApp,
+    backgroundImage:
+      `radial-gradient(circle at 14% 8%, ${colors.chromeGlowPrimary}, transparent 34%), radial-gradient(circle at 84% 10%, ${colors.chromeGlowSecondary}, transparent 38%), linear-gradient(168deg, ${colors.chromeStart} 0%, ${colors.chromeMid} 52%, ${colors.chromeEnd} 100%)`,
+    color: colors.textPrimary,
+    fontFamily: typography.body,
+    fontSize: typography.bodySize,
+    lineHeight: typography.bodyLine,
+    transitionProperty: 'background-color, background-image, color',
+    transitionDuration: motion.slow,
+  },
   page: {
     minHeight: '100vh',
     backgroundColor: colors.bgApp,
@@ -28,41 +39,51 @@ export const appShellStyles = stylex.create({
 
 export const surfaceStyles = stylex.create({
   panel: {
-    background: `linear-gradient(160deg, ${colors.panelTop}, ${colors.panelBottom})`,
+    background: `linear-gradient(160deg, ${colors.panelSurfaceStart}, ${colors.panelSurfaceEnd})`,
     borderWidth: '1px',
     borderStyle: 'solid',
-    borderColor: colors.borderSubtle,
+    borderColor: colors.panelBorder,
     borderRadius: radius.lg,
     boxShadow: colors.shadowCard,
     color: colors.textPrimary,
     padding: layout.cardPadding,
   },
-  card: {
+  chrome: {
     background:
-      `radial-gradient(circle at 10% 0%, ${colors.surfaceGlowPrimary}, transparent 42%), radial-gradient(circle at 88% 10%, ${colors.surfaceGlowSecondary}, transparent 34%), linear-gradient(145deg, ${colors.surfaceBase}, ${colors.panelBottom})`,
+      `radial-gradient(circle at 0% 0%, ${colors.surfaceGlowPrimary}, transparent 44%), radial-gradient(circle at 100% 0%, ${colors.surfaceGlowSecondary}, transparent 34%), linear-gradient(160deg, ${colors.panelSurfaceStart}, ${colors.panelSurfaceEnd})`,
     borderWidth: '1px',
     borderStyle: 'solid',
-    borderColor: colors.borderSubtle,
+    borderColor: colors.chromeBorder,
+    borderRadius: radius.xl,
+    boxShadow: colors.shadowCard,
+    color: colors.textPrimary,
+  },
+  card: {
+    background:
+      `radial-gradient(circle at 10% 0%, ${colors.surfaceGlowPrimary}, transparent 42%), radial-gradient(circle at 88% 10%, ${colors.surfaceGlowSecondary}, transparent 34%), linear-gradient(145deg, ${colors.cardSurfaceStart}, ${colors.cardSurfaceEnd})`,
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: colors.panelBorder,
     borderRadius: radius.xl,
     boxShadow: colors.shadowCard,
     color: colors.textPrimary,
     padding: layout.cardPaddingLg,
   },
   elevated: {
-    background: `linear-gradient(160deg, ${colors.bgElevated}, ${colors.surfaceRaised})`,
+    background: `linear-gradient(160deg, ${colors.elevatedSurfaceStart}, ${colors.elevatedSurfaceEnd})`,
     borderWidth: '1px',
     borderStyle: 'solid',
-    borderColor: colors.borderDefault,
+    borderColor: colors.panelBorderStrong,
     borderRadius: radius.xl,
     boxShadow: colors.shadowLifted,
     color: colors.textPrimary,
     padding: layout.cardPaddingLg,
   },
   subdued: {
-    background: `linear-gradient(160deg, ${colors.surfaceRaised}, ${colors.surfaceBase})`,
+    background: `linear-gradient(160deg, ${colors.subduedSurfaceStart}, ${colors.subduedSurfaceEnd})`,
     borderWidth: '1px',
     borderStyle: 'solid',
-    borderColor: colors.borderDefault,
+    borderColor: colors.panelBorderStrong,
     borderRadius: radius.lg,
     boxShadow: colors.shadowInset,
     color: colors.textPrimary,
@@ -73,11 +94,11 @@ export const surfaceStyles = stylex.create({
     transitionTimingFunction: motion.easeStandard,
     ':hover': {
       backgroundColor: colors.controlSurfaceHover,
-      borderColor: colors.borderDefault,
+      borderColor: colors.panelBorderStrong,
       transform: 'translateY(-1px)',
     },
     ':focus-within': {
-      borderColor: colors.accentEdgeStrong,
+      borderColor: colors.chromeBorderStrong,
       boxShadow: `0 0 0 1px ${colors.accentSoft}, ${colors.shadowLifted}`,
     },
   },
@@ -171,10 +192,10 @@ export const buttonStyles = stylex.create({
   },
   secondary: {
     minHeight: layout.buttonSecondaryHeight,
-    background: `linear-gradient(160deg, ${colors.controlSurface}, ${colors.bgPanelAlt})`,
+    background: `linear-gradient(160deg, ${colors.buttonSecondaryStart}, ${colors.buttonSecondaryEnd})`,
     borderWidth: '1px',
     borderStyle: 'solid',
-    borderColor: colors.borderDefault,
+    borderColor: colors.panelBorderStrong,
     color: colors.textPrimary,
     ':hover': {
       backgroundColor: colors.controlSurfaceHover,
@@ -189,12 +210,15 @@ export const buttonStyles = stylex.create({
     color: colors.textSecondary,
     ':hover': {
       color: colors.textPrimary,
-      backgroundColor: colors.accentMuted,
+      backgroundColor: colors.buttonGhostHover,
+    },
+    ':active': {
+      backgroundColor: colors.buttonGhostActive,
     },
   },
   danger: {
     minHeight: layout.buttonSecondaryHeight,
-    background: `linear-gradient(145deg, ${colors.dangerSurfaceStrong}, ${colors.dangerSurface})`,
+    background: `linear-gradient(145deg, ${colors.buttonDangerStart}, ${colors.buttonDangerEnd})`,
     borderWidth: '1px',
     borderStyle: 'solid',
     borderColor: colors.dangerBorder,
@@ -203,6 +227,9 @@ export const buttonStyles = stylex.create({
       transform: 'translateY(-1px)',
       boxShadow: colors.shadowCard,
     },
+  },
+  touch: {
+    minHeight: layout.buttonTouchHeight,
   },
 });
 
@@ -228,20 +255,24 @@ export const formStyles = stylex.create({
     minHeight: layout.fieldHeight,
     borderRadius: radius.md,
     padding: `${spacing.md} ${spacing.lg}`,
-    backgroundColor: colors.controlSurface,
+    backgroundColor: colors.fieldSurface,
     borderWidth: '1px',
     borderStyle: 'solid',
-    borderColor: colors.borderDefault,
+    borderColor: colors.panelBorderStrong,
     color: colors.textPrimary,
     boxShadow: colors.shadowInset,
     transitionProperty: 'border-color, box-shadow, background-color',
     transitionDuration: motion.fast,
     transitionTimingFunction: motion.easeStandard,
+    ':hover': {
+      backgroundColor: colors.fieldSurfaceHover,
+      borderColor: colors.borderDefault,
+    },
     ':focus': {
       outline: 'none',
       borderColor: colors.fieldFocusBorder,
       boxShadow: `0 0 0 3px ${colors.focusGlow}`,
-      backgroundColor: colors.controlSurfaceHover,
+      backgroundColor: colors.fieldSurfaceActive,
     },
     '::placeholder': {
       color: colors.textMuted,
@@ -280,9 +311,9 @@ export const overlayStyles = stylex.create({
     borderRadius: radius.overlay,
     borderWidth: '1px',
     borderStyle: 'solid',
-    borderColor: colors.accentEdge,
+    borderColor: colors.chromeBorder,
     background:
-      `radial-gradient(circle at 10% 0%, ${colors.surfaceGlowPrimary}, transparent 36%), radial-gradient(circle at 86% 10%, ${colors.surfaceGlowSecondary}, transparent 34%), linear-gradient(145deg, ${colors.overlaySurface}, ${colors.surfaceRaised})`,
+      `radial-gradient(circle at 10% 0%, ${colors.surfaceGlowPrimary}, transparent 36%), radial-gradient(circle at 86% 10%, ${colors.surfaceGlowSecondary}, transparent 34%), linear-gradient(145deg, ${colors.overlayPanelStart}, ${colors.overlayPanelEnd})`,
     boxShadow: `0 20px 40px ${colors.shadowStrong}, inset 0 0 0 1px ${colors.borderSubtle}`,
   },
   panelNarrow: {
