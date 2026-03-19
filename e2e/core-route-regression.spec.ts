@@ -162,10 +162,12 @@ test.describe('desktop core route regression', () => {
     await expect(commandNav.getByRole('link', { name: 'Гайды', exact: true })).toBeVisible();
 
     await primaryNav.getByRole('link', { name: 'Новости', exact: true }).click();
+    await expect(page).toHaveURL(/\/news$/);
     await expect(page.getByRole('heading', { name: 'Боевой сбор' }).first()).toBeVisible();
 
     await primaryNav.getByRole('link', { name: 'Помощь', exact: true }).click();
-    await expect(page.getByText('Нужен лидер на вечерний сбор').first()).toBeVisible();
+    await expect(page).toHaveURL(/\/help$/);
+    await expect(page.getByRole('heading', { name: 'Нужен лидер на вечерний сбор' }).first()).toBeVisible();
 
     await primaryNav.getByRole('link', { name: 'Кабинет', exact: true }).click();
     await expect(page).toHaveURL(/\/profile$/);

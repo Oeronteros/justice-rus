@@ -6,3 +6,5 @@
 - 2026-03-18: A minimal bridge at `lib/styled-components/token-bridge.ts` can expose StyleX semantic vars (`colors`, `spacing`, `typography`, `radius`, `layout`, `motion`) directly to Styled Components leaves without introducing a second theme runtime.
 - 2026-03-19: Route alias ownership now lives in `lib/nav.ts` via `sectionPathAliases` + `sectionPathEntries`, so `MainLayout` resolves `currentSection` from shared metadata instead of a duplicated local map.
 - 2026-03-19: Keeping prefetch hook execution in `MainLayout` while centralizing only pathname resolution avoids session/auth boundary churn and preserves `ShellNavigationContract` for `Header` and `MobileNav`.
+- 2026-03-19: The desktop shell reads more clearly when the current-section signal is separated from the quick-access controls and the five primary routes use indexed command cards instead of a single undifferentiated strip.
+- 2026-03-19: The targeted shell smoke is more stable when route clicks assert `toHaveURL()` before page content, because the portal sections can finish rendering slightly after the desktop rail updates its active state.
