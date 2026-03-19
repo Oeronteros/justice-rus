@@ -457,6 +457,57 @@ export const dashboardStyles = stylex.create({
       '@media (min-width: 960px)': 'minmax(0, 0.92fr) minmax(0, 1.08fr)',
     },
   },
+  denseLaneGrid: {
+    display: 'grid',
+    gap: spacing.lg,
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 1180px)': 'repeat(2, minmax(0, 1fr))',
+    },
+    alignItems: 'start',
+  },
+  denseLane: {
+    display: 'grid',
+    gap: spacing.lg,
+    padding: {
+      default: spacing.lg,
+      '@media (min-width: 640px)': spacing.xl,
+    },
+    borderRadius: radius.xxl,
+    border: `1px solid ${colors.borderDefault}`,
+    background: `linear-gradient(180deg, ${colors.bgPanelAlt}, ${colors.bgPanel})`,
+    boxShadow: colors.shadowInset,
+  },
+  denseLaneActive: {
+    borderColor: colors.successBorder,
+    background: `linear-gradient(180deg, ${colors.successSurface}, ${colors.bgPanel})`,
+  },
+  denseLaneAlert: {
+    borderColor: colors.dangerBorder,
+    background: `linear-gradient(180deg, ${colors.dangerSurfaceStrong}, ${colors.bgPanel})`,
+  },
+  denseLaneHeader: {
+    display: 'grid',
+    gap: spacing.md,
+  },
+  denseLaneSignals: {
+    rowGap: spacing.xs,
+    columnGap: spacing.sm,
+  },
+  denseLaneSignal: {
+    minHeight: '28px',
+    padding: `${spacing.xs} ${spacing.md}`,
+    borderRadius: radius.pill,
+    border: `1px solid ${colors.borderDefault}`,
+    backgroundColor: colors.bgPanel,
+    color: colors.textSecondary,
+    fontSize: typography.microSize,
+    lineHeight: 1.3,
+  },
+  denseLaneCards: {
+    display: 'grid',
+    gap: spacing.md,
+  },
   statusCard: {
     minHeight: '100%',
     padding: {
