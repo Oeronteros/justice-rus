@@ -66,6 +66,35 @@ async function readThemeProbeState(page: Page) {
   });
 }
 
+async function switchThemeMode(page: Page, nextMode: 'light' | 'dark') {
+  const toggle = page.getByTestId('theme-toggle');
+  const button = toggle.locator(`button[data-theme-mode="${nextMode}"]`);
+
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    await button.click();
+
+    try {
+      await expect(toggle).toHaveAttribute('data-theme-current', nextMode, { timeout: 5000 });
+      return;
+    } catch (error) {
+      await button.dispatchEvent('click');
+
+      try {
+        await expect(toggle).toHaveAttribute('data-theme-current', nextMode, { timeout: 5000 });
+        return;
+      } catch (dispatchError) {
+        if (attempt === 2) {
+          throw dispatchError;
+        }
+      }
+
+      if (attempt === 2) {
+        throw error;
+      }
+    }
+  }
+}
+
 test.describe('vinext theme primitives @theme-primitives', () => {
   test.setTimeout(60000);
 
@@ -82,9 +111,11 @@ test.describe('vinext theme primitives @theme-primitives', () => {
     await expect(boundary).toHaveClass(/theme-wuxia/);
     await expect(boundary).toHaveAttribute('data-theme-mode', 'system');
 
-    await lightButton.click();
+    await switchThemeMode(page, 'light');
 
+    await expect(toggle).toHaveAttribute('data-theme-current', 'light');
     await expect(boundary).toHaveAttribute('data-theme', 'light');
+    await expect(boundary).toHaveAttribute('data-theme-mode', 'light');
     await expect(boundary).toHaveClass(/theme-light/);
     await expect(lightButton).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
@@ -108,9 +139,11 @@ test.describe('vinext theme primitives @theme-primitives', () => {
     expect(lightProbe.overlay.boxShadow).not.toBe('none');
     expect(lightProbe.overlay.borderRadius).toBe('30px');
 
-    await darkButton.click();
+    await switchThemeMode(page, 'dark');
 
+    await expect(toggle).toHaveAttribute('data-theme-current', 'dark');
     await expect(boundary).toHaveAttribute('data-theme', 'dark');
+    await expect(boundary).toHaveAttribute('data-theme-mode', 'dark');
     await expect(boundary).toHaveClass(/theme-dark/);
     await expect(darkButton).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');

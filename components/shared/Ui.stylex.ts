@@ -455,3 +455,35 @@ export const uiStyles = stylex.create({
     },
   },
 });
+
+export const uiThemeProbeStyles = stylex.create({
+  rail: {
+    position: 'fixed',
+    width: '1px',
+    height: '1px',
+    padding: 0,
+    margin: '-1px',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    borderWidth: 0,
+    clipPath: 'inset(50%)',
+    pointerEvents: 'none',
+  },
+  stack: {
+    display: 'grid',
+    gap: spacing.sm,
+    width: '320px',
+  },
+  surface: {
+    padding: spacing.lg,
+  },
+  button: {
+    width: '100%',
+  },
+  overlay: {
+    width: '320px',
+    maxWidth: '320px',
+    maxHeight: 'none',
+    padding: spacing.lg,
+  },
+});
