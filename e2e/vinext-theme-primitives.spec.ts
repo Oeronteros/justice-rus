@@ -70,25 +70,29 @@ async function readThemeProbeState(page: Page) {
 async function switchThemeMode(page: Page, nextMode: 'light' | 'dark') {
   const toggle = page.getByTestId('theme-toggle');
   await expect(toggle).toHaveAttribute('data-theme-ready', 'true');
+  await expect
+    .poll(
+      () =>
+        page.evaluate(() => {
+          return typeof (window as Window & {
+            __silentMoonfallSetThemeMode?: unknown;
+          }).__silentMoonfallSetThemeMode;
+        }),
+      { timeout: 10000 }
+    )
+    .toBe('function');
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
     await page.evaluate((mode) => {
-      const harness = document.querySelector('[data-testid="theme-toggle"]') as (HTMLElement & {
-        setThemeMode?: (nextMode: 'system' | 'dark' | 'light') => void;
-      }) | null;
+      const setThemeMode = (window as Window & {
+        __silentMoonfallSetThemeMode?: (nextMode: 'system' | 'dark' | 'light') => void;
+      }).__silentMoonfallSetThemeMode;
 
-      if (harness?.setThemeMode) {
-        harness.setThemeMode(mode);
-        return;
+      if (typeof setThemeMode !== 'function') {
+        throw new Error('Theme mode hook is not ready');
       }
 
-      const button = harness?.querySelector<HTMLButtonElement>(`button[data-theme-mode="${mode}"]`);
-
-      if (!button) {
-        throw new Error('Theme toggle harness is not ready');
-      }
-
-      button.click();
+      setThemeMode(mode);
     }, nextMode);
 
     try {

@@ -13,6 +13,8 @@ import {
 export type ThemeMode = 'system' | 'dark' | 'light';
 export type ResolvedTheme = 'dark' | 'light';
 
+const THEME_CHANGE_EVENT = 'silent-moonfall-theme-modechange';
+
 interface ThemeContextValue {
   mode: ThemeMode;
   resolvedTheme: ResolvedTheme;
@@ -73,6 +75,29 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       mediaQuery.removeEventListener('change', syncTheme);
     };
   }, [mode]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const handleThemeModeChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ mode?: ThemeMode; resolvedTheme?: ResolvedTheme }>;
+      const nextMode = customEvent.detail?.mode;
+      const nextResolvedTheme = customEvent.detail?.resolvedTheme;
+
+      if (nextMode === 'system' || nextMode === 'dark' || nextMode === 'light') {
+        setModeState(nextMode);
+        setResolvedTheme(nextResolvedTheme === 'light' || nextResolvedTheme === 'dark' ? nextResolvedTheme : resolveTheme(nextMode));
+      }
+    };
+
+    window.addEventListener(THEME_CHANGE_EVENT, handleThemeModeChange as EventListener);
+
+    return () => {
+      window.removeEventListener(THEME_CHANGE_EVENT, handleThemeModeChange as EventListener);
+    };
+  }, []);
 
   useEffect(() => {
     if (typeof document === 'undefined') {

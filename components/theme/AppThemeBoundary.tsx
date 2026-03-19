@@ -27,6 +27,11 @@ type ThemeToggleHarnessElement = HTMLDivElement & {
   setThemeMode?: (mode: ThemeMode) => void;
 };
 
+const darkThemeClassName = stylex.props(wuxiaTheme).className ?? '';
+const lightThemeClassName = stylex.props(moonlitTheme).className ?? '';
+const darkThemeClassTokens = darkThemeClassName.split(' ').filter(Boolean).join('|');
+const lightThemeClassTokens = lightThemeClassName.split(' ').filter(Boolean).join('|');
+
 export default function AppThemeBoundary({ children }: { children: React.ReactNode }) {
   const { mode, resolvedTheme, setMode } = useTheme();
   const themeToggleHarnessRef = useRef<HTMLDivElement | null>(null);
@@ -57,7 +62,14 @@ export default function AppThemeBoundary({ children }: { children: React.ReactNo
   );
 
   return (
-    <div {...themeProps} data-testid="theme-boundary" data-theme={resolvedTheme} data-theme-mode={mode}>
+    <div
+      {...themeProps}
+      data-testid="theme-boundary"
+      data-theme={resolvedTheme}
+      data-theme-mode={mode}
+      data-theme-class-dark={darkThemeClassTokens}
+      data-theme-class-light={lightThemeClassTokens}
+    >
       <div
         ref={themeToggleHarnessRef}
         style={themeToggleHarnessStyles}
