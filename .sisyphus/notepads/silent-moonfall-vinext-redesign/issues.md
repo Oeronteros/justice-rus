@@ -11,3 +11,22 @@
 ## 2026-03-19 Task 1 gotchas
 - Plan QA text referenced `[data-testid="runtime-badge"]` and `[data-testid="section-key"]`, but those hooks are not present yet and this task is constrained from broad shell instrumentation; used route-status parity checks plus manifest evidence file output instead.
 - `grep` tool scanning root hit a Windows `nul` filesystem error; repository searches were completed with `git grep` for exact token evidence (`VINEXT_CUTOVER_SCOPE`, `cutover:verify`, `buildVinextCutoverRewrites`, `runtime-badge|section-key`).
+
+## 2026-03-19 Vinext task 2 surface findings
+-  is a thin Vinext runtime shell: only , , and config files live locally; TS path alias  means Vinext renders shared root , , and  rather than a separate local shell stack.
+- Vinext already consumes the shared root shell/theme path:  uses , , , and ;  uses shared , which then mounts shared , , , and shared section components.
+- Theme primitives already exist repo-wide in shared StyleX files (, , , , ), so task 2 should treat Vinext as a consumer/integration surface, not invent a second Vinext-only token layer.
+- Vinext gaps versus root app:  does not import , does not use , does not apply root font variables from , and does not use  fallback/content wrappers; this is the main Vinext-local shell/theme seam to inspect first for cross-theme parity.
+- Theme toggle already mounts for authenticated portal routes through shared ; no separate Vinext-only mount is needed for signed-in pages. If a later task wants theme control on the unauthenticated PIN screen, that belongs in shared  /  work, which should wait for task 3.
+- Likely task 2 first-touch files: , , , , , ; likely wait for task 3: , , , route pages under  unless a page exposes a missing primitive.
+
+
+- Note: the Vinext task 2 block above lost inline path text during a failed shell-escaped append attempt; use the corrected block below as authoritative.
+
+## 2026-03-19 Vinext task 2 surface findings (corrected)
+- apps/portal-vinext is a thin Vinext runtime shell: only app/**, vite.config.ts, and config files live locally; apps/portal-vinext/tsconfig.json maps @/* to ../../*, so Vinext renders shared root components/**, lib/**, and types/** rather than a separate local shell stack.
+- Vinext already consumes the shared root shell/theme path: apps/portal-vinext/app/layout.tsx uses ThemeProvider, AppThemeBoundary, QueryProvider, and I18nProvider; apps/portal-vinext/app/(portal)/layout.tsx uses shared PortalShell, which then mounts shared MainLayout, Header, MobileNav, and shared section components.
+- Theme primitives already exist repo-wide in shared StyleX files (lib/stylex/tokens.stylex.ts, lib/stylex/theme.stylex.ts, lib/stylex/primitives.stylex.ts, components/shared/Ui.stylex.ts, components/shell/Shell.stylex.ts), so task 2 should treat Vinext as a consumer/integration surface, not invent a second Vinext-only token layer.
+- Vinext gaps versus root app: apps/portal-vinext/app/layout.tsx does not import app/stylex.css, does not use app/styled-components-registry, does not apply root font variables from next/font, and does not use rootLayoutStyles fallback/content wrappers from app/layout.stylex.ts; this is the main Vinext-local shell/theme seam to inspect first for cross-theme parity.
+- Theme toggle already mounts for authenticated portal routes through components/shell/Header.tsx -> components/shell/ThemeModeSwitch.tsx; no separate Vinext-only mount is needed for signed-in pages. If a later task wants theme control on the unauthenticated PIN screen, that belongs in shared PortalShell / PinScreen work and should wait for task 3.
+- Likely task 2 first-touch files: apps/portal-vinext/app/layout.tsx, apps/portal-vinext/vite.config.ts, lib/stylex/tokens.stylex.ts, lib/stylex/theme.stylex.ts, lib/stylex/primitives.stylex.ts, components/shared/Ui.stylex.ts; likely wait for task 3: components/shell/PortalShell.tsx, components/shell/MainLayout.tsx, components/shell/Header.tsx, route pages under apps/portal-vinext/app/(portal)/** unless a page exposes a missing primitive.

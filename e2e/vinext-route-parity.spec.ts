@@ -47,7 +47,6 @@ test('@route-parity validates vinext route manifest against live availability', 
     status: number;
     expectedStatus: number;
     expectedOwner: 'vinext' | 'next';
-    observedOwner: 'vinext' | 'next';
     ok: boolean;
   }> = [];
 
@@ -69,7 +68,6 @@ test('@route-parity validates vinext route manifest against live availability', 
 
     const status = response?.status() ?? 0;
     const expectedOwner = ownedRoutes.has(entry.route) ? 'vinext' : 'next';
-    const observedOwner = status === 200 ? 'vinext' : 'next';
     const expectedStatus = expectedOwner === 'vinext' ? 200 : entry.nextPagePath ? 200 : 404;
 
     routeResults.push({
@@ -78,7 +76,6 @@ test('@route-parity validates vinext route manifest against live availability', 
       status,
       expectedStatus,
       expectedOwner,
-      observedOwner,
       ok: status === expectedStatus,
     });
 
@@ -100,8 +97,9 @@ test('@route-parity validates vinext route manifest against live availability', 
 
   await expect(page.getByText('Доступ участника')).toBeVisible();
 
-  await page.goto('/analytics', { waitUntil: 'networkidle' });
-  await expect(page.getByText('Аналитика гильдии')).toBeVisible();
+  const analyticsResponse = await page.goto('/analytics', { waitUntil: 'networkidle' });
+  expect(analyticsResponse?.status() ?? 0).toBe(200);
+  await expect(page.getByText('Доступ участника')).toBeVisible();
 
   const evidencePath = path.resolve(process.cwd(), '.sisyphus/evidence/task-1-route-parity.json');
   await mkdir(path.dirname(evidencePath), { recursive: true });

@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-03-19T18:30:20.666Z",
+  "generatedAt": "2026-03-19T19:26:16.161Z",
   "project": "chromium",
-  "baseURL": "http://127.0.0.1:3101",
+  "baseURL": "http://127.0.0.1:3000",
   "parityScope": "all",
   "blockedRoutes": [
     "/",
@@ -20,14 +20,42 @@
     "/schedule",
     "/calendar"
   ],
+  "consoleErrors": [
+    "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>\n      <AppDevOverlayErrorBoundary globalError={[...]}>\n        <ReplaySsrOnlyErrors>\n        <DevRootHTTPAccessFallbackBoundary>\n          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>\n            <HTTPAccessFallbackErrorBoundary pathname=\"/\" notFound={<NotAllowedRootHTTPFallbackError>} ...>\n              <RedirectBoundary>\n                <RedirectErrorBoundary router={{...}}>\n                  <Head>\n                  <__next_root_layout_boundary__>\n                    <SegmentViewNode type=\"layout\" pagePath=\"layout.tsx\">\n                      <SegmentTrieNode>\n                      <link>\n                      <script>\n                      <script>\n                      <script>\n                      <RootLayout>\n                        <html\n                          lang=\"ru\"\n                          className=\"manrope_3412a695-module__0cyrZG__variable noto_serif_dae03161-module__I-4zDW__var...\"\n-                         data-theme=\"light\"\n-                         data-theme-mode=\"system\"\n                        >\n                          <body\n-                           data-theme=\"light\"\n-                           data-theme-mode=\"system\"\n                          >\n                  ...\n",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>\n      <AppDevOverlayErrorBoundary globalError={[...]}>\n        <ReplaySsrOnlyErrors>\n        <DevRootHTTPAccessFallbackBoundary>\n          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>\n            <HTTPAccessFallbackErrorBoundary pathname=\"/about\" notFound={<NotAllowedRootHTTPFallbackError>} ...>\n              <RedirectBoundary>\n                <RedirectErrorBoundary router={{...}}>\n                  <Head>\n                  <__next_root_layout_boundary__>\n                    <SegmentViewNode type=\"layout\" pagePath=\"layout.tsx\">\n                      <SegmentTrieNode>\n                      <link>\n                      <script>\n                      <script>\n                      <script>\n                      <RootLayout>\n                        <html\n                          lang=\"ru\"\n                          className=\"manrope_3412a695-module__0cyrZG__variable noto_serif_dae03161-module__I-4zDW__var...\"\n-                         data-theme=\"light\"\n-                         data-theme-mode=\"system\"\n                        >\n                          <body\n-                           data-theme=\"light\"\n-                           data-theme-mode=\"system\"\n                          >\n                  ...\n",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>\n      <AppDevOverlayErrorBoundary globalError={[...]}>\n        <ReplaySsrOnlyErrors>\n        <DevRootHTTPAccessFallbackBoundary>\n          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>\n            <HTTPAccessFallbackErrorBoundary pathname=\"/analytics\" notFound={<NotAllowedRootHTTPFallbackError>} ...>\n              <RedirectBoundary>\n                <RedirectErrorBoundary router={{...}}>\n                  <Head>\n                  <__next_root_layout_boundary__>\n                    <SegmentViewNode type=\"layout\" pagePath=\"layout.tsx\">\n                      <SegmentTrieNode>\n                      <link>\n                      <script>\n                      <script>\n                      <script>\n                      <RootLayout>\n                        <html\n                          lang=\"ru\"\n                          className=\"manrope_3412a695-module__0cyrZG__variable noto_serif_dae03161-module__I-4zDW__var...\"\n-                         data-theme=\"light\"\n-                         data-theme-mode=\"system\"\n                        >\n                          <body\n-                           data-theme=\"light\"\n-                           data-theme-mode=\"system\"\n                          >\n                  ...\n",
+    "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>\n      <AppDevOverlayErrorBoundary globalError={[...]}>\n        <ReplaySsrOnlyErrors>\n        <DevRootHTTPAccessFallbackBoundary>\n          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>\n            <HTTPAccessFallbackErrorBoundary pathname=\"/workflow\" notFound={<NotAllowedRootHTTPFallbackError>} ...>\n              <RedirectBoundary>\n                <RedirectErrorBoundary router={{...}}>\n                  <Head>\n                  <__next_root_layout_boundary__>\n                    <SegmentViewNode type=\"layout\" pagePath=\"layout.tsx\">\n                      <SegmentTrieNode>\n                      <link>\n                      <script>\n                      <script>\n                      <script>\n                      <RootLayout>\n                        <html\n                          lang=\"ru\"\n                          className=\"manrope_3412a695-module__0cyrZG__variable noto_serif_dae03161-module__I-4zDW__var...\"\n-                         data-theme=\"light\"\n-                         data-theme-mode=\"system\"\n                        >\n                          <body\n-                           data-theme=\"light\"\n-                           data-theme-mode=\"system\"\n                          >\n                  ...\n",
+    "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>\n      <AppDevOverlayErrorBoundary globalError={[...]}>\n        <ReplaySsrOnlyErrors>\n        <DevRootHTTPAccessFallbackBoundary>\n          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>\n            <HTTPAccessFallbackErrorBoundary pathname=\"/integrations\" notFound={<NotAllowedRootHTTPFallbackError>} ...>\n              <RedirectBoundary>\n                <RedirectErrorBoundary router={{...}}>\n                  <Head>\n                  <__next_root_layout_boundary__>\n                    <SegmentViewNode type=\"layout\" pagePath=\"layout.tsx\">\n                      <SegmentTrieNode>\n                      <link>\n                      <script>\n                      <script>\n                      <script>\n                      <RootLayout>\n                        <html\n                          lang=\"ru\"\n                          className=\"manrope_3412a695-module__0cyrZG__variable noto_serif_dae03161-module__I-4zDW__var...\"\n-                         data-theme=\"light\"\n-                         data-theme-mode=\"system\"\n                        >\n                          <body\n-                           data-theme=\"light\"\n-                           data-theme-mode=\"system\"\n                          >\n                  ...\n",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>\n      <AppDevOverlayErrorBoundary globalError={[...]}>\n        <ReplaySsrOnlyErrors>\n        <DevRootHTTPAccessFallbackBoundary>\n          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>\n            <HTTPAccessFallbackErrorBoundary pathname=\"/analytics\" notFound={<NotAllowedRootHTTPFallbackError>} ...>\n              <RedirectBoundary>\n                <RedirectErrorBoundary router={{...}}>\n                  <Head>\n                  <__next_root_layout_boundary__>\n                    <SegmentViewNode type=\"layout\" pagePath=\"layout.tsx\">\n                      <SegmentTrieNode>\n                      <link>\n                      <script>\n                      <script>\n                      <script>\n                      <RootLayout>\n                        <html\n                          lang=\"ru\"\n                          className=\"manrope_3412a695-module__0cyrZG__variable noto_serif_dae03161-module__I-4zDW__var...\"\n-                         data-theme=\"light\"\n-                         data-theme-mode=\"system\"\n                        >\n                          <body\n-                           data-theme=\"light\"\n-                           data-theme-mode=\"system\"\n                          >\n                  ...\n"
+  ],
+  "requestFailures": [
+    "GET http://127.0.0.1:3000/node_modules/vite/dist/client/env.mjs :: net::ERR_ABORTED",
+    "GET http://127.0.0.1:3000/node_modules/vite/dist/client/env.mjs :: net::ERR_ABORTED",
+    "GET http://127.0.0.1:3000/node_modules/vite/dist/client/env.mjs :: net::ERR_ABORTED",
+    "GET http://127.0.0.1:3000/node_modules/vite/dist/client/env.mjs :: net::ERR_ABORTED",
+    "GET http://127.0.0.1:3000/node_modules/vite/dist/client/env.mjs :: net::ERR_ABORTED",
+    "GET http://127.0.0.1:3000/node_modules/vite/dist/client/env.mjs :: net::ERR_ABORTED",
+    "GET http://127.0.0.1:3000/node_modules/vite/dist/client/env.mjs :: net::ERR_ABORTED",
+    "GET http://127.0.0.1:3000/node_modules/vite/dist/client/env.mjs :: net::ERR_ABORTED",
+    "GET http://127.0.0.1:3000/node_modules/vite/dist/client/env.mjs :: net::ERR_ABORTED"
+  ],
   "routes": [
     {
       "route": "/",
       "sectionKey": "about",
-      "status": 404,
-      "expectedStatus": 404,
+      "status": 200,
+      "expectedStatus": 200,
       "expectedOwner": "next",
-      "observedOwner": "next",
       "ok": true
     },
     {
@@ -36,7 +64,6 @@
       "status": 404,
       "expectedStatus": 404,
       "expectedOwner": "next",
-      "observedOwner": "next",
       "ok": true
     },
     {
@@ -45,7 +72,6 @@
       "status": 200,
       "expectedStatus": 200,
       "expectedOwner": "vinext",
-      "observedOwner": "vinext",
       "ok": true
     },
     {
@@ -54,7 +80,6 @@
       "status": 200,
       "expectedStatus": 200,
       "expectedOwner": "vinext",
-      "observedOwner": "vinext",
       "ok": true
     },
     {
@@ -63,7 +88,6 @@
       "status": 200,
       "expectedStatus": 200,
       "expectedOwner": "vinext",
-      "observedOwner": "vinext",
       "ok": true
     },
     {
@@ -72,7 +96,6 @@
       "status": 200,
       "expectedStatus": 200,
       "expectedOwner": "vinext",
-      "observedOwner": "vinext",
       "ok": true
     },
     {
@@ -81,7 +104,6 @@
       "status": 200,
       "expectedStatus": 200,
       "expectedOwner": "vinext",
-      "observedOwner": "vinext",
       "ok": true
     },
     {
@@ -90,7 +112,6 @@
       "status": 200,
       "expectedStatus": 200,
       "expectedOwner": "vinext",
-      "observedOwner": "vinext",
       "ok": true
     },
     {
@@ -99,7 +120,6 @@
       "status": 200,
       "expectedStatus": 200,
       "expectedOwner": "vinext",
-      "observedOwner": "vinext",
       "ok": true
     },
     {
@@ -108,34 +128,30 @@
       "status": 200,
       "expectedStatus": 200,
       "expectedOwner": "vinext",
-      "observedOwner": "vinext",
       "ok": true
     },
     {
       "route": "/analytics",
       "sectionKey": "analytics",
-      "status": 404,
-      "expectedStatus": 404,
+      "status": 200,
+      "expectedStatus": 200,
       "expectedOwner": "next",
-      "observedOwner": "next",
       "ok": true
     },
     {
       "route": "/workflow",
       "sectionKey": "workflow",
-      "status": 404,
-      "expectedStatus": 404,
+      "status": 200,
+      "expectedStatus": 200,
       "expectedOwner": "next",
-      "observedOwner": "next",
       "ok": true
     },
     {
       "route": "/integrations",
       "sectionKey": "integrations",
-      "status": 404,
-      "expectedStatus": 404,
+      "status": 200,
+      "expectedStatus": 200,
       "expectedOwner": "next",
-      "observedOwner": "next",
       "ok": true
     }
   ]

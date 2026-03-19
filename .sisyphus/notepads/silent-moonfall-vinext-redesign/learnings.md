@@ -23,3 +23,6 @@
 - `VINEXT_CUTOVER_SCOPE=all` now means final ownership target map in docs and manifest, but rewrites remain parity-safe: only `ready` routes are rewritten; blocked routes (`/`, `/about`, `/analytics`, `/workflow`, `/integrations`) stay on Next.
 - `scripts/verify-cutover-config.mjs` now prints `BLOCKED_ROUTES` and `PARITY_MANIFEST_ROUTES` in addition to existing scope/origin/rewrite evidence.
 - Added Playwright lane `@route-parity` in `e2e/vinext-route-parity.spec.ts`; it validates manifest coverage and live route status on Vinext server, and writes `.sisyphus/evidence/task-1-route-parity.json`.
+
+## 2026-03-19 Task 1 evidence semantics correction
+- Updated `e2e/vinext-route-parity.spec.ts` to remove `observedOwner` from evidence rows because HTTP status alone cannot prove runtime ownership in combined cutover mode; evidence now records `expectedOwner`, `status`, and `expectedStatus` without fabricating owner inference.

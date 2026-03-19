@@ -112,7 +112,7 @@ Wave 4: optimization, deletion, release hardening (`13`, `14`)
 > Implementation + Test = ONE task. Never separate.
 > EVERY task MUST have: Agent Profile + Parallelization + QA Scenarios.
 
-- [ ] 1. Establish Vinext route-parity and cutover manifest
+- [x] 1. Establish Vinext route-parity and cutover manifest
 
   **What to do**: Create `docs/vinext-route-parity.md` as the implementation inventory that maps every current portal route, owning section key, auth requirement, data dependencies, target Vinext route, and deletion gate. Formalize the final release scope as `VINEXT_CUTOVER_SCOPE=all` with an explicit parity checklist for `/`, `/about`, `/news`, `/help`, `/guides`, `/profile`, `/absences`, `/pvp`, `/schedule`, `/calendar`, `/analytics`, `/workflow`, and `/integrations`. Add a rollback section using the existing cutover commands so execution agents never guess rollout order.
   **Must NOT do**: Do not migrate UI yet; do not delete any legacy route or rewrite until parity artifacts are complete.
