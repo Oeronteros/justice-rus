@@ -1,5 +1,7 @@
 import {
   buildVinextCutoverRewrites,
+  getVinextBlockedRoutes,
+  getVinextCutoverManifest,
   getVinextCutoverOrigin,
   getVinextCutoverScope,
   getVinextOwnedRoutes,
@@ -8,11 +10,15 @@ import {
 const scope = getVinextCutoverScope();
 const origin = getVinextCutoverOrigin();
 const ownedRoutes = getVinextOwnedRoutes(scope);
+const blockedRoutes = getVinextBlockedRoutes(scope);
+const manifest = getVinextCutoverManifest();
 const rewrites = buildVinextCutoverRewrites({ scope, origin });
 
 process.stdout.write(`VINEXT_CUTOVER_SCOPE=${scope}\n`);
 process.stdout.write(`VINEXT_CUTOVER_ORIGIN=${origin ?? ''}\n`);
 process.stdout.write(`OWNED_ROUTES=${ownedRoutes.join(',')}\n`);
+process.stdout.write(`BLOCKED_ROUTES=${blockedRoutes.join(',')}\n`);
+process.stdout.write(`PARITY_MANIFEST_ROUTES=${manifest.map((entry) => entry.route).join(',')}\n`);
 process.stdout.write(`REWRITE_COUNT=${rewrites.length}\n`);
 
 for (const rewrite of rewrites) {

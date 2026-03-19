@@ -150,7 +150,9 @@ vercel --prod
 - `VINEXT_CUTOVER_SCOPE=off` — весь трафик остается на `Next`
 - `VINEXT_CUTOVER_SCOPE=pilot` — `vinext` забирает `/news`, `/help`, `/guides`
 - `VINEXT_CUTOVER_SCOPE=wave2` — дополнительно забирает `/profile`, `/absences`, `/pvp`, `/schedule`, `/calendar`
-- `VINEXT_CUTOVER_SCOPE=all` — тот же набор, но режим оставлен для дальнейшего расширения волн
+- `VINEXT_CUTOVER_SCOPE=all` — финальная ownership-карта по `docs/vinext-route-parity.md`; rewrites включаются только для parity-ready маршрутов
+
+Текущие blocked routes для `all` (остаются на `Next` до готовности Vinext-страниц): `/`, `/about`, `/analytics`, `/workflow`, `/integrations`.
 
 Для локального dual-runtime запуска есть готовые команды:
 
@@ -173,6 +175,8 @@ NEXT_PORT=3001 VINEXT_PORT=3201 VINEXT_CUTOVER_ORIGIN=http://127.0.0.1:3201 npm 
 
 Быстрый rollback локально — остановить cutover script и вернуться к обычному `npm run dev`, либо выставить `VINEXT_CUTOVER_SCOPE=off`.
 
+Полный parity-манифест и route ownership: `docs/vinext-route-parity.md`.
+
 ### Staging / preview cutover
 
 Для preview/staging env используйте тот же path-based cutover через env vars. Подробный runbook лежит в `docs/vinext-staging-cutover.md`.
@@ -188,7 +192,7 @@ npm run cutover:env:off
 Проверка активных rewrites под текущим env:
 
 ```bash
-VINEXT_CUTOVER_SCOPE=wave2 VINEXT_CUTOVER_ORIGIN=https://vinext-preview.example.com npm run cutover:verify
+VINEXT_CUTOVER_SCOPE=all VINEXT_CUTOVER_ORIGIN=https://vinext-preview.example.com npm run cutover:verify
 ```
 
 ## Проверка качества

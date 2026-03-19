@@ -15,3 +15,6 @@
 - Official migration/cutover evidence is limited: the docs describe side-by-side project migration via dev:vinext alongside the existing dev flow, but I found no official route-by-route cutover manifest or split-runtime ownership guidance.
 - Best input shape for a parity manifest comes from the App Router scanner data model: pattern, pagePath, routePath, layouts, parallelSlots, loadingPath, errorPath, and routeSegments.
 - Example references worth mirroring for layout/provider composition: the vinext fumadocs template uses a root provider in app/layout.tsx plus a nested app/docs/layout.tsx; the WorkOS AuthKit vinext example keeps provider composition in the root layout and calls out known vinext limitations explicitly.
+
+## 2026-03-19 Task 1 cutover decision
+- Adopted a two-layer `all` interpretation to avoid unsafe rewrites: (1) `all` documents the final ownership target map in `docs/vinext-route-parity.md`; (2) active rewrites still include only parity-ready routes from `lib/platform/vinext-cutover.ts` until blocked Vinext route files exist.

@@ -1,0 +1,142 @@
+{
+  "generatedAt": "2026-03-19T18:30:20.666Z",
+  "project": "chromium",
+  "baseURL": "http://127.0.0.1:3101",
+  "parityScope": "all",
+  "blockedRoutes": [
+    "/",
+    "/about",
+    "/analytics",
+    "/workflow",
+    "/integrations"
+  ],
+  "ownedRoutes": [
+    "/news",
+    "/help",
+    "/guides",
+    "/profile",
+    "/absences",
+    "/pvp",
+    "/schedule",
+    "/calendar"
+  ],
+  "routes": [
+    {
+      "route": "/",
+      "sectionKey": "about",
+      "status": 404,
+      "expectedStatus": 404,
+      "expectedOwner": "next",
+      "observedOwner": "next",
+      "ok": true
+    },
+    {
+      "route": "/about",
+      "sectionKey": "about",
+      "status": 404,
+      "expectedStatus": 404,
+      "expectedOwner": "next",
+      "observedOwner": "next",
+      "ok": true
+    },
+    {
+      "route": "/news",
+      "sectionKey": "news",
+      "status": 200,
+      "expectedStatus": 200,
+      "expectedOwner": "vinext",
+      "observedOwner": "vinext",
+      "ok": true
+    },
+    {
+      "route": "/help",
+      "sectionKey": "help",
+      "status": 200,
+      "expectedStatus": 200,
+      "expectedOwner": "vinext",
+      "observedOwner": "vinext",
+      "ok": true
+    },
+    {
+      "route": "/guides",
+      "sectionKey": "guides",
+      "status": 200,
+      "expectedStatus": 200,
+      "expectedOwner": "vinext",
+      "observedOwner": "vinext",
+      "ok": true
+    },
+    {
+      "route": "/profile",
+      "sectionKey": "profile",
+      "status": 200,
+      "expectedStatus": 200,
+      "expectedOwner": "vinext",
+      "observedOwner": "vinext",
+      "ok": true
+    },
+    {
+      "route": "/absences",
+      "sectionKey": "absences",
+      "status": 200,
+      "expectedStatus": 200,
+      "expectedOwner": "vinext",
+      "observedOwner": "vinext",
+      "ok": true
+    },
+    {
+      "route": "/pvp",
+      "sectionKey": "pvp",
+      "status": 200,
+      "expectedStatus": 200,
+      "expectedOwner": "vinext",
+      "observedOwner": "vinext",
+      "ok": true
+    },
+    {
+      "route": "/schedule",
+      "sectionKey": "schedule",
+      "status": 200,
+      "expectedStatus": 200,
+      "expectedOwner": "vinext",
+      "observedOwner": "vinext",
+      "ok": true
+    },
+    {
+      "route": "/calendar",
+      "sectionKey": "calendar",
+      "status": 200,
+      "expectedStatus": 200,
+      "expectedOwner": "vinext",
+      "observedOwner": "vinext",
+      "ok": true
+    },
+    {
+      "route": "/analytics",
+      "sectionKey": "analytics",
+      "status": 404,
+      "expectedStatus": 404,
+      "expectedOwner": "next",
+      "observedOwner": "next",
+      "ok": true
+    },
+    {
+      "route": "/workflow",
+      "sectionKey": "workflow",
+      "status": 404,
+      "expectedStatus": 404,
+      "expectedOwner": "next",
+      "observedOwner": "next",
+      "ok": true
+    },
+    {
+      "route": "/integrations",
+      "sectionKey": "integrations",
+      "status": 404,
+      "expectedStatus": 404,
+      "expectedOwner": "next",
+      "observedOwner": "next",
+      "ok": true
+    }
+  ]
+}

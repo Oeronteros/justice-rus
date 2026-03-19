@@ -7,3 +7,7 @@
 - Shell/navigation contract: `components/shell/MainLayout.tsx` derives `currentSection` via `resolveSectionFromPath(usePathname())`, wraps content in `HeaderProvider`, mounts `Header`, `main#portal-main`, `MissionControl`, animated `motion.div` page shell, and `MobileNav`.
 - Nav registry baseline: `types/index.ts` defines sections `about, news, registration, schedule, calendar, analytics, workflow, integrations, pvp, guides, help, absences, calculator, profile`; `lib/nav.ts` defines desktop/mobile primary+secondary arrays and grouped keys `core, guild, command, tools`.
 - Reusable selector evidence: no `data-testid` matches repo-wide in `*.ts`/`*.tsx`; existing stable hooks are semantic selectors like `main#portal-main`, mobile nav aria labels (`Быстрая навигация`, `Дополнительная навигация`, `Еще`, `Текущий`) in `components/shell/MobileNav.tsx`, and header nav/button aria labels in `components/shell/Header.tsx`.
+
+## 2026-03-19 Task 1 gotchas
+- Plan QA text referenced `[data-testid="runtime-badge"]` and `[data-testid="section-key"]`, but those hooks are not present yet and this task is constrained from broad shell instrumentation; used route-status parity checks plus manifest evidence file output instead.
+- `grep` tool scanning root hit a Windows `nul` filesystem error; repository searches were completed with `git grep` for exact token evidence (`VINEXT_CUTOVER_SCOPE`, `cutover:verify`, `buildVinextCutoverRewrites`, `runtime-badge|section-key`).

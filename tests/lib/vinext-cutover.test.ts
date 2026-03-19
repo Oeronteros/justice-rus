@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildVinextCutoverRewrites,
+  getVinextBlockedRoutes,
+  getVinextCutoverManifest,
   getVinextCutoverOrigin,
   getVinextCutoverScope,
   getVinextOwnedRoutes,
@@ -26,6 +28,46 @@ describe('vinext cutover helpers', () => {
       '/pvp',
       '/schedule',
       '/calendar',
+    ]);
+  });
+
+  it('keeps all scope rewrites on parity-ready routes only', () => {
+    expect(getVinextOwnedRoutes('all')).toEqual([
+      '/news',
+      '/help',
+      '/guides',
+      '/profile',
+      '/absences',
+      '/pvp',
+      '/schedule',
+      '/calendar',
+    ]);
+  });
+
+  it('exposes blocked final-scope routes in the parity manifest', () => {
+    expect(getVinextBlockedRoutes('all')).toEqual([
+      '/',
+      '/about',
+      '/analytics',
+      '/workflow',
+      '/integrations',
+    ]);
+
+    const parityRoutes = getVinextCutoverManifest().map((entry) => entry.route);
+    expect(parityRoutes).toEqual([
+      '/',
+      '/about',
+      '/news',
+      '/help',
+      '/guides',
+      '/profile',
+      '/absences',
+      '/pvp',
+      '/schedule',
+      '/calendar',
+      '/analytics',
+      '/workflow',
+      '/integrations',
     ]);
   });
 
