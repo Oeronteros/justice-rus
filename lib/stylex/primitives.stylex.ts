@@ -12,7 +12,7 @@ export const appShellStyles = stylex.create({
     fontSize: typography.bodySize,
     lineHeight: typography.bodyLine,
     transitionProperty: 'background-color, background-image, color',
-    transitionDuration: '240ms',
+    transitionDuration: motion.slow,
   },
   container: {
     width: '100%',
@@ -34,6 +34,7 @@ export const surfaceStyles = stylex.create({
     borderColor: colors.borderSubtle,
     borderRadius: radius.lg,
     boxShadow: colors.shadowCard,
+    color: colors.textPrimary,
     padding: layout.cardPadding,
   },
   card: {
@@ -44,6 +45,7 @@ export const surfaceStyles = stylex.create({
     borderColor: colors.borderSubtle,
     borderRadius: radius.xl,
     boxShadow: colors.shadowCard,
+    color: colors.textPrimary,
     padding: layout.cardPaddingLg,
   },
   elevated: {
@@ -53,6 +55,7 @@ export const surfaceStyles = stylex.create({
     borderColor: colors.borderDefault,
     borderRadius: radius.xl,
     boxShadow: colors.shadowLifted,
+    color: colors.textPrimary,
     padding: layout.cardPaddingLg,
   },
   subdued: {
@@ -62,6 +65,7 @@ export const surfaceStyles = stylex.create({
     borderColor: colors.borderDefault,
     borderRadius: radius.lg,
     boxShadow: colors.shadowInset,
+    color: colors.textPrimary,
   },
   interactive: {
     transitionProperty: 'background-color, border-color, transform, box-shadow',
@@ -239,6 +243,10 @@ export const formStyles = stylex.create({
       boxShadow: `0 0 0 3px ${colors.focusGlow}`,
       backgroundColor: colors.controlSurfaceHover,
     },
+    '::placeholder': {
+      color: colors.textMuted,
+      opacity: 1,
+    },
   },
   input: {
     appearance: 'none',
@@ -247,7 +255,7 @@ export const formStyles = stylex.create({
     appearance: 'none',
   },
   textarea: {
-    minHeight: '140px',
+    minHeight: layout.textareaMinHeight,
     resize: 'vertical',
   },
 });
@@ -266,10 +274,10 @@ export const overlayStyles = stylex.create({
   },
   panel: {
     position: 'relative',
-    width: 'min(100%, 1120px)',
-    maxHeight: 'min(92vh, 980px)',
+    width: `min(100%, ${layout.overlayWidth})`,
+    maxHeight: layout.overlayMaxHeight,
     overflow: 'auto',
-    borderRadius: '30px',
+    borderRadius: radius.overlay,
     borderWidth: '1px',
     borderStyle: 'solid',
     borderColor: colors.accentEdge,
@@ -278,7 +286,7 @@ export const overlayStyles = stylex.create({
     boxShadow: `0 20px 40px ${colors.shadowStrong}, inset 0 0 0 1px ${colors.borderSubtle}`,
   },
   panelNarrow: {
-    maxWidth: '980px',
+    maxWidth: layout.overlayWidthNarrow,
   },
   panelFullBleed: {
     width: '100%',

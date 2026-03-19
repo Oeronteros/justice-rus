@@ -1,16 +1,14 @@
 import { expect, test, type Page } from '@playwright/test';
+import { addVinextAuthCookie, type VinextFixtureUser } from './utils/vinext-auth';
 
-const authResponse = {
-  success: true,
-  user: {
-    id: '90001',
-    nickname: 'Smoke Member',
-    role: 'member',
-    isActive: true,
-    authMethod: 'account',
-    discordHandle: null,
-    className: 'Numina',
-  },
+const fixtureUser: VinextFixtureUser = {
+  id: 'pin-member',
+  nickname: 'Smoke Member',
+  role: 'member',
+  isActive: true,
+  authMethod: 'pin',
+  discordHandle: null,
+  className: 'Numina',
 };
 
 const newsPayload = [
@@ -25,19 +23,9 @@ const newsPayload = [
   },
 ];
 
-async function loginThroughPinScreen(page: Page) {
-  await page.route('**/api/auth', async (route) => {
-    if (route.request().method() !== 'POST') {
-      await route.continue();
-      return;
-    }
-
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(authResponse),
-    });
-  });
+async function openAuthenticatedNews(page: Page) {
+  process.env.PLAYWRIGHT_VINEXT_BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:3000';
+  await addVinextAuthCookie(page.context(), fixtureUser);
 
   await page.route('**/api/news', async (route) => {
     await route.fulfill({
@@ -48,38 +36,49 @@ async function loginThroughPinScreen(page: Page) {
   });
 
   await page.goto('/news');
-
-  const nicknameField = page.getByPlaceholder('Ник в гильдии');
-  await nicknameField.evaluate((input, value) => {
-    const element = input as HTMLInputElement;
-    element.value = value;
-    element.dispatchEvent(new Event('input', { bubbles: true }));
-    element.dispatchEvent(new Event('change', { bubbles: true }));
-  }, authResponse.user.nickname);
-
-  const passwordField = page.getByPlaceholder('Пароль');
-  await passwordField.evaluate((input, value) => {
-    const element = input as HTMLInputElement;
-    element.value = value;
-    element.dispatchEvent(new Event('input', { bubbles: true }));
-    element.dispatchEvent(new Event('change', { bubbles: true }));
-  }, 'very-secret-password');
-
-  await page.locator('form').getByRole('button', { name: 'Войти' }).click();
   await expect(page.getByTestId('theme-toggle')).toBeVisible({ timeout: 60000 });
+}
+
+async function readThemeProbeState(page: Page) {
+  return await page.evaluate(() => {
+    const getState = (testId: string) => {
+      const node = document.querySelector(`[data-testid="${testId}"]`) as HTMLElement | null;
+      const computed = node ? window.getComputedStyle(node) : null;
+
+      return {
+        backgroundColor: computed?.backgroundColor ?? '',
+        backgroundImage: computed?.backgroundImage ?? '',
+        borderColor: computed?.borderColor ?? '',
+        borderRadius: computed?.borderRadius ?? '',
+        boxShadow: computed?.boxShadow ?? '',
+        color: computed?.color ?? '',
+      };
+    };
+
+    return {
+      boundary: getState('theme-boundary'),
+      card: getState('theme-probe-card'),
+      panel: getState('theme-probe-panel'),
+      button: getState('theme-probe-button'),
+      input: getState('theme-probe-input'),
+      overlay: getState('theme-probe-overlay'),
+    };
+  });
 }
 
 test.describe('vinext theme primitives @theme-primitives', () => {
   test.setTimeout(60000);
 
   test('toggles shared light and dark themes without dropping the legacy boundary contract', async ({ page }) => {
-    await loginThroughPinScreen(page);
+    await openAuthenticatedNews(page);
 
     const boundary = page.getByTestId('theme-boundary');
+    const primitivesProbe = page.getByTestId('theme-primitives-probe');
     const toggle = page.getByTestId('theme-toggle');
     const lightButton = toggle.locator('button[data-theme-mode="light"]');
     const darkButton = toggle.locator('button[data-theme-mode="dark"]');
 
+    await expect(primitivesProbe).toBeAttached();
     await expect(boundary).toHaveClass(/theme-wuxia/);
     await expect(boundary).toHaveAttribute('data-theme-mode', 'system');
 
@@ -91,22 +90,23 @@ test.describe('vinext theme primitives @theme-primitives', () => {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
     await expect(page.locator('body')).toHaveAttribute('data-theme', 'light');
 
-    const lightState = await page.evaluate(() => {
-      const boundaryNode = document.querySelector('[data-testid="theme-boundary"]') as HTMLElement | null;
-      const computed = boundaryNode ? window.getComputedStyle(boundaryNode) : null;
-
-      return {
-        storageMode: window.localStorage.getItem('silent-moonfall-theme-mode'),
-        documentTheme: document.documentElement.dataset.theme,
-        bodyTheme: document.body.dataset.theme,
-        backgroundImage: computed?.backgroundImage ?? '',
-      };
-    });
+    const lightState = await page.evaluate(() => ({
+      storageMode: window.localStorage.getItem('silent-moonfall-theme-mode'),
+      documentTheme: document.documentElement.dataset.theme,
+      bodyTheme: document.body.dataset.theme,
+    }));
+    const lightProbe = await readThemeProbeState(page);
 
     expect(lightState.storageMode).toBe('light');
     expect(lightState.documentTheme).toBe('light');
     expect(lightState.bodyTheme).toBe('light');
-    expect(lightState.backgroundImage).not.toBe('none');
+    expect(lightProbe.boundary.backgroundImage).not.toBe('none');
+    expect(lightProbe.card.backgroundImage).not.toBe('none');
+    expect(lightProbe.panel.backgroundImage).not.toBe('none');
+    expect(lightProbe.button.backgroundImage).not.toBe('none');
+    expect(lightProbe.input.borderColor).not.toBe('rgba(0, 0, 0, 0)');
+    expect(lightProbe.overlay.boxShadow).not.toBe('none');
+    expect(lightProbe.overlay.borderRadius).toBe('30px');
 
     await darkButton.click();
 
@@ -122,10 +122,17 @@ test.describe('vinext theme primitives @theme-primitives', () => {
       bodyTheme: document.body.dataset.theme,
       boundaryClasses: document.querySelector('[data-testid="theme-boundary"]')?.className ?? '',
     }));
+    const darkProbe = await readThemeProbeState(page);
 
     expect(darkState.storageMode).toBe('dark');
     expect(darkState.documentTheme).toBe('dark');
     expect(darkState.bodyTheme).toBe('dark');
     expect(darkState.boundaryClasses).toContain('theme-wuxia');
+    expect(darkProbe.boundary.backgroundImage).not.toBe(lightProbe.boundary.backgroundImage);
+    expect(darkProbe.card.backgroundImage).not.toBe(lightProbe.card.backgroundImage);
+    expect(darkProbe.panel.backgroundImage).not.toBe(lightProbe.panel.backgroundImage);
+    expect(darkProbe.button.backgroundImage).not.toBe(lightProbe.button.backgroundImage);
+    expect(darkProbe.input.backgroundColor).not.toBe(lightProbe.input.backgroundColor);
+    expect(darkProbe.overlay.backgroundImage).not.toBe(lightProbe.overlay.backgroundImage);
   });
 });

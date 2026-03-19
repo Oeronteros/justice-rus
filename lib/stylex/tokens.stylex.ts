@@ -129,6 +129,7 @@ export const radius = stylex.defineVars({
   lg: '16px',
   xl: '20px',
   xxl: '24px',
+  overlay: '30px',
   pill: '999px',
 });
 
@@ -142,6 +143,7 @@ export const spacing = stylex.defineVars({
   xxl: '24px',
   xxxl: '32px',
   section: '40px',
+  sectionLg: '48px',
 });
 
 export const layout = stylex.defineVars({
@@ -152,10 +154,17 @@ export const layout = stylex.defineVars({
   cardPadding: '16px',
   cardPaddingLg: '20px',
   fieldHeight: '40px',
+  textareaMinHeight: '140px',
   buttonPrimaryHeight: '40px',
   buttonSecondaryHeight: '36px',
   buttonGhostHeight: '32px',
+  buttonTouchHeight: '44px',
   chipHeight: '22px',
+  badgeHeight: '28px',
+  iconButtonSize: '46px',
+  overlayWidth: '1120px',
+  overlayWidthNarrow: '980px',
+  overlayMaxHeight: 'min(92vh, 980px)',
 });
 
 export const motion = stylex.defineVars({
