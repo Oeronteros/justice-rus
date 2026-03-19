@@ -1,5 +1,29 @@
 import * as stylex from '@stylexjs/stylex';
+import {
+  appShellStyles,
+  buttonStyles,
+  formStyles,
+  overlayStyles,
+  surfaceStyles,
+} from '../../lib/stylex/primitives.stylex';
 import { colors, layout, motion, radius, spacing, typography } from '../../lib/stylex/tokens.stylex';
+
+export const uiPrimitives = {
+  pageChrome: [appShellStyles.page, appShellStyles.contentShell],
+  card: [surfaceStyles.card, surfaceStyles.interactive],
+  panel: [surfaceStyles.panel],
+  elevatedPanel: [surfaceStyles.elevated, surfaceStyles.interactive],
+  subduedPanel: [surfaceStyles.subdued],
+  primaryButton: [buttonStyles.base, buttonStyles.primary],
+  secondaryButton: [buttonStyles.base, buttonStyles.secondary],
+  ghostButton: [buttonStyles.base, buttonStyles.ghost],
+  dangerButton: [buttonStyles.base, buttonStyles.danger],
+  input: [formStyles.field, formStyles.input],
+  select: [formStyles.field, formStyles.select],
+  textarea: [formStyles.field, formStyles.textarea],
+  overlayBackdrop: [overlayStyles.backdrop],
+  overlayPanel: [overlayStyles.panel],
+} as const;
 
 export const uiStyles = stylex.create({
   sectionShell: {
@@ -38,7 +62,7 @@ export const uiStyles = stylex.create({
     borderRadius: radius.lg,
     border: `1px solid ${colors.borderSubtle}`,
     background:
-      `radial-gradient(circle at 10% 0%, rgba(139, 64, 58, 0.12), transparent 42%), radial-gradient(circle at 88% 10%, ${colors.accentMuted}, transparent 34%), linear-gradient(145deg, ${colors.bgPanel}, ${colors.panelBottom})`,
+      `radial-gradient(circle at 10% 0%, ${colors.surfaceGlowPrimary}, transparent 42%), radial-gradient(circle at 88% 10%, ${colors.surfaceGlowSecondary}, transparent 34%), linear-gradient(145deg, ${colors.surfaceBase}, ${colors.panelBottom})`,
     transitionProperty: 'border-color, transform, box-shadow',
     transitionDuration: motion.fast,
     boxShadow: colors.shadowCard,
@@ -58,7 +82,7 @@ export const uiStyles = stylex.create({
   softPanel: {
     borderRadius: radius.xl,
     border: `1px solid ${colors.borderDefault}`,
-    backgroundColor: colors.bgPanelAlt,
+    background: `linear-gradient(160deg, ${colors.surfaceRaised}, ${colors.surfaceBase})`,
     boxShadow: colors.shadowInset,
   },
   buttonBase: {
@@ -89,11 +113,11 @@ export const uiStyles = stylex.create({
     },
   },
   buttonPrimary: {
-    background: `linear-gradient(120deg, ${colors.ember}, ${colors.accent})`,
+    background: `linear-gradient(120deg, ${colors.buttonPrimaryStart}, ${colors.buttonPrimaryEnd})`,
     border: `1px solid ${colors.accentEdge}`,
     boxShadow: `0 10px 20px ${colors.shadowSoft}`,
     ':hover': {
-      background: `linear-gradient(120deg, ${colors.emberStrong}, ${colors.accentStrong})`,
+      background: `linear-gradient(120deg, ${colors.buttonPrimaryHoverStart}, ${colors.buttonPrimaryHoverEnd})`,
       boxShadow: `0 14px 26px ${colors.shadowStrong}`,
     },
     ':active': {
@@ -107,16 +131,16 @@ export const uiStyles = stylex.create({
     },
   },
   buttonSecondary: {
-    backgroundColor: colors.bgPanelAlt,
+    background: `linear-gradient(160deg, ${colors.controlSurface}, ${colors.bgPanelAlt})`,
     border: `1px solid ${colors.borderDefault}`,
     boxShadow: colors.shadowInset,
     ':hover': {
-      backgroundColor: colors.bgHover,
+      backgroundColor: colors.controlSurfaceHover,
       borderColor: colors.borderStrong,
       boxShadow: `0 14px 28px ${colors.shadowStrong}`,
     },
     ':active': {
-      backgroundColor: colors.bgActive,
+      backgroundColor: colors.controlSurfaceActive,
     },
     ':focus-visible': {
       outline: `2px solid ${colors.focusRing}`,
@@ -254,7 +278,7 @@ export const uiStyles = stylex.create({
     borderRadius: '16px',
     border: `1px solid ${colors.lineMuted}`,
     backgroundColor: colors.surfaceSoft,
-    color: colors.paperStrong,
+    color: colors.textPrimary,
     fontSize: '0.9rem',
     lineHeight: 1.6,
     padding: '14px 16px',
@@ -271,41 +295,45 @@ export const uiStyles = stylex.create({
   },
   input: {
     width: '100%',
+    minHeight: layout.fieldHeight,
     borderRadius: radius.md,
     padding: `${spacing.md} ${spacing.lg}`,
     transitionProperty: 'border-color, box-shadow, background-color',
     transitionDuration: motion.fast,
-    backgroundColor: colors.bgField,
+    backgroundColor: colors.controlSurface,
     border: `1px solid ${colors.borderDefault}`,
     color: colors.textPrimary,
     boxShadow: colors.shadowInset,
     ':focus': {
       outline: 'none',
-      borderColor: colors.accentEdgeStrong,
+      borderColor: colors.fieldFocusBorder,
       boxShadow: `0 0 0 3px ${colors.focusGlow}`,
+      backgroundColor: colors.controlSurfaceHover,
     },
   },
   select: {
     width: '100%',
+    minHeight: layout.fieldHeight,
     borderRadius: radius.md,
     padding: `${spacing.md} ${spacing.lg}`,
     transitionProperty: 'border-color, box-shadow, background-color',
     transitionDuration: motion.fast,
-    backgroundColor: colors.bgField,
+    backgroundColor: colors.controlSurface,
     border: `1px solid ${colors.borderDefault}`,
     color: colors.textPrimary,
     boxShadow: colors.shadowInset,
     ':focus': {
       outline: 'none',
-      borderColor: colors.accentEdgeStrong,
+      borderColor: colors.fieldFocusBorder,
       boxShadow: `0 0 0 3px ${colors.focusGlow}`,
+      backgroundColor: colors.controlSurfaceHover,
     },
   },
   tableFrame: {
     overflowX: 'auto',
     borderRadius: radius.xl,
     border: `1px solid ${colors.lineMuted}`,
-    background: 'linear-gradient(145deg, rgba(17, 19, 24, 0.92), rgba(10, 12, 16, 0.92))',
+    background: `linear-gradient(145deg, ${colors.surfaceBase}, ${colors.controlSurface})`,
   },
   textCenter: {
     textAlign: 'center',
@@ -326,23 +354,23 @@ export const uiStyles = stylex.create({
     position: 'sticky',
     top: 0,
     zIndex: 1,
-    backgroundColor: 'rgba(20, 22, 28, 0.95)',
+    backgroundColor: colors.overlaySurface,
     backdropFilter: 'blur(8px)',
-    color: 'rgba(222, 203, 170, 0.92)',
+    color: colors.accentStrong,
   },
   tableCell: {
     padding: '16px 24px',
     whiteSpace: 'nowrap',
     fontSize: '0.875rem',
-    color: '#dccdb2',
-    borderTop: '1px solid rgba(255, 255, 255, 0.03)',
+    color: colors.textPrimary,
+    borderTop: `1px solid ${colors.lineSoft}`,
   },
   tableRowEven: {
-    backgroundColor: 'rgba(20, 22, 28, 0.66)',
+    backgroundColor: colors.controlSurface,
   },
   tableRowHover: {
     ':hover': {
-      backgroundColor: 'rgba(38, 32, 34, 0.58)',
+      backgroundColor: colors.controlSurfaceHover,
     },
   },
   modalBackdrop: {
@@ -353,7 +381,7 @@ export const uiStyles = stylex.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: '16px',
-    backgroundColor: 'rgba(7, 8, 12, 0.78)',
+    backgroundColor: colors.overlayScrim,
     backdropFilter: 'blur(6px)',
   },
   modalShell: {
@@ -362,10 +390,10 @@ export const uiStyles = stylex.create({
     maxHeight: 'min(92vh, 980px)',
     overflow: 'auto',
     borderRadius: '30px',
-    border: '1px solid rgba(160, 139, 103, 0.5)',
+    border: `1px solid ${colors.accentEdge}`,
     background:
-      'radial-gradient(circle at 10% 0%, rgba(169, 71, 63, 0.12), transparent 36%), radial-gradient(circle at 86% 10%, rgba(130, 185, 173, 0.1), transparent 34%), linear-gradient(145deg, rgba(17, 19, 24, 0.97), rgba(10, 12, 16, 0.95))',
-    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.44), inset 0 0 0 1px rgba(248, 237, 217, 0.03)',
+      `radial-gradient(circle at 10% 0%, ${colors.surfaceGlowPrimary}, transparent 36%), radial-gradient(circle at 86% 10%, ${colors.surfaceGlowSecondary}, transparent 34%), linear-gradient(145deg, ${colors.overlaySurface}, ${colors.surfaceRaised})`,
+    boxShadow: `0 20px 40px ${colors.shadowStrong}, inset 0 0 0 1px ${colors.borderSubtle}`,
   },
   modalShellNarrow: {
     maxWidth: '980px',
@@ -386,12 +414,12 @@ export const uiStyles = stylex.create({
   modalTitle: {
     fontSize: 'clamp(1.55rem, 3vw, 2rem)',
     fontWeight: 700,
-    color: '#e6eff5',
+    color: colors.textPrimary,
     letterSpacing: '0.01em',
   },
   modalSubtitle: {
     marginTop: '8px',
-    color: 'rgba(181, 199, 212, 0.88)',
+    color: colors.textSecondary,
     fontSize: '0.95rem',
     lineHeight: 1.6,
     maxWidth: '66ch',
@@ -403,8 +431,8 @@ export const uiStyles = stylex.create({
     minWidth: '46px',
     height: '46px',
     borderRadius: '12px',
-    backgroundColor: 'rgba(11, 22, 31, 0.84)',
-    border: '1px solid rgba(77, 112, 134, 0.46)',
+    backgroundColor: colors.controlSurface,
+    border: `1px solid ${colors.borderDefault}`,
     backdropFilter: 'blur(12px)',
     transitionProperty: 'background-color, border-color, transform, box-shadow',
     transitionDuration: '200ms',
@@ -412,10 +440,10 @@ export const uiStyles = stylex.create({
     textDecoration: 'none',
     cursor: 'pointer',
     ':hover': {
-      backgroundColor: 'rgba(18, 35, 48, 0.92)',
-      borderColor: 'rgba(151, 194, 216, 0.65)',
+      backgroundColor: colors.controlSurfaceHover,
+      borderColor: colors.borderStrong,
       transform: 'translateY(-1px)',
-      boxShadow: '0 14px 28px rgba(3, 8, 12, 0.46)',
+      boxShadow: `0 14px 28px ${colors.shadowSoft}`,
     },
   },
 });

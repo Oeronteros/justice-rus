@@ -41,7 +41,13 @@ export default function ThemeModeSwitch({ language }: ThemeModeSwitchProps) {
   const iconClassName = stylex.props(shellStyles.themeToggleIcon).className ?? '';
 
   return (
-    <div {...stylex.props(shellStyles.themeToggleGroup)} role="group" aria-label={labels[language].system}>
+    <div
+      {...stylex.props(shellStyles.themeToggleGroup)}
+      role="group"
+      aria-label={labels[language].system}
+      data-testid="theme-toggle"
+      data-theme-current={mode}
+    >
       {switchOptions.map((option) => {
         const isActive = mode === option.mode;
 
@@ -52,6 +58,7 @@ export default function ThemeModeSwitch({ language }: ThemeModeSwitchProps) {
             onClick={() => setMode(option.mode)}
             {...stylex.props(shellStyles.themeToggleButton, isActive && shellStyles.themeToggleButtonActive)}
             aria-pressed={isActive}
+            data-theme-mode={option.mode}
             title={labels[language][option.mode]}
           >
             <WuxiaIcon name={option.icon} className={iconClassName} />
