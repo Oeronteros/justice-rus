@@ -1,5 +1,5 @@
 import * as stylex from '@stylexjs/stylex';
-import { colors, motion, radius, spacing, typography } from '@/lib/stylex/tokens.stylex';
+import { colors, motion, radius, spacing, typography } from '../../lib/stylex/tokens.stylex';
 
 export const missionControlStyles = stylex.create({
   shell: {
