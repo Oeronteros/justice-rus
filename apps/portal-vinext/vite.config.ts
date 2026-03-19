@@ -2,6 +2,8 @@ import path from 'node:path';
 import { defineConfig } from 'vite';
 import vinext from 'vinext';
 
+const vinextDevOrigin = process.env.VINEXT_DEV_ORIGIN?.replace(/\/$/, '');
+
 export default defineConfig({
   envDir: path.resolve(__dirname, '../../'),
   build: {
@@ -54,6 +56,7 @@ export default defineConfig({
   server: {
     host: '127.0.0.1',
     port: 3101,
+    origin: vinextDevOrigin,
     fs: {
       allow: [path.resolve(__dirname, '../../')],
     },

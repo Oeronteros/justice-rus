@@ -229,7 +229,7 @@ export function buildVinextCutoverRewrites(options?: {
     return [];
   }
 
-  return getVinextOwnedRoutes(scope).flatMap((route) => [
+  const routeRewrites = getVinextOwnedRoutes(scope).flatMap((route) => [
     {
       source: route,
       destination: `${origin}${route}`,
@@ -239,4 +239,17 @@ export function buildVinextCutoverRewrites(options?: {
       destination: `${origin}${route}/:path*`,
     },
   ]);
+
+  if (scope === 'off') {
+    return routeRewrites;
+  }
+
+  const vinextDevAssetRewrites = [
+    {
+      source: '/@:path*',
+      destination: `${origin}/@:path*`,
+    },
+  ];
+
+  return [...routeRewrites, ...vinextDevAssetRewrites];
 }

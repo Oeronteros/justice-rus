@@ -19,6 +19,14 @@ const targetRoutes = [
   '/integrations',
 ] as const;
 
+const blockedConsolePatterns = [
+  'Refused to apply style from',
+  "MIME type ('text/html')",
+  'Failed to fetch dynamically imported module',
+  '/@id/__x00__virtual:vite-rsc/entry-browser',
+  '/@fs/',
+];
+
 test('@route-parity validates vinext route manifest against live availability', async ({ page }, testInfo) => {
   const manifest = getVinextCutoverManifest();
   const routeEntries = targetRoutes.map((route) => {
@@ -31,6 +39,8 @@ test('@route-parity validates vinext route manifest against live availability', 
 
   const ownedRoutes = new Set(getVinextOwnedRoutes('all'));
   const blockedRoutes = new Set(getVinextBlockedRoutes('all'));
+  const consoleErrors: string[] = [];
+  const requestFailures: string[] = [];
   const routeResults: Array<{
     route: string;
     sectionKey: string;
@@ -41,12 +51,26 @@ test('@route-parity validates vinext route manifest against live availability', 
     ok: boolean;
   }> = [];
 
+  page.on('console', (message) => {
+    if (message.type() !== 'error') {
+      return;
+    }
+
+    consoleErrors.push(message.text());
+  });
+
+  page.on('requestfailed', (request) => {
+    requestFailures.push(`${request.method()} ${request.url()} :: ${request.failure()?.errorText ?? 'unknown error'}`);
+  });
+
   for (const entry of routeEntries) {
     const response = await page.goto(entry.route, { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('networkidle');
+
     const status = response?.status() ?? 0;
     const expectedOwner = ownedRoutes.has(entry.route) ? 'vinext' : 'next';
     const observedOwner = status === 200 ? 'vinext' : 'next';
-    const expectedStatus = expectedOwner === 'vinext' ? 200 : 404;
+    const expectedStatus = expectedOwner === 'vinext' ? 200 : entry.nextPagePath ? 200 : 404;
 
     routeResults.push({
       route: entry.route,
@@ -64,6 +88,21 @@ test('@route-parity validates vinext route manifest against live availability', 
     ).toBe(expectedStatus);
   }
 
+  await page.goto('/news', { waitUntil: 'networkidle' });
+
+  const relevantConsoleErrors = consoleErrors.filter((entry) => blockedConsolePatterns.some((pattern) => entry.includes(pattern)));
+  const relevantRequestFailures = requestFailures.filter(
+    (entry) => entry.includes('/@id/') || entry.includes('/@fs/') || entry.includes('/@vite/') || entry.includes('/@react-refresh')
+  );
+
+  expect(relevantConsoleErrors).toEqual([]);
+  expect(relevantRequestFailures).toEqual([]);
+
+  await expect(page.getByText('Доступ участника')).toBeVisible();
+
+  await page.goto('/analytics', { waitUntil: 'networkidle' });
+  await expect(page.getByText('Аналитика гильдии')).toBeVisible();
+
   const evidencePath = path.resolve(process.cwd(), '.sisyphus/evidence/task-1-route-parity.json');
   await mkdir(path.dirname(evidencePath), { recursive: true });
   await writeFile(
@@ -76,6 +115,8 @@ test('@route-parity validates vinext route manifest against live availability', 
         parityScope: 'all',
         blockedRoutes: Array.from(blockedRoutes),
         ownedRoutes: Array.from(ownedRoutes),
+        consoleErrors,
+        requestFailures,
         routes: routeResults,
       },
       null,

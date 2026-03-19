@@ -89,6 +89,7 @@ process.stdout.write(`- Vinext: ${vinextOrigin}\n`);
 spawnProcess('vinext', npmCommand, ['run', 'dev:vinext'], {
   ...process.env,
   PORT: vinextPort,
+  VINEXT_DEV_ORIGIN: vinextOrigin,
 });
 
 spawnProcess('next', npxCommand, ['next', 'dev', '--port', nextPort], {
