@@ -1,11 +1,12 @@
 import * as stylex from '@stylexjs/stylex';
 import { colors, layout, motion, radius, spacing, typography } from './tokens.stylex';
 
+const chromeBackground =
+  `radial-gradient(circle at 14% 8%, ${colors.chromeGlowPrimary}, transparent 34%), radial-gradient(circle at 84% 10%, ${colors.chromeGlowSecondary}, transparent 38%), linear-gradient(168deg, ${colors.chromeStart} 0%, ${colors.chromeMid} 52%, ${colors.chromeEnd} 100%)`;
+
 export const appShellStyles = stylex.create({
   chromeSurface: {
-    backgroundColor: colors.bgApp,
-    backgroundImage:
-      `radial-gradient(circle at 14% 8%, ${colors.chromeGlowPrimary}, transparent 34%), radial-gradient(circle at 84% 10%, ${colors.chromeGlowSecondary}, transparent 38%), linear-gradient(168deg, ${colors.chromeStart} 0%, ${colors.chromeMid} 52%, ${colors.chromeEnd} 100%)`,
+    background: chromeBackground,
     color: colors.textPrimary,
     fontFamily: typography.body,
     fontSize: typography.bodySize,
@@ -15,9 +16,7 @@ export const appShellStyles = stylex.create({
   },
   page: {
     minHeight: '100vh',
-    backgroundColor: colors.bgApp,
-    backgroundImage:
-      `radial-gradient(circle at 14% 8%, ${colors.chromeGlowPrimary}, transparent 34%), radial-gradient(circle at 84% 10%, ${colors.chromeGlowSecondary}, transparent 38%), linear-gradient(168deg, ${colors.chromeStart} 0%, ${colors.chromeMid} 52%, ${colors.chromeEnd} 100%)`,
+    background: chromeBackground,
     color: colors.textPrimary,
     fontFamily: typography.body,
     fontSize: typography.bodySize,
@@ -326,3 +325,31 @@ export const overlayStyles = stylex.create({
     borderRadius: 0,
   },
 });
+
+export const themePrimitives = {
+  pageChrome: [appShellStyles.page, appShellStyles.contentShell],
+  pageChromeSurface: [appShellStyles.chromeSurface],
+  pageContainer: [appShellStyles.container],
+  chromePanel: [surfaceStyles.chrome],
+  card: [surfaceStyles.card, surfaceStyles.interactive],
+  cardStatic: [surfaceStyles.card],
+  panel: [surfaceStyles.panel],
+  panelInteractive: [surfaceStyles.panel, surfaceStyles.interactive],
+  elevatedPanel: [surfaceStyles.elevated, surfaceStyles.interactive],
+  subduedPanel: [surfaceStyles.subdued],
+  primaryButton: [buttonStyles.base, buttonStyles.primary],
+  secondaryButton: [buttonStyles.base, buttonStyles.secondary],
+  touchButton: [buttonStyles.base, buttonStyles.secondary, buttonStyles.touch],
+  ghostButton: [buttonStyles.base, buttonStyles.ghost],
+  dangerButton: [buttonStyles.base, buttonStyles.danger],
+  fieldLabel: [formStyles.label],
+  fieldHint: [formStyles.hint],
+  fieldError: [formStyles.error],
+  input: [formStyles.field, formStyles.input],
+  select: [formStyles.field, formStyles.select],
+  textarea: [formStyles.field, formStyles.textarea],
+  overlayBackdrop: [overlayStyles.backdrop],
+  overlayPanel: [overlayStyles.panel],
+  overlayPanelNarrow: [overlayStyles.panel, overlayStyles.panelNarrow],
+  overlayPanelFullBleed: [overlayStyles.panel, overlayStyles.panelFullBleed],
+} as const;

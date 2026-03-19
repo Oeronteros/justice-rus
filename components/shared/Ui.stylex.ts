@@ -1,40 +1,8 @@
 import * as stylex from '@stylexjs/stylex';
-import {
-  appShellStyles,
-  buttonStyles,
-  formStyles,
-  overlayStyles,
-  surfaceStyles,
-} from '../../lib/stylex/primitives.stylex';
+import { themePrimitives } from '../../lib/stylex/primitives.stylex';
 import { colors, layout, motion, radius, spacing, typography } from '../../lib/stylex/tokens.stylex';
 
-export const uiPrimitives = {
-  pageChrome: [appShellStyles.page, appShellStyles.contentShell],
-  pageChromeSurface: [appShellStyles.chromeSurface],
-  pageContainer: [appShellStyles.container],
-  chromePanel: [surfaceStyles.chrome],
-  card: [surfaceStyles.card, surfaceStyles.interactive],
-  cardStatic: [surfaceStyles.card],
-  panel: [surfaceStyles.panel],
-  panelInteractive: [surfaceStyles.panel, surfaceStyles.interactive],
-  elevatedPanel: [surfaceStyles.elevated, surfaceStyles.interactive],
-  subduedPanel: [surfaceStyles.subdued],
-  primaryButton: [buttonStyles.base, buttonStyles.primary],
-  secondaryButton: [buttonStyles.base, buttonStyles.secondary],
-  touchButton: [buttonStyles.base, buttonStyles.secondary, buttonStyles.touch],
-  ghostButton: [buttonStyles.base, buttonStyles.ghost],
-  dangerButton: [buttonStyles.base, buttonStyles.danger],
-  fieldLabel: [formStyles.label],
-  fieldHint: [formStyles.hint],
-  fieldError: [formStyles.error],
-  input: [formStyles.field, formStyles.input],
-  select: [formStyles.field, formStyles.select],
-  textarea: [formStyles.field, formStyles.textarea],
-  overlayBackdrop: [overlayStyles.backdrop],
-  overlayPanel: [overlayStyles.panel],
-  overlayPanelNarrow: [overlayStyles.panel, overlayStyles.panelNarrow],
-  overlayPanelFullBleed: [overlayStyles.panel, overlayStyles.panelFullBleed],
-} as const;
+export const uiPrimitives = themePrimitives;
 
 export const uiStyles = stylex.create({
   sectionShell: {

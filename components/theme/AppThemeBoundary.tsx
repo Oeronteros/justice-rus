@@ -6,7 +6,7 @@ import { rootLayoutStyles } from '@/app/layout.stylex';
 import { useTheme, type ThemeMode } from '@/lib/theme/context';
 import { appShellStyles } from '@/lib/stylex/primitives.stylex';
 import { mergeStylexProps } from '@/lib/stylex/utils';
-import { moonlitTheme, wuxiaTheme } from '@/lib/stylex/theme.stylex';
+import { sharedThemeClassTokens, sharedThemesByMode } from '@/lib/stylex/theme.stylex';
 
 const themeToggleHarnessStyles = {
   position: 'fixed',
@@ -27,11 +27,6 @@ type ThemeToggleHarnessElement = HTMLDivElement & {
   setThemeMode?: (mode: ThemeMode) => void;
 };
 
-const darkThemeClassName = stylex.props(wuxiaTheme).className ?? '';
-const lightThemeClassName = stylex.props(moonlitTheme).className ?? '';
-const darkThemeClassTokens = darkThemeClassName.split(' ').filter(Boolean).join('|');
-const lightThemeClassTokens = lightThemeClassName.split(' ').filter(Boolean).join('|');
-
 export default function AppThemeBoundary({ children }: { children: React.ReactNode }) {
   const { mode, resolvedTheme, setMode } = useTheme();
   const themeToggleHarnessRef = useRef<HTMLDivElement | null>(null);
@@ -51,9 +46,20 @@ export default function AppThemeBoundary({ children }: { children: React.ReactNo
     };
   }, [setMode]);
 
+  useEffect(() => {
+    const probeNode = document.querySelector('[data-testid="theme-primitives-probe"]');
+    if (!probeNode) {
+      return;
+    }
+
+    probeNode.setAttribute('data-theme-current', resolvedTheme);
+    probeNode.setAttribute('data-theme-mode', mode);
+    probeNode.setAttribute('data-theme-ready', 'true');
+  }, [mode, resolvedTheme]);
+
   const themeProps = mergeStylexProps(
     stylex.props(
-      resolvedTheme === 'light' ? moonlitTheme : wuxiaTheme,
+      sharedThemesByMode[resolvedTheme],
       rootLayoutStyles.body,
       resolvedTheme === 'light' && rootLayoutStyles.bodyLight,
       appShellStyles.page
@@ -67,8 +73,8 @@ export default function AppThemeBoundary({ children }: { children: React.ReactNo
       data-testid="theme-boundary"
       data-theme={resolvedTheme}
       data-theme-mode={mode}
-      data-theme-class-dark={darkThemeClassTokens}
-      data-theme-class-light={lightThemeClassTokens}
+      data-theme-class-dark={sharedThemeClassTokens.dark}
+      data-theme-class-light={sharedThemeClassTokens.light}
     >
       <div
         ref={themeToggleHarnessRef}

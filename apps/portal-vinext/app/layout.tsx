@@ -6,7 +6,7 @@ import '@/app/stylex.css';
 import '@/app/globals.css';
 import { rootLayoutStyles } from '@/app/layout.stylex';
 import StyledComponentsRegistry from '@/app/styled-components-registry';
-import { uiPrimitives, uiThemeProbeStyles } from '@/components/shared/Ui.stylex';
+import { uiThemeProbeStyles } from '@/components/shared/Ui.stylex';
 import InputPerformanceMode from '@/components/InputPerformanceMode';
 import AppTelemetry from '@/components/platform/AppTelemetry';
 import AppThemeBoundary from '@/components/theme/AppThemeBoundary';
@@ -15,6 +15,13 @@ import { I18nProvider } from '@/lib/i18n/context';
 import { ThemeProvider } from '@/lib/theme/context';
 import { defaultLanguage } from '@/lib/i18n/shared';
 import { shouldEnableTelemetry } from '@/lib/platform/runtime';
+import {
+  appShellStyles,
+  buttonStyles,
+  formStyles,
+  overlayStyles,
+  surfaceStyles,
+} from '@/lib/stylex/primitives.stylex';
 
 export const metadata: Metadata = {
   title: 'Silent Moonfall | Guild Portal',
@@ -72,16 +79,21 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 <I18nProvider>
                   <Suspense fallback={<div {...stylex.props(rootLayoutStyles.fallback)} />}>
                     <>
-                      <div data-testid="theme-primitives-probe" aria-hidden="true" {...stylex.props(uiThemeProbeStyles.rail)}>
+                      <div
+                        data-testid="theme-primitives-probe"
+                        data-theme-primitives="pageChrome,card,panel,button,input,overlayPanelNarrow"
+                        aria-hidden="true"
+                        {...stylex.props(uiThemeProbeStyles.rail)}
+                      >
                         <div {...stylex.props(uiThemeProbeStyles.stack)}>
-                          <div data-testid="theme-probe-page" {...stylex.props(...uiPrimitives.pageChromeSurface, uiThemeProbeStyles.page)} />
-                          <div data-testid="theme-probe-card" {...stylex.props(...uiPrimitives.cardStatic, uiThemeProbeStyles.surface)} />
-                          <div data-testid="theme-probe-panel" {...stylex.props(...uiPrimitives.panel, uiThemeProbeStyles.surface)} />
-                          <button data-testid="theme-probe-button" type="button" tabIndex={-1} {...stylex.props(...uiPrimitives.secondaryButton, uiThemeProbeStyles.button)}>
+                          <div data-testid="theme-probe-page" data-theme-probe-primitive="pageChrome" {...stylex.props(appShellStyles.page, appShellStyles.contentShell, uiThemeProbeStyles.page)} />
+                          <div data-testid="theme-probe-card" data-theme-probe-primitive="card" {...stylex.props(surfaceStyles.card, uiThemeProbeStyles.surface)} />
+                          <div data-testid="theme-probe-panel" data-theme-probe-primitive="panel" {...stylex.props(surfaceStyles.panel, uiThemeProbeStyles.surface)} />
+                          <button data-testid="theme-probe-button" data-theme-probe-primitive="button" type="button" tabIndex={-1} {...stylex.props(buttonStyles.base, buttonStyles.secondary, uiThemeProbeStyles.button)}>
                             Theme probe
                           </button>
-                          <input data-testid="theme-probe-input" tabIndex={-1} readOnly value="Theme probe" {...stylex.props(...uiPrimitives.input)} />
-                          <div data-testid="theme-probe-overlay" {...stylex.props(...uiPrimitives.overlayPanelNarrow, uiThemeProbeStyles.overlay)} />
+                          <input data-testid="theme-probe-input" data-theme-probe-primitive="input" tabIndex={-1} readOnly value="Theme probe" {...stylex.props(formStyles.field, formStyles.input)} />
+                          <div data-testid="theme-probe-overlay" data-theme-probe-primitive="overlayPanelNarrow" {...stylex.props(overlayStyles.panel, overlayStyles.panelNarrow, uiThemeProbeStyles.overlay)} />
                         </div>
                       </div>
                       <div {...stylex.props(rootLayoutStyles.content)}>{children}</div>

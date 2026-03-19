@@ -43,19 +43,20 @@ async function readThemeProbeState(page: Page) {
   return await page.evaluate(() => {
     const getState = (testId: string) => {
       const node = document.querySelector(`[data-testid="${testId}"]`) as HTMLElement | null;
-      const computed = node ? window.getComputedStyle(node) : null;
 
       return {
-        backgroundColor: computed?.backgroundColor ?? '',
-        backgroundImage: computed?.backgroundImage ?? '',
-        borderColor: computed?.borderColor ?? '',
-        borderRadius: computed?.borderRadius ?? '',
-        boxShadow: computed?.boxShadow ?? '',
-        color: computed?.color ?? '',
+        className: node?.className ?? '',
+        primitive: node?.getAttribute('data-theme-probe-primitive') ?? '',
       };
     };
 
+    const probeRoot = document.querySelector('[data-testid="theme-primitives-probe"]') as HTMLElement | null;
+
     return {
+      currentTheme: probeRoot?.getAttribute('data-theme-current') ?? '',
+      currentMode: probeRoot?.getAttribute('data-theme-mode') ?? '',
+      ready: probeRoot?.getAttribute('data-theme-ready') ?? '',
+      contract: (probeRoot?.getAttribute('data-theme-primitives') ?? '').split(',').filter(Boolean),
       boundary: getState('theme-boundary'),
       page: getState('theme-probe-page'),
       card: getState('theme-probe-card'),
@@ -119,6 +120,7 @@ test.describe('vinext theme primitives @theme-primitives', () => {
     const darkButton = toggle.locator('button[data-theme-mode="dark"]');
 
     await expect(primitivesProbe).toBeAttached();
+    await expect(primitivesProbe).toHaveAttribute('data-theme-primitives', 'pageChrome,card,panel,button,input,overlayPanelNarrow');
     await expect(boundary).toHaveClass(/theme-wuxia/);
     await expect(boundary).toHaveAttribute('data-theme-mode', 'system');
 
@@ -142,14 +144,22 @@ test.describe('vinext theme primitives @theme-primitives', () => {
     expect(lightState.storageMode).toBe('light');
     expect(lightState.documentTheme).toBe('light');
     expect(lightState.bodyTheme).toBe('light');
-    expect(lightProbe.boundary.backgroundImage).not.toBe('none');
-    expect(lightProbe.page.backgroundImage).not.toBe('none');
-    expect(lightProbe.card.backgroundImage).not.toBe('none');
-    expect(lightProbe.panel.backgroundImage).not.toBe('none');
-    expect(lightProbe.button.backgroundImage).not.toBe('none');
-    expect(lightProbe.input.borderColor).not.toBe('rgba(0, 0, 0, 0)');
-    expect(lightProbe.overlay.boxShadow).not.toBe('none');
-    expect(lightProbe.overlay.borderRadius).toBe('30px');
+    expect(lightProbe.ready).toBe('true');
+    expect(lightProbe.currentTheme).toBe('light');
+    expect(lightProbe.currentMode).toBe('light');
+    expect(lightProbe.contract).toEqual(['pageChrome', 'card', 'panel', 'button', 'input', 'overlayPanelNarrow']);
+    expect(lightProbe.page.primitive).toBe('pageChrome');
+    expect(lightProbe.card.primitive).toBe('card');
+    expect(lightProbe.panel.primitive).toBe('panel');
+    expect(lightProbe.button.primitive).toBe('button');
+    expect(lightProbe.input.primitive).toBe('input');
+    expect(lightProbe.overlay.primitive).toBe('overlayPanelNarrow');
+    expect(lightProbe.page.className).toContain('primitives__appShellStyles.page');
+    expect(lightProbe.card.className).toContain('primitives__surfaceStyles.card');
+    expect(lightProbe.panel.className).toContain('primitives__surfaceStyles.panel');
+    expect(lightProbe.button.className).toContain('primitives__buttonStyles.secondary');
+    expect(lightProbe.input.className).toContain('primitives__formStyles.field');
+    expect(lightProbe.overlay.className).toContain('primitives__overlayStyles.panel');
 
     await switchThemeMode(page, 'dark');
 
@@ -173,12 +183,15 @@ test.describe('vinext theme primitives @theme-primitives', () => {
     expect(darkState.documentTheme).toBe('dark');
     expect(darkState.bodyTheme).toBe('dark');
     expect(darkState.boundaryClasses).toContain('theme-wuxia');
-    expect(darkProbe.boundary.backgroundImage).not.toBe(lightProbe.boundary.backgroundImage);
-    expect(darkProbe.page.backgroundImage).not.toBe(lightProbe.page.backgroundImage);
-    expect(darkProbe.card.backgroundImage).not.toBe(lightProbe.card.backgroundImage);
-    expect(darkProbe.panel.backgroundImage).not.toBe(lightProbe.panel.backgroundImage);
-    expect(darkProbe.button.backgroundImage).not.toBe(lightProbe.button.backgroundImage);
-    expect(darkProbe.input.backgroundColor).not.toBe(lightProbe.input.backgroundColor);
-    expect(darkProbe.overlay.backgroundImage).not.toBe(lightProbe.overlay.backgroundImage);
+    expect(darkProbe.ready).toBe('true');
+    expect(darkProbe.currentTheme).toBe('dark');
+    expect(darkProbe.currentMode).toBe('dark');
+    expect(darkProbe.contract).toEqual(lightProbe.contract);
+    expect(darkProbe.page.className).toContain('primitives__appShellStyles.page');
+    expect(darkProbe.card.className).toContain('primitives__surfaceStyles.card');
+    expect(darkProbe.panel.className).toContain('primitives__surfaceStyles.panel');
+    expect(darkProbe.button.className).toContain('primitives__buttonStyles.secondary');
+    expect(darkProbe.input.className).toContain('primitives__formStyles.field');
+    expect(darkProbe.overlay.className).toContain('primitives__overlayStyles.panel');
   });
 });

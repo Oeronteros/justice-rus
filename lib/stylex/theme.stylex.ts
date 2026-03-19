@@ -1,6 +1,8 @@
 import * as stylex from '@stylexjs/stylex';
 import { colors } from './tokens.stylex';
 
+export type SharedThemeName = 'dark' | 'light';
+
 export const wuxiaTheme = stylex.createTheme(colors, {
   bgApp: '#141217',
   bgShell: 'rgba(25, 22, 29, 0.94)',
@@ -238,3 +240,18 @@ export const moonlitTheme = stylex.createTheme(colors, {
   lineMuted: 'rgba(27, 34, 48, 0.12)',
   lineStrong: 'rgba(27, 34, 48, 0.2)',
 });
+
+export const sharedThemesByMode = {
+  dark: wuxiaTheme,
+  light: moonlitTheme,
+} as const;
+
+const sharedThemeClassNames = {
+  dark: stylex.props(wuxiaTheme).className ?? '',
+  light: stylex.props(moonlitTheme).className ?? '',
+} as const;
+
+export const sharedThemeClassTokens = {
+  dark: sharedThemeClassNames.dark.split(' ').filter(Boolean).join('|'),
+  light: sharedThemeClassNames.light.split(' ').filter(Boolean).join('|'),
+} as const satisfies Record<SharedThemeName, string>;
