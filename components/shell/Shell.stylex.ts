@@ -1052,7 +1052,6 @@ export const shellStyles = stylex.create({
     paddingLeft: 'max(12px, env(safe-area-inset-left))',
     paddingRight: 'max(12px, env(safe-area-inset-right))',
     paddingBottom: 'max(10px, env(safe-area-inset-bottom))',
-    pointerEvents: 'none',
   },
   mobileSheetScrim: {
     position: 'fixed',

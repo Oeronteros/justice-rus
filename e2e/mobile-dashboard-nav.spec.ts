@@ -249,7 +249,7 @@ test.describe('mobile dashboard and nav flow', () => {
     const pvpLink = page.locator('nav[aria-label="Дополнительная навигация"] a[href="/pvp"]').first();
     await expect(pvpLink).toBeVisible();
     await pvpLink.scrollIntoViewIfNeeded();
-    await pvpLink.click();
+    await pvpLink.tap();
     await expect(page).toHaveURL(/\/pvp$/);
 
     await expect.poll(async () => page.evaluate(() => document.body.style.position)).toBe('');
