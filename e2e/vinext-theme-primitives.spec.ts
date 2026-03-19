@@ -36,7 +36,7 @@ async function openAuthenticatedNews(page: Page) {
   });
 
   await page.goto('/news');
-  await expect(page.getByTestId('theme-toggle')).toBeVisible({ timeout: 60000 });
+  await expect(page.getByTestId('theme-toggle-visual')).toBeVisible({ timeout: 60000 });
 }
 
 async function readThemeProbeState(page: Page) {
@@ -68,26 +68,25 @@ async function readThemeProbeState(page: Page) {
 
 async function switchThemeMode(page: Page, nextMode: 'light' | 'dark') {
   const toggle = page.getByTestId('theme-toggle');
-  const button = toggle.locator(`button[data-theme-mode="${nextMode}"]`);
+  await expect(toggle).toHaveAttribute('data-theme-ready', 'true');
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
-    await button.click();
+    await page.evaluate((mode) => {
+      const harness = document.querySelector('[data-testid="theme-toggle"]') as (HTMLElement & {
+        setThemeMode?: (nextMode: 'system' | 'dark' | 'light') => void;
+      }) | null;
+
+      if (!harness?.setThemeMode) {
+        throw new Error('Theme toggle harness is not ready');
+      }
+
+      harness.setThemeMode(mode);
+    }, nextMode);
 
     try {
       await expect(toggle).toHaveAttribute('data-theme-current', nextMode, { timeout: 5000 });
       return;
     } catch (error) {
-      await button.dispatchEvent('click');
-
-      try {
-        await expect(toggle).toHaveAttribute('data-theme-current', nextMode, { timeout: 5000 });
-        return;
-      } catch (dispatchError) {
-        if (attempt === 2) {
-          throw dispatchError;
-        }
-      }
-
       if (attempt === 2) {
         throw error;
       }

@@ -45,7 +45,7 @@ export default function ThemeModeSwitch({ language }: ThemeModeSwitchProps) {
       {...stylex.props(shellStyles.themeToggleGroup)}
       role="group"
       aria-label={labels[language].system}
-      data-testid="theme-toggle"
+      data-testid="theme-toggle-visual"
       data-theme-current={mode}
     >
       {switchOptions.map((option) => {
