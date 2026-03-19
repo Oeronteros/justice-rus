@@ -189,6 +189,14 @@ type DashboardCopy = {
   pvpEmpty: string;
   quickRoutes: string;
   quickRoutesBody: string;
+  denseOperationsEyebrow: string;
+  denseOperationsTitle: string;
+  denseOperationsBody: string;
+  immediateFollowUp: string;
+  immediateFollowUpBody: string;
+  commandWatch: string;
+  commandWatchBody: string;
+  actionRowLabel: string;
   openSchedule: string;
   openHelp: string;
   openNews: string;
@@ -300,6 +308,17 @@ const dashboardCopy: Record<Language, DashboardCopy> = {
     pvpEmpty: 'PvP-контур пока без активной очереди и матчей.',
     quickRoutes: 'Быстрые маршруты',
     quickRoutesBody: 'Переходы в ключевые разделы, если нужно углубиться из дашборда.',
+    denseOperationsEyebrow: 'Плотный операционный контур',
+    denseOperationsTitle: 'Нижняя панель решений',
+    denseOperationsBody:
+      'Ниже первого экрана сигналы собраны в два осмысленных блока: где нужно действовать сразу и где держать постоянный обзор боеготовности.',
+    immediateFollowUp: 'Немедленное сопровождение',
+    immediateFollowUpBody:
+      'Ближайшее событие, срочные запросы и pending-отсутствия идут одной очередью, чтобы решения принимались без лишнего сканирования.',
+    commandWatch: 'Контур наблюдения',
+    commandWatchBody:
+      'Готовность состава, PvP-напряжение и быстрые маршруты вынесены в отдельный блок для устойчивого мониторинга.',
+    actionRowLabel: 'Следующее действие',
     openSchedule: 'Открыть расписание',
     openHelp: 'Открыть помощь',
     openNews: 'Открыть новости',
@@ -409,6 +428,17 @@ const dashboardCopy: Record<Language, DashboardCopy> = {
     pvpEmpty: 'PvP is quiet right now: no queue and no live match.',
     quickRoutes: 'Quick routes',
     quickRoutesBody: 'Jump deeper into the core modules when a live card needs action.',
+    denseOperationsEyebrow: 'Dense operations',
+    denseOperationsTitle: 'Below-the-fold operations board',
+    denseOperationsBody:
+      'Below the first screen, the heavy dashboard modules are grouped into two lanes: what needs action now and what deserves steady command attention.',
+    immediateFollowUp: 'Immediate follow-up',
+    immediateFollowUpBody:
+      'Keep the next event, urgent help, and pending absences together so officers and members can move through the highest-friction work first.',
+    commandWatch: 'Command watch',
+    commandWatchBody:
+      'Roster readiness, PvP pressure, and quick routes stay in a separate monitoring lane built for ongoing scanning.',
+    actionRowLabel: 'Next action',
     openSchedule: 'Open schedule',
     openHelp: 'Open help board',
     openNews: 'Open news',
@@ -518,6 +548,14 @@ const dashboardCopy: Record<Language, DashboardCopy> = {
     pvpEmpty: '当前 PvP 比较安静：没有排队，也没有进行中的对局。',
     quickRoutes: '快速入口',
     quickRoutesBody: '当某个实时卡片需要深入处理时，可以直接跳到对应模块。',
+    denseOperationsEyebrow: '密集行动区',
+    denseOperationsTitle: '首屏以下作战面板',
+    denseOperationsBody: '首屏以下的重度监控内容被拆成两条通道：一条处理立即行动，一条维持持续观察。',
+    immediateFollowUp: '立即跟进',
+    immediateFollowUpBody: '把下一个活动、紧急求助和待批请假集中在同一行动通道里，减少来回切换。',
+    commandWatch: '指挥观察',
+    commandWatchBody: '把成员战备、PvP 压力和快捷入口放进独立观察区，保持持续监控更清晰。',
+    actionRowLabel: '下一步操作',
     openSchedule: '打开日程',
     openHelp: '打开求助',
     openNews: '打开公告',
@@ -767,6 +805,21 @@ function DenseActionLink({ href, label }: { href: string; label: string }) {
   );
 }
 
+function DenseActionRail({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div {...stylex.props(dashboardStyles.denseActionRail)}>
+      <span {...stylex.props(dashboardStyles.denseActionLabel)}>{label}</span>
+      <div {...stylex.props(dashboardStyles.denseActionRow)}>{children}</div>
+    </div>
+  );
+}
+
 function dashboardReveal(prefersReducedMotion: boolean | null, delay = 0) {
   const reduced = Boolean(prefersReducedMotion);
 
@@ -874,6 +927,37 @@ function StatusCard({
       </div>
       {children}
     </article>
+  );
+}
+
+function DenseOperationsCluster({
+  eyebrow,
+  title,
+  body,
+  tone = 'steady',
+  children,
+}: {
+  eyebrow: string;
+  title: string;
+  body: string;
+  tone?: LiveTone;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      {...stylex.props(
+        dashboardStyles.denseCluster,
+        tone === 'active' && dashboardStyles.denseClusterActive,
+        tone === 'alert' && dashboardStyles.denseClusterAlert
+      )}
+    >
+      <div {...stylex.props(dashboardStyles.denseClusterHeader)}>
+        <div {...stylex.props(dashboardStyles.kicker)}>{eyebrow}</div>
+        <h3 {...stylex.props(dashboardStyles.statusTitle)}>{title}</h3>
+        <p {...stylex.props(dashboardStyles.metaText)}>{body}</p>
+      </div>
+      <div {...stylex.props(dashboardStyles.denseClusterGrid)}>{children}</div>
+    </section>
   );
 }
 
@@ -1287,130 +1371,155 @@ function DashboardDenseRegion({
     return upcoming[0] ?? null;
   }, [schedule]);
 
+  const immediateTone: LiveTone = helpSnapshot.unattended > 0 || absenceSnapshot.pending.length > 0 ? 'alert' : nextEvent ? 'active' : 'steady';
+  const watchTone: LiveTone = pvpSnapshot.disputed ? 'alert' : rosterSnapshot.readinessPercent >= 60 || pvpSnapshot.queueSize > 0 ? 'active' : 'steady';
+
   return (
-    <div {...stylex.props(dashboardStyles.primaryGrid)}>
-      <StatusCard title={copy.nextEvent} icon="calendar" moduleId="next_event" actionHref="/schedule" actionLabel={copy.openSchedule} tone={nextEvent ? 'active' : 'steady'}>
-        {scheduleLoading ? <MiniSkeleton /> : nextEvent ? (
-          <div {...stylex.props(dashboardStyles.stack)}>
-            <div {...stylex.props(dashboardStyles.listItem)}>
-              <div>
-                <div {...stylex.props(dashboardStyles.emphasis)}>{resolveScheduleHeadline(nextEvent, language)}</div>
-                <div {...stylex.props(dashboardStyles.metaText)}>{formatTimeAgo(nextEvent.date, copy, language)}</div>
-              </div>
-              <SignalBadge tone="active">{formatScheduleBucket(nextEvent.date, copy)}</SignalBadge>
-            </div>
-            <div {...stylex.props(dashboardStyles.denseActionRow)}>
-              <DenseActionLink href="/schedule" label={copy.openSchedule} />
-              <DenseActionLink href="/profile" label={copy.openProfile} />
-            </div>
-          </div>
-        ) : <div {...stylex.props(dashboardStyles.body)}>{copy.nextEventEmpty}</div>}
-      </StatusCard>
+    <div {...stylex.props(uiStyles.stackLg)}>
+      <div {...stylex.props(dashboardStyles.denseOperationsIntro)}>
+        <div {...stylex.props(dashboardStyles.kicker)}>{copy.denseOperationsEyebrow}</div>
+        <h3 {...stylex.props(dashboardStyles.statusTitle)}>{copy.denseOperationsTitle}</h3>
+        <p {...stylex.props(dashboardStyles.metaText)}>{copy.denseOperationsBody}</p>
+      </div>
 
-      <StatusCard title={copy.urgentHelp} icon="help" moduleId="urgent_help" actionHref="/help" actionLabel={copy.openHelp} tone={helpSnapshot.unattended > 0 ? 'alert' : 'steady'}>
-        {helpSnapshot.urgent.length > 0 ? (
-          <div {...stylex.props(dashboardStyles.stack)}>
-            {helpSnapshot.urgent.map((request) => (
-              <div key={request.id} {...stylex.props(dashboardStyles.listItem)}>
-                <div>
-                  <div {...stylex.props(dashboardStyles.emphasis)}>{request.title}</div>
-                  <div {...stylex.props(dashboardStyles.metaText)}>{formatTimeAgo(request.gatheringStart, copy, language)}</div>
+      <div {...stylex.props(dashboardStyles.denseOperationsGrid)}>
+        <DenseOperationsCluster
+          eyebrow={copy.denseOperationsEyebrow}
+          title={copy.immediateFollowUp}
+          body={copy.immediateFollowUpBody}
+          tone={immediateTone}
+        >
+          <StatusCard title={copy.nextEvent} icon="calendar" moduleId="next_event" actionHref="/schedule" actionLabel={copy.openSchedule} tone={nextEvent ? 'active' : 'steady'}>
+            {scheduleLoading ? <MiniSkeleton /> : nextEvent ? (
+              <div {...stylex.props(dashboardStyles.stack)}>
+                <div {...stylex.props(dashboardStyles.listItem)}>
+                  <div>
+                    <div {...stylex.props(dashboardStyles.emphasis)}>{resolveScheduleHeadline(nextEvent, language)}</div>
+                    <div {...stylex.props(dashboardStyles.metaText)}>{formatTimeAgo(nextEvent.date, copy, language)}</div>
+                  </div>
+                  <SignalBadge tone="active">{formatScheduleBucket(nextEvent.date, copy)}</SignalBadge>
                 </div>
-                <SignalBadge tone={request.responders.length === 0 ? 'alert' : request.responders.length === 1 ? 'active' : 'steady'}>
-                  {request.responders.length === 0
-                    ? copy.noResponder
-                    : request.responders.length === 1
-                      ? copy.responderOne
-                      : `${request.responders.length} ${copy.responderMany}`}
-                </SignalBadge>
+                <DenseActionRail label={copy.actionRowLabel}>
+                  <DenseActionLink href="/schedule" label={copy.openSchedule} />
+                  <DenseActionLink href="/profile" label={copy.openProfile} />
+                </DenseActionRail>
               </div>
-            ))}
-            <div {...stylex.props(dashboardStyles.denseActionRow)}>
-              <DenseActionLink href="/help" label={copy.openHelp} />
-              <DenseActionLink href="/profile" label={copy.openProfile} />
-            </div>
-          </div>
-        ) : <div {...stylex.props(dashboardStyles.body)}>{copy.urgentHelpEmpty}</div>}
-      </StatusCard>
+            ) : <div {...stylex.props(dashboardStyles.body)}>{copy.nextEventEmpty}</div>}
+          </StatusCard>
 
-      <StatusCard title={copy.readiness} icon="usersSlash" moduleId="readiness" actionHref="/members" actionLabel={copy.openMembers} tone={rosterSnapshot.readinessPercent >= 60 ? 'active' : 'alert'}>
-        {rosterSnapshot.total > 0 ? (
-          <div {...stylex.props(dashboardStyles.stack)}>
-            <div {...stylex.props(dashboardStyles.metricGrid)}>
-              <MetricTile label={copy.totalMembers} value={rosterSnapshot.total} tone="steady" hint={copy.activeMembers} />
-              <MetricTile label={copy.activeMembers} value={rosterSnapshot.active} tone={rosterSnapshot.active > 0 ? 'active' : 'steady'} hint={`${rosterSnapshot.readinessPercent}% ${copy.stable.toLowerCase()}`} />
-              <MetricTile label={copy.readyCore} value={rosterSnapshot.readyCore} tone={rosterSnapshot.readyCore > 0 ? 'active' : 'steady'} hint={copy.quickRoutesBody} />
-              <MetricTile label={copy.avgKpi} value={rosterSnapshot.avgKpi} tone="steady" hint={copy.liveSnapshot} />
-            </div>
-            <div {...stylex.props(dashboardStyles.denseActionRow)}>
-              <DenseActionLink href="/members" label={copy.openMembers} />
-              <DenseActionLink href="/guides" label={copy.openGuides} />
-            </div>
-          </div>
-        ) : <div {...stylex.props(dashboardStyles.body)}>{copy.readinessEmpty}</div>}
-      </StatusCard>
+          <StatusCard title={copy.urgentHelp} icon="help" moduleId="urgent_help" actionHref="/help" actionLabel={copy.openHelp} tone={helpSnapshot.unattended > 0 ? 'alert' : 'steady'}>
+            {helpSnapshot.urgent.length > 0 ? (
+              <div {...stylex.props(dashboardStyles.stack)}>
+                {helpSnapshot.urgent.map((request) => (
+                  <div key={request.id} {...stylex.props(dashboardStyles.listItem)}>
+                    <div>
+                      <div {...stylex.props(dashboardStyles.emphasis)}>{request.title}</div>
+                      <div {...stylex.props(dashboardStyles.metaText)}>{formatTimeAgo(request.gatheringStart, copy, language)}</div>
+                    </div>
+                    <SignalBadge tone={request.responders.length === 0 ? 'alert' : request.responders.length === 1 ? 'active' : 'steady'}>
+                      {request.responders.length === 0
+                        ? copy.noResponder
+                        : request.responders.length === 1
+                          ? copy.responderOne
+                          : `${request.responders.length} ${copy.responderMany}`}
+                    </SignalBadge>
+                  </div>
+                ))}
+                <DenseActionRail label={copy.actionRowLabel}>
+                  <DenseActionLink href="/help" label={copy.openHelp} />
+                  <DenseActionLink href="/profile" label={copy.openProfile} />
+                </DenseActionRail>
+              </div>
+            ) : <div {...stylex.props(dashboardStyles.body)}>{copy.urgentHelpEmpty}</div>}
+          </StatusCard>
 
-      <StatusCard title={copy.absences} icon="calendarX" moduleId="absence_radar" actionHref="/absences" actionLabel={copy.openAbsences} tone={absenceSnapshot.pending.length > 0 ? 'alert' : 'steady'}>
-        {absenceSnapshot.pending.length > 0 ? (
-          <div {...stylex.props(dashboardStyles.stack)}>
-            {absenceSnapshot.pending.slice(0, 3).map((absence) => (
-              <div key={absence.id} {...stylex.props(dashboardStyles.listItem)}>
-                <div>
-                  <div {...stylex.props(dashboardStyles.emphasis)}>{absence.member}</div>
-                  <div {...stylex.props(dashboardStyles.metaText)}>{absence.reason || copy.pendingAbsencesLabel}</div>
+          <StatusCard title={copy.absences} icon="calendarX" moduleId="absence_radar" actionHref="/absences" actionLabel={copy.openAbsences} tone={absenceSnapshot.pending.length > 0 ? 'alert' : 'steady'}>
+            {absenceSnapshot.pending.length > 0 ? (
+              <div {...stylex.props(dashboardStyles.stack)}>
+                {absenceSnapshot.pending.slice(0, 3).map((absence) => (
+                  <div key={absence.id} {...stylex.props(dashboardStyles.listItem)}>
+                    <div>
+                      <div {...stylex.props(dashboardStyles.emphasis)}>{absence.member}</div>
+                      <div {...stylex.props(dashboardStyles.metaText)}>{absence.reason || copy.pendingAbsencesLabel}</div>
+                    </div>
+                    <SignalBadge tone="alert">{copy.pendingApprovals}</SignalBadge>
+                  </div>
+                ))}
+                <DenseActionRail label={copy.actionRowLabel}>
+                  <DenseActionLink href="/absences" label={copy.openAbsences} />
+                  <DenseActionLink href="/profile" label={copy.openProfile} />
+                </DenseActionRail>
+              </div>
+            ) : (
+              <div {...stylex.props(dashboardStyles.stack)}>
+                <div {...stylex.props(dashboardStyles.body)}>{copy.absencesEmpty}</div>
+                {absenceSnapshot.approvedNow.length > 0 ? <div {...stylex.props(dashboardStyles.metaText)}>{absenceSnapshot.approvedNow.length} {copy.activeMembers.toLowerCase()}</div> : null}
+              </div>
+            )}
+          </StatusCard>
+        </DenseOperationsCluster>
+
+        <DenseOperationsCluster
+          eyebrow={copy.denseOperationsEyebrow}
+          title={copy.commandWatch}
+          body={copy.commandWatchBody}
+          tone={watchTone}
+        >
+          <StatusCard title={copy.readiness} icon="usersSlash" moduleId="readiness" actionHref="/members" actionLabel={copy.openMembers} tone={rosterSnapshot.readinessPercent >= 60 ? 'active' : 'alert'}>
+            {rosterSnapshot.total > 0 ? (
+              <div {...stylex.props(dashboardStyles.stack)}>
+                <div {...stylex.props(dashboardStyles.metricGrid)}>
+                  <MetricTile label={copy.totalMembers} value={rosterSnapshot.total} tone="steady" hint={copy.activeMembers} />
+                  <MetricTile label={copy.activeMembers} value={rosterSnapshot.active} tone={rosterSnapshot.active > 0 ? 'active' : 'steady'} hint={`${rosterSnapshot.readinessPercent}% ${copy.stable.toLowerCase()}`} />
+                  <MetricTile label={copy.readyCore} value={rosterSnapshot.readyCore} tone={rosterSnapshot.readyCore > 0 ? 'active' : 'steady'} hint={copy.quickRoutesBody} />
+                  <MetricTile label={copy.avgKpi} value={rosterSnapshot.avgKpi} tone="steady" hint={copy.liveSnapshot} />
                 </div>
-                <SignalBadge tone="alert">{copy.pendingApprovals}</SignalBadge>
+                <DenseActionRail label={copy.actionRowLabel}>
+                  <DenseActionLink href="/members" label={copy.openMembers} />
+                  <DenseActionLink href="/guides" label={copy.openGuides} />
+                </DenseActionRail>
               </div>
-            ))}
-            <div {...stylex.props(dashboardStyles.denseActionRow)}>
-              <DenseActionLink href="/absences" label={copy.openAbsences} />
-              <DenseActionLink href="/profile" label={copy.openProfile} />
-            </div>
-          </div>
-        ) : (
-          <div {...stylex.props(dashboardStyles.stack)}>
-            <div {...stylex.props(dashboardStyles.body)}>{copy.absencesEmpty}</div>
-            {absenceSnapshot.approvedNow.length > 0 ? <div {...stylex.props(dashboardStyles.metaText)}>{absenceSnapshot.approvedNow.length} {copy.activeMembers.toLowerCase()}</div> : null}
-          </div>
-        )}
-      </StatusCard>
+            ) : <div {...stylex.props(dashboardStyles.body)}>{copy.readinessEmpty}</div>}
+          </StatusCard>
 
-      <StatusCard title={copy.pvpPulse} icon="sword" moduleId="pvp_pulse" actionHref="/pvp" actionLabel={copy.openPvp} tone={pvpSnapshot.disputed ? 'alert' : pvpSnapshot.queueSize > 0 ? 'active' : 'steady'}>
-        <div {...stylex.props(dashboardStyles.stack)}>
-          <div {...stylex.props(dashboardStyles.listItem)}>
-            <div>
-              <div {...stylex.props(dashboardStyles.emphasis)}>{copy.activeQueue}</div>
-              <div {...stylex.props(dashboardStyles.metaText)}>{pvpSnapshot.queueSize > 0 ? `${pvpSnapshot.queueSize}` : copy.noQueue}</div>
+          <StatusCard title={copy.pvpPulse} icon="sword" moduleId="pvp_pulse" actionHref="/pvp" actionLabel={copy.openPvp} tone={pvpSnapshot.disputed ? 'alert' : pvpSnapshot.queueSize > 0 ? 'active' : 'steady'}>
+            <div {...stylex.props(dashboardStyles.stack)}>
+              <div {...stylex.props(dashboardStyles.listItem)}>
+                <div>
+                  <div {...stylex.props(dashboardStyles.emphasis)}>{copy.activeQueue}</div>
+                  <div {...stylex.props(dashboardStyles.metaText)}>{pvpSnapshot.queueSize > 0 ? `${pvpSnapshot.queueSize}` : copy.noQueue}</div>
+                </div>
+                <SignalBadge tone={pvpSnapshot.queueSize > 0 ? 'active' : 'steady'}>{pvpSnapshot.userInQueue ? copy.live : copy.stable}</SignalBadge>
+              </div>
+              <div {...stylex.props(dashboardStyles.listItem)}>
+                <div>
+                  <div {...stylex.props(dashboardStyles.emphasis)}>{copy.liveMatch}</div>
+                  <div {...stylex.props(dashboardStyles.metaText)}>{pvpSnapshot.activeMatch ? `${pvpSnapshot.activeMatch.playerOne.nickname} vs ${pvpSnapshot.activeMatch.playerTwo.nickname}` : copy.noLiveMatch}</div>
+                </div>
+                <SignalBadge tone={pvpSnapshot.disputed ? 'alert' : pvpSnapshot.activeMatch ? 'active' : 'steady'}>{pvpSnapshot.disputed ? copy.contestedMatch : copy.now}</SignalBadge>
+              </div>
+              <DenseActionRail label={copy.actionRowLabel}>
+                <DenseActionLink href="/pvp" label={copy.openPvp} />
+                <DenseActionLink href="/news" label={copy.openNews} />
+              </DenseActionRail>
             </div>
-            <SignalBadge tone={pvpSnapshot.queueSize > 0 ? 'active' : 'steady'}>{pvpSnapshot.userInQueue ? copy.live : copy.stable}</SignalBadge>
-          </div>
-          <div {...stylex.props(dashboardStyles.listItem)}>
-            <div>
-              <div {...stylex.props(dashboardStyles.emphasis)}>{copy.liveMatch}</div>
-              <div {...stylex.props(dashboardStyles.metaText)}>{pvpSnapshot.activeMatch ? `${pvpSnapshot.activeMatch.playerOne.nickname} vs ${pvpSnapshot.activeMatch.playerTwo.nickname}` : copy.noLiveMatch}</div>
-            </div>
-            <SignalBadge tone={pvpSnapshot.disputed ? 'alert' : pvpSnapshot.activeMatch ? 'active' : 'steady'}>{pvpSnapshot.disputed ? copy.contestedMatch : copy.now}</SignalBadge>
-          </div>
-          <div {...stylex.props(dashboardStyles.denseActionRow)}>
-            <DenseActionLink href="/pvp" label={copy.openPvp} />
-            <DenseActionLink href="/news" label={copy.openNews} />
-          </div>
-        </div>
-      </StatusCard>
+          </StatusCard>
 
-      <StatusCard title={copy.quickRoutes} icon="link" moduleId="quick_routes" actionHref="/profile" actionLabel={copy.openProfile} tone="active">
-        <div {...stylex.props(dashboardStyles.stack)}>
-          <p {...stylex.props(dashboardStyles.body)}>{copy.quickRoutesBody}</p>
-          <div {...stylex.props(dashboardStyles.quickRouteGrid)}>
-            <DenseActionLink href="/schedule" label={copy.openSchedule} />
-            <DenseActionLink href="/help" label={copy.openHelp} />
-            <DenseActionLink href="/news" label={copy.openNews} />
-            <DenseActionLink href="/guides" label={copy.openGuides} />
-            <DenseActionLink href="/pvp" label={copy.openPvp} />
-            <DenseActionLink href="/absences" label={copy.openAbsences} />
-          </div>
-        </div>
-      </StatusCard>
+          <StatusCard title={copy.quickRoutes} icon="link" moduleId="quick_routes" actionHref="/profile" actionLabel={copy.openProfile} tone="active">
+            <div {...stylex.props(dashboardStyles.stack)}>
+              <p {...stylex.props(dashboardStyles.body)}>{copy.quickRoutesBody}</p>
+              <div {...stylex.props(dashboardStyles.quickRouteGrid)}>
+                <DenseActionLink href="/schedule" label={copy.openSchedule} />
+                <DenseActionLink href="/help" label={copy.openHelp} />
+                <DenseActionLink href="/news" label={copy.openNews} />
+                <DenseActionLink href="/guides" label={copy.openGuides} />
+                <DenseActionLink href="/pvp" label={copy.openPvp} />
+                <DenseActionLink href="/absences" label={copy.openAbsences} />
+              </div>
+            </div>
+          </StatusCard>
+        </DenseOperationsCluster>
+      </div>
     </div>
   );
 }
