@@ -240,7 +240,7 @@ Wave 3: `13-16` shared-state polish, responsive/i18n/cutover hardening, and auto
 
   **Commit**: YES | Message: `refactor(shell): consolidate nav contracts` | Files: `lib/nav.ts`, `components/shell/MainLayout.tsx`, supporting shell/nav helpers, related tests
 
-- [ ] 4. Refresh the desktop shell header and primary command rail
+- [x] 4. Refresh the desktop shell header and primary command rail
 
   **What to do**: Redesign the desktop shell using the existing StyleX shell foundation only. Keep the brand block, section signal, quick-access tray, primary rail, and immersive secondary menu, but improve hierarchy, spacing, motion, and command clarity for 1280px+ and 1024px widths. Preserve language switch, theme switch, refresh, profile, calendar, and logout affordances.
   **Must NOT do**: Do not move shell styling into Styled Components. Do not remove compact-header behavior, nav prefetch hooks, or the immersive secondary menu entry point.
