@@ -5,3 +5,5 @@
 - 2026-03-18: Declared StyleX-owned platform boundaries (`components/shell/*`, `components/shared/*`, `lib/stylex/*`, `app/layout.tsx`, `app/(portal)/layout.tsx`) and constrained Styled Components to route-local leaf presentation under `components/sections/*` only.
 - 2026-03-18: Chose a root-mounted Styled Components registry (`app/styled-components-registry.tsx`) wrapping the existing root tree once, while preserving the provider order semantics `ThemeProvider -> AppThemeBoundary -> QueryProvider -> I18nProvider` unchanged.
 - 2026-03-18: Kept token sharing as a bridge-only export (`lib/styled-components/token-bridge.ts`) based on existing StyleX semantic values, intentionally avoiding a Styled Components `ThemeProvider` to prevent parallel theme contexts.
+- 2026-03-19: Standardized pathname-to-section resolution on `lib/nav.ts` exports (`resolveSectionFromPath`) and removed `MainLayout`'s private `pathToSection` registry to eliminate route/alias drift.
+- 2026-03-19: Preserved runtime behavior by keeping shell tone and prefetch dispatch in `components/shell/MainLayout.tsx`, with tests expanded to lock integration aliases and fallback-to-`about` resolution.

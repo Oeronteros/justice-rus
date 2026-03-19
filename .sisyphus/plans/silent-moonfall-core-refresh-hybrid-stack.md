@@ -154,7 +154,7 @@ Wave 3: `13-16` shared-state polish, responsive/i18n/cutover hardening, and auto
 
   **Commit**: YES | Message: `docs(portal): lock core refresh contract` | Files: `docs/core-module-inventory.md`, `docs/vinext-shell-compatibility-guardrails.md`, any new scope-note file under `docs/`
 
-- [ ] 2. Enable Styled Components readiness for approved leaf islands only
+- [x] 2. Enable Styled Components readiness for approved leaf islands only
 
   **What to do**: Add the minimum Next-side infrastructure required for leaf-only Styled Components usage: dependency install, `compiler.styledComponents` enablement, App Router style registry, and token-bridge rules so Styled Components consumes existing semantic values instead of inventing a parallel theme. Wire this without changing provider order or shell ownership.
   **Must NOT do**: Do not migrate existing shell/shared components to Styled Components. Do not introduce a second global theme runtime. Do not wrap only part of the root tree in a way that changes auth/i18n/query/theme boundaries.
@@ -197,7 +197,7 @@ Wave 3: `13-16` shared-state polish, responsive/i18n/cutover hardening, and auto
 
   **Commit**: YES | Message: `feat(styling): enable leaf styled-components bridge` | Files: `package.json`, `next.config.ts`, new registry file under `app/` or `lib/`, token-bridge helper files only
 
-- [ ] 3. Consolidate shell and nav contracts before visual refreshes
+- [x] 3. Consolidate shell and nav contracts before visual refreshes
 
   **What to do**: Remove or centralize route-mapping drift between `lib/nav.ts` and `components/shell/MainLayout.tsx` so active-section resolution, prefetch routing, and shell tone selection stay consistent. Preserve the existing auth/session shell boundary while making the navigation contract reusable by both desktop and mobile shell work.
   **Must NOT do**: Do not move auth/session logic out of `app/(portal)/layout.tsx` or `components/shell/PortalShell.tsx`. Do not bypass the current page -> hooks -> api -> server layering.

@@ -53,6 +53,48 @@ describe('Header navigation accessibility', () => {
     expect(screen.getByRole('combobox', { name: 'Interface language' })).toBeInTheDocument();
   });
 
+  it('forwards nav prefetch interactions for primary and grouped sections', () => {
+    const onNavPrefetch = vi.fn();
+
+    render(
+      <Header
+        currentSection="about"
+        onLogout={vi.fn()}
+        onRefresh={vi.fn()}
+        language="en"
+        onLanguageChange={vi.fn()}
+        onNavPrefetch={onNavPrefetch}
+      />
+    );
+
+    const newsLink = document.querySelector('a[href="/news"]');
+    const scheduleLink = document.querySelector('a[href="/schedule"]');
+    expect(newsLink).not.toBeNull();
+    expect(scheduleLink).not.toBeNull();
+
+    fireEvent.mouseEnter(newsLink as Element);
+    fireEvent.focus(scheduleLink as Element);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Sections' }));
+
+    const registrationLink = document.querySelector('a[href="/members"]');
+    const guidesLink = document.querySelector('a[href="/guides"]');
+    const absencesLink = document.querySelector('a[href="/absences"]');
+    expect(registrationLink).not.toBeNull();
+    expect(guidesLink).not.toBeNull();
+    expect(absencesLink).not.toBeNull();
+
+    fireEvent.touchStart(registrationLink as Element);
+    fireEvent.mouseEnter(guidesLink as Element);
+    fireEvent.focus(absencesLink as Element);
+
+    expect(onNavPrefetch).toHaveBeenNthCalledWith(1, 'news');
+    expect(onNavPrefetch).toHaveBeenNthCalledWith(2, 'schedule');
+    expect(onNavPrefetch).toHaveBeenNthCalledWith(3, 'registration');
+    expect(onNavPrefetch).toHaveBeenNthCalledWith(4, 'guides');
+    expect(onNavPrefetch).toHaveBeenNthCalledWith(5, 'absences');
+  });
+
   it('removes the March 8 toggle and does not touch March theme storage', () => {
     render(
       <Header

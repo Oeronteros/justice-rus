@@ -13,6 +13,7 @@ import { usePrefetchNews } from '@/lib/news/hooks';
 import { usePrefetchRegistrations } from '@/lib/registration/hooks';
 import { usePrefetchSchedule } from '@/lib/schedule/hooks';
 import type { User } from '@/lib/schemas/auth';
+import { resolveSectionFromPath } from '@/lib/nav';
 import { Section } from '@/types';
 import type { Language } from '@/lib/i18n';
 import { useLanguage } from '@/lib/i18n/context';
@@ -24,26 +25,6 @@ interface MainLayoutProps {
   children: React.ReactNode;
 }
 
-const pathToSection: Record<string, Section> = {
-  '/': 'about',
-  '/members': 'registration',
-  '/schedule': 'schedule',
-  '/calendar': 'calendar',
-  '/analytics': 'analytics',
-  '/workflow': 'workflow',
-  '/integrations': 'integrations',
-  '/integrations/discord': 'integrations',
-  '/integrations/google-sheets': 'integrations',
-  '/integrations/wow': 'integrations',
-  '/pvp': 'pvp',
-  '/news': 'news',
-  '/guides': 'guides',
-  '/help': 'help',
-  '/absences': 'absences',
-  '/calculator': 'calculator',
-  '/profile': 'profile',
-};
-
 interface ShellNavigationContract {
   currentSection: Section;
   onNavPrefetch: (section: Section) => void;
@@ -54,10 +35,6 @@ interface ShellSessionContract {
   onLanguageChange: (language: Language) => void;
   onRefresh: () => void;
   onLogout: () => void;
-}
-
-function resolveSection(pathname: string): Section {
-  return pathToSection[pathname] || 'about';
 }
 
 function resolvePageShellTone(section: Section) {
@@ -105,7 +82,7 @@ function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
   const prefetchGuides = usePrefetchGuides();
   const prefetchAbsences = usePrefetchAbsences();
 
-  const currentSection = useMemo(() => resolveSection(pathname), [pathname]);
+  const currentSection = useMemo(() => resolveSectionFromPath(pathname), [pathname]);
   const pageShellTone = useMemo(() => resolvePageShellTone(currentSection), [currentSection]);
   const handleNavPrefetch = useCallback(
     (section: Section) => {

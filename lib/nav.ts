@@ -31,6 +31,21 @@ export const navItems: NavItem[] = [
   { section: 'profile', href: '/profile', icon: 'profile' },
 ];
 
+export const sectionPathAliases: Readonly<Partial<Record<Section, readonly string[]>>> = {
+  integrations: ['/integrations/discord', '/integrations/google-sheets', '/integrations/wow'],
+};
+
+export const sectionPathEntries: ReadonlyArray<readonly [path: string, section: Section]> = navItems.flatMap((item) => {
+  const aliases = sectionPathAliases[item.section] ?? [];
+  return [[item.href, item.section] as const, ...aliases.map((alias) => [alias, item.section] as const)];
+});
+
+const pathToSection = Object.fromEntries(sectionPathEntries) as Record<string, Section>;
+
+export function resolveSectionFromPath(pathname: string): Section {
+  return pathToSection[pathname] ?? 'about';
+}
+
 function pickNavItems(sections: readonly Section[]): NavItem[] {
   return sections
     .map((section) => navItems.find((item) => item.section === section))

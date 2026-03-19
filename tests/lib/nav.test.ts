@@ -7,6 +7,9 @@ import {
   mobilePrimarySections,
   mobileSecondarySections,
   navItems,
+  resolveSectionFromPath,
+  sectionPathEntries,
+  sectionPathAliases,
 } from '@/lib/nav';
 
 function flattenGroupSections(groups: ReadonlyArray<{ sections: readonly string[] }>): string[] {
@@ -46,5 +49,23 @@ describe('core portal IA contract', () => {
 
     expect(inScopeRoutes).toEqual(['/', '/news', '/guides', '/schedule', '/help', '/profile']);
     expect(shellSmokeOnlyRoutes).toEqual(['/members', '/absences', '/pvp', '/analytics', '/workflow', '/integrations', '/calculator']);
+  });
+
+  it('derives section resolution from canonical nav routes and aliases', () => {
+    for (const item of navItems) {
+      expect(resolveSectionFromPath(item.href)).toBe(item.section);
+    }
+
+    expect(resolveSectionFromPath('/integrations/discord')).toBe('integrations');
+    expect(resolveSectionFromPath('/integrations/google-sheets')).toBe('integrations');
+    expect(resolveSectionFromPath('/integrations/wow')).toBe('integrations');
+  });
+
+  it('keeps integration aliases and fallback behavior explicit', () => {
+    expect(sectionPathAliases.integrations).toEqual(['/integrations/discord', '/integrations/google-sheets', '/integrations/wow']);
+    expect(sectionPathEntries).toContainEqual(['/integrations/discord', 'integrations']);
+    expect(sectionPathEntries).toContainEqual(['/integrations/google-sheets', 'integrations']);
+    expect(sectionPathEntries).toContainEqual(['/integrations/wow', 'integrations']);
+    expect(resolveSectionFromPath('/unknown-path')).toBe('about');
   });
 });
