@@ -43,12 +43,8 @@ function shouldMirrorToDesktop(settings: NotificationSettings, toast: Omit<Toast
   if (typeof window === 'undefined' || typeof Notification === 'undefined') return false;
   if (Notification.permission !== 'granted') return false;
 
-  if (toast.type === 'error' || toast.type === 'warning') {
-    return true;
-  }
-
-  if (toast.type === 'success' && settings.officerAlerts) {
-    return true;
+  if (toast.type === 'error' || toast.type === 'warning' || toast.type === 'success') {
+    return settings.officerAlerts;
   }
 
   return settings.eventReminders;
