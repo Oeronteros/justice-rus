@@ -457,6 +457,52 @@ export const dashboardStyles = stylex.create({
       '@media (min-width: 960px)': 'minmax(0, 0.92fr) minmax(0, 1.08fr)',
     },
   },
+  denseOperationsIntro: {
+    display: 'grid',
+    gap: spacing.xs,
+    padding: `${spacing.lg} ${spacing.xl}`,
+    borderRadius: radius.xl,
+    border: `1px solid ${colors.borderDefault}`,
+    background: `linear-gradient(160deg, ${colors.bgPanelAlt}, ${colors.bgPanel})`,
+    boxShadow: colors.shadowInset,
+  },
+  denseOperationsGrid: {
+    display: 'grid',
+    gap: spacing.lg,
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 1180px)': 'repeat(2, minmax(0, 1fr))',
+    },
+    alignItems: 'start',
+  },
+  denseCluster: {
+    display: 'grid',
+    gap: spacing.lg,
+    padding: {
+      default: spacing.lg,
+      '@media (min-width: 640px)': spacing.xl,
+    },
+    borderRadius: radius.xxl,
+    border: `1px solid ${colors.borderDefault}`,
+    background: `linear-gradient(180deg, ${colors.bgPanelAlt}, ${colors.bgPanel})`,
+    boxShadow: colors.shadowInset,
+  },
+  denseClusterActive: {
+    borderColor: colors.successBorder,
+    background: `linear-gradient(180deg, ${colors.successSurface}, ${colors.bgPanel})`,
+  },
+  denseClusterAlert: {
+    borderColor: colors.dangerBorder,
+    background: `linear-gradient(180deg, ${colors.dangerSurfaceStrong}, ${colors.bgPanel})`,
+  },
+  denseClusterHeader: {
+    display: 'grid',
+    gap: spacing.xs,
+  },
+  denseClusterGrid: {
+    display: 'grid',
+    gap: spacing.md,
+  },
   statusCard: {
     minHeight: '100%',
     padding: {
@@ -534,6 +580,17 @@ export const dashboardStyles = stylex.create({
       default: '1fr',
       '@media (min-width: 640px)': 'repeat(2, minmax(0, 1fr))',
     },
+  },
+  denseActionRail: {
+    display: 'grid',
+    gap: spacing.sm,
+  },
+  denseActionLabel: {
+    color: colors.textMuted,
+    fontSize: typography.microSize,
+    letterSpacing: '0.14em',
+    textTransform: 'uppercase',
+    fontWeight: 700,
   },
   denseActionLink: {
     display: 'inline-flex',
