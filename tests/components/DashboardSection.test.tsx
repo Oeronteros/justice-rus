@@ -59,9 +59,9 @@ describe('DashboardSection', () => {
     expect(screen.getByText('Support')).toBeInTheDocument();
     expect(screen.getByText('Officer')).toBeInTheDocument();
     expect(screen.getAllByText('Raid Lead').length).toBeGreaterThan(0);
-    expect(screen.getByText('Очередь действий')).toBeInTheDocument();
+    expect(screen.getByText('Нижняя панель решений')).toBeInTheDocument();
+    expect(screen.getByText('Немедленное сопровождение')).toBeInTheDocument();
     expect(screen.getByText('Контур наблюдения')).toBeInTheDocument();
-    expect(screen.getByText(/Следующее событие:/)).toBeInTheDocument();
-    expect(screen.getByText(/Готовность состава:/)).toBeInTheDocument();
+    expect(screen.getAllByText('Следующее действие').length).toBeGreaterThan(0);
   });
 });

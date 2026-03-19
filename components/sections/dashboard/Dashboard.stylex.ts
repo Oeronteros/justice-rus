@@ -457,7 +457,16 @@ export const dashboardStyles = stylex.create({
       '@media (min-width: 960px)': 'minmax(0, 0.92fr) minmax(0, 1.08fr)',
     },
   },
-  denseLaneGrid: {
+  denseOperationsIntro: {
+    display: 'grid',
+    gap: spacing.xs,
+    padding: `${spacing.lg} ${spacing.xl}`,
+    borderRadius: radius.xl,
+    border: `1px solid ${colors.borderDefault}`,
+    background: `linear-gradient(160deg, ${colors.bgPanelAlt}, ${colors.bgPanel})`,
+    boxShadow: colors.shadowInset,
+  },
+  denseOperationsGrid: {
     display: 'grid',
     gap: spacing.lg,
     gridTemplateColumns: {
@@ -466,7 +475,7 @@ export const dashboardStyles = stylex.create({
     },
     alignItems: 'start',
   },
-  denseLane: {
+  denseCluster: {
     display: 'grid',
     gap: spacing.lg,
     padding: {
@@ -478,33 +487,19 @@ export const dashboardStyles = stylex.create({
     background: `linear-gradient(180deg, ${colors.bgPanelAlt}, ${colors.bgPanel})`,
     boxShadow: colors.shadowInset,
   },
-  denseLaneActive: {
+  denseClusterActive: {
     borderColor: colors.successBorder,
     background: `linear-gradient(180deg, ${colors.successSurface}, ${colors.bgPanel})`,
   },
-  denseLaneAlert: {
+  denseClusterAlert: {
     borderColor: colors.dangerBorder,
     background: `linear-gradient(180deg, ${colors.dangerSurfaceStrong}, ${colors.bgPanel})`,
   },
-  denseLaneHeader: {
+  denseClusterHeader: {
     display: 'grid',
-    gap: spacing.md,
+    gap: spacing.xs,
   },
-  denseLaneSignals: {
-    rowGap: spacing.xs,
-    columnGap: spacing.sm,
-  },
-  denseLaneSignal: {
-    minHeight: '28px',
-    padding: `${spacing.xs} ${spacing.md}`,
-    borderRadius: radius.pill,
-    border: `1px solid ${colors.borderDefault}`,
-    backgroundColor: colors.bgPanel,
-    color: colors.textSecondary,
-    fontSize: typography.microSize,
-    lineHeight: 1.3,
-  },
-  denseLaneCards: {
+  denseClusterGrid: {
     display: 'grid',
     gap: spacing.md,
   },
@@ -585,6 +580,17 @@ export const dashboardStyles = stylex.create({
       default: '1fr',
       '@media (min-width: 640px)': 'repeat(2, minmax(0, 1fr))',
     },
+  },
+  denseActionRail: {
+    display: 'grid',
+    gap: spacing.sm,
+  },
+  denseActionLabel: {
+    color: colors.textMuted,
+    fontSize: typography.microSize,
+    letterSpacing: '0.14em',
+    textTransform: 'uppercase',
+    fontWeight: 700,
   },
   denseActionLink: {
     display: 'inline-flex',

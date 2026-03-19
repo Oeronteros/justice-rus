@@ -189,8 +189,14 @@ type DashboardCopy = {
   pvpEmpty: string;
   quickRoutes: string;
   quickRoutesBody: string;
-  followUpLane: string;
-  watchLane: string;
+  denseOperationsEyebrow: string;
+  denseOperationsTitle: string;
+  denseOperationsBody: string;
+  immediateFollowUp: string;
+  immediateFollowUpBody: string;
+  commandWatch: string;
+  commandWatchBody: string;
+  actionRowLabel: string;
   openSchedule: string;
   openHelp: string;
   openNews: string;
@@ -302,8 +308,17 @@ const dashboardCopy: Record<Language, DashboardCopy> = {
     pvpEmpty: 'PvP-контур пока без активной очереди и матчей.',
     quickRoutes: 'Быстрые маршруты',
     quickRoutesBody: 'Переходы в ключевые разделы, если нужно углубиться из дашборда.',
-    followUpLane: 'Очередь действий',
-    watchLane: 'Контур наблюдения',
+    denseOperationsEyebrow: 'Плотный операционный контур',
+    denseOperationsTitle: 'Нижняя панель решений',
+    denseOperationsBody:
+      'Ниже первого экрана сигналы собраны в два осмысленных блока: где нужно действовать сразу и где держать постоянный обзор боеготовности.',
+    immediateFollowUp: 'Немедленное сопровождение',
+    immediateFollowUpBody:
+      'Ближайшее событие, срочные запросы и pending-отсутствия идут одной очередью, чтобы решения принимались без лишнего сканирования.',
+    commandWatch: 'Контур наблюдения',
+    commandWatchBody:
+      'Готовность состава, PvP-напряжение и быстрые маршруты вынесены в отдельный блок для устойчивого мониторинга.',
+    actionRowLabel: 'Следующее действие',
     openSchedule: 'Открыть расписание',
     openHelp: 'Открыть помощь',
     openNews: 'Открыть новости',
@@ -413,8 +428,17 @@ const dashboardCopy: Record<Language, DashboardCopy> = {
     pvpEmpty: 'PvP is quiet right now: no queue and no live match.',
     quickRoutes: 'Quick routes',
     quickRoutesBody: 'Jump deeper into the core modules when a live card needs action.',
-    followUpLane: 'Action queue',
-    watchLane: 'Command watch',
+    denseOperationsEyebrow: 'Dense operations',
+    denseOperationsTitle: 'Below-the-fold operations board',
+    denseOperationsBody:
+      'Below the first screen, the heavy dashboard modules are grouped into two lanes: what needs action now and what deserves steady command attention.',
+    immediateFollowUp: 'Immediate follow-up',
+    immediateFollowUpBody:
+      'Keep the next event, urgent help, and pending absences together so officers and members can move through the highest-friction work first.',
+    commandWatch: 'Command watch',
+    commandWatchBody:
+      'Roster readiness, PvP pressure, and quick routes stay in a separate monitoring lane built for ongoing scanning.',
+    actionRowLabel: 'Next action',
     openSchedule: 'Open schedule',
     openHelp: 'Open help board',
     openNews: 'Open news',
@@ -524,8 +548,14 @@ const dashboardCopy: Record<Language, DashboardCopy> = {
     pvpEmpty: '当前 PvP 比较安静：没有排队，也没有进行中的对局。',
     quickRoutes: '快速入口',
     quickRoutesBody: '当某个实时卡片需要深入处理时，可以直接跳到对应模块。',
-    followUpLane: '行动队列',
-    watchLane: '指挥观察',
+    denseOperationsEyebrow: '密集行动区',
+    denseOperationsTitle: '首屏以下作战面板',
+    denseOperationsBody: '首屏以下的重度监控内容被拆成两条通道：一条处理立即行动，一条维持持续观察。',
+    immediateFollowUp: '立即跟进',
+    immediateFollowUpBody: '把下一个活动、紧急求助和待批请假集中在同一行动通道里，减少来回切换。',
+    commandWatch: '指挥观察',
+    commandWatchBody: '把成员战备、PvP 压力和快捷入口放进独立观察区，保持持续监控更清晰。',
+    actionRowLabel: '下一步操作',
     openSchedule: '打开日程',
     openHelp: '打开求助',
     openNews: '打开公告',
@@ -775,6 +805,21 @@ function DenseActionLink({ href, label }: { href: string; label: string }) {
   );
 }
 
+function DenseActionRail({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div {...stylex.props(dashboardStyles.denseActionRail)}>
+      <span {...stylex.props(dashboardStyles.denseActionLabel)}>{label}</span>
+      <div {...stylex.props(dashboardStyles.denseActionRow)}>{children}</div>
+    </div>
+  );
+}
+
 function dashboardReveal(prefersReducedMotion: boolean | null, delay = 0) {
   const reduced = Boolean(prefersReducedMotion);
 
@@ -882,6 +927,37 @@ function StatusCard({
       </div>
       {children}
     </article>
+  );
+}
+
+function DenseOperationsCluster({
+  eyebrow,
+  title,
+  body,
+  tone = 'steady',
+  children,
+}: {
+  eyebrow: string;
+  title: string;
+  body: string;
+  tone?: LiveTone;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      {...stylex.props(
+        dashboardStyles.denseCluster,
+        tone === 'active' && dashboardStyles.denseClusterActive,
+        tone === 'alert' && dashboardStyles.denseClusterAlert
+      )}
+    >
+      <div {...stylex.props(dashboardStyles.denseClusterHeader)}>
+        <div {...stylex.props(dashboardStyles.kicker)}>{eyebrow}</div>
+        <h3 {...stylex.props(dashboardStyles.statusTitle)}>{title}</h3>
+        <p {...stylex.props(dashboardStyles.metaText)}>{body}</p>
+      </div>
+      <div {...stylex.props(dashboardStyles.denseClusterGrid)}>{children}</div>
+    </section>
   );
 }
 
@@ -1297,42 +1373,22 @@ function DashboardDenseRegion({
 
   const immediateTone: LiveTone = helpSnapshot.unattended > 0 || absenceSnapshot.pending.length > 0 ? 'alert' : nextEvent ? 'active' : 'steady';
   const watchTone: LiveTone = pvpSnapshot.disputed ? 'alert' : rosterSnapshot.readinessPercent >= 60 || pvpSnapshot.queueSize > 0 ? 'active' : 'steady';
-  const followUpSignals = [
-    `${copy.nextEvent}: ${nextEvent ? formatScheduleBucket(nextEvent.date, copy) : copy.noUpcoming}`,
-    `${copy.urgentHelp}: ${helpSnapshot.unattended}`,
-    `${copy.pendingAbsences}: ${absenceSnapshot.pending.length}`,
-  ];
-  const watchSignals = [
-    `${copy.readiness}: ${rosterSnapshot.readinessPercent}%`,
-    `${copy.pvpPulse}: ${pvpSnapshot.queueSize > 0 ? pvpSnapshot.queueSize : copy.noQueue}`,
-    `${copy.quickRoutes}: 6`,
-  ];
 
   return (
-    <div {...stylex.props(dashboardStyles.denseLaneGrid)}>
-      <section
-        data-dashboard-lane="follow_up"
-        {...stylex.props(
-          dashboardStyles.denseLane,
-          immediateTone === 'active' && dashboardStyles.denseLaneActive,
-          immediateTone === 'alert' && dashboardStyles.denseLaneAlert
-        )}
-      >
-        <div {...stylex.props(dashboardStyles.denseLaneHeader)}>
-          <div>
-            <div {...stylex.props(dashboardStyles.kicker)}>{copy.officerActions}</div>
-            <h3 {...stylex.props(dashboardStyles.statusTitle)}>{copy.followUpLane}</h3>
-          </div>
-          <div {...stylex.props(uiStyles.inlineTags, dashboardStyles.denseLaneSignals)}>
-            {followUpSignals.map((signal) => (
-              <span key={signal} {...stylex.props(dashboardStyles.denseLaneSignal)}>
-                {signal}
-              </span>
-            ))}
-          </div>
-        </div>
+    <div {...stylex.props(uiStyles.stackLg)}>
+      <div {...stylex.props(dashboardStyles.denseOperationsIntro)}>
+        <div {...stylex.props(dashboardStyles.kicker)}>{copy.denseOperationsEyebrow}</div>
+        <h3 {...stylex.props(dashboardStyles.statusTitle)}>{copy.denseOperationsTitle}</h3>
+        <p {...stylex.props(dashboardStyles.metaText)}>{copy.denseOperationsBody}</p>
+      </div>
 
-        <div {...stylex.props(dashboardStyles.denseLaneCards)}>
+      <div {...stylex.props(dashboardStyles.denseOperationsGrid)}>
+        <DenseOperationsCluster
+          eyebrow={copy.denseOperationsEyebrow}
+          title={copy.immediateFollowUp}
+          body={copy.immediateFollowUpBody}
+          tone={immediateTone}
+        >
           <StatusCard title={copy.nextEvent} icon="calendar" moduleId="next_event" actionHref="/schedule" actionLabel={copy.openSchedule} tone={nextEvent ? 'active' : 'steady'}>
             {scheduleLoading ? <MiniSkeleton /> : nextEvent ? (
               <div {...stylex.props(dashboardStyles.stack)}>
@@ -1343,10 +1399,10 @@ function DashboardDenseRegion({
                   </div>
                   <SignalBadge tone="active">{formatScheduleBucket(nextEvent.date, copy)}</SignalBadge>
                 </div>
-                <div {...stylex.props(dashboardStyles.denseActionRow)}>
+                <DenseActionRail label={copy.actionRowLabel}>
                   <DenseActionLink href="/schedule" label={copy.openSchedule} />
                   <DenseActionLink href="/profile" label={copy.openProfile} />
-                </div>
+                </DenseActionRail>
               </div>
             ) : <div {...stylex.props(dashboardStyles.body)}>{copy.nextEventEmpty}</div>}
           </StatusCard>
@@ -1369,10 +1425,10 @@ function DashboardDenseRegion({
                     </SignalBadge>
                   </div>
                 ))}
-                <div {...stylex.props(dashboardStyles.denseActionRow)}>
+                <DenseActionRail label={copy.actionRowLabel}>
                   <DenseActionLink href="/help" label={copy.openHelp} />
                   <DenseActionLink href="/profile" label={copy.openProfile} />
-                </div>
+                </DenseActionRail>
               </div>
             ) : <div {...stylex.props(dashboardStyles.body)}>{copy.urgentHelpEmpty}</div>}
           </StatusCard>
@@ -1389,10 +1445,10 @@ function DashboardDenseRegion({
                     <SignalBadge tone="alert">{copy.pendingApprovals}</SignalBadge>
                   </div>
                 ))}
-                <div {...stylex.props(dashboardStyles.denseActionRow)}>
+                <DenseActionRail label={copy.actionRowLabel}>
                   <DenseActionLink href="/absences" label={copy.openAbsences} />
                   <DenseActionLink href="/profile" label={copy.openProfile} />
-                </div>
+                </DenseActionRail>
               </div>
             ) : (
               <div {...stylex.props(dashboardStyles.stack)}>
@@ -1401,32 +1457,14 @@ function DashboardDenseRegion({
               </div>
             )}
           </StatusCard>
-        </div>
-      </section>
+        </DenseOperationsCluster>
 
-      <section
-        data-dashboard-lane="watch"
-        {...stylex.props(
-          dashboardStyles.denseLane,
-          watchTone === 'active' && dashboardStyles.denseLaneActive,
-          watchTone === 'alert' && dashboardStyles.denseLaneAlert
-        )}
-      >
-        <div {...stylex.props(dashboardStyles.denseLaneHeader)}>
-          <div>
-            <div {...stylex.props(dashboardStyles.kicker)}>{copy.readiness}</div>
-            <h3 {...stylex.props(dashboardStyles.statusTitle)}>{copy.watchLane}</h3>
-          </div>
-          <div {...stylex.props(uiStyles.inlineTags, dashboardStyles.denseLaneSignals)}>
-            {watchSignals.map((signal) => (
-              <span key={signal} {...stylex.props(dashboardStyles.denseLaneSignal)}>
-                {signal}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div {...stylex.props(dashboardStyles.denseLaneCards)}>
+        <DenseOperationsCluster
+          eyebrow={copy.denseOperationsEyebrow}
+          title={copy.commandWatch}
+          body={copy.commandWatchBody}
+          tone={watchTone}
+        >
           <StatusCard title={copy.readiness} icon="usersSlash" moduleId="readiness" actionHref="/members" actionLabel={copy.openMembers} tone={rosterSnapshot.readinessPercent >= 60 ? 'active' : 'alert'}>
             {rosterSnapshot.total > 0 ? (
               <div {...stylex.props(dashboardStyles.stack)}>
@@ -1436,10 +1474,10 @@ function DashboardDenseRegion({
                   <MetricTile label={copy.readyCore} value={rosterSnapshot.readyCore} tone={rosterSnapshot.readyCore > 0 ? 'active' : 'steady'} hint={copy.quickRoutesBody} />
                   <MetricTile label={copy.avgKpi} value={rosterSnapshot.avgKpi} tone="steady" hint={copy.liveSnapshot} />
                 </div>
-                <div {...stylex.props(dashboardStyles.denseActionRow)}>
+                <DenseActionRail label={copy.actionRowLabel}>
                   <DenseActionLink href="/members" label={copy.openMembers} />
                   <DenseActionLink href="/guides" label={copy.openGuides} />
-                </div>
+                </DenseActionRail>
               </div>
             ) : <div {...stylex.props(dashboardStyles.body)}>{copy.readinessEmpty}</div>}
           </StatusCard>
@@ -1460,10 +1498,10 @@ function DashboardDenseRegion({
                 </div>
                 <SignalBadge tone={pvpSnapshot.disputed ? 'alert' : pvpSnapshot.activeMatch ? 'active' : 'steady'}>{pvpSnapshot.disputed ? copy.contestedMatch : copy.now}</SignalBadge>
               </div>
-              <div {...stylex.props(dashboardStyles.denseActionRow)}>
+              <DenseActionRail label={copy.actionRowLabel}>
                 <DenseActionLink href="/pvp" label={copy.openPvp} />
                 <DenseActionLink href="/news" label={copy.openNews} />
-              </div>
+              </DenseActionRail>
             </div>
           </StatusCard>
 
@@ -1480,8 +1518,8 @@ function DashboardDenseRegion({
               </div>
             </div>
           </StatusCard>
-        </div>
-      </section>
+        </DenseOperationsCluster>
+      </div>
     </div>
   );
 }

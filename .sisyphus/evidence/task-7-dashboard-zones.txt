@@ -1,12 +1,10 @@
-Attempted command: npx vitest run tests/components/DashboardSection.test.tsx
-Result: blocked in this environment.
-Details:
-- root workspace has no local ./node_modules/.bin/vitest binary
-- npx fallback request to registry returned HTTP 403 for vitest
-Follow-up local checks completed instead:
-- git diff --check (pass)
-- stale helper/search cleanup via rg (pass)
-- source assertions for new dashboard lanes/test expectations (pass)
-See also:
-- .sisyphus/evidence/task-7-dashboard-zones-review.txt
-- .sisyphus/evidence/task-7-dashboard-source-check.txt
+
+ RUN  v4.0.16 /workspace/justice-rus
+
+ ✓ tests/components/DashboardSection.test.tsx (1 test) 279ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  12:19:59
+   Duration  4.94s (transform 2.79s, setup 478ms, import 2.87s, tests 279ms, environment 983ms)
+
