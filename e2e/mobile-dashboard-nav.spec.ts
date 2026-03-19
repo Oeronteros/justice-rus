@@ -217,6 +217,7 @@ async function installPortalMocks(page: Page) {
 test.describe('mobile dashboard and nav flow', () => {
   test('logs in on mobile, shows refreshed dashboard, and opens PvP from immersive menu', async ({ page }) => {
     await installPortalMocks(page);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
 
     await page.goto('/');
     await page.getByPlaceholder('Ник в гильдии').fill('Smoke Member');
