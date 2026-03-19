@@ -325,7 +325,7 @@ Wave 3: `13-16` shared-state polish, responsive/i18n/cutover hardening, and auto
 
   **Commit**: YES | Message: `feat(shell): refresh mobile dock` | Files: `components/shell/MobileNav.tsx`, `components/shell/Shell.stylex.ts`, related tests/specs only
 
-- [ ] 6. Refresh the dashboard hero and first-screen command surface
+- [x] 6. Refresh the dashboard hero and first-screen command surface
 
   **What to do**: Redesign the above-the-fold dashboard so it immediately communicates guild status, next actions, and member context. Preserve existing data hooks and signal-strip content, but reorganize the first screen into a clearer narrative hero, action deck, and optional micro-visuals using existing `motion` and existing chart packages only if current dashboard data already supports them.
   **Must NOT do**: Do not add new backend data dependencies. Do not turn the dashboard route into a cross-module data rewrite. Do not use Styled Components on the outer section shell if StyleX already owns that subtree.

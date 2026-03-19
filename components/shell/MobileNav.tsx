@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { TouchEvent, useEffect, useId, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import autoAnimate from '@formkit/auto-animate';
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'motion/react';
 import * as stylex from '@stylexjs/stylex';
@@ -19,6 +20,7 @@ interface MobileNavProps {
 
 export default function MobileNav({ currentSection, language, onNavPrefetch }: MobileNavProps) {
   const [isMoreOpen, setIsMoreOpen] = useState(false);
+  const router = useRouter();
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const menuOpenedAtRef = useRef(0);
@@ -58,6 +60,13 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
     onTouchStart: () => onNavPrefetch?.(section),
     onMouseEnter: () => onNavPrefetch?.(section),
     onFocus: () => onNavPrefetch?.(section),
+  });
+
+  const touchNavigateProps = (href: string) => ({
+    onTouchEnd: (event: TouchEvent<HTMLAnchorElement>) => {
+      event.preventDefault();
+      router.push(href);
+    },
   });
 
   const primaryItems = useMemo(() => mobilePrimaryNavItems, []);
@@ -231,6 +240,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
                               key={item.section}
                               href={item.href}
                               {...navPrefetchProps(item.section)}
+                              {...touchNavigateProps(item.href)}
                               {...stylex.props(shellStyles.mobileSheetLink, isActive && shellStyles.mobileSheetLinkActive)}
                               aria-label={orderLabels[item.section]}
                               aria-current={isActive ? 'page' : undefined}
@@ -280,6 +290,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
                   key={item.section}
                   href={item.href}
                   {...navPrefetchProps(item.section)}
+                  {...touchNavigateProps(item.href)}
                   {...stylex.props(shellStyles.mobileChip, isActive && shellStyles.mobileChipActive)}
                   aria-label={sectionLabels[language][item.section]}
                   aria-current={isActive ? 'page' : undefined}
