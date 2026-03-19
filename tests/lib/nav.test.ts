@@ -13,6 +13,12 @@ function flattenGroupSections(groups: ReadonlyArray<{ sections: readonly string[
   return groups.flatMap((group) => group.sections);
 }
 
+function pickRoutes(sections: readonly string[]): string[] {
+  return sections
+    .map((section) => navItems.find((item) => item.section === section)?.href)
+    .filter((href): href is string => Boolean(href));
+}
+
 describe('core portal IA contract', () => {
   it('keeps desktop and mobile primary rails focused on daily routes', () => {
     expect(desktopPrimarySections).toEqual(['about', 'news', 'schedule', 'help', 'profile']);
@@ -32,5 +38,13 @@ describe('core portal IA contract', () => {
 
     expect(registration?.href).toBe('/members');
     expect(profile?.href).toBe('/profile');
+  });
+
+  it('keeps core refresh route ownership explicit from nav metadata', () => {
+    const inScopeRoutes = pickRoutes(['about', 'news', 'guides', 'schedule', 'help', 'profile']);
+    const shellSmokeOnlyRoutes = pickRoutes(['registration', 'absences', 'pvp', 'analytics', 'workflow', 'integrations', 'calculator']);
+
+    expect(inScopeRoutes).toEqual(['/', '/news', '/guides', '/schedule', '/help', '/profile']);
+    expect(shellSmokeOnlyRoutes).toEqual(['/members', '/absences', '/pvp', '/analytics', '/workflow', '/integrations', '/calculator']);
   });
 });

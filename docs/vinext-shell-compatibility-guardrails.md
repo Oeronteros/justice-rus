@@ -19,6 +19,18 @@ This note constrains how the main portal shell can evolve without forcing an imm
 - `lib/i18n/copy.ts` and section label sources should remain canonical so cutover routes do not drift by locale.
 - Shell-facing callbacks and boundaries in `components/shell/MainLayout.tsx` should stay explicit because they define what future shell parity must preserve: route resolution, nav prefetch, refresh, logout, language switching, and header visibility.
 
+## Route Ownership Contract (Core Refresh)
+
+- In scope for the core refresh contract: `/`, `/news`, `/guides`, `/schedule`, `/help`, `/profile`.
+- Shell-smoke-only for this contract: `/members`, `/absences`, `/pvp`, `/analytics`, `/workflow`, `/integrations`, `/calculator`.
+- Keep route ownership assertions tied to `lib/nav.ts` metadata and `tests/lib/nav.test.ts` checks rather than introducing parallel registries.
+
+## Styling Ownership Contract
+
+- StyleX-owned boundaries: `components/shell/*`, `components/shared/*`, `lib/stylex/*`, `app/layout.tsx`, and `app/(portal)/layout.tsx`.
+- Styled Components are allowed only for route-local leaf presentation subcomponents under `components/sections/*`.
+- No shared shell primitives, shared tokens, or layout boundary contracts may move to Styled Components during this phase.
+
 ## Follow-Up For Future Vinext Adoption
 
 - Recreate or consume the same nav grouping contract for cutover routes covered by `VINEXT_CUTOVER_SCOPE=pilot` (`/news`, `/help`, `/guides`).

@@ -3,9 +3,10 @@
 ## Scope
 
 This inventory covers only the in-scope Core Portal modules for later redesign waves:
+- `/`
 - `/news`
-- `/schedule`
 - `/guides`
+- `/schedule`
 - `/help`
 - `/profile`
 
@@ -102,9 +103,9 @@ It records stable redesign seams, protected actions, and obvious UX hotspots wit
   - combines member self-service and admin account-management responsibilities
   - redesign should preserve the admin/non-admin split rather than flattening it
 
-## Out Of Scope Modules
+## Shell-Smoke-Only Modules
 
-These remain outside T5/T12-T14 unless needed for shell consistency only:
+These remain outside redesign scope and are shell-smoke-only until later waves:
 - `/members`
 - `/absences`
 - `/pvp`

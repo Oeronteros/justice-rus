@@ -13,6 +13,7 @@ import { I18nProvider } from "@/lib/i18n/context";
 import { ThemeProvider } from '@/lib/theme/context';
 import { shouldEnableTelemetry } from "@/lib/platform/runtime";
 import { defaultLanguage } from "@/lib/i18n/shared";
+import StyledComponentsRegistry from '@/app/styled-components-registry';
 
 export const metadata: Metadata = {
   title: "Silent Moonfall | Guild Portal",
@@ -65,20 +66,22 @@ export default function RootLayout({
   return (
     <html lang={defaultLanguage} className={`${bodyFont.variable} ${displayFont.variable}`}>
       <body>
-        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
-        <InputPerformanceMode />
-        <ThemeProvider>
-          <AppThemeBoundary>
-            <QueryProvider>
-              <I18nProvider>
-                <Suspense fallback={<div {...stylex.props(rootLayoutStyles.fallback)} />}>
-                  <div {...stylex.props(rootLayoutStyles.content)}>{children}</div>
-                </Suspense>
-              </I18nProvider>
-            </QueryProvider>
-          </AppThemeBoundary>
-        </ThemeProvider>
-        <AppTelemetry enabled={shouldEnableTelemetry()} />
+        <StyledComponentsRegistry>
+          <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+          <InputPerformanceMode />
+          <ThemeProvider>
+            <AppThemeBoundary>
+              <QueryProvider>
+                <I18nProvider>
+                  <Suspense fallback={<div {...stylex.props(rootLayoutStyles.fallback)} />}>
+                    <div {...stylex.props(rootLayoutStyles.content)}>{children}</div>
+                  </Suspense>
+                </I18nProvider>
+              </QueryProvider>
+            </AppThemeBoundary>
+          </ThemeProvider>
+          <AppTelemetry enabled={shouldEnableTelemetry()} />
+        </StyledComponentsRegistry>
       </body>
     </html>
   );
