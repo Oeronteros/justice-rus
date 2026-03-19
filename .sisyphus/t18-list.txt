@@ -1,7 +1,0 @@
-Listing tests:
-  [chromium] › a11y.spec.ts:59:3 › portal accessibility smoke › PinScreen has no serious accessibility violations
-  [chromium] › a11y.spec.ts:66:3 › portal accessibility smoke › logged-in news page has no serious accessibility violations
-  [chromium] › a11y.spec.ts:83:3 › portal accessibility smoke › officer help view has no serious accessibility violations
-  [chromium] › core-route-regression.spec.ts:135:3 › desktop core route regression › logs in and reaches news, help, and profile from the refreshed shell
-  [chromium] › mobile-dashboard-nav.spec.ts:218:3 › mobile dashboard and nav flow › logs in on mobile, shows refreshed dashboard, and opens PvP from immersive menu
-Total: 5 tests in 3 files

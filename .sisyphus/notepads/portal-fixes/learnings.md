@@ -1,4 +1,0 @@
-Note: Patched /api/rules route to auto-create Neon rules table if missing and added JWT-based write authorization. Reads remain public to preserve frontend compatibility.
-Note: Schedule route (app/api/schedule/route.ts) updated to align with DiscordBot2 contract: map bot payload to portal schedule shape, preserve DB-first flow, language-aware localization, and graceful fallback when bot or DB is unavailable. Also added type-safe mapping for title/time fields and preserved existing frontend contract.
-Note: Help requests now persist gathering time range and responders in Neon, with runtime-safe schema creation, author/officer-only time edits, and unique RSVP identity enforced via (request_id, responder_user_id).
-Note: Guides now store optional owner_account_id on create, enforce owner-or-moderator edits server-side (legacy rows remain author-only + moderator-editable), and the guide modal gained in-app share links plus markdown download.

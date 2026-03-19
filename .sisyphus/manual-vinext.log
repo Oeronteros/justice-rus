@@ -1,9 +1,0 @@
-
-> dev
-> vinext dev --port 3101 --hostname 127.0.0.1 --port 3201 --hostname 127.0.0.1
-
-
-  vinext dev  (Vite 8.0.0)
-
-Port 3201 is in use, trying another one...
-  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m3202[22m/[39m
