@@ -1,0 +1,20 @@
+
+Running 1 test using 1 worker
+
+  ✘  1 [chromium] › e2e/mobile-dashboard-nav.spec.ts:218:3 › mobile dashboard and nav flow › logs in on mobile, shows refreshed dashboard, and opens PvP from immersive menu (4ms)
+
+
+  1) [chromium] › e2e/mobile-dashboard-nav.spec.ts:218:3 › mobile dashboard and nav flow › logs in on mobile, shows refreshed dashboard, and opens PvP from immersive menu 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1208/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  1 failed
+    [chromium] › e2e/mobile-dashboard-nav.spec.ts:218:3 › mobile dashboard and nav flow › logs in on mobile, shows refreshed dashboard, and opens PvP from immersive menu 
