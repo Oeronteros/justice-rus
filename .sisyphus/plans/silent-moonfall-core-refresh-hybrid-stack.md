@@ -283,7 +283,7 @@ Wave 3: `13-16` shared-state polish, responsive/i18n/cutover hardening, and auto
 
   **Commit**: YES | Message: `feat(shell): refresh desktop header rail` | Files: `components/shell/Header.tsx`, `components/shell/Shell.stylex.ts`, related tests/specs only
 
-- [ ] 5. Refresh the mobile dock and overflow navigation sheet
+- [x] 5. Refresh the mobile dock and overflow navigation sheet
 
   **What to do**: Rework the thumb-reach mobile shell using the existing StyleX shell layer. Keep the four-item quick dock plus `More` entry pattern, but improve information scent, overflow-sheet hierarchy, body-scroll locking, motion, and active-state clarity for 390px and small-tablet widths.
   **Must NOT do**: Do not move mobile shell chrome into Styled Components. Do not remove the overflow scrim, grouped secondary navigation, or prefetch callbacks.

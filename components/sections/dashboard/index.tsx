@@ -2,16 +2,16 @@
 
 import Link from 'next/link';
 import { useMemo } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import WuxiaIcon, { type IconName } from '@/components/WuxiaIcons';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { PrefixBadge } from '@/components/PrefixBadge';
-import { SectionHero } from '@/components/shared/SectionHero';
 import { useAbsences } from '@/lib/absences/hooks';
 import { hasRoleAtLeast } from '@/lib/authz';
 import { useHelp } from '@/lib/help/hooks';
-import { sectionLabels, type Language } from '@/lib/i18n';
+import { type Language } from '@/lib/i18n';
 import { useNews } from '@/lib/news/hooks';
 import { usePvpState } from '@/lib/pvp/hooks';
 import { useRegistrations } from '@/lib/registration/hooks';
@@ -767,6 +767,69 @@ function DenseActionLink({ href, label }: { href: string; label: string }) {
   );
 }
 
+function dashboardReveal(prefersReducedMotion: boolean | null, delay = 0) {
+  const reduced = Boolean(prefersReducedMotion);
+
+  return {
+    initial: reduced ? false : { opacity: 0, y: 18 },
+    animate: { opacity: 1, y: 0 },
+    transition: reduced
+      ? { duration: 0 }
+      : { duration: 0.26, delay, ease: [0.22, 1, 0.36, 1] as const },
+  };
+}
+
+function formatResponderSummary(
+  responderCount: number,
+  copy: DashboardCopy
+): string {
+  if (responderCount <= 0) return copy.noResponder;
+  if (responderCount === 1) return copy.responderOne;
+  return `${responderCount} ${copy.responderMany}`;
+}
+
+function HeroActionDeckCard({
+  eyebrow,
+  title,
+  body,
+  href,
+  cta,
+  icon,
+  tone = 'steady',
+  moduleId,
+}: {
+  eyebrow: string;
+  title: string;
+  body: string;
+  href: string;
+  cta: string;
+  icon: IconName;
+  tone?: LiveTone;
+  moduleId?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      data-dashboard-module={moduleId}
+      {...stylex.props(
+        dashboardStyles.actionDeckCard,
+        tone === 'active' && dashboardStyles.actionDeckCardActive,
+        tone === 'alert' && dashboardStyles.actionDeckCardAlert
+      )}
+    >
+      <div {...stylex.props(dashboardStyles.actionDeckHead)}>
+        <span {...stylex.props(dashboardStyles.actionDeckIcon)}>
+          <WuxiaIcon name={icon} {...stylex.props(dashboardStyles.iconGlyphSm)} />
+        </span>
+        <span {...stylex.props(dashboardStyles.actionDeckEyebrow)}>{eyebrow}</span>
+      </div>
+      <div {...stylex.props(dashboardStyles.actionDeckTitle)}>{title}</div>
+      <div {...stylex.props(dashboardStyles.actionDeckBody)}>{body}</div>
+      <span {...stylex.props(dashboardStyles.actionDeckFooter)}>{cta}</span>
+    </Link>
+  );
+}
+
 function StatusCard({
   title,
   icon,
@@ -851,6 +914,7 @@ function DashboardHeroRegion({
   copy,
   liveTone,
   liveLabel,
+  nextEvent,
   rosterSnapshot,
   helpSnapshot,
   absenceSnapshot,
@@ -864,8 +928,9 @@ function DashboardHeroRegion({
   copy: DashboardCopy;
   liveTone: LiveTone;
   liveLabel: string;
+  nextEvent: Schedule | null;
   rosterSnapshot: { active: number; readinessPercent: number; readyCore: number };
-  helpSnapshot: { unattended: number };
+  helpSnapshot: { unattended: number; urgent: Array<{ id: string; title: string; gatheringStart: string; responders: Array<{ nickname?: string | null }> }> };
   absenceSnapshot: { pending: Absence[] };
   newsSnapshot: { activeCount: number };
   user: User;
@@ -874,32 +939,71 @@ function DashboardHeroRegion({
   isOfficer: boolean;
   officerSignals: number;
 }) {
+  const prefersReducedMotion = useReducedMotion();
+  const primaryHelpRequest = helpSnapshot.urgent[0] ?? null;
+  const officerHref = absenceSnapshot.pending.length > 0 ? '/absences' : helpSnapshot.unattended > 0 ? '/help' : pvpSnapshot.disputed ? '/pvp' : '/profile';
+  const officerLinkLabel = absenceSnapshot.pending.length > 0
+    ? copy.openAbsences
+    : helpSnapshot.unattended > 0
+      ? copy.openHelp
+      : pvpSnapshot.disputed
+        ? copy.openPvp
+        : copy.openProfile;
+  const actionDeckThirdTitle = isOfficer
+    ? officerSignals > 0
+      ? `${officerSignals} ${copy.pendingApprovals.toLowerCase()}`
+      : copy.noOfficerActions
+    : user.prefix || roleLabels[language][user.role];
+  const actionDeckThirdBody = isOfficer
+    ? officerSignals > 0
+      ? `${absenceSnapshot.pending.length} ${copy.pendingAbsencesLabel.toLowerCase()} · ${helpSnapshot.unattended} ${copy.pendingHelpLabel.toLowerCase()}`
+      : copy.noOverlay
+    : pvpSnapshot.userInQueue
+      ? copy.queuedNow
+      : copy.personalStationBody;
+
   return (
     <div {...stylex.props(dashboardStyles.heroGrid)}>
-      <article data-dashboard-module="hero" {...stylex.props(uiStyles.card, uiStyles.sectionCard, dashboardStyles.commandCard)}>
+      <motion.article
+        data-dashboard-module="hero"
+        {...dashboardReveal(prefersReducedMotion)}
+        {...stylex.props(uiStyles.card, uiStyles.sectionCard, dashboardStyles.commandCard)}
+      >
+        <div {...stylex.props(dashboardStyles.heroStatusRow)}>
+          <SignalBadge tone={liveTone}>{liveLabel}</SignalBadge>
+          <div {...stylex.props(uiStyles.inlineTags, dashboardStyles.heroChipRow)}>
+            {copy.chips.map((chip) => (
+              <span key={chip} {...stylex.props(dashboardStyles.heroChip)}>{chip}</span>
+            ))}
+          </div>
+        </div>
+
         <div {...stylex.props(dashboardStyles.heroTopRow)}>
           <div {...stylex.props(dashboardStyles.heroLeadStack)}>
-            <div {...stylex.props(dashboardStyles.headerRow)}>
-              <div>
-                <div {...stylex.props(dashboardStyles.kicker)}>{copy.liveStatus}</div>
-                <h3 {...stylex.props(dashboardStyles.title)}>{copy.situationRoom}</h3>
-              </div>
-              <SignalBadge tone={liveTone}>{liveLabel}</SignalBadge>
+            <div>
+              <div {...stylex.props(dashboardStyles.kicker)}>{copy.liveStatus}</div>
+              <h2 {...stylex.props(dashboardStyles.title)}>{copy.title}</h2>
+              <p {...stylex.props(dashboardStyles.lede)}>{copy.subtitle}</p>
             </div>
 
-            <p {...stylex.props(dashboardStyles.lede)}>{copy.openingLine}</p>
-            <p {...stylex.props(dashboardStyles.body, dashboardStyles.commandBody)}>{copy.liveSnapshot}</p>
+            <div {...stylex.props(dashboardStyles.heroNarrativeCard)}>
+              <div {...stylex.props(dashboardStyles.heroNarrativeHead)}>
+                <span {...stylex.props(dashboardStyles.heroNarrativeKicker)}>{copy.situationRoom}</span>
+                <span {...stylex.props(dashboardStyles.heroNarrativeMeta)}>{copy.refreshPulse}</span>
+              </div>
+              <p {...stylex.props(dashboardStyles.body, dashboardStyles.commandBody)}>{copy.liveSnapshot}</p>
+            </div>
           </div>
 
           <div {...stylex.props(dashboardStyles.heroActionRail)}>
             <div {...stylex.props(dashboardStyles.heroActionMeta)}>
-              <span {...stylex.props(dashboardStyles.heroActionKicker)}>{copy.quickRoutes}</span>
-              <span {...stylex.props(dashboardStyles.heroActionHint)}>{copy.quickRoutesBody}</span>
+              <span {...stylex.props(dashboardStyles.heroActionKicker)}>{copy.actionCenter}</span>
+              <span {...stylex.props(dashboardStyles.heroActionHint)}>{copy.actionCenterBody}</span>
             </div>
             <div {...stylex.props(dashboardStyles.heroActionButtons)}>
               <HeroActionLink href="/schedule" label={copy.openSchedule} />
               <HeroActionLink href="/help" label={copy.openHelp} tone="secondary" />
-              <HeroActionLink href="/news" label={copy.openNews} tone="ghost" />
+              <HeroActionLink href="/profile" label={copy.openProfile} tone="ghost" />
             </div>
           </div>
         </div>
@@ -922,19 +1026,71 @@ function DashboardHeroRegion({
           </div>
         </div>
 
+        <motion.div
+          {...dashboardReveal(prefersReducedMotion, 0.05)}
+          {...stylex.props(dashboardStyles.heroActionDeckSection)}
+        >
+          <div {...stylex.props(dashboardStyles.heroActionDeckHeader)}>
+            <div>
+              <div {...stylex.props(dashboardStyles.kicker)}>{copy.actionCenter}</div>
+              <h3 {...stylex.props(dashboardStyles.statusTitle)}>{copy.openingLine}</h3>
+            </div>
+            <p {...stylex.props(dashboardStyles.metaText, dashboardStyles.heroActionDeckIntro)}>{copy.quickRoutesBody}</p>
+          </div>
+          <div {...stylex.props(dashboardStyles.actionDeckGrid)}>
+            <HeroActionDeckCard
+              eyebrow={copy.nextEvent}
+              title={nextEvent ? resolveScheduleHeadline(nextEvent, language) : copy.noUpcoming}
+              body={nextEvent ? formatScheduleBucket(nextEvent.date, copy) : copy.nextEventEmpty}
+              href="/schedule"
+              cta={copy.openSchedule}
+              icon="calendar"
+              tone={nextEvent ? 'active' : 'steady'}
+              moduleId="next_event"
+            />
+            <HeroActionDeckCard
+              eyebrow={copy.urgentHelp}
+              title={primaryHelpRequest ? primaryHelpRequest.title : helpSnapshot.unattended > 0 ? `${helpSnapshot.unattended} ${copy.pendingHelpLabel.toLowerCase()}` : copy.urgentHelpEmpty}
+              body={primaryHelpRequest ? formatResponderSummary(primaryHelpRequest.responders.length, copy) : helpSnapshot.unattended > 0 ? copy.activeAlerts : copy.allClear}
+              href="/help"
+              cta={copy.openHelp}
+              icon="help"
+              tone={helpSnapshot.unattended > 0 ? 'alert' : primaryHelpRequest ? 'active' : 'steady'}
+              moduleId="urgent_help"
+            />
+            <HeroActionDeckCard
+              eyebrow={isOfficer ? copy.officerActions : copy.personalStation}
+              title={actionDeckThirdTitle}
+              body={actionDeckThirdBody}
+              href={officerHref}
+              cta={officerLinkLabel}
+              icon={isOfficer ? 'seal' : 'user'}
+              tone={isOfficer ? (officerSignals > 0 ? 'alert' : 'steady') : (user.isActive ? 'active' : 'steady')}
+              moduleId={isOfficer ? 'officer_overlay' : 'member_station'}
+            />
+          </div>
+        </motion.div>
+
         <div {...stylex.props(dashboardStyles.metricGrid)}>
           <MetricTile label={copy.activeMembers} value={rosterSnapshot.active} tone={liveTone === 'steady' ? 'active' : liveTone} hint={`${rosterSnapshot.readinessPercent}% ${copy.readyCore.toLowerCase()}`} />
           <MetricTile label={copy.unattendedRequests} value={helpSnapshot.unattended} tone={helpSnapshot.unattended > 0 ? 'alert' : 'steady'} hint={helpSnapshot.unattended > 0 ? copy.activeAlerts : copy.allClear} />
           <MetricTile label={copy.pendingAbsences} value={absenceSnapshot.pending.length} tone={absenceSnapshot.pending.length > 0 ? 'alert' : 'steady'} hint={absenceSnapshot.pending.length > 0 ? copy.pendingAbsencesLabel : copy.stable} />
           <MetricTile label={copy.activeAnnouncements} value={newsSnapshot.activeCount} tone="active" hint={newsSnapshot.activeCount > 0 ? copy.live : copy.latest} />
         </div>
-      </article>
+      </motion.article>
 
-      <aside data-dashboard-module="member_station" {...stylex.props(uiStyles.card, uiStyles.sectionCard, dashboardStyles.stationCard)}>
+      <motion.aside
+        data-dashboard-module="member_station"
+        {...dashboardReveal(prefersReducedMotion, 0.08)}
+        {...stylex.props(uiStyles.card, uiStyles.sectionCard, dashboardStyles.stationCard)}
+      >
         <div {...stylex.props(dashboardStyles.headerRow)}>
           <div>
             <div {...stylex.props(dashboardStyles.kicker)}>{copy.personalStation}</div>
-            <h3 {...stylex.props(dashboardStyles.title)}>{user.nickname || 'Silent Moonfall'}</h3>
+            <div {...stylex.props(dashboardStyles.stationIdentityRow)}>
+              <h3 {...stylex.props(dashboardStyles.title, dashboardStyles.stationTitle)}>{user.nickname || 'Silent Moonfall'}</h3>
+              {user.prefix ? <PrefixBadge prefix={user.prefix} variant="compact" /> : null}
+            </div>
           </div>
           <SignalBadge tone={user.isActive ? 'active' : 'alert'}>{user.isActive ? copy.activeState : copy.inactiveState}</SignalBadge>
         </div>
@@ -997,7 +1153,7 @@ function DashboardHeroRegion({
             </div>
           </div>
         )}
-      </aside>
+      </motion.aside>
     </div>
   );
 }
@@ -1351,6 +1507,13 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
 
     return resolveScheduleHeadline(item, language);
   }, [copy.noUpcoming, language, schedule]);
+  const nextEvent = useMemo(() => {
+    const upcoming = [...schedule]
+      .filter((item) => Number.isFinite(new Date(item.date).getTime()))
+      .sort((left, right) => new Date(left.date).getTime() - new Date(right.date).getTime());
+
+    return upcoming[0] ?? null;
+  }, [schedule]);
 
   const coreLoading = scheduleLoading || helpLoading || registrationsLoading || newsLoading;
   const coreEmpty = !schedule.length && !openHelp.length && !registrations.length && !news.length;
@@ -1380,18 +1543,12 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
     <section {...stylex.props(uiStyles.sectionShell)}>
       <div {...stylex.props(uiStyles.sectionContainer)}>
         <div {...stylex.props(uiStyles.stackLg)}>
-          <SectionHero icon={<WuxiaIcon name="eye" {...stylex.props(dashboardStyles.iconGlyphMd)} />} title={copy.title} subtitle={copy.subtitle} chips={copy.chips} actions={
-            <>
-              <Link href="/schedule" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}>{copy.openSchedule}</Link>
-              <Link href="/help" {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}>{copy.openHelp}</Link>
-            </>
-          } />
-
           <DashboardRegionShell region={resolveDashboardRegion('priority_summary')}>
             <DashboardHeroRegion
               copy={copy}
               liveTone={liveTone}
               liveLabel={liveLabel}
+              nextEvent={nextEvent}
               rosterSnapshot={rosterSnapshot}
               helpSnapshot={helpSnapshot}
               absenceSnapshot={absenceSnapshot}
