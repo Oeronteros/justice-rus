@@ -140,18 +140,34 @@ test.describe('desktop core route regression', () => {
     await page.getByPlaceholder('Пароль').fill('very-secret-password');
     await page.locator('form').getByRole('button', { name: 'Войти' }).click();
 
-    await expect(page.getByRole('navigation', { name: 'Основная навигация' })).toBeVisible();
+    const primaryNav = page.getByRole('navigation', { name: 'Основная навигация' });
+
+    await expect(primaryNav).toBeVisible();
     await expect(page.getByRole('button', { name: 'Разделы' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Обновить данные' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Открыть кабинет' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Открыть уведомления' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Выйти' })).toBeVisible();
 
-    await page.getByRole('navigation', { name: 'Основная навигация' }).getByRole('link', { name: 'Новости', exact: true }).click();
+    await expect(primaryNav.getByRole('link', { name: 'Дашборд', exact: true })).toBeVisible();
+    await expect(primaryNav.getByRole('link', { name: 'Новости', exact: true })).toBeVisible();
+    await expect(primaryNav.getByRole('link', { name: 'Расписание', exact: true })).toBeVisible();
+    await expect(primaryNav.getByRole('link', { name: 'Помощь', exact: true })).toBeVisible();
+    await expect(primaryNav.getByRole('link', { name: 'Кабинет', exact: true })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Разделы' }).click();
+    const commandNav = page.getByLabel('Командная навигация');
+    await expect(commandNav).toBeVisible();
+    await expect(commandNav.getByRole('link', { name: 'Участники', exact: true })).toBeVisible();
+    await expect(commandNav.getByRole('link', { name: 'Гайды', exact: true })).toBeVisible();
+
+    await primaryNav.getByRole('link', { name: 'Новости', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Боевой сбор' }).first()).toBeVisible();
 
-    await page.getByRole('navigation', { name: 'Основная навигация' }).getByRole('link', { name: 'Помощь', exact: true }).click();
+    await primaryNav.getByRole('link', { name: 'Помощь', exact: true }).click();
     await expect(page.getByText('Нужен лидер на вечерний сбор').first()).toBeVisible();
 
-    await page.getByRole('navigation', { name: 'Основная навигация' }).getByRole('link', { name: 'Кабинет', exact: true }).click();
+    await primaryNav.getByRole('link', { name: 'Кабинет', exact: true }).click();
     await expect(page).toHaveURL(/\/profile$/);
     await expect(page.getByText('Raid Lead').first()).toBeVisible();
   });

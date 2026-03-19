@@ -8,7 +8,6 @@ import * as stylex from '@stylexjs/stylex';
 import { Section } from '@/types';
 import { headerCopy, Language, portalCopy, sectionLabels } from '@/lib/i18n';
 import { desktopGroupedNavItems, desktopPrimaryNavItems } from '@/lib/nav';
-import { mergeStylexProps } from '@/lib/stylex/utils';
 import WuxiaIcon from '../WuxiaIcons';
 import ThemeModeSwitch from './ThemeModeSwitch';
 import { shellStyles } from './Shell.stylex';
@@ -78,6 +77,7 @@ export default function Header({
   const utilityStripLabel = language === 'ru' ? 'Быстрый доступ' : language === 'zh' ? '快速控制' : 'Quick access';
 
   const sectionLabel = orderLabels[currentSection];
+  const groupedRouteCount = desktopGroupedNavItems.reduce((total, group) => total + group.items.length, 0);
 
   useEffect(() => {
     if (!desktopDeckRef.current) return;
@@ -149,59 +149,63 @@ export default function Header({
           </Link>
 
           <div {...stylex.props(shellStyles.toolbarShell)}>
-            <div {...stylex.props(shellStyles.utilityMeta)}>
-              <span {...stylex.props(shellStyles.utilityKicker)}>{utilityStripLabel}</span>
-              <span {...stylex.props(shellStyles.utilityCurrent)}>{labels.activeSection}: {sectionLabel}</span>
-            </div>
-            <div {...stylex.props(shellStyles.toolbar)}>
-            <ThemeModeSwitch language={language} />
-            <select
-              id="langSwitch"
-              value={language}
-              onChange={(e) => onLanguageChange(e.target.value as Language)}
-              aria-label={labels.languageSwitcher}
-              {...stylex.props(shellStyles.select)}
-            >
-              <option value="ru">RU</option>
-              <option value="en">EN</option>
-              <option value="zh">简体中文</option>
-            </select>
+            <div {...stylex.props(shellStyles.utilityPanel, headerCompact && shellStyles.utilityPanelCompact)}>
+              <div {...stylex.props(shellStyles.utilityMeta)}>
+                <span {...stylex.props(shellStyles.utilityKicker)}>{utilityStripLabel}</span>
+                <span {...stylex.props(shellStyles.utilityCurrent)}>{labels.activeSection}: {sectionLabel}</span>
+              </div>
+              <div {...stylex.props(shellStyles.toolbar, headerCompact && shellStyles.toolbarCompact)}>
+                <ThemeModeSwitch language={language} />
+                <select
+                  id="langSwitch"
+                  value={language}
+                  onChange={(e) => onLanguageChange(e.target.value as Language)}
+                  aria-label={labels.languageSwitcher}
+                  {...stylex.props(shellStyles.select)}
+                >
+                  <option value="ru">RU</option>
+                  <option value="en">EN</option>
+                  <option value="zh">简体中文</option>
+                </select>
 
-            <Link
-              href="/calendar"
-              {...stylex.props(shellStyles.iconButton)}
-              title={labels.notifications}
-              aria-label={labels.notifications}
-            >
-              <WuxiaIcon name="calendarCheck" className="w-5 h-5" />
-            </Link>
+                <Link
+                  href="/calendar"
+                  {...stylex.props(shellStyles.iconButton)}
+                  title={labels.notifications}
+                  aria-label={labels.notifications}
+                >
+                  <WuxiaIcon name="calendarCheck" className="w-5 h-5" />
+                </Link>
 
-            <Link
-              href="/profile"
-              {...stylex.props(shellStyles.iconButton, currentSection === 'profile' && shellStyles.iconButtonActive)}
-              title={labels.profile}
-              aria-label={labels.profile}
-            >
-              <WuxiaIcon name="profile" className="w-5 h-5" />
-            </Link>
+                <Link
+                  href="/profile"
+                  {...stylex.props(shellStyles.iconButton, currentSection === 'profile' && shellStyles.iconButtonActive)}
+                  title={labels.profile}
+                  aria-label={labels.profile}
+                >
+                  <WuxiaIcon name="profile" className="w-5 h-5" />
+                </Link>
 
-            <button
-              onClick={onRefresh}
-              {...stylex.props(shellStyles.iconButton)}
-              title={labels.refresh}
-              aria-label={labels.refresh}
-            >
-              <WuxiaIcon name="refresh" className="w-5 h-5" />
-            </button>
+                <button
+                  type="button"
+                  onClick={onRefresh}
+                  {...stylex.props(shellStyles.iconButton)}
+                  title={labels.refresh}
+                  aria-label={labels.refresh}
+                >
+                  <WuxiaIcon name="refresh" className="w-5 h-5" />
+                </button>
 
-            <button
-              onClick={onLogout}
-              {...stylex.props(shellStyles.iconButton, shellStyles.iconButtonAccent)}
-              title={labels.logout}
-              aria-label={labels.logout}
-            >
-              <WuxiaIcon name="logout" className="w-5 h-5" />
-            </button>
+                <button
+                  type="button"
+                  onClick={onLogout}
+                  {...stylex.props(shellStyles.iconButton, shellStyles.iconButtonAccent)}
+                  title={labels.logout}
+                  aria-label={labels.logout}
+                >
+                  <WuxiaIcon name="logout" className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -210,36 +214,47 @@ export default function Header({
           <div {...stylex.props(shellStyles.navShell, shellStyles.navShellEnhanced)}>
             <div {...stylex.props(shellStyles.navHeadRow)}>
               <div {...stylex.props(shellStyles.coreRailShell)}>
-                <div {...stylex.props(shellStyles.navSectionMeta)}>
-                  <span {...stylex.props(shellStyles.navSectionKicker)}>{primaryNavLabel}</span>
-                  <span {...stylex.props(shellStyles.navSectionHint)}>{portalCopy[language].oath}</span>
+                <div {...stylex.props(shellStyles.navMetaBand)}>
+                  <div {...stylex.props(shellStyles.navSectionMeta)}>
+                    <span {...stylex.props(shellStyles.navSectionKicker)}>{primaryNavLabel}</span>
+                    <span {...stylex.props(shellStyles.navSectionHint)}>{portalCopy[language].oath}</span>
+                  </div>
+                  <span {...stylex.props(shellStyles.navCurrentChip)}>{sectionLabel}</span>
                 </div>
                 <LayoutGroup id="desktop-core-nav">
                   <div {...stylex.props(shellStyles.coreRail, headerCompact && shellStyles.coreRailCompact)}>
-                    {desktopPrimaryNavItems.map((item) => {
-                    const isActive = currentSection === item.section;
+                    {desktopPrimaryNavItems.map((item, index) => {
+                      const isActive = currentSection === item.section;
 
-                    return (
-                      <motion.div key={item.section} layout whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }} transition={{ type: 'spring', stiffness: 420, damping: 28 }}>
-                        <Link
-                          href={item.href}
-                          {...navPrefetchProps(item.section)}
-                          {...stylex.props(shellStyles.navLinkBase, !isActive && shellStyles.navLinkInactive)}
-                          aria-label={orderLabels[item.section]}
-                          aria-current={isActive ? 'page' : undefined}
-                          title={orderLabels[item.section]}
-                          onClick={() => setIsDesktopMenuOpen(false)}
-                        >
-                          {isActive ? <motion.span layoutId="desktop-core-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
-                          <span {...stylex.props(shellStyles.navLinkContent, shellStyles.coreLinkContent)}>
-                            <span {...stylex.props(shellStyles.orderDot)}>
-                              <WuxiaIcon name={item.icon} className="w-4 h-4" />
+                      return (
+                        <motion.div key={item.section} layout whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }} transition={{ type: 'spring', stiffness: 420, damping: 28 }}>
+                          <Link
+                            href={item.href}
+                            {...navPrefetchProps(item.section)}
+                            {...stylex.props(
+                              shellStyles.navLinkBase,
+                              shellStyles.coreRailLink,
+                              headerCompact && shellStyles.coreRailLinkCompact,
+                              !isActive && shellStyles.navLinkInactive
+                            )}
+                            aria-label={orderLabels[item.section]}
+                            aria-current={isActive ? 'page' : undefined}
+                            title={orderLabels[item.section]}
+                            onClick={() => setIsDesktopMenuOpen(false)}
+                          >
+                            {isActive ? <motion.span layoutId="desktop-core-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
+                            <span {...stylex.props(shellStyles.navLinkContent, shellStyles.coreLinkContent)}>
+                              <span {...stylex.props(shellStyles.coreLinkMeta)}>
+                                <span {...stylex.props(shellStyles.coreLinkIndex)}>{String(index + 1).padStart(2, '0')}</span>
+                                <span {...stylex.props(shellStyles.orderDot)}>
+                                  <WuxiaIcon name={item.icon} className="w-4 h-4" />
+                                </span>
+                              </span>
+                              <span {...stylex.props(shellStyles.orderLabel, shellStyles.coreOrderLabel)}>{orderLabels[item.section]}</span>
                             </span>
-                            <span {...stylex.props(shellStyles.orderLabel)}>{orderLabels[item.section]}</span>
-                          </span>
-                        </Link>
-                      </motion.div>
-                    );
+                          </Link>
+                        </motion.div>
+                      );
                     })}
                   </div>
                 </LayoutGroup>
@@ -260,8 +275,13 @@ export default function Header({
                 title={immersiveMenuLabel}
                 {...stylex.props(shellStyles.desktopMenuButton, isDesktopMenuOpen && shellStyles.desktopMenuButtonActive)}
               >
-                <WuxiaIcon name="dots" className="w-5 h-5" />
-                <span {...stylex.props(shellStyles.desktopMenuLabel)}>{immersiveMenuLabel}</span>
+                <span {...stylex.props(shellStyles.desktopMenuGlyph)}>
+                  <WuxiaIcon name="dots" className="w-5 h-5" />
+                </span>
+                <span {...stylex.props(shellStyles.desktopMenuCopy)}>
+                  <span {...stylex.props(shellStyles.desktopMenuLabel)}>{immersiveMenuLabel}</span>
+                  <span {...stylex.props(shellStyles.desktopMenuValue)}>{String(groupedRouteCount).padStart(2, '0')}</span>
+                </span>
               </button>
               </div>
             </div>
