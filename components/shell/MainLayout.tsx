@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import * as stylex from '@stylexjs/stylex';
 import Header from './Header';
 import MobileNav from './MobileNav';
+import MissionControl from './MissionControl';
 import { HeaderProvider, useHeaderVisibility } from '@/lib/ui/headerContext';
 import { usePrefetchAbsences } from '@/lib/absences/hooks';
 import { usePrefetchGuides } from '@/lib/guides/hooks';
@@ -140,6 +141,7 @@ function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
       </div>
       <main id="portal-main" {...stylex.props(shellStyles.main, isHeaderHidden && shellStyles.mainShifted)}>
         <div {...stylex.props(shellStyles.mainInner)}>
+          <MissionControl currentSection={navigationContract.currentSection} language={sessionContract.language} />
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={pathname}

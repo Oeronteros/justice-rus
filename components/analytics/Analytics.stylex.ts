@@ -7,6 +7,53 @@ export const analyticsStyles = stylex.create({
     display: 'grid',
     gap: '16px',
   },
+
+  iconLg: {
+    width: '48px',
+    height: '48px',
+    marginInline: 'auto',
+    marginBottom: '12px',
+    opacity: 0.3,
+  },
+  distributionSegment: {
+    height: '100%',
+    transitionProperty: 'width, opacity',
+    transitionDuration: '160ms',
+  },
+  classList: {
+    display: 'grid',
+    gap: '12px',
+  },
+  classInfo: {
+    minWidth: 0,
+  },
+  classStats: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  },
+  percentValue: {
+    width: '48px',
+    textAlign: 'right',
+  },
+  chartGridRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  chartGridLabel: {
+    width: '32px',
+    textAlign: 'right',
+  },
+  chartGridLine: {
+    flex: 1,
+    height: '1px',
+    backgroundColor: 'rgba(42,60,76,0.4)',
+  },
+  xAxisItem: {
+    flex: 1,
+    textAlign: 'center',
+  },
   empty: {
     textAlign: 'center',
     paddingBlock: '32px',

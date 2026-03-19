@@ -3,7 +3,6 @@
 import { createContext, useContext, useCallback, useState, useMemo, type ReactNode } from 'react';
 import type { Toast, ToastType } from '@/components/notifications/Toast';
 
-type NotificationPriority = 'low' | 'medium' | 'high' | 'urgent';
 
 interface NotificationSettings {
   enabled: boolean;
@@ -39,6 +38,42 @@ const defaultSettings: NotificationSettings = {
 
 const SETTINGS_KEY = 'guild_notification_settings';
 
+function shouldMirrorToDesktop(settings: NotificationSettings, toast: Omit<Toast, 'id'>) {
+  if (!settings.enabled || !settings.desktopEnabled) return false;
+  if (typeof window === 'undefined' || typeof Notification === 'undefined') return false;
+  if (Notification.permission !== 'granted') return false;
+
+  if (toast.type === 'error' || toast.type === 'warning') {
+    return true;
+  }
+
+  if (toast.type === 'success' && settings.officerAlerts) {
+    return true;
+  }
+
+  return settings.eventReminders;
+}
+
+function mirrorToastToDesktop(toast: Omit<Toast, 'id'>) {
+  try {
+    const notification = new Notification(toast.title, {
+      body: toast.message,
+      tag: toast.title,
+      silent: true,
+    });
+
+    if (toast.action) {
+      notification.onclick = () => {
+        window.focus();
+        toast.action?.onClick();
+        notification.close();
+      };
+    }
+  } catch {
+    // ignore Notification construction failures
+  }
+}
+
 function getStoredSettings(): NotificationSettings {
   if (typeof window === 'undefined') return defaultSettings;
 
@@ -71,8 +106,12 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       console.warn(`[${toast.type.toUpperCase()}] ${toast.title}: ${toast.message || ''}`);
     }
 
+    if (shouldMirrorToDesktop(settings, toast)) {
+      mirrorToastToDesktop(toast);
+    }
+
     return id;
-  }, []);
+  }, [settings]);
 
   const dismissToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));

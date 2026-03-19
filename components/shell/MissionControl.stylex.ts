@@ -1,0 +1,197 @@
+import * as stylex from '@stylexjs/stylex';
+import { colors, motion, radius, spacing, typography } from '@/lib/stylex/tokens.stylex';
+
+export const missionControlStyles = stylex.create({
+  shell: {
+    marginBottom: spacing.xl,
+  },
+  frame: {
+    position: 'relative',
+    overflow: 'hidden',
+    padding: {
+      default: spacing.lg,
+      '@media (min-width: 768px)': spacing.xl,
+    },
+    display: 'grid',
+    gap: spacing.lg,
+    borderRadius: radius.xl,
+    border: `1px solid ${colors.borderDefault}`,
+    background:
+      `radial-gradient(circle at 10% 0%, ${colors.infoSurface}, transparent 34%), radial-gradient(circle at 100% 0%, ${colors.accentMuted}, transparent 28%), linear-gradient(165deg, ${colors.bgElevated}, ${colors.bgPanel})`,
+    boxShadow: colors.shadowCard,
+    '::after': {
+      content: "''",
+      position: 'absolute',
+      inset: '1px',
+      borderRadius: radius.xl,
+      border: `1px solid ${colors.borderSubtle}`,
+      pointerEvents: 'none',
+    },
+  },
+  topRow: {
+    display: 'grid',
+    gap: spacing.lg,
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 1100px)': 'minmax(0, 1.25fr) minmax(320px, 0.75fr)',
+    },
+  },
+  titleStack: {
+    display: 'grid',
+    gap: spacing.sm,
+  },
+  eyebrow: {
+    fontSize: typography.microSize,
+    lineHeight: typography.microLine,
+    letterSpacing: '0.18em',
+    textTransform: 'uppercase',
+    color: colors.textMuted,
+    fontWeight: 700,
+  },
+  title: {
+    margin: 0,
+    color: colors.textPrimary,
+    fontFamily: typography.display,
+    fontSize: 'clamp(1.2rem, 2vw, 1.55rem)',
+    lineHeight: 1.05,
+  },
+  body: {
+    margin: 0,
+    color: colors.textSecondary,
+    lineHeight: 1.65,
+    maxWidth: '68ch',
+  },
+  statusGrid: {
+    display: 'grid',
+    gap: spacing.sm,
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 640px)': 'repeat(2, minmax(0, 1fr))',
+    },
+  },
+  statusCard: {
+    display: 'grid',
+    gap: spacing.xs,
+    padding: `${spacing.md} ${spacing.lg}`,
+    borderRadius: radius.lg,
+    border: `1px solid ${colors.borderDefault}`,
+    background: `linear-gradient(155deg, ${colors.bgPanelAlt}, ${colors.bgPanel})`,
+  },
+  statusCardSuccess: {
+    borderColor: colors.successBorder,
+    background: `linear-gradient(155deg, ${colors.successSurface}, ${colors.bgPanel})`,
+  },
+  statusCardAlert: {
+    borderColor: colors.dangerBorder,
+    background: `linear-gradient(155deg, ${colors.dangerSurfaceStrong}, ${colors.bgPanel})`,
+  },
+  statusLabel: {
+    color: colors.textMuted,
+    fontSize: typography.microSize,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+  },
+  statusValue: {
+    color: colors.textPrimary,
+    fontWeight: 700,
+    fontSize: typography.titleSize,
+  },
+  statusMeta: {
+    color: colors.textSecondary,
+    fontSize: typography.secondarySize,
+    lineHeight: 1.45,
+  },
+  quickGrid: {
+    display: 'grid',
+    gap: spacing.md,
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 640px)': 'repeat(2, minmax(0, 1fr))',
+      '@media (min-width: 1180px)': 'repeat(4, minmax(0, 1fr))',
+    },
+  },
+  quickCard: {
+    display: 'grid',
+    gap: spacing.sm,
+    minHeight: '100%',
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    border: `1px solid ${colors.borderDefault}`,
+    background: `linear-gradient(155deg, ${colors.bgPanelAlt}, ${colors.bgPanel})`,
+    color: colors.textPrimary,
+    textDecoration: 'none',
+    transitionProperty: 'transform, border-color, box-shadow',
+    transitionDuration: motion.base,
+    transitionTimingFunction: motion.easeStandard,
+    ':hover': {
+      transform: 'translateY(-2px)',
+      borderColor: colors.borderStrong,
+      boxShadow: colors.shadowLifted,
+    },
+  },
+  quickTitleRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  iconWrap: {
+    display: 'grid',
+    placeItems: 'center',
+    width: '36px',
+    height: '36px',
+    borderRadius: radius.lg,
+    backgroundColor: colors.bgField,
+    color: colors.textPrimary,
+    border: `1px solid ${colors.borderDefault}`,
+    flexShrink: 0,
+  },
+  quickTitle: {
+    color: colors.textPrimary,
+    fontSize: typography.titleSize,
+    fontWeight: 700,
+  },
+  quickBody: {
+    color: colors.textSecondary,
+    fontSize: typography.secondarySize,
+    lineHeight: 1.55,
+  },
+  quickMeta: {
+    color: colors.textMuted,
+    fontSize: typography.microSize,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+  },
+  actionRow: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  actionButton: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: spacing.sm,
+    minHeight: '42px',
+    padding: `0 ${spacing.lg}`,
+    borderRadius: radius.pill,
+    border: `1px solid ${colors.borderDefault}`,
+    backgroundColor: colors.bgPanelAlt,
+    color: colors.textPrimary,
+    fontWeight: 700,
+    transitionProperty: 'transform, border-color, background-color',
+    transitionDuration: motion.fast,
+    ':hover': {
+      transform: 'translateY(-1px)',
+      borderColor: colors.borderStrong,
+    },
+    ':disabled': {
+      opacity: 0.55,
+      cursor: 'not-allowed',
+      transform: 'none',
+    },
+  },
+  actionButtonAccent: {
+    background: `linear-gradient(120deg, ${colors.ember}, ${colors.accent})`,
+    borderColor: colors.accentEdge,
+    color: colors.paperBright,
+  },
+});
