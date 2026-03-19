@@ -28,7 +28,6 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
     bodyPosition: '',
     bodyTop: '',
     bodyWidth: '',
-    bodyTouchAction: '',
     bodyPaddingRight: '',
     htmlOverscroll: '',
   });
@@ -82,7 +81,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
         : 'The remaining routes are grouped by role and task';
   const closeLabel = language === 'ru' ? 'Закрыть меню' : language === 'zh' ? '关闭菜单' : 'Close menu';
   const currentLabel = language === 'ru' ? 'Текущий' : language === 'zh' ? '当前' : 'Current';
-  const sectionsLabel = language === 'ru' ? 'маршрутов' : language === 'zh' ? '个分区' : 'routes';
+  const secondaryCountLabel = String(secondaryItems.length).padStart(2, '0');
   const groupLabels = {
     core: labels.navCore,
     guild: labels.navGuild,
@@ -131,7 +130,6 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
       bodyPosition: body.style.position,
       bodyTop: body.style.top,
       bodyWidth: body.style.width,
-      bodyTouchAction: body.style.touchAction,
       bodyPaddingRight: body.style.paddingRight,
       htmlOverscroll: documentElement.style.overscrollBehavior,
     };
@@ -140,7 +138,6 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
     body.style.position = 'fixed';
     body.style.top = `-${scrollY}px`;
     body.style.width = '100%';
-    body.style.touchAction = 'none';
     if (scrollbarWidth > 0) {
       body.style.paddingRight = `${scrollbarWidth}px`;
     }
@@ -153,7 +150,6 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
       body.style.position = previousState.bodyPosition;
       body.style.top = previousState.bodyTop;
       body.style.width = previousState.bodyWidth;
-      body.style.touchAction = previousState.bodyTouchAction;
       body.style.paddingRight = previousState.bodyPaddingRight;
       documentElement.style.overscrollBehavior = previousState.htmlOverscroll;
       window.scrollTo(0, previousState.scrollY);
@@ -211,7 +207,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
                     </span>
                     <span {...stylex.props(shellStyles.mobileSheetStatusChip)}>
                       <span {...stylex.props(shellStyles.mobileSheetStatusKicker)}>{moreLabel}</span>
-                      <span {...stylex.props(shellStyles.mobileSheetStatusValue)}>{secondaryItems.length} {sectionsLabel}</span>
+                      <span {...stylex.props(shellStyles.mobileSheetStatusValue)}>{secondaryCountLabel}</span>
                     </span>
                   </div>
                 </div>
@@ -310,7 +306,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
               title={moreLabel}
             >
               {isMoreOpen || isMoreActive ? <motion.span layoutId="mobile-bottom-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 420, damping: 32 }} /> : null}
-              <span {...stylex.props(shellStyles.mobileChipBadge)}>{String(secondaryItems.length).padStart(2, '0')}</span>
+              <span {...stylex.props(shellStyles.mobileChipBadge)}>{secondaryCountLabel}</span>
               <span {...stylex.props(shellStyles.mobileLinkContent)}>
                 <span {...stylex.props(shellStyles.mobileDockIcon, (isMoreOpen || isMoreActive) && shellStyles.mobileDockIconActive)}>
                   <WuxiaIcon name="dots" className="w-5 h-5" />

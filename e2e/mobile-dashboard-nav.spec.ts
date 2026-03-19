@@ -228,19 +228,41 @@ test.describe('mobile dashboard and nav flow', () => {
     await expect(page.getByText('Raid Lead').first()).toBeVisible();
     await expect(page.getByRole('link', { name: 'Дашборд', exact: true })).toHaveAttribute('aria-current', 'page');
 
+    const quickNav = page.getByRole('navigation', { name: 'Быстрая навигация' });
+    await expect(quickNav.getByRole('link', { name: 'Дашборд', exact: true })).toBeVisible();
+    await expect(quickNav.getByRole('link', { name: 'Новости', exact: true })).toBeVisible();
+    await expect(quickNav.getByRole('link', { name: 'Расписание', exact: true })).toBeVisible();
+    await expect(quickNav.getByRole('link', { name: 'Помощь', exact: true })).toBeVisible();
+
     const moreButton = page.getByRole('button', { name: 'Еще' });
     await moreButton.click();
     await expect(moreButton).toHaveAttribute('aria-expanded', 'true');
+    await expect.poll(async () => page.evaluate(() => document.body.style.position)).toBe('fixed');
+    await expect.poll(async () => page.evaluate(() => document.body.style.overflow)).toBe('hidden');
 
     const moreNav = page.getByRole('navigation', { name: 'Дополнительная навигация' });
     await expect(moreNav).toBeVisible();
+    await expect(moreNav.getByText('Оставшиеся маршруты сгруппированы по роли и задаче')).toBeVisible();
+    await expect(moreNav.getByText('Раздел')).toBeVisible();
+    await expect(moreNav.getByText('Дашборд')).toBeVisible();
+    await expect(moreNav.getByText('Ядро')).toBeVisible();
     const pvpLink = page.locator('nav[aria-label="Дополнительная навигация"] a[href="/pvp"]').first();
     await expect(pvpLink).toBeVisible();
-    await pvpLink.tap();
+    await pvpLink.scrollIntoViewIfNeeded();
+    await pvpLink.click();
+    await expect(page).toHaveURL(/\/pvp$/);
 
+    await expect.poll(async () => page.evaluate(() => document.body.style.position)).toBe('');
+    await expect(moreButton).toHaveAttribute('aria-expanded', 'false');
     await expect(page.getByText(/Топ рейтинга/i).first()).toBeVisible();
     await expect(page.getByText(/Последние подтвержденные матчи/i).first()).toBeVisible();
     await expect(page.getByText('Vanguard').first()).toBeVisible();
     await expect(page.getByText('Raid Lead').first()).toBeVisible();
+
+    await moreButton.click();
+    await expect(moreButton).toHaveAttribute('aria-expanded', 'true');
+    const activePvpLink = page.locator('nav[aria-label="Дополнительная навигация"] a[href="/pvp"]').first();
+    await expect(activePvpLink).toHaveAttribute('aria-current', 'page');
+    await expect(activePvpLink.getByText('Текущий')).toBeVisible();
   });
 });
