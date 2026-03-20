@@ -37,3 +37,13 @@ export function useUser() {
   }
   return user;
 }
+
+export function useAuthState() {
+  const { user } = useAuth();
+
+  return {
+    isAuthenticated: Boolean(user),
+    authState: user ? ('authenticated' as const) : ('unauthenticated' as const),
+    user,
+  };
+}

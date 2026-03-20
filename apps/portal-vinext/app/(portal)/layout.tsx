@@ -10,5 +10,9 @@ export default async function PortalLayout({ children }: { children: React.React
   const token = cookieStore.get('auth_token')?.value;
   const session = await resolveSessionFromToken(token);
 
-  return <PortalShell initialUser={session.valid ? session.user : null}>{children}</PortalShell>;
+  return (
+    <PortalShell runtime="vinext" initialUser={session.valid ? session.user : null}>
+      {children}
+    </PortalShell>
+  );
 }

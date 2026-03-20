@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import BackgroundEffects from '@/components/effects/BackgroundEffects';
 import MainLayout from '@/components/shell/MainLayout';
 import PinScreen from '@/components/shell/PinScreen';
@@ -13,11 +13,25 @@ import type { User } from '@/lib/schemas/auth';
 
 interface PortalShellProps {
   initialUser: User | null;
+  runtime?: 'next' | 'vinext';
   children: React.ReactNode;
 }
 
-export default function PortalShell({ initialUser, children }: PortalShellProps) {
+export default function PortalShell({ initialUser, runtime = 'next', children }: PortalShellProps) {
   const [user, setUser] = useState<User | null>(initialUser);
+
+  useEffect(() => {
+    setUser(initialUser);
+  }, [initialUser]);
+
+  const authState = user ? 'authenticated' : 'unauthenticated';
+  const authStateLabel = useMemo(() => {
+    if (user) {
+      return `${runtime}:authenticated`;
+    }
+
+    return `${runtime}:unauthenticated`;
+  }, [runtime, user]);
 
   const handleAuthSuccess = (userData: User) => {
     setUser(userData);
@@ -33,24 +47,27 @@ export default function PortalShell({ initialUser, children }: PortalShellProps)
     }
   };
 
-  if (!user) {
-    return (
-      <>
-        <BackgroundEffects variant="auth" />
-        <PinScreen onAuthSuccess={handleAuthSuccess} />
-      </>
-    );
-  }
-
   return (
-    <AuthProvider user={user}>
-      <NotificationsProvider>
-        <PortalVisualEffects />
-        <ToastContainer />
-        <MainLayout user={user} onLogout={handleLogout}>
-          {children}
-        </MainLayout>
-      </NotificationsProvider>
-    </AuthProvider>
+    <div data-testid="portal-shell" data-runtime={runtime} data-auth-state={authState} data-auth-user-id={user?.id ?? ''}>
+      <span data-testid="runtime-badge" data-runtime={runtime} data-auth-state={authState} aria-hidden="true">
+        {authStateLabel}
+      </span>
+      {!user ? (
+        <>
+          <BackgroundEffects variant="auth" />
+          <PinScreen onAuthSuccess={handleAuthSuccess} />
+        </>
+      ) : (
+        <AuthProvider user={user}>
+          <NotificationsProvider>
+            <PortalVisualEffects />
+            <ToastContainer />
+            <MainLayout user={user} onLogout={handleLogout}>
+              {children}
+            </MainLayout>
+          </NotificationsProvider>
+        </AuthProvider>
+      )}
+    </div>
   );
 }

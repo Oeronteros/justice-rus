@@ -117,7 +117,7 @@ const schedulePayload = [
 ];
 
 async function loginThroughPinScreen(page: Page, user: VinextFixtureUser) {
-  await page.route('**/api/auth', async (route) => {
+  await page.route('**/api/auth*', async (route) => {
     if (route.request().method() !== 'POST') {
       await route.continue();
       return;
@@ -131,31 +131,60 @@ async function loginThroughPinScreen(page: Page, user: VinextFixtureUser) {
   });
 
   const nicknameField = page.getByPlaceholder('Ник в гильдии');
-  await nicknameField.evaluate((input, value) => {
-    const element = input as HTMLInputElement;
-    element.value = value;
-    element.dispatchEvent(new Event('input', { bubbles: true }));
-    element.dispatchEvent(new Event('change', { bubbles: true }));
-  }, user.nickname);
+  await nicknameField.fill(user.nickname);
   const passwordField = page.getByPlaceholder('Пароль');
-  await passwordField.evaluate((input, value) => {
-    const element = input as HTMLInputElement;
-    element.value = value;
-    element.dispatchEvent(new Event('input', { bubbles: true }));
-    element.dispatchEvent(new Event('change', { bubbles: true }));
-  }, 'very-secret-password');
+  await passwordField.fill('very-secret-password');
   await page.locator('form').getByRole('button', { name: 'Войти' }).click();
 }
 
 test.describe('vinext pilot smoke', () => {
   test.setTimeout(60000);
 
-  test('shows PinScreen on /news when session is missing', async ({ page }) => {
+  test('@shell-auth shows PinScreen on /news when session is missing', async ({ page }) => {
     await page.goto('/news');
 
+    await expect(page.getByTestId('portal-shell')).toHaveAttribute('data-runtime', 'vinext');
+    await expect(page.getByTestId('portal-shell')).toHaveAttribute('data-auth-state', 'unauthenticated');
+    await expect(page.getByTestId('runtime-badge')).toHaveAttribute('data-runtime', 'vinext');
+    await expect(page.getByTestId('runtime-badge')).toHaveAttribute('data-auth-state', 'unauthenticated');
     await expect(page.getByText('Доступ участника')).toBeVisible();
     await expect(page.getByPlaceholder('Ник в гильдии')).toBeVisible();
     await expect(page.locator('form').getByRole('button', { name: 'Войти' })).toBeVisible();
+  });
+
+  test.fixme('switches shell auth diagnostics on login and logout', async ({ page }) => {
+    await page.route((url) => url.pathname === '/api/news', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(newsPayload),
+      });
+    });
+
+    await page.route((url) => url.pathname === '/api/logout', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ success: true }),
+      });
+    });
+
+    await page.goto('/news');
+    await expect(page.getByTestId('portal-shell')).toHaveAttribute('data-auth-state', 'unauthenticated');
+
+    await loginThroughPinScreen(page, authResponse.user);
+
+    await expect(page.getByTestId('portal-shell')).toHaveAttribute('data-auth-state', 'authenticated');
+    await expect(page.getByTestId('portal-shell')).toHaveAttribute('data-auth-user-id', authResponse.user.id);
+    await expect(page.getByTestId('runtime-badge')).toHaveAttribute('data-auth-state', 'authenticated');
+    await expect(page.getByRole('navigation', { name: 'Основная навигация' })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Выйти' }).click();
+
+    await expect(page.getByTestId('portal-shell')).toHaveAttribute('data-auth-state', 'unauthenticated');
+    await expect(page.getByTestId('portal-shell')).toHaveAttribute('data-auth-user-id', '');
+    await expect(page.getByTestId('runtime-badge')).toHaveAttribute('data-auth-state', 'unauthenticated');
+    await expect(page.getByText('Доступ участника')).toBeVisible();
   });
 
   test.fixme('logs in on /news and renders protected content', async ({ page }) => {

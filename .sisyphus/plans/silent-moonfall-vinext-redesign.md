@@ -154,7 +154,7 @@ Wave 4: optimization, deletion, release hardening (`13`, `14`)
 
   **Commit**: YES | Message: `chore(cutover): define vinext parity manifest` | Files: `README.md`, `docs/vinext-staging-cutover.md`, `docs/vinext-route-parity.md`, `lib/platform/vinext-cutover.ts`
 
-- [ ] 2. Build StyleX token system and cross-theme primitives for Vinext
+- [x] 2. Build StyleX token system and cross-theme primitives for Vinext
 
   **What to do**: Consolidate the visual system for the Vinext app around StyleX tokens, two first-class themes, and reusable primitives for page chrome, cards, buttons, panels, forms, and overlays. Port only the portal-surface design language needed for the migration and define exact design tokens for color, typography, spacing, elevation, motion, and state styles. Every new Vinext screen must consume these primitives rather than ad-hoc CSS.
   **Must NOT do**: Do not keep styled-components or Tailwind-compat patterns alive inside Vinext; do not rely on `app/globals.css` for new component styling.

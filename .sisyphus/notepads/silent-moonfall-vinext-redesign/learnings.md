@@ -36,3 +36,14 @@
 - The corrected task-2 patch keeps the cutover asset rewrite fix, but also restores real shared theming work to the tracked diff by making `lib/stylex/primitives.stylex.ts` the source of probe entries (`themePrimitiveProbeEntries`) instead of leaving the probe node list hardcoded only in `apps/portal-vinext/app/layout.tsx`.
 - `components/shared/Ui.stylex.ts` now re-exports the shared probe entries, and `components/theme/AppThemeBoundary.tsx` exposes a tiny optional `qaSlot` seam so Vinext can mount the hidden theme-primitives probe inside the real theme boundary without broad shell/provider refactors.
 - `apps/portal-vinext/app/layout.tsx` now maps the shared probe entries into hidden probe nodes through that boundary seam, so the page/card/panel/button/input/overlay contract is shared code in the task diff rather than test-only or layout-inline behavior.
+
+## 2026-03-20 Task 2 hydrated harness contract
+- `components/theme/AppThemeBoundary.tsx` now treats the hidden `[data-testid="theme-toggle"]` harness as a post-hydration contract: the effect that installs `setThemeMode()` is also the only place that marks `data-theme-ready="true"`.
+- The hidden harness now exposes `data-theme-current` as the concrete `resolvedTheme` and `data-theme-mode` as the raw selection mode, so QA can distinguish resolved light/dark state from persisted `system|dark|light` mode without reintroducing any pre-hydration DOM writes.
+- `e2e/vinext-theme-primitives.spec.ts` now waits for both `data-theme-ready="true"` and a live harness setter before switching modes, which removes the startup race while keeping the hydration-safe path intact.
+
+## 2026-03-20 Task 3 shell/provider/auth boundary notes
+- `components/shell/PortalShell.tsx` now renders both unauthenticated and authenticated states under one stable root (`[data-testid="portal-shell"]`) with runtime/auth diagnostics on attributes: `data-runtime`, `data-auth-state`, and `data-auth-user-id`.
+- Added a small runtime/auth probe node (`[data-testid="runtime-badge"]`) inside `PortalShell` so parity QA can assert runtime and auth boundary state transitions without depending on nav/header redesign work.
+- `apps/portal-vinext/app/(portal)/layout.tsx` now passes `runtime="vinext"` into shared `PortalShell`, preserving shared contracts (`resolveSessionFromToken` -> `initialUser`) while making Vinext-vs-Next boundary assertions explicit.
+- `lib/auth/context.tsx` now exports `useAuthState()` (`isAuthenticated`, `authState`, `user`) as a minimal shared auth-state diagnostics hook for downstream parity checks.
