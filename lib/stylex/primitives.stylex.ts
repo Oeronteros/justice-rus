@@ -371,3 +371,16 @@ export const themePrimitiveProbeStyles = {
   input: themePrimitives.input,
   overlayPanelNarrow: themePrimitives.overlayPanelNarrow,
 } as const satisfies Record<(typeof themePrimitiveProbeContract)[number], readonly unknown[]>;
+
+export const themePrimitiveProbeEntries = [
+  { testId: 'theme-probe-page', primitive: 'pageChrome', styles: themePrimitiveProbeStyles.pageChrome },
+  { testId: 'theme-probe-card', primitive: 'card', styles: themePrimitiveProbeStyles.card },
+  { testId: 'theme-probe-panel', primitive: 'panel', styles: themePrimitiveProbeStyles.panel },
+  { testId: 'theme-probe-button', primitive: 'button', styles: themePrimitiveProbeStyles.button },
+  { testId: 'theme-probe-input', primitive: 'input', styles: themePrimitiveProbeStyles.input },
+  { testId: 'theme-probe-overlay', primitive: 'overlayPanelNarrow', styles: themePrimitiveProbeStyles.overlayPanelNarrow },
+] as const satisfies ReadonlyArray<{
+  testId: string;
+  primitive: (typeof themePrimitiveProbeContract)[number];
+  styles: readonly unknown[];
+}>;

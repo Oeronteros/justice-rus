@@ -249,6 +249,10 @@ export function buildVinextCutoverRewrites(options?: {
       source: '/:path((?:@).*)',
       destination: `${origin}/:path`,
     },
+    {
+      source: '/node_modules/:path*',
+      destination: `${origin}/node_modules/:path*`,
+    },
   ];
 
   return [...routeRewrites, ...vinextDevAssetRewrites];

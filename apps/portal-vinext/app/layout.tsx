@@ -6,7 +6,7 @@ import '@/app/stylex.css';
 import '@/app/globals.css';
 import { rootLayoutStyles } from '@/app/layout.stylex';
 import StyledComponentsRegistry from '@/app/styled-components-registry';
-import { uiThemeProbeContract, uiThemeProbeStyles } from '@/components/shared/Ui.stylex';
+import { uiThemeProbeContract, uiThemeProbeEntries, uiThemeProbeStyles } from '@/components/shared/Ui.stylex';
 import InputPerformanceMode from '@/components/InputPerformanceMode';
 import AppTelemetry from '@/components/platform/AppTelemetry';
 import AppThemeBoundary from '@/components/theme/AppThemeBoundary';
@@ -216,6 +216,41 @@ const themeBootScript = `
 `;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const themeProbeSlot = (
+    <div
+      data-testid="theme-primitives-probe"
+      data-theme-primitives={uiThemeProbeContract.join(',')}
+      aria-hidden="true"
+      {...stylex.props(uiThemeProbeStyles.rail)}
+    >
+      <div {...stylex.props(uiThemeProbeStyles.stack)}>
+        {uiThemeProbeEntries.map((entry) => {
+          if (entry.primitive === 'pageChrome') {
+            return <div key={entry.testId} data-testid={entry.testId} data-theme-probe-primitive={entry.primitive} {...stylex.props(...entry.styles, uiThemeProbeStyles.page)} />;
+          }
+
+          if (entry.primitive === 'button') {
+            return (
+              <button key={entry.testId} data-testid={entry.testId} data-theme-probe-primitive={entry.primitive} type="button" tabIndex={-1} {...stylex.props(...entry.styles, uiThemeProbeStyles.button)}>
+                Theme probe
+              </button>
+            );
+          }
+
+          if (entry.primitive === 'input') {
+            return <input key={entry.testId} data-testid={entry.testId} data-theme-probe-primitive={entry.primitive} tabIndex={-1} readOnly value="Theme probe" {...stylex.props(...entry.styles)} />;
+          }
+
+          if (entry.primitive === 'overlayPanelNarrow') {
+            return <div key={entry.testId} data-testid={entry.testId} data-theme-probe-primitive={entry.primitive} {...stylex.props(...entry.styles, uiThemeProbeStyles.overlay)} />;
+          }
+
+          return <div key={entry.testId} data-testid={entry.testId} data-theme-probe-primitive={entry.primitive} {...stylex.props(...entry.styles, uiThemeProbeStyles.surface)} />;
+        })}
+      </div>
+    </div>
+  );
+
   return (
     <html lang={defaultLanguage} className={`${bodyFont.variable} ${displayFont.variable}`}>
       <body>
@@ -223,30 +258,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
           <InputPerformanceMode />
           <ThemeProvider>
-            <AppThemeBoundary>
+            <AppThemeBoundary qaSlot={themeProbeSlot}>
               <QueryProvider>
                 <I18nProvider>
                   <Suspense fallback={<div {...stylex.props(rootLayoutStyles.fallback)} />}>
-                    <>
-                      <div
-                        data-testid="theme-primitives-probe"
-                        data-theme-primitives={uiThemeProbeContract.join(',')}
-                        aria-hidden="true"
-                        {...stylex.props(uiThemeProbeStyles.rail)}
-                      >
-                        <div {...stylex.props(uiThemeProbeStyles.stack)}>
-                          <div data-testid="theme-probe-page" data-theme-probe-primitive="pageChrome" {...stylex.props(...themePrimitiveProbeStyles.pageChrome, uiThemeProbeStyles.page)} />
-                          <div data-testid="theme-probe-card" data-theme-probe-primitive="card" {...stylex.props(...themePrimitiveProbeStyles.card, uiThemeProbeStyles.surface)} />
-                          <div data-testid="theme-probe-panel" data-theme-probe-primitive="panel" {...stylex.props(...themePrimitiveProbeStyles.panel, uiThemeProbeStyles.surface)} />
-                          <button data-testid="theme-probe-button" data-theme-probe-primitive="button" type="button" tabIndex={-1} {...stylex.props(...themePrimitiveProbeStyles.button, uiThemeProbeStyles.button)}>
-                            Theme probe
-                          </button>
-                          <input data-testid="theme-probe-input" data-theme-probe-primitive="input" tabIndex={-1} readOnly value="Theme probe" {...stylex.props(...themePrimitiveProbeStyles.input)} />
-                          <div data-testid="theme-probe-overlay" data-theme-probe-primitive="overlayPanelNarrow" {...stylex.props(...themePrimitiveProbeStyles.overlayPanelNarrow, uiThemeProbeStyles.overlay)} />
-                        </div>
-                      </div>
-                      <div {...stylex.props(rootLayoutStyles.content)}>{children}</div>
-                    </>
+                    <div {...stylex.props(rootLayoutStyles.content)}>{children}</div>
                   </Suspense>
                 </I18nProvider>
               </QueryProvider>

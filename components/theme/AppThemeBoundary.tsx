@@ -40,7 +40,13 @@ function syncThemeProbeNode(mode: ThemeMode, resolvedTheme: 'dark' | 'light') {
   return true;
 }
 
-export default function AppThemeBoundary({ children }: { children: React.ReactNode }) {
+export default function AppThemeBoundary({
+  children,
+  qaSlot,
+}: {
+  children: React.ReactNode;
+  qaSlot?: React.ReactNode;
+}) {
   const { mode, resolvedTheme, setMode } = useTheme();
   const themeToggleHarnessRef = useRef<HTMLDivElement | null>(null);
 
@@ -120,6 +126,7 @@ export default function AppThemeBoundary({ children }: { children: React.ReactNo
           </button>
         ))}
       </div>
+      {qaSlot}
       {children}
     </div>
   );

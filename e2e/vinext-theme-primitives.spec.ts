@@ -1,6 +1,18 @@
 import { expect, test, type Page } from '@playwright/test';
 import { addVinextAuthCookie, type VinextFixtureUser } from './utils/vinext-auth';
 
+const blockedConsolePatterns = [
+  'Failed to fetch dynamically imported module',
+  '/@id/__x00__virtual:vite-rsc/entry-browser',
+  '/node_modules/',
+  '/.vite/',
+] as const;
+
+const assetProbePaths = [
+  '/node_modules/vite/dist/client/env.mjs',
+  '/node_modules/@vitejs/plugin-rsc/dist/browser.js',
+] as const;
+
 const fixtureUser: VinextFixtureUser = {
   id: 'pin-member',
   nickname: 'Smoke Member',
@@ -107,10 +119,36 @@ async function switchThemeMode(page: Page, nextMode: 'light' | 'dark') {
   }
 }
 
+async function readAssetProbeStatuses(page: Page) {
+  return await page.evaluate(async (paths) => {
+    return await Promise.all(
+      paths.map(async (url) => {
+        const response = await fetch(url);
+
+        return {
+          url,
+          status: response.status,
+          contentType: response.headers.get('content-type') ?? '',
+        };
+      })
+    );
+  }, [...assetProbePaths]);
+}
+
 test.describe('vinext theme primitives @theme-primitives', () => {
   test.setTimeout(60000);
 
   test('toggles shared light and dark themes without dropping the legacy boundary contract', async ({ page }) => {
+    const consoleErrors: string[] = [];
+
+    page.on('console', (message) => {
+      if (message.type() !== 'error') {
+        return;
+      }
+
+      consoleErrors.push(message.text());
+    });
+
     await openAuthenticatedNews(page);
 
     const boundary = page.getByTestId('theme-boundary');
@@ -123,6 +161,18 @@ test.describe('vinext theme primitives @theme-primitives', () => {
     await expect(primitivesProbe).toHaveAttribute('data-theme-primitives', 'pageChrome,card,panel,button,input,overlayPanelNarrow');
     await expect(boundary).toHaveClass(/theme-wuxia/);
     await expect(boundary).toHaveAttribute('data-theme-mode', 'system');
+
+    const initialAssetStatuses = await readAssetProbeStatuses(page);
+    expect(initialAssetStatuses).toEqual(
+      expect.arrayContaining(
+        assetProbePaths.map((url) =>
+          expect.objectContaining({
+            url,
+            status: 200,
+          })
+        )
+      )
+    );
 
     await switchThemeMode(page, 'light');
 
@@ -193,5 +243,8 @@ test.describe('vinext theme primitives @theme-primitives', () => {
     expect(darkProbe.button.className).toContain('primitives__buttonStyles.secondary');
     expect(darkProbe.input.className).toContain('primitives__formStyles.field');
     expect(darkProbe.overlay.className).toContain('primitives__overlayStyles.panel');
+
+    const relevantConsoleErrors = consoleErrors.filter((entry) => blockedConsolePatterns.some((pattern) => entry.includes(pattern)));
+    expect(relevantConsoleErrors).toEqual([]);
   });
 });

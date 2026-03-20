@@ -16,12 +16,15 @@ Starting local cutover in 'all' mode
 [next] - Network:       http://172.18.0.1:3000
 [next] - Environments: .env.local
 [next] ✓ Starting...
-[next] ✓ Ready in 2.5s
-[next] (node:15540) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+[next] ✓ Ready in 4.3s
+[next] (node:22188) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
 [next] (Use `node --trace-deprecation ...` to show where the warning was created)
 [vinext] [vite] connected.
 [vinext] [vite] connected.
-[vinext]  GET /news 200 in 15.0s (compile: 4.5s, render: 3.5s)
+[vinext]  GET /news 200 in 25.2s (compile: 8.0s, render: 5.5s)
 [next]   Using external babel configuration from D:\Desktop\justice-ru\babel.config.js
 [next] ○ Compiling /_not-found/page ...
-[next]  GET /node_modules/vite/dist/client/env.mjs 404 in 32.0s (compile: 31.6s, render: 399ms)
+[vinext] [2m16:14:06[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32m✨ new dependencies optimized: [33mstyled-components[32m[39m
+[vinext] [2m16:14:06[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32m✨ optimized dependencies changed. reloading[39m
+[vinext]  GET /news 200 in 101ms (compile: 4ms, render: 92ms)
+[next]  GET /app/(portal)/news/page.tsx 404 in 31.5s (compile: 30.8s, render: 783ms)
