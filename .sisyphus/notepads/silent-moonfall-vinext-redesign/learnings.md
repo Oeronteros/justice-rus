@@ -26,3 +26,8 @@
 
 ## 2026-03-19 Task 1 evidence semantics correction
 - Updated `e2e/vinext-route-parity.spec.ts` to remove `observedOwner` from evidence rows because HTTP status alone cannot prove runtime ownership in combined cutover mode; evidence now records `expectedOwner`, `status`, and `expectedStatus` without fabricating owner inference.
+
+## 2026-03-20 Task 2 StyleX probe consolidation
+- Consolidated the Vinext theme-probe contract into shared StyleX primitives (`lib/stylex/primitives.stylex.ts`) and re-exported it from `components/shared/Ui.stylex.ts`, so the hidden QA probe now derives its primitive list and probe styles from the same shared source as the actual token-backed primitives.
+- `apps/portal-vinext/app/layout.tsx` boot-time theme sync now updates `[data-testid="theme-primitives-probe"]` alongside the legacy `theme-wuxia` boundary and toggle harnesses; this closes a race where scripted theme switches updated the boundary/toggle before React effects reapplied probe readiness attributes.
+- `components/theme/AppThemeBoundary.tsx` now retries probe attribute sync for a short window after mount/theme changes, which keeps the shared boundary compatible with Suspense-delayed Vinext probe markup without widening into shell/provider migration work.

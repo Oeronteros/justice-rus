@@ -22,10 +22,23 @@ const themeToggleHarnessStyles = {
 } as const;
 
 const themeModes = ['system', 'dark', 'light'] as const;
+const themePrimitivesProbeSelector = '[data-testid="theme-primitives-probe"]';
 
 type ThemeToggleHarnessElement = HTMLDivElement & {
   setThemeMode?: (mode: ThemeMode) => void;
 };
+
+function syncThemeProbeNode(mode: ThemeMode, resolvedTheme: 'dark' | 'light') {
+  const probeNode = document.querySelector(themePrimitivesProbeSelector);
+  if (!probeNode) {
+    return false;
+  }
+
+  probeNode.setAttribute('data-theme-current', resolvedTheme);
+  probeNode.setAttribute('data-theme-mode', mode);
+  probeNode.setAttribute('data-theme-ready', 'true');
+  return true;
+}
 
 export default function AppThemeBoundary({ children }: { children: React.ReactNode }) {
   const { mode, resolvedTheme, setMode } = useTheme();
@@ -47,14 +60,25 @@ export default function AppThemeBoundary({ children }: { children: React.ReactNo
   }, [setMode]);
 
   useEffect(() => {
-    const probeNode = document.querySelector('[data-testid="theme-primitives-probe"]');
-    if (!probeNode) {
-      return;
-    }
+    let timeoutId: number | null = null;
+    let attempts = 0;
 
-    probeNode.setAttribute('data-theme-current', resolvedTheme);
-    probeNode.setAttribute('data-theme-mode', mode);
-    probeNode.setAttribute('data-theme-ready', 'true');
+    const syncProbe = () => {
+      if (syncThemeProbeNode(mode, resolvedTheme) || attempts >= 10) {
+        return;
+      }
+
+      attempts += 1;
+      timeoutId = window.setTimeout(syncProbe, 50);
+    };
+
+    syncProbe();
+
+    return () => {
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId);
+      }
+    };
   }, [mode, resolvedTheme]);
 
   const themeProps = mergeStylexProps(

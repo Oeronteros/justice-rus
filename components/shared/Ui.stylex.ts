@@ -1,8 +1,9 @@
 import * as stylex from '@stylexjs/stylex';
-import { themePrimitives } from '../../lib/stylex/primitives.stylex';
+import { themePrimitiveProbeContract, themePrimitives } from '../../lib/stylex/primitives.stylex';
 import { colors, layout, motion, radius, spacing, typography } from '../../lib/stylex/tokens.stylex';
 
 export const uiPrimitives = themePrimitives;
+export const uiThemeProbeContract = themePrimitiveProbeContract;
 
 export const uiStyles = stylex.create({
   sectionShell: {

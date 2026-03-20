@@ -353,3 +353,21 @@ export const themePrimitives = {
   overlayPanelNarrow: [overlayStyles.panel, overlayStyles.panelNarrow],
   overlayPanelFullBleed: [overlayStyles.panel, overlayStyles.panelFullBleed],
 } as const;
+
+export const themePrimitiveProbeContract = [
+  'pageChrome',
+  'card',
+  'panel',
+  'button',
+  'input',
+  'overlayPanelNarrow',
+] as const;
+
+export const themePrimitiveProbeStyles = {
+  pageChrome: themePrimitives.pageChrome,
+  card: themePrimitives.cardStatic,
+  panel: themePrimitives.panel,
+  button: themePrimitives.secondaryButton,
+  input: themePrimitives.input,
+  overlayPanelNarrow: themePrimitives.overlayPanelNarrow,
+} as const satisfies Record<(typeof themePrimitiveProbeContract)[number], readonly unknown[]>;

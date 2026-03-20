@@ -1,0 +1,27 @@
+
+> justice-ru@2.0.0 dev:cutover:all
+> node scripts/dev-cutover.mjs all
+
+Starting local cutover in 'all' mode
+- Next: http://127.0.0.1:3000
+- Vinext: http://127.0.0.1:3101
+[vinext] > justice-ru@2.0.0 dev:vinext
+[vinext] > npm --prefix apps/portal-vinext run dev
+[vinext] > dev
+[vinext] > vinext dev --port 3101 --hostname 127.0.0.1
+[vinext]   vinext dev  (Vite 8.0.0)
+[vinext]   [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m3101[22m/[39m
+[next] ▲ Next.js 16.1.6 (Turbopack, Cache Components)
+[next] - Local:         http://localhost:3000
+[next] - Network:       http://172.18.0.1:3000
+[next] - Environments: .env.local
+[next] ✓ Starting...
+[next] ✓ Ready in 2.5s
+[next] (node:15540) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+[next] (Use `node --trace-deprecation ...` to show where the warning was created)
+[vinext] [vite] connected.
+[vinext] [vite] connected.
+[vinext]  GET /news 200 in 15.0s (compile: 4.5s, render: 3.5s)
+[next]   Using external babel configuration from D:\Desktop\justice-ru\babel.config.js
+[next] ○ Compiling /_not-found/page ...
+[next]  GET /node_modules/vite/dist/client/env.mjs 404 in 32.0s (compile: 31.6s, render: 399ms)
