@@ -87,6 +87,7 @@ describe('vinext cutover helpers', () => {
       { source: '/guides', destination: 'http://127.0.0.1:3101/guides' },
       { source: '/guides/:path*', destination: 'http://127.0.0.1:3101/guides/:path*' },
       { source: '/:path((?:@).*)', destination: 'http://127.0.0.1:3101/:path' },
+      { source: '/app/:path*', destination: 'http://127.0.0.1:3101/app/:path*' },
       { source: '/node_modules/:path*', destination: 'http://127.0.0.1:3101/node_modules/:path*' },
     ]);
   });
@@ -96,6 +97,7 @@ describe('vinext cutover helpers', () => {
     expect(rewrites).toEqual(
       expect.arrayContaining([
         { source: '/:path((?:@).*)', destination: 'http://127.0.0.1:3101/:path' },
+        { source: '/app/:path*', destination: 'http://127.0.0.1:3101/app/:path*' },
         { source: '/node_modules/:path*', destination: 'http://127.0.0.1:3101/node_modules/:path*' },
       ])
     );

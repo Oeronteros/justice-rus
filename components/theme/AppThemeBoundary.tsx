@@ -1,7 +1,7 @@
 'use client';
 
 import * as stylex from '@stylexjs/stylex';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { rootLayoutStyles } from '@/app/layout.stylex';
 import { useTheme, type ThemeMode } from '@/lib/theme/context';
 import { appShellStyles } from '@/lib/stylex/primitives.stylex';
@@ -49,6 +49,7 @@ export default function AppThemeBoundary({
 }) {
   const { mode, resolvedTheme, setMode } = useTheme();
   const themeToggleHarnessRef = useRef<HTMLDivElement | null>(null);
+  const [isHarnessReady, setIsHarnessReady] = useState(false);
 
   useEffect(() => {
     const harnessNode = themeToggleHarnessRef.current as ThemeToggleHarnessElement | null;
@@ -59,9 +60,13 @@ export default function AppThemeBoundary({
     harnessNode.setThemeMode = (nextMode: ThemeMode) => {
       setMode(nextMode);
     };
+    harnessNode.dataset.themeReady = 'true';
+    setIsHarnessReady(true);
 
     return () => {
       delete harnessNode.setThemeMode;
+      delete harnessNode.dataset.themeReady;
+      setIsHarnessReady(false);
     };
   }, [setMode]);
 
@@ -111,8 +116,9 @@ export default function AppThemeBoundary({
         style={themeToggleHarnessStyles}
         aria-hidden="true"
         data-testid="theme-toggle"
-        data-theme-current={mode}
-        data-theme-ready="true"
+        data-theme-current={resolvedTheme}
+        data-theme-mode={mode}
+        data-theme-ready={isHarnessReady ? 'true' : 'false'}
       >
         {themeModes.map((themeMode) => (
           <button

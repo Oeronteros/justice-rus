@@ -250,6 +250,10 @@ export function buildVinextCutoverRewrites(options?: {
       destination: `${origin}/:path`,
     },
     {
+      source: '/app/:path*',
+      destination: `${origin}/app/:path*`,
+    },
+    {
       source: '/node_modules/:path*',
       destination: `${origin}/node_modules/:path*`,
     },

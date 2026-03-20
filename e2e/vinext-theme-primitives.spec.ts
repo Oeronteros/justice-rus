@@ -6,6 +6,8 @@ const blockedConsolePatterns = [
   '/@id/__x00__virtual:vite-rsc/entry-browser',
   '/node_modules/',
   '/.vite/',
+  'A tree hydrated but some attributes of the server rendered HTML didn\'t match the client properties',
+  '/app/(portal)/news/page.tsx',
 ] as const;
 
 const assetProbePaths = [
@@ -82,30 +84,35 @@ async function readThemeProbeState(page: Page) {
 
 async function switchThemeMode(page: Page, nextMode: 'light' | 'dark') {
   const toggle = page.getByTestId('theme-toggle');
-  await expect(toggle).toHaveAttribute('data-theme-ready', 'true');
   await expect
     .poll(
       () =>
         page.evaluate(() => {
-          return typeof (window as Window & {
-            __silentMoonfallSetThemeMode?: unknown;
-          }).__silentMoonfallSetThemeMode;
+          const harnessNode = document.querySelector('[data-testid="theme-toggle"]') as
+            | (HTMLDivElement & { setThemeMode?: unknown })
+            | null;
+
+          return {
+            ready: harnessNode?.dataset.themeReady ?? 'false',
+            hasSetter: typeof harnessNode?.setThemeMode === 'function',
+          };
         }),
       { timeout: 10000 }
     )
-    .toBe('function');
+    .toEqual({ ready: 'true', hasSetter: true });
+  await expect(toggle).toHaveAttribute('data-theme-current', /light|dark/);
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
     await page.evaluate((mode) => {
-      const setThemeMode = (window as Window & {
-        __silentMoonfallSetThemeMode?: (nextMode: 'system' | 'dark' | 'light') => void;
-      }).__silentMoonfallSetThemeMode;
+      const harnessNode = document.querySelector('[data-testid="theme-toggle"]') as
+        | (HTMLDivElement & { setThemeMode?: (nextMode: 'system' | 'dark' | 'light') => void })
+        | null;
 
-      if (typeof setThemeMode !== 'function') {
-        throw new Error('Theme mode hook is not ready');
+      if (!harnessNode || harnessNode.dataset.themeReady !== 'true' || typeof harnessNode.setThemeMode !== 'function') {
+        throw new Error('Theme harness is not hydrated');
       }
 
-      setThemeMode(mode);
+      harnessNode.setThemeMode(mode);
     }, nextMode);
 
     try {
