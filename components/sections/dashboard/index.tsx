@@ -1649,25 +1649,27 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
   }
 
   return (
-    <section {...stylex.props(uiStyles.sectionShell)}>
+    <section {...stylex.props(uiStyles.sectionShell)} data-testid="dashboard-section">
       <div {...stylex.props(uiStyles.sectionContainer)}>
-        <div {...stylex.props(uiStyles.stackLg)}>
+        <div {...stylex.props(uiStyles.stackLg)} data-testid="dashboard-signal-strip">
           <DashboardRegionShell region={resolveDashboardRegion('priority_summary')}>
-            <DashboardHeroRegion
-              copy={copy}
-              liveTone={liveTone}
-              liveLabel={liveLabel}
-              nextEvent={nextEvent}
-              rosterSnapshot={rosterSnapshot}
-              helpSnapshot={helpSnapshot}
-              absenceSnapshot={absenceSnapshot}
-              newsSnapshot={newsSnapshot}
-              user={user}
-              language={language}
-              pvpSnapshot={pvpSnapshot}
-              isOfficer={isOfficer}
-              officerSignals={officerSignals}
-            />
+            <div data-testid="dashboard-hero">
+              <DashboardHeroRegion
+                copy={copy}
+                liveTone={liveTone}
+                liveLabel={liveLabel}
+                nextEvent={nextEvent}
+                rosterSnapshot={rosterSnapshot}
+                helpSnapshot={helpSnapshot}
+                absenceSnapshot={absenceSnapshot}
+                newsSnapshot={newsSnapshot}
+                user={user}
+                language={language}
+                pvpSnapshot={pvpSnapshot}
+                isOfficer={isOfficer}
+                officerSignals={officerSignals}
+              />
+            </div>
 
             <GuildOperationsDeck
               language={language}

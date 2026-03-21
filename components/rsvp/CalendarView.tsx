@@ -271,7 +271,7 @@ export function CalendarView({ user, language }: CalendarViewProps) {
   };
 
   return (
-    <section {...stylex.props(uiStyles.sectionShell)}>
+    <section {...stylex.props(uiStyles.sectionShell)} data-testid="calendar-view">
       <div {...stylex.props(uiStyles.sectionContainer)}>
         <SectionHero
           icon={<WuxiaIcon name="calendar" className="w-5 h-5" />}

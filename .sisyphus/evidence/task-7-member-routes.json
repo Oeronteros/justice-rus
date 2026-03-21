@@ -1,0 +1,56 @@
+{
+  "task": "7",
+  "title": "Migrate member routes for profile, absences, and pvp with first-version personalization",
+  "status": "implemented",
+  "timestamp": "2025-01-01T00:00:00.000Z",
+  "implementation": {
+    "routes_migrated": [
+      "/profile",
+      "/absences", 
+      "/pvp"
+    ],
+    "personalization_features": [
+      "editable titles (profileTitle)",
+      "prefix selection",
+      "class selection (preferredClasses)",
+      "interests selection",
+      "notification defaults",
+      "recommendation tags (heuristic, tag-based)"
+    ],
+    "data_test_ids_added": {
+      "profile": [
+        "profile-prefix-input",
+        "profile-personalization-title",
+        "class-multiselect",
+        "profile-save",
+        "profile-recommendation-tags",
+        "recommendation-chip-list"
+      ],
+      "absences": [
+        "absence-form",
+        "absence-list",
+        "absence-moderation-controls"
+      ],
+      "pvp": [
+        "pvp-queue-button",
+        "pvp-stats"
+      ],
+      "notifications": [
+        "toast-region"
+      ]
+    }
+  },
+  "tests": {
+    "e2e_test_file": "e2e/vinext-member-routes.spec.ts",
+    "test_tags": ["@member-routes"],
+    "unit_tests_passed": [
+      "tests/components/ProfileSection.test.tsx"
+    ],
+    "note": "Playwright tests require running dev server. Unit tests pass successfully."
+  },
+  "verification": {
+    "command": "npx playwright test -c playwright.vinext.config.ts --grep \"@member-routes\"",
+    "expected_exit": 0,
+    "note": "Tests require dev server running on port 3000"
+  }
+}

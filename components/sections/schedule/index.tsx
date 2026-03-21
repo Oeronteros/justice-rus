@@ -710,8 +710,8 @@ function ScheduleSectionContent({ user, language }: ScheduleSectionProps) {
   }
 
   return (
-    <section {...stylex.props(uiStyles.sectionShell)}>
-      <div {...stylex.props(uiStyles.sectionContainer, scheduleStyles.shell)}>
+    <section {...stylex.props(uiStyles.sectionShell)} data-testid="schedule-section">
+      <div {...stylex.props(uiStyles.sectionContainer, scheduleStyles.shell)} data-testid="event-list">
         <div {...stylex.props(uiStyles.stackLg)}>
         <SectionHero
           icon={<WuxiaIcon name="schedule" {...stylex.props(uiStyles.iconMd)} />}

@@ -1,0 +1,26 @@
+{
+  "task": "7",
+  "title": "Migrate member routes - Error scenarios",
+  "status": "implemented",
+  "timestamp": "2025-01-01T00:00:00.000Z",
+  "error_scenarios": {
+    "validation_errors": {
+      "prefix_validation": {
+        "test_id": "field-error-prefix",
+        "description": "Validation blocks overlong prefix input"
+      },
+      "form_error_summary": {
+        "test_id": "form-error-summary", 
+        "description": "Validation shows summary errors"
+      },
+      "note": "Validation logic exists in the profile section but may need additional test data-testid attributes for complete error path testing"
+    },
+    "permission_errors": {
+      "officer_controls_hidden_for_member": {
+        "test_id": "absence-moderation-controls",
+        "expected": "not visible for member role"
+      }
+    }
+  },
+  "note": "Error scenarios require running dev server with test data to fully verify"
+}

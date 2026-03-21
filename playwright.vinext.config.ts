@@ -13,6 +13,7 @@ export default defineConfig({
     'vinext-nav.spec.ts',
     'vinext-data-adapter.spec.ts',
     'vinext-member-routes.spec.ts',
+    'vinext-ops-routes.spec.ts',
   ],
   timeout: 120000,
   fullyParallel: false,

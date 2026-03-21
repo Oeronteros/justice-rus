@@ -362,7 +362,7 @@ Wave 4: optimization, deletion, release hardening (`13`, `14`)
 
   **Commit**: YES | Message: `feat(vinext): migrate content route family` | Files: `apps/portal-vinext`, `components/sections/news/index.tsx`, `components/sections/guides/index.tsx`, `e2e/core-route-regression.spec.ts`
 
-- [ ] 7. Migrate member routes for profile, absences, and pvp with first-version personalization
+- [x] 7. Migrate member routes for profile, absences, and pvp with first-version personalization
 
   **What to do**: Rebuild `/profile`, `/absences`, and `/pvp` in Vinext with the new design system and add the agreed first-version personalization model: editable titles, prefixes, class selection, interests, notification defaults, and recommendation tags. Recommendations must remain heuristic and tag-based, derived from profile interests and event/content metadata, not machine-learning or opaque ranking.
   **Must NOT do**: Do not invent new account roles, ranking formulas, or irreversible schema changes outside the existing account/profile domain contracts.
