@@ -51,3 +51,14 @@
 ## 2026-03-21 Task 5 stale NewsSection hooks mock
 - `tests/components/NewsSection.test.tsx` mocked `@/lib/news/hooks` without `newsKeys` (and `usePrefetchNews`), which became stale once `lib/news/adapter.ts` imported those exports for the shared adapter contract.
 - Fixed only the test-side contract by extending the hooks mock shape (including `newsKeys` and `usePrefetchNews`) so adapter-driven imports resolve in test runtime without altering production adapter code.
+n## 2026-03-21 Task 6 content-route lane contractn-  must register its mocked  handlers before the first authenticated navigation in the happy path, otherwise  and  boot against live dashboard data and the alias assertions become nondeterministic.n- The lane is stable when it uses a valid  auth fixture for no-DB runs, exact pathname-based API mocks (to avoid intercepting Vite  module requests), and a guide-detail payload whose comments use the schema field  rather than .
+
+## 2026-03-21 Task 6 content-route lane contract (corrected)
+- Note: line 54 in this file came from a shell-escaped append failure; use this corrected block as authoritative for task 6.
+-  must register its mocked  handlers before the first authenticated navigation in the happy path, otherwise  and  boot against live dashboard data and the alias assertions become nondeterministic.
+- The lane is stable when it uses a valid  auth fixture for no-DB runs, exact pathname-based API mocks (to avoid intercepting Vite  module requests), and a guide-detail payload whose comments use the schema field  rather than .
+
+## 2026-03-21 Task 6 content-route lane contract (corrected)
+- Note: line 54 in this file came from a shell-escaped append failure; use this corrected block as authoritative for task 6.
+- `e2e/vinext-content-routes.spec.ts` must register its mocked `/api/...` handlers before the first authenticated navigation in the happy path, otherwise `/` and `/about` boot against live dashboard data and the alias assertions become nondeterministic.
+- The lane is stable when it uses a valid `pin-officer` auth fixture for no-DB runs, exact pathname-based API mocks (to avoid intercepting Vite `/@fs/.../lib/api/*.ts` module requests), and a guide-detail payload whose comments use the schema field `comment` rather than `content`.

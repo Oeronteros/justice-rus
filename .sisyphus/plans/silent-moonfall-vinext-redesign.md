@@ -321,7 +321,7 @@ Wave 4: optimization, deletion, release hardening (`13`, `14`)
 
   **Commit**: YES | Message: `refactor(vinext): share feature data adapters` | Files: `apps/portal-vinext`, `lib/api`, `lib/server`, `lib/news/hooks.ts`, `tests/api/schedule-route.test.ts`
 
-- [ ] 6. Migrate and redesign the content routes for about, news, help, and guides
+- [x] 6. Migrate and redesign the content routes for about, news, help, and guides
 
   **What to do**: Rebuild the high-visibility content routes on Vinext using the new shell and StyleX primitives. The redesign should keep the current content model and role-based actions intact while modernizing hero treatment, list/detail transitions, empty states, mobile layout, and editorial affordances. Include `/`, `/about`, `/news`, `/help`, and `/guides` as one coherent content family.
   **Must NOT do**: Do not change news/help/guides business rules, moderation permissions, or data contracts beyond what task `5` already standardized.

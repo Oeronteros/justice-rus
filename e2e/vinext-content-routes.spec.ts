@@ -132,7 +132,7 @@ const guideDetailPayload = {
     {
       id: 'comment-1',
       author: 'Officer',
-      content: 'Проверь список баффов перед стартом.',
+      comment: 'Проверь список баффов перед стартом.',
       createdAt: '2099-03-10T19:00:00.000Z',
     },
   ],
@@ -276,6 +276,7 @@ test.describe('vinext content routes', () => {
     test.slow();
 
     await addAuth(page, officerUser);
+    await mockSharedContentApis(page);
 
     await waitForAuthenticatedShell(page, '/');
     await expect(page).toHaveURL(/\/$/);
@@ -284,8 +285,6 @@ test.describe('vinext content routes', () => {
     await page.goto('/about', { waitUntil: 'domcontentloaded' });
     await expect(page).toHaveURL(/\/about$/);
     await expect(page.getByText(/Раздел:\s*Дашборд/).first()).toBeVisible({ timeout: 20000 });
-
-    await mockSharedContentApis(page);
 
     await page.goto('/news', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('news-list')).toBeVisible({ timeout: 20000 });
