@@ -1,13 +1,12 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { FocusEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import autoAnimate from '@formkit/auto-animate';
-import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
+import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'motion/react';
 import * as stylex from '@stylexjs/stylex';
 import { Section } from '@/types';
 import { headerCopy, Language, portalCopy, sectionLabels } from '@/lib/i18n';
-import { desktopGroupedNavItems, desktopPrimaryNavItems } from '@/lib/nav';
+import { desktopGroupedNavItems, desktopPrimaryNavItems, resolveNavGroupForSection, type NavGroupKey } from '@/lib/nav';
 import WuxiaIcon from '../WuxiaIcons';
 import ThemeModeSwitch from './ThemeModeSwitch';
 import { shellStyles } from './Shell.stylex';
@@ -30,8 +29,11 @@ export default function Header({
   onNavPrefetch,
 }: HeaderProps) {
   const [headerCompact, setHeaderCompact] = useState(false);
-  const [isDesktopMenuOpen, setIsDesktopMenuOpen] = useState(false);
-  const desktopDeckRef = useRef<HTMLDivElement | null>(null);
+  const [openDesktopGroup, setOpenDesktopGroup] = useState<NavGroupKey | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const desktopSubmenuRef = useRef<HTMLDivElement | null>(null);
+  const desktopTriggerRefs = useRef<Partial<Record<NavGroupKey, HTMLButtonElement | null>>>({});
+  const focusOpenedGroupRef = useRef<NavGroupKey | null>(null);
 
   const navPrefetchProps = (section: Section) => ({
     onMouseEnter: () => onNavPrefetch?.(section),
@@ -70,27 +72,78 @@ export default function Header({
   const orderLabels = useMemo(() => {
     return sectionLabels[language];
   }, [language]);
-  const primaryNavLabel = language === 'ru' ? 'Основная навигация' : language === 'zh' ? '主导航' : 'Primary navigation';
-  const secondaryNavLabel = language === 'ru' ? 'Командная навигация' : language === 'zh' ? '指挥导航' : 'Command navigation';
-  const immersiveMenuLabel = language === 'ru' ? 'Разделы' : language === 'zh' ? '分区菜单' : 'Sections';
-  const immersiveMenuHint = language === 'ru' ? 'Быстрый переход по всем модулям' : language === 'zh' ? '快速跳转到全部模块' : 'Quick jump across all modules';
-  const utilityStripLabel = language === 'ru' ? 'Быстрый доступ' : language === 'zh' ? '快速控制' : 'Quick access';
+  const primaryNavLabel = labels.primaryNavigation;
+  const secondaryNavLabel = labels.groupedNavigation;
+  const immersiveMenuLabel = labels.sectionsMenu;
+  const immersiveMenuHint = labels.sectionsMenuHint;
+  const utilityStripLabel = labels.quickAccess;
 
   const sectionLabel = orderLabels[currentSection];
   const groupedRouteCount = desktopGroupedNavItems.reduce((total, group) => total + group.items.length, 0);
 
-  useEffect(() => {
-    if (!desktopDeckRef.current) return;
-    autoAnimate(desktopDeckRef.current, { duration: 220, easing: 'ease-out' });
-  }, [isDesktopMenuOpen]);
+  const activeDesktopGroup = useMemo(
+    () => resolveNavGroupForSection(currentSection, desktopGroupedNavItems),
+    [currentSection]
+  );
 
+  const openDesktopGroupData = useMemo(
+    () => desktopGroupedNavItems.find((group) => group.key === openDesktopGroup) ?? null,
+    [openDesktopGroup]
+  );
+
+  const activeIndicatorTransition = prefersReducedMotion
+    ? { duration: 0 }
+    : { type: 'spring' as const, stiffness: 420, damping: 32 };
+  const boundedHoverMotion = prefersReducedMotion ? {} : { y: -2 };
+  const boundedTapMotion = prefersReducedMotion ? {} : { scale: 0.985 };
+  const boundedSubmenuTransition = prefersReducedMotion
+    ? { duration: 0 }
+    : { duration: 0.18, ease: [0.22, 1, 0.36, 1] as const };
+  const closeDesktopSubmenu = useCallback(() => {
+    focusOpenedGroupRef.current = null;
+    setOpenDesktopGroup(null);
+  }, []);
+
+  const handleDesktopGroupToggle = useCallback((groupKey: NavGroupKey) => {
+    focusOpenedGroupRef.current = null;
+    setOpenDesktopGroup(groupKey);
+  }, []);
+
+  const handleDesktopGroupFocus = useCallback((groupKey: NavGroupKey) => {
+    focusOpenedGroupRef.current = groupKey;
+    setOpenDesktopGroup(groupKey);
+  }, []);
+
+  const handleDesktopGroupHover = useCallback((groupKey: NavGroupKey) => {
+    focusOpenedGroupRef.current = null;
+    setOpenDesktopGroup(groupKey);
+  }, []);
+
+  const handleDesktopSubmenuBlur = useCallback((event: FocusEvent<HTMLDivElement>) => {
+    const nextTarget = event.relatedTarget;
+
+    if (nextTarget instanceof Node && event.currentTarget.contains(nextTarget)) {
+      return;
+    }
+
+    setOpenDesktopGroup(null);
+  }, []);
+
+  const handleDesktopSubmenuMouseLeave = useCallback(() => {
+    if (desktopSubmenuRef.current?.contains(document.activeElement)) {
+      return;
+    }
+
+    setOpenDesktopGroup(null);
+  }, []);
 
   useEffect(() => {
-    if (!isDesktopMenuOpen) return;
+    if (!openDesktopGroup) return;
 
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setIsDesktopMenuOpen(false);
+        setOpenDesktopGroup(null);
+        desktopTriggerRefs.current[openDesktopGroup]?.focus();
       }
     };
 
@@ -98,7 +151,32 @@ export default function Header({
     return () => {
       window.removeEventListener('keydown', handleEscape);
     };
-  }, [isDesktopMenuOpen]);
+  }, [openDesktopGroup]);
+
+  useEffect(() => {
+    if (!openDesktopGroup) return;
+
+    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
+      const target = event.target;
+
+      if (target instanceof Node && desktopSubmenuRef.current?.contains(target)) {
+        return;
+      }
+
+      closeDesktopSubmenu();
+    };
+
+    window.addEventListener('mousedown', handlePointerDown);
+    window.addEventListener('touchstart', handlePointerDown);
+    return () => {
+      window.removeEventListener('mousedown', handlePointerDown);
+      window.removeEventListener('touchstart', handlePointerDown);
+    };
+  }, [closeDesktopSubmenu, openDesktopGroup]);
+
+  useEffect(() => {
+    setOpenDesktopGroup(null);
+  }, [currentSection]);
 
   const groupLabels = {
     core: labels.navCore,
@@ -236,7 +314,7 @@ export default function Header({
           </div>
         </div>
 
-        <nav {...stylex.props(shellStyles.desktopNav)} aria-label={primaryNavLabel}>
+        <nav data-testid="nav-horizontal" {...stylex.props(shellStyles.desktopNav)} aria-label={primaryNavLabel}>
           <div {...stylex.props(shellStyles.navShell, shellStyles.navShellEnhanced)}>
             <div {...stylex.props(shellStyles.navHeadRow)}>
               <div {...stylex.props(shellStyles.coreRailShell)}>
@@ -253,7 +331,13 @@ export default function Header({
                       const isActive = currentSection === item.section;
 
                       return (
-                        <motion.div key={item.section} layout whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }} transition={{ type: 'spring', stiffness: 420, damping: 28 }}>
+                        <motion.div
+                          key={item.section}
+                          layout={!prefersReducedMotion}
+                          whileHover={boundedHoverMotion}
+                          whileTap={boundedTapMotion}
+                          transition={activeIndicatorTransition}
+                        >
                           <Link
                             href={item.href}
                             {...navPrefetchProps(item.section)}
@@ -266,9 +350,15 @@ export default function Header({
                             aria-label={orderLabels[item.section]}
                             aria-current={isActive ? 'page' : undefined}
                             title={orderLabels[item.section]}
-                            onClick={() => setIsDesktopMenuOpen(false)}
+                            onClick={closeDesktopSubmenu}
                           >
-                            {isActive ? <motion.span layoutId="desktop-core-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
+                            {isActive ? (
+                              <motion.span
+                                layoutId="desktop-core-active"
+                                {...stylex.props(shellStyles.navActiveIndicator)}
+                                transition={activeIndicatorTransition}
+                              />
+                            ) : null}
                             <span {...stylex.props(shellStyles.navLinkContent, shellStyles.coreLinkContent)}>
                               <span {...stylex.props(shellStyles.coreLinkMeta)}>
                                 <span {...stylex.props(shellStyles.coreLinkIndex)}>{String(index + 1).padStart(2, '0')}</span>
@@ -287,69 +377,108 @@ export default function Header({
               </div>
 
               <div {...stylex.props(shellStyles.desktopMenuWrap)}>
-                <div {...stylex.props(shellStyles.navSectionMeta, shellStyles.navSectionMetaCompact)}>
-                  <span {...stylex.props(shellStyles.navSectionKicker)}>{secondaryNavLabel}</span>
-                  <span {...stylex.props(shellStyles.navSectionHint)}>{immersiveMenuHint}</span>
-                </div>
-
-              <button
-                type="button"
-                onClick={() => setIsDesktopMenuOpen((current) => !current)}
-                aria-expanded={isDesktopMenuOpen}
-                aria-controls="desktop-immersive-menu"
-                aria-label={immersiveMenuLabel}
-                title={immersiveMenuLabel}
-                {...stylex.props(shellStyles.desktopMenuButton, isDesktopMenuOpen && shellStyles.desktopMenuButtonActive)}
-              >
-                <span {...stylex.props(shellStyles.desktopMenuGlyph)}>
-                  <WuxiaIcon name="dots" className="w-5 h-5" />
-                </span>
-                <span {...stylex.props(shellStyles.desktopMenuCopy)}>
-                  <span {...stylex.props(shellStyles.desktopMenuLabel)}>{immersiveMenuLabel}</span>
-                  <span {...stylex.props(shellStyles.desktopMenuHint)}>{immersiveMenuHint}</span>
-                  <span {...stylex.props(shellStyles.desktopMenuValue)}>{String(groupedRouteCount).padStart(2, '0')}</span>
-                </span>
-              </button>
-              </div>
-            </div>
-
-            <AnimatePresence initial={false}>
-              {isDesktopMenuOpen ? (
-                <motion.section
-                  id="desktop-immersive-menu"
-                  initial={{ opacity: 0, y: -10, scale: 0.99 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.99 }}
-                  transition={{ type: 'spring', stiffness: 320, damping: 30 }}
-                  {...stylex.props(shellStyles.immersivePanel)}
-                  aria-label={secondaryNavLabel}
+                <div
+                  ref={desktopSubmenuRef}
+                  onBlur={handleDesktopSubmenuBlur}
+                  onMouseLeave={handleDesktopSubmenuMouseLeave}
+                  {...stylex.props(shellStyles.desktopSubmenuShell)}
                 >
-                  <div {...stylex.props(shellStyles.immersivePanelHeader)}>
-                    <span {...stylex.props(shellStyles.immersivePanelTitle)}>{secondaryNavLabel}</span>
-                    <span {...stylex.props(shellStyles.immersivePanelHint)}>{immersiveMenuHint}</span>
+                  <div {...stylex.props(shellStyles.navSectionMeta, shellStyles.navSectionMetaCompact)}>
+                    <span {...stylex.props(shellStyles.navSectionKicker)}>{secondaryNavLabel}</span>
+                    <span {...stylex.props(shellStyles.navSectionHint)}>{immersiveMenuHint}</span>
                   </div>
 
-                  <div {...stylex.props(shellStyles.commandDeck)} ref={desktopDeckRef}>
-                    {desktopGroupedNavItems.map((group) => (
-                      <section key={group.key} {...stylex.props(shellStyles.commandGroup)}>
-                        <div {...stylex.props(shellStyles.groupLabel)}>{groupLabels[group.key]}</div>
-                        <LayoutGroup id={`desktop-${group.key}-nav`}>
-                          <div {...stylex.props(shellStyles.groupItems)}>
-                            {group.items.map((item) => {
+                  <div {...stylex.props(shellStyles.groupTriggerRail)} role="group" aria-label={immersiveMenuLabel}>
+                    {desktopGroupedNavItems.map((group) => {
+                      const isOpen = openDesktopGroup === group.key;
+                      const isCurrentGroup = activeDesktopGroup?.key === group.key;
+                      const groupStatusLabel = isCurrentGroup ? sectionLabel : orderLabels[group.sections[0]];
+
+                      return (
+                        <button
+                          key={group.key}
+                          ref={(node) => {
+                            desktopTriggerRefs.current[group.key] = node;
+                          }}
+                          type="button"
+                          onClick={() => handleDesktopGroupToggle(group.key)}
+                          onFocus={() => handleDesktopGroupFocus(group.key)}
+                          onMouseEnter={() => handleDesktopGroupHover(group.key)}
+                          aria-expanded={isOpen}
+                          aria-controls={`desktop-group-panel-${group.key}`}
+                          aria-label={groupLabels[group.key]}
+                          title={groupLabels[group.key]}
+                          {...stylex.props(
+                            shellStyles.groupTrigger,
+                            isCurrentGroup && shellStyles.groupTriggerCurrent,
+                            isOpen && shellStyles.groupTriggerOpen
+                          )}
+                        >
+                          <span {...stylex.props(shellStyles.groupTriggerContent)}>
+                            <span {...stylex.props(shellStyles.groupTriggerLabel)}>{groupLabels[group.key]}</span>
+                            <span {...stylex.props(shellStyles.groupTriggerHint)}>{groupStatusLabel}</span>
+                          </span>
+                          <span {...stylex.props(shellStyles.groupTriggerCount)}>{String(group.items.length).padStart(2, '0')}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <AnimatePresence initial={false}>
+                    {openDesktopGroupData ? (
+                      <motion.section
+                        key={openDesktopGroupData.key}
+                        id={`desktop-group-panel-${openDesktopGroupData.key}`}
+                        initial={prefersReducedMotion ? false : { opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                        transition={boundedSubmenuTransition}
+                        {...stylex.props(shellStyles.desktopSubmenuPanel)}
+                        aria-label={`${secondaryNavLabel}: ${groupLabels[openDesktopGroupData.key]}`}
+                      >
+                        <div {...stylex.props(shellStyles.desktopSubmenuPanelHeader)}>
+                          <div {...stylex.props(shellStyles.desktopSubmenuPanelCopy)}>
+                            <span {...stylex.props(shellStyles.desktopSubmenuPanelTitle)}>{groupLabels[openDesktopGroupData.key]}</span>
+                            <span {...stylex.props(shellStyles.desktopSubmenuPanelHint)}>{immersiveMenuHint}</span>
+                          </div>
+                          <span {...stylex.props(shellStyles.desktopSubmenuPanelCount)}>
+                            {String(openDesktopGroupData.items.length).padStart(2, '0')}
+                          </span>
+                        </div>
+
+                        <LayoutGroup id={`desktop-${openDesktopGroupData.key}-nav`}>
+                          <div {...stylex.props(shellStyles.desktopSubmenuList)}>
+                            {openDesktopGroupData.items.map((item) => {
                               const isActive = currentSection === item.section;
 
                               return (
-                                <motion.div key={item.section} layout whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }} transition={{ type: 'spring', stiffness: 420, damping: 30 }}>
+                                <motion.div
+                                  key={item.section}
+                                  layout={!prefersReducedMotion}
+                                  whileHover={boundedHoverMotion}
+                                  whileTap={boundedTapMotion}
+                                  transition={activeIndicatorTransition}
+                                >
                                   <Link
                                     href={item.href}
                                     {...navPrefetchProps(item.section)}
-                                    {...stylex.props(shellStyles.navLinkBase, !isActive && shellStyles.navLinkInactive)}
+                                    {...stylex.props(
+                                      shellStyles.navLinkBase,
+                                      shellStyles.desktopSubmenuLink,
+                                      !isActive && shellStyles.navLinkInactive
+                                    )}
                                     aria-label={orderLabels[item.section]}
                                     aria-current={isActive ? 'page' : undefined}
                                     title={orderLabels[item.section]}
-                                    onClick={() => setIsDesktopMenuOpen(false)}
+                                    onClick={closeDesktopSubmenu}
                                   >
-                                    {isActive ? <motion.span layoutId="desktop-command-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 500, damping: 34 }} /> : null}
+                                    {isActive ? (
+                                      <motion.span
+                                        layoutId="desktop-submenu-active"
+                                        {...stylex.props(shellStyles.navActiveIndicator)}
+                                        transition={activeIndicatorTransition}
+                                      />
+                                    ) : null}
                                     <span {...stylex.props(shellStyles.navLinkContent, shellStyles.commandLinkContent)}>
                                       <span {...stylex.props(shellStyles.orderDot)}>
                                         <WuxiaIcon name={item.icon} className="w-4 h-4" />
@@ -362,12 +491,12 @@ export default function Header({
                             })}
                           </div>
                         </LayoutGroup>
-                      </section>
-                    ))}
-                  </div>
-                </motion.section>
-              ) : null}
-            </AnimatePresence>
+                      </motion.section>
+                    ) : null}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </div>
           </div>
         </nav>
       </div>

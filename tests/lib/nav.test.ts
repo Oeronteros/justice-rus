@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
+  desktopGroupedNavItems,
   desktopNavGroups,
   desktopPrimarySections,
   desktopSecondarySections,
   mobileNavGroups,
   mobilePrimarySections,
   mobileSecondarySections,
+  mobileGroupedNavItems,
   navItems,
+  resolveNavGroupForSection,
   resolveSectionFromPath,
   sectionPathEntries,
   sectionPathAliases,
@@ -67,5 +70,28 @@ describe('core portal IA contract', () => {
     expect(sectionPathEntries).toContainEqual(['/integrations/google-sheets', 'integrations']);
     expect(sectionPathEntries).toContainEqual(['/integrations/wow', 'integrations']);
     expect(resolveSectionFromPath('/unknown-path')).toBe('about');
+  });
+
+  it('derives grouped desktop and mobile navigation from the same canonical registry', () => {
+    expect(desktopGroupedNavItems.map((group) => group.items.map((item) => item.section))).toEqual([
+      ['registration'],
+      ['guides', 'absences', 'pvp'],
+      ['analytics', 'workflow', 'integrations'],
+      ['calculator'],
+    ]);
+
+    expect(mobileGroupedNavItems.map((group) => group.items.map((item) => item.section))).toEqual([
+      ['registration', 'profile'],
+      ['guides', 'absences', 'pvp'],
+      ['analytics', 'workflow', 'integrations'],
+      ['calculator'],
+    ]);
+  });
+
+  it('resolves the active nav group for grouped sections without changing section keys', () => {
+    expect(resolveNavGroupForSection('guides', desktopGroupedNavItems)?.key).toBe('guild');
+    expect(resolveNavGroupForSection('workflow', desktopGroupedNavItems)?.key).toBe('command');
+    expect(resolveNavGroupForSection('profile', desktopGroupedNavItems)).toBeNull();
+    expect(resolveNavGroupForSection('profile', mobileGroupedNavItems)?.key).toBe('core');
   });
 });

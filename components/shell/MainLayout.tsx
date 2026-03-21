@@ -85,6 +85,10 @@ function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
 
   const currentSection = useMemo(() => resolveSectionFromPath(pathname), [pathname]);
   const pageShellTone = useMemo(() => resolvePageShellTone(currentSection), [currentSection]);
+  const routeTransition = useMemo(
+    () => (prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: [0.22, 1, 0.36, 1] as const }),
+    [prefersReducedMotion]
+  );
   const handleNavPrefetch = useCallback(
     (section: Section) => {
       switch (section) {
@@ -145,11 +149,11 @@ function MainLayoutContent({ user, onLogout, children }: MainLayoutProps) {
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={pathname}
-              {...stylex.props(shellStyles.pageShell, pageShellTone)}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 18, scale: 0.992 }}
-              animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
-              exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 10, scale: 0.996 }}
-              transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
+              {...stylex.props(shellStyles.pageShell, pageShellTone, prefersReducedMotion && shellStyles.pageShellReducedMotion)}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
+              transition={routeTransition}
             >
               <div {...stylex.props(shellStyles.pageShellContent)}>{children}</div>
             </motion.div>

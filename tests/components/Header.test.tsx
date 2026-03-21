@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import Header from '@/components/shell/Header';
 
 interface MockLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
@@ -36,14 +36,21 @@ describe('Header navigation accessibility', () => {
     );
 
     expect(screen.getByRole('navigation', { name: 'Primary navigation' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Sections' })).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Sections' }));
+    const sectionsGroup = screen.getByRole('group', { name: 'Sections' });
+    expect(within(sectionsGroup).getByRole('button', { name: 'Core' })).toBeInTheDocument();
+    expect(within(sectionsGroup).getByRole('button', { name: 'Guild' })).toBeInTheDocument();
+    expect(within(sectionsGroup).getByRole('button', { name: 'Command' })).toBeInTheDocument();
+    expect(within(sectionsGroup).getByRole('button', { name: 'Tools' })).toBeInTheDocument();
 
-    expect(screen.getByLabelText('Command navigation')).toBeInTheDocument();
+    const guildTrigger = within(sectionsGroup).getByRole('button', { name: 'Guild' });
+    fireEvent.focus(guildTrigger);
+    expect(guildTrigger).toHaveAttribute('aria-expanded', 'true');
 
-    const guidesLink = screen.getByLabelText('Command navigation').querySelector('a[aria-label="Guides"]');
+    const guildPanel = screen.getByLabelText('Command navigation: Guild');
+    const guidesLink = within(guildPanel).getByRole('link', { name: 'Guides' });
 
-    expect(guidesLink).not.toBeNull();
     expect(guidesLink).toHaveAttribute('href', '/guides');
     expect(guidesLink).toHaveAttribute('aria-current', 'page');
     expect(guidesLink).toHaveAttribute('aria-label', 'Guides');
@@ -75,18 +82,26 @@ describe('Header navigation accessibility', () => {
     fireEvent.mouseEnter(newsLink as Element);
     fireEvent.focus(scheduleLink as Element);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Sections' }));
+    const sectionsGroup = screen.getByRole('group', { name: 'Sections' });
+    const coreTrigger = within(sectionsGroup).getByRole('button', { name: 'Core' });
+    fireEvent.focus(coreTrigger);
 
-    const registrationLink = document.querySelector('a[href="/members"]');
-    const guidesLink = document.querySelector('a[href="/guides"]');
-    const absencesLink = document.querySelector('a[href="/absences"]');
-    expect(registrationLink).not.toBeNull();
-    expect(guidesLink).not.toBeNull();
-    expect(absencesLink).not.toBeNull();
+    const corePanel = screen.getByLabelText('Command navigation: Core');
+    const registrationLink = within(corePanel).getByRole('link', { name: 'Members' });
 
-    fireEvent.touchStart(registrationLink as Element);
-    fireEvent.mouseEnter(guidesLink as Element);
-    fireEvent.focus(absencesLink as Element);
+    const guildTrigger = within(sectionsGroup).getByRole('button', { name: 'Guild' });
+    fireEvent.focus(guildTrigger);
+
+    const guildPanel = screen.getByLabelText('Command navigation: Guild');
+    const guidesLink = within(guildPanel).getByRole('link', { name: 'Guides' });
+    const absencesLink = within(guildPanel).getByRole('link', { name: 'Absences' });
+
+    expect(coreTrigger).toHaveAttribute('aria-expanded', 'false');
+    expect(guildTrigger).toHaveAttribute('aria-expanded', 'true');
+
+    fireEvent.touchStart(registrationLink);
+    fireEvent.mouseEnter(guidesLink);
+    fireEvent.focus(absencesLink);
 
     expect(onNavPrefetch).toHaveBeenNthCalledWith(1, 'news');
     expect(onNavPrefetch).toHaveBeenNthCalledWith(2, 'schedule');

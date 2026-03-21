@@ -62,6 +62,18 @@ export const headerCopy: Record<
     languageSwitcher: string;
     notifications: string;
     profile: string;
+    primaryNavigation: string;
+    groupedNavigation: string;
+    sectionsMenu: string;
+    sectionsMenuHint: string;
+    quickAccess: string;
+    more: string;
+    quickNavigation: string;
+    quickNavigationHint: string;
+    moreNavigation: string;
+    moreNavigationHint: string;
+    closeMenu: string;
+    current: string;
     navCore: string;
     navGuild: string;
     navCommand: string;
@@ -76,6 +88,18 @@ export const headerCopy: Record<
     languageSwitcher: 'Язык интерфейса',
     notifications: 'Открыть уведомления',
     profile: 'Открыть кабинет',
+    primaryNavigation: 'Основная навигация',
+    groupedNavigation: 'Командная навигация',
+    sectionsMenu: 'Разделы',
+    sectionsMenuHint: 'Быстрый переход по модулям, сгруппированным по роли и задаче',
+    quickAccess: 'Быстрый доступ',
+    more: 'Еще',
+    quickNavigation: 'Быстрая навигация',
+    quickNavigationHint: 'Главные маршруты всегда под пальцем',
+    moreNavigation: 'Дополнительная навигация',
+    moreNavigationHint: 'Оставшиеся маршруты сгруппированы по роли и задаче',
+    closeMenu: 'Закрыть меню',
+    current: 'Текущий',
     navCore: 'Ядро',
     navGuild: 'Гильдия',
     navCommand: 'Управление',
@@ -89,6 +113,18 @@ export const headerCopy: Record<
     languageSwitcher: 'Interface language',
     notifications: 'Open notifications',
     profile: 'Open profile',
+    primaryNavigation: 'Primary navigation',
+    groupedNavigation: 'Command navigation',
+    sectionsMenu: 'Sections',
+    sectionsMenuHint: 'Quick jump across grouped guild modules',
+    quickAccess: 'Quick access',
+    more: 'More',
+    quickNavigation: 'Quick navigation',
+    quickNavigationHint: 'Core routes stay under your thumb',
+    moreNavigation: 'More navigation',
+    moreNavigationHint: 'The remaining routes are grouped by role and task',
+    closeMenu: 'Close menu',
+    current: 'Current',
     navCore: 'Core',
     navGuild: 'Guild',
     navCommand: 'Command',
@@ -102,6 +138,18 @@ export const headerCopy: Record<
     languageSwitcher: '界面语言',
     notifications: '打开通知中心',
     profile: '打开个人页',
+    primaryNavigation: '主导航',
+    groupedNavigation: '指挥导航',
+    sectionsMenu: '分区菜单',
+    sectionsMenuHint: '按角色与任务分组快速跳转到全部模块',
+    quickAccess: '快速控制',
+    more: '更多',
+    quickNavigation: '快捷导航',
+    quickNavigationHint: '核心入口保持在拇指范围内',
+    moreNavigation: '更多导航',
+    moreNavigationHint: '其余路由按角色与任务分组',
+    closeMenu: '关闭菜单',
+    current: '当前',
     navCore: '核心',
     navGuild: '公会',
     navCommand: '管理',

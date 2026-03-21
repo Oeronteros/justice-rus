@@ -246,6 +246,10 @@ export function buildVinextCutoverRewrites(options?: {
 
   const vinextDevAssetRewrites = [
     {
+      source: '/@fs/:path*',
+      destination: `${origin}/@fs/:path*`,
+    },
+    {
       source: '/:path((?:@).*)',
       destination: `${origin}/:path`,
     },

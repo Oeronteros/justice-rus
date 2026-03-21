@@ -4,10 +4,10 @@ const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:3000';
 
 export default defineConfig({
   testDir: './e2e',
-  testMatch: ['vinext-pilot.spec.ts', 'vinext-pilot-a11y.spec.ts', 'vinext-route-parity.spec.ts', 'vinext-theme-primitives.spec.ts'],
+  testMatch: ['vinext-pilot.spec.ts', 'vinext-pilot-a11y.spec.ts', 'vinext-route-parity.spec.ts', 'vinext-theme-primitives.spec.ts', 'vinext-nav.spec.ts'],
   timeout: 120000,
   fullyParallel: false,
-  retries: process.env.CI ? 2 : 0,
+  retries: 1,
   workers: 1,
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: {
@@ -25,9 +25,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run dev:cutover:all',
+    command: 'set NODE_OPTIONS=--max-old-space-size=4096 && set JWT_SECRET=e2e-secret && npm run dev:cutover:all',
     url: `${baseURL}/news`,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     stdout: 'ignore',
     stderr: 'pipe',
     timeout: 120000,

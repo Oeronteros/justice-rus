@@ -47,3 +47,7 @@
 - Added a small runtime/auth probe node (`[data-testid="runtime-badge"]`) inside `PortalShell` so parity QA can assert runtime and auth boundary state transitions without depending on nav/header redesign work.
 - `apps/portal-vinext/app/(portal)/layout.tsx` now passes `runtime="vinext"` into shared `PortalShell`, preserving shared contracts (`resolveSessionFromToken` -> `initialUser`) while making Vinext-vs-Next boundary assertions explicit.
 - `lib/auth/context.tsx` now exports `useAuthState()` (`isAuthenticated`, `authState`, `user`) as a minimal shared auth-state diagnostics hook for downstream parity checks.
+
+## 2026-03-21 Task 4 header regression test contract
+- `tests/components/Header.test.tsx` must target the desktop grouped-nav contract now implemented in `components/shell/Header.tsx`: `Sections` is a `role="group"` rail label, not a single launcher button, and open desktop submenu panels expose group-specific labels like `Command navigation: Guild`.
+- Meaningful header regression coverage still comes from opening real group triggers (`Core`, `Guild`, `Command`, `Tools`) and asserting actual grouped links/prefetch behavior, not from falling back to generic panel selectors.

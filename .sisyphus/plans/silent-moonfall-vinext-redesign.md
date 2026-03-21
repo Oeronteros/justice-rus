@@ -196,7 +196,7 @@ Wave 4: optimization, deletion, release hardening (`13`, `14`)
 
   **Commit**: YES | Message: `feat(stylex): establish vinext themes and primitives` | Files: `apps/portal-vinext`, `lib/stylex/tokens.stylex.ts`, `lib/stylex/primitives.stylex.ts`, `components/theme/AppThemeBoundary.tsx`
 
-- [ ] 3. Port provider, auth, and shell boundaries into the Vinext app
+- [x] 3. Port provider, auth, and shell boundaries into the Vinext app
 
   **What to do**: Recreate the portal runtime boundary inside Vinext by porting the provider stack, auth/session bootstrap, shell mount points, and runtime diagnostics needed for parity checks. The Vinext shell must provide `ThemeProvider`, `QueryProvider`, i18n, auth context, runtime badge, and a stable root element for every downstream page.
   **Must NOT do**: Do not fork business logic; reuse shared auth/query/i18n contracts where possible instead of duplicating server/client state code.

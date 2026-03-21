@@ -14,6 +14,10 @@ export type NavGroup = {
   sections: readonly Section[];
 };
 
+export type NavGroupWithItems = NavGroup & {
+  items: NavItem[];
+};
+
 export const navItems: NavItem[] = [
   { section: 'about', href: '/', icon: 'eye' },
   { section: 'news', href: '/news', icon: 'news' },
@@ -52,6 +56,20 @@ function pickNavItems(sections: readonly Section[]): NavItem[] {
     .filter((item): item is NavItem => Boolean(item));
 }
 
+function buildGroupedNavItems(groups: readonly NavGroup[]): NavGroupWithItems[] {
+  return groups.map((group) => ({
+    ...group,
+    items: pickNavItems(group.sections),
+  }));
+}
+
+export function resolveNavGroupForSection(
+  section: Section,
+  groups: readonly NavGroupWithItems[]
+): NavGroupWithItems | null {
+  return groups.find((group) => group.sections.includes(section)) ?? null;
+}
+
 export const desktopPrimarySections: readonly Section[] = ['about', 'news', 'schedule', 'help', 'profile'];
 export const desktopSecondarySections: readonly Section[] = ['registration', 'guides', 'absences', 'pvp', 'analytics', 'workflow', 'integrations', 'calculator'];
 export const mobilePrimarySections: readonly Section[] = ['about', 'news', 'schedule', 'help'];
@@ -75,11 +93,5 @@ export const desktopPrimaryNavItems = pickNavItems(desktopPrimarySections);
 export const desktopSecondaryNavItems = pickNavItems(desktopSecondarySections);
 export const mobilePrimaryNavItems = pickNavItems(mobilePrimarySections);
 export const mobileSecondaryNavItems = pickNavItems(mobileSecondarySections);
-export const desktopGroupedNavItems = desktopNavGroups.map((group) => ({
-  ...group,
-  items: pickNavItems(group.sections),
-}));
-export const mobileGroupedNavItems = mobileNavGroups.map((group) => ({
-  ...group,
-  items: pickNavItems(group.sections),
-}));
+export const desktopGroupedNavItems = buildGroupedNavItems(desktopNavGroups);
+export const mobileGroupedNavItems = buildGroupedNavItems(mobileNavGroups);

@@ -1,14 +1,13 @@
 'use client';
 
-import { TouchEvent, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { TouchEvent, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import autoAnimate from '@formkit/auto-animate';
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'motion/react';
 import * as stylex from '@stylexjs/stylex';
 import { Section } from '@/types';
 import { headerCopy, Language, sectionLabels } from '@/lib/i18n';
-import { mobileGroupedNavItems, mobilePrimaryNavItems, mobileSecondaryNavItems } from '@/lib/nav';
+import { mobileGroupedNavItems, mobilePrimaryNavItems, mobileSecondaryNavItems, resolveNavGroupForSection, type NavGroupKey } from '@/lib/nav';
 import WuxiaIcon from '../WuxiaIcons';
 import { shellStyles } from './Shell.stylex';
 
@@ -23,6 +22,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
   const router = useRouter();
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const moreButtonRef = useRef<HTMLButtonElement | null>(null);
   const menuOpenedAtRef = useRef(0);
   const bodyScrollStateRef = useRef({
     scrollY: 0,
@@ -36,9 +36,60 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
   const prefersReducedMotion = useReducedMotion();
   const moreSheetId = useId();
 
-  const closeMoreMenu = () => setIsMoreOpen(false);
+  const labels = useMemo(() => headerCopy[language], [language]);
+  const orderLabels = useMemo(() => sectionLabels[language], [language]);
+  const primaryItems = useMemo(() => mobilePrimaryNavItems, []);
+  const secondaryItems = useMemo(() => mobileSecondaryNavItems, []);
+  const activeGroupedNav = useMemo(
+    () => resolveNavGroupForSection(currentSection, mobileGroupedNavItems),
+    [currentSection]
+  );
+  const [expandedGroups, setExpandedGroups] = useState<NavGroupKey[]>(() =>
+    activeGroupedNav ? [activeGroupedNav.key] : [mobileGroupedNavItems[0]?.key].filter(Boolean) as NavGroupKey[]
+  );
 
-  const toggleMoreMenu = () => {
+  const isMoreActive = secondaryItems.some((item) => item.section === currentSection);
+  const currentSectionLabel = orderLabels[currentSection];
+  const moreLabel = labels.more;
+  const quickNavLabel = labels.quickNavigation;
+  const moreNavLabel = labels.moreNavigation;
+  const quickNavHint = labels.quickNavigationHint;
+  const moreNavHint = labels.moreNavigationHint;
+  const closeLabel = labels.closeMenu;
+  const currentLabel = labels.current;
+  const secondaryCountLabel = String(secondaryItems.length).padStart(2, '0');
+  const scrimDismissGuardMs = 320;
+  const activeIndicatorTransition = prefersReducedMotion
+    ? { duration: 0 }
+    : { type: 'spring' as const, stiffness: 420, damping: 32 };
+  const boundedDrawerTransition = prefersReducedMotion
+    ? { duration: 0 }
+    : { duration: 0.2, ease: [0.22, 1, 0.36, 1] as const };
+  const groupLabels = {
+    core: labels.navCore,
+    guild: labels.navGuild,
+    command: labels.navCommand,
+    tools: labels.navTools,
+  } as const;
+  const sheetTitleId = `${moreSheetId}-title`;
+  const sheetHintId = `${moreSheetId}-hint`;
+
+  const closeMoreMenu = useCallback(() => {
+    setIsMoreOpen(false);
+  }, []);
+
+  const returnFocusToTrigger = useCallback(() => {
+    window.requestAnimationFrame(() => {
+      moreButtonRef.current?.focus();
+    });
+  }, []);
+
+  const handleCloseMenu = useCallback(() => {
+    closeMoreMenu();
+    returnFocusToTrigger();
+  }, [closeMoreMenu, returnFocusToTrigger]);
+
+  const toggleMoreMenu = useCallback(() => {
     setIsMoreOpen((value) => {
       if (!value) {
         menuOpenedAtRef.current = Date.now();
@@ -46,15 +97,29 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
 
       return !value;
     });
-  };
+  }, []);
 
-  const closeViaScrim = () => {
-    if (Date.now() - menuOpenedAtRef.current < 140) {
+  const handleMoreTouchEnd = useCallback(
+    (event: TouchEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      toggleMoreMenu();
+    },
+    [toggleMoreMenu]
+  );
+
+  const toggleGroup = useCallback((groupKey: NavGroupKey) => {
+    setExpandedGroups((current) =>
+      current.includes(groupKey) ? current.filter((key) => key !== groupKey) : [...current, groupKey]
+    );
+  }, []);
+
+  const closeViaScrim = useCallback(() => {
+    if (Date.now() - menuOpenedAtRef.current < scrimDismissGuardMs) {
       return;
     }
 
-    closeMoreMenu();
-  };
+    handleCloseMenu();
+  }, [handleCloseMenu, scrimDismissGuardMs]);
 
   const navPrefetchProps = (section: Section) => ({
     onTouchStart: () => onNavPrefetch?.(section),
@@ -69,60 +134,19 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
     },
   });
 
-  const primaryItems = useMemo(() => mobilePrimaryNavItems, []);
-  const secondaryItems = useMemo(
-    () => mobileSecondaryNavItems.filter((item) => !primaryItems.some((primaryItem) => primaryItem.section === item.section)),
-    [primaryItems]
-  );
-  const labels = useMemo(() => headerCopy[language], [language]);
-  const orderLabels = useMemo(() => sectionLabels[language], [language]);
-  const isMoreActive = secondaryItems.some((item) => item.section === currentSection);
-  const currentSectionLabel = orderLabels[currentSection];
-  const moreLabel = language === 'ru' ? 'Еще' : language === 'zh' ? '更多' : 'More';
-  const quickNavLabel = language === 'ru' ? 'Быстрая навигация' : language === 'zh' ? '快捷导航' : 'Quick navigation';
-  const moreNavLabel = language === 'ru' ? 'Дополнительная навигация' : language === 'zh' ? '更多导航' : 'More navigation';
-  const quickNavHint = language === 'ru' ? 'Главные маршруты всегда под пальцем' : language === 'zh' ? '核心入口保持在拇指范围内' : 'Core routes stay under your thumb';
-  const moreNavHint =
-    language === 'ru'
-      ? 'Оставшиеся маршруты сгруппированы по роли и задаче'
-      : language === 'zh'
-        ? '其余路由按角色与任务分组'
-        : 'The remaining routes are grouped by role and task';
-  const closeLabel = language === 'ru' ? 'Закрыть меню' : language === 'zh' ? '关闭菜单' : 'Close menu';
-  const currentLabel = language === 'ru' ? 'Текущий' : language === 'zh' ? '当前' : 'Current';
-  const secondaryCountLabel = String(secondaryItems.length).padStart(2, '0');
-  const groupLabels = {
-    core: labels.navCore,
-    guild: labels.navGuild,
-    command: labels.navCommand,
-    tools: labels.navTools,
-  } as const;
-  const sheetTitleId = `${moreSheetId}-title`;
-  const sheetHintId = `${moreSheetId}-hint`;
-
-  useEffect(() => {
-    if (!sheetRef.current) return;
-    autoAnimate(sheetRef.current, { duration: prefersReducedMotion ? 0 : 220, easing: 'ease-out' });
-  }, [prefersReducedMotion]);
-
   useEffect(() => {
     closeMoreMenu();
-  }, [currentSection]);
+  }, [closeMoreMenu, currentSection]);
 
   useEffect(() => {
-    if (!isMoreOpen) return;
+    if (!activeGroupedNav) {
+      return;
+    }
 
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        closeMoreMenu();
-      }
-    };
-
-    window.addEventListener('keydown', handleEscape);
-    return () => {
-      window.removeEventListener('keydown', handleEscape);
-    };
-  }, [isMoreOpen]);
+    setExpandedGroups((current) =>
+      current.includes(activeGroupedNav.key) ? current : [...current, activeGroupedNav.key]
+    );
+  }, [activeGroupedNav]);
 
   useEffect(() => {
     if (!isMoreOpen) return;
@@ -169,6 +193,50 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
     };
   }, [isMoreOpen]);
 
+  useEffect(() => {
+    if (!isMoreOpen || !sheetRef.current) {
+      return;
+    }
+
+    const container = sheetRef.current;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        handleCloseMenu();
+        return;
+      }
+
+      if (event.key !== 'Tab') {
+        return;
+      }
+
+      const focusableElements = Array.from(
+        container.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+      ).filter((element) => !element.hasAttribute('hidden'));
+
+      if (focusableElements.length === 0) {
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    container.addEventListener('keydown', handleKeyDown);
+    return () => {
+      container.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleCloseMenu, isMoreOpen]);
+
   return (
     <div {...stylex.props(shellStyles.mobileNavRoot)}>
       <AnimatePresence initial={false}>
@@ -181,15 +249,16 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.18 }}
+              transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.16 }}
               {...stylex.props(shellStyles.mobileSheetScrim)}
             />
             <motion.nav
               id={moreSheetId}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 22, scale: 0.985 }}
-              animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
-              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.985 }}
-              transition={prefersReducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 360, damping: 30 }}
+              data-testid="nav-mobile-drawer"
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 14 }}
+              transition={boundedDrawerTransition}
               {...stylex.props(shellStyles.mobileSheetFrame)}
               aria-label={moreNavLabel}
               aria-labelledby={sheetTitleId}
@@ -205,7 +274,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
                     <button
                       ref={closeButtonRef}
                       type="button"
-                      onClick={closeMoreMenu}
+                      onClick={handleCloseMenu}
                       aria-label={closeLabel}
                       title={closeLabel}
                       {...stylex.props(shellStyles.mobileSheetClose)}
@@ -224,41 +293,87 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
                     </span>
                   </div>
                 </div>
-                <div {...stylex.props(shellStyles.mobileSheetScroll)}>
-                  {mobileGroupedNavItems.map((group) => (
-                    <section key={group.key} {...stylex.props(shellStyles.mobileGroup)}>
-                      <div {...stylex.props(shellStyles.mobileGroupMeta)}>
-                        <div {...stylex.props(shellStyles.groupLabel)}>{groupLabels[group.key]}</div>
-                        <span {...stylex.props(shellStyles.mobileGroupCount)}>{String(group.items.length).padStart(2, '0')}</span>
-                      </div>
-                      <div {...stylex.props(shellStyles.mobileSheetGrid)}>
-                        {group.items.map((item) => {
-                          const isActive = currentSection === item.section;
 
-                          return (
-                            <Link
-                              key={item.section}
-                              href={item.href}
-                              {...navPrefetchProps(item.section)}
-                              {...touchNavigateProps(item.href)}
-                              {...stylex.props(shellStyles.mobileSheetLink, isActive && shellStyles.mobileSheetLinkActive)}
-                              aria-label={orderLabels[item.section]}
-                              aria-current={isActive ? 'page' : undefined}
-                              title={orderLabels[item.section]}
+                <div {...stylex.props(shellStyles.mobileSheetScroll)}>
+                  {mobileGroupedNavItems.map((group) => {
+                    const isExpanded = expandedGroups.includes(group.key);
+                    const isCurrentGroup = activeGroupedNav?.key === group.key;
+
+                    return (
+                      <section key={group.key} {...stylex.props(shellStyles.mobileDisclosureSection)}>
+                        <button
+                          type="button"
+                          onClick={() => toggleGroup(group.key)}
+                          aria-expanded={isExpanded}
+                          aria-controls={`${moreSheetId}-${group.key}`}
+                          aria-label={groupLabels[group.key]}
+                          {...stylex.props(
+                            shellStyles.mobileDisclosureButton,
+                            isCurrentGroup && shellStyles.mobileDisclosureButtonCurrent,
+                            isExpanded && shellStyles.mobileDisclosureButtonOpen
+                          )}
+                        >
+                          <span {...stylex.props(shellStyles.mobileDisclosureCopy)}>
+                            <span {...stylex.props(shellStyles.groupLabel)}>{groupLabels[group.key]}</span>
+                            <span {...stylex.props(shellStyles.mobileDisclosureHint)}>
+                              {isCurrentGroup ? currentSectionLabel : moreNavHint}
+                            </span>
+                          </span>
+                          <span {...stylex.props(shellStyles.mobileDisclosureMeta)}>
+                            <span {...stylex.props(shellStyles.mobileGroupCount)}>{String(group.items.length).padStart(2, '0')}</span>
+                            <span {...stylex.props(shellStyles.mobileDisclosureGlyph)}>{isExpanded ? '-' : '+'}</span>
+                          </span>
+                        </button>
+
+                        <AnimatePresence initial={false}>
+                          {isExpanded ? (
+                            <motion.div
+                              key={group.key}
+                              id={`${moreSheetId}-${group.key}`}
+                              initial={prefersReducedMotion ? false : { opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
+                              transition={boundedDrawerTransition}
+                              {...stylex.props(shellStyles.mobileDisclosurePanel)}
                             >
-                              <span {...stylex.props(shellStyles.mobileSheetIcon, isActive && shellStyles.mobileSheetIconActive)}>
-                                <WuxiaIcon name={item.icon} className="h-5 w-5" />
-                              </span>
-                              <span {...stylex.props(shellStyles.mobileSheetText)}>
-                                <span {...stylex.props(shellStyles.mobileSheetLabel, isActive && shellStyles.mobileSheetLabelActive)}>{orderLabels[item.section]}</span>
-                                {isActive ? <span {...stylex.props(shellStyles.mobileSheetCurrentTag)}>{currentLabel}</span> : null}
-                              </span>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    </section>
-                  ))}
+                              <div {...stylex.props(shellStyles.mobileDisclosureList)}>
+                                {group.items.map((item) => {
+                                  const isActive = currentSection === item.section;
+
+                                  return (
+                                    <Link
+                                      key={item.section}
+                                      href={item.href}
+                                      {...navPrefetchProps(item.section)}
+                                      {...touchNavigateProps(item.href)}
+                                      {...stylex.props(
+                                        shellStyles.mobileSheetLink,
+                                        shellStyles.mobileDisclosureLink,
+                                        isActive && shellStyles.mobileSheetLinkActive
+                                      )}
+                                      aria-label={orderLabels[item.section]}
+                                      aria-current={isActive ? 'page' : undefined}
+                                      title={orderLabels[item.section]}
+                                    >
+                                      <span {...stylex.props(shellStyles.mobileSheetIcon, isActive && shellStyles.mobileSheetIconActive)}>
+                                        <WuxiaIcon name={item.icon} className="h-5 w-5" />
+                                      </span>
+                                      <span {...stylex.props(shellStyles.mobileSheetText)}>
+                                        <span {...stylex.props(shellStyles.mobileSheetLabel, isActive && shellStyles.mobileSheetLabelActive)}>
+                                          {orderLabels[item.section]}
+                                        </span>
+                                        {isActive ? <span {...stylex.props(shellStyles.mobileSheetCurrentTag)}>{currentLabel}</span> : null}
+                                      </span>
+                                    </Link>
+                                  );
+                                })}
+                              </div>
+                            </motion.div>
+                          ) : null}
+                        </AnimatePresence>
+                      </section>
+                    );
+                  })}
                 </div>
               </div>
             </motion.nav>
@@ -266,10 +381,7 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
         ) : null}
       </AnimatePresence>
 
-      <nav
-        {...stylex.props(shellStyles.mobileDock)}
-        aria-label={quickNavLabel}
-      >
+      <nav {...stylex.props(shellStyles.mobileDock)} aria-label={quickNavLabel}>
         <div {...stylex.props(shellStyles.mobileDockMeta)}>
           <div {...stylex.props(shellStyles.mobileDockCopy)}>
             <span {...stylex.props(shellStyles.mobileDockKicker)}>{quickNavLabel}</span>
@@ -296,7 +408,13 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
                   aria-current={isActive ? 'page' : undefined}
                   title={orderLabels[item.section]}
                 >
-                  {isActive ? <motion.span layoutId="mobile-bottom-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 420, damping: 32 }} /> : null}
+                  {isActive ? (
+                    <motion.span
+                      layoutId="mobile-bottom-active"
+                      {...stylex.props(shellStyles.navActiveIndicator)}
+                      transition={activeIndicatorTransition}
+                    />
+                  ) : null}
                   <span {...stylex.props(shellStyles.mobileLinkContent)}>
                     <span {...stylex.props(shellStyles.mobileDockIcon, isActive && shellStyles.mobileDockIconActive)}>
                       <WuxiaIcon name={item.icon} className="w-5 h-5" />
@@ -310,15 +428,23 @@ export default function MobileNav({ currentSection, language, onNavPrefetch }: M
             })}
 
             <button
+              ref={moreButtonRef}
               type="button"
               {...stylex.props(shellStyles.mobileChip, shellStyles.mobileMore, (isMoreOpen || isMoreActive) && shellStyles.mobileChipActive)}
               onClick={toggleMoreMenu}
+              onTouchEnd={handleMoreTouchEnd}
               aria-expanded={isMoreOpen}
               aria-controls={moreSheetId}
               aria-label={moreLabel}
               title={moreLabel}
             >
-              {isMoreOpen || isMoreActive ? <motion.span layoutId="mobile-bottom-active" {...stylex.props(shellStyles.navActiveIndicator)} transition={{ type: 'spring', stiffness: 420, damping: 32 }} /> : null}
+              {isMoreOpen || isMoreActive ? (
+                <motion.span
+                  layoutId="mobile-bottom-active"
+                  {...stylex.props(shellStyles.navActiveIndicator)}
+                  transition={activeIndicatorTransition}
+                />
+              ) : null}
               <span {...stylex.props(shellStyles.mobileChipBadge)}>{secondaryCountLabel}</span>
               <span {...stylex.props(shellStyles.mobileLinkContent)}>
                 <span {...stylex.props(shellStyles.mobileDockIcon, (isMoreOpen || isMoreActive) && shellStyles.mobileDockIconActive)}>
