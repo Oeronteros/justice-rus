@@ -8,13 +8,11 @@ import { rootLayoutStyles } from '@/app/layout.stylex';
 import StyledComponentsRegistry from '@/app/styled-components-registry';
 import { uiThemeProbeContract, uiThemeProbeEntries, uiThemeProbeStyles } from '@/components/shared/Ui.stylex';
 import InputPerformanceMode from '@/components/InputPerformanceMode';
-import AppTelemetry from '@/components/platform/AppTelemetry';
 import AppThemeBoundary from '@/components/theme/AppThemeBoundary';
 import { QueryProvider } from '@/lib/providers/QueryProvider';
 import { I18nProvider } from '@/lib/i18n/context';
-import { ThemeProvider } from '@/lib/theme/context';
 import { defaultLanguage } from '@/lib/i18n/shared';
-import { shouldEnableTelemetry } from '@/lib/platform/runtime';
+import { ThemeProvider } from '@/lib/theme/context';
 import {
   themePrimitiveProbeStyles,
 } from '@/lib/stylex/primitives.stylex';
@@ -115,7 +113,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               </QueryProvider>
             </AppThemeBoundary>
           </ThemeProvider>
-          <AppTelemetry enabled={shouldEnableTelemetry()} />
         </StyledComponentsRegistry>
       </body>
     </html>
