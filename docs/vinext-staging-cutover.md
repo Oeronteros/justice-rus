@@ -23,8 +23,8 @@ VINEXT_CUTOVER_ORIGIN=https://your-vinext-preview.example.com
 ### Семантика `all` на текущем этапе
 
 - Целевая карта `all`: `/`, `/about`, `/news`, `/help`, `/guides`, `/profile`, `/absences`, `/pvp`, `/schedule`, `/calendar`, `/analytics`, `/workflow`, `/integrations`.
-- Пока Vinext route-файлы есть только для `/news`, `/help`, `/guides`, `/profile`, `/absences`, `/pvp`, `/schedule`, `/calendar`.
-- Поэтому при `VINEXT_CUTOVER_SCOPE=all` rewrites включаются только для parity-ready маршрутов, а `/`, `/about`, `/analytics`, `/workflow`, `/integrations` остаются на Next до закрытия блокеров.
+- Пока Vinext route-файлы есть для `/`, `/about`, `/news`, `/help`, `/guides`, `/profile`, `/absences`, `/pvp`, `/schedule`, `/calendar`.
+- Поэтому при `VINEXT_CUTOVER_SCOPE=all` rewrites включаются только для parity-ready маршрутов, а `/analytics`, `/workflow`, `/integrations` остаются на Next до закрытия блокеров.
 
 ## Команды-подсказки
 

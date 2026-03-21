@@ -152,7 +152,7 @@ vercel --prod
 - `VINEXT_CUTOVER_SCOPE=wave2` — дополнительно забирает `/profile`, `/absences`, `/pvp`, `/schedule`, `/calendar`
 - `VINEXT_CUTOVER_SCOPE=all` — финальная ownership-карта по `docs/vinext-route-parity.md`; rewrites включаются только для parity-ready маршрутов
 
-Текущие blocked routes для `all` (остаются на `Next` до готовности Vinext-страниц): `/`, `/about`, `/analytics`, `/workflow`, `/integrations`.
+Текущие blocked routes для `all` (остаются на `Next` до готовности Vinext-страниц): `/analytics`, `/workflow`, `/integrations`.
 
 Для локального dual-runtime запуска есть готовые команды:
 

@@ -8,6 +8,7 @@ export default defineConfig({
     'vinext-pilot.spec.ts',
     'vinext-pilot-a11y.spec.ts',
     'vinext-route-parity.spec.ts',
+    'vinext-content-routes.spec.ts',
     'vinext-theme-primitives.spec.ts',
     'vinext-nav.spec.ts',
     'vinext-data-adapter.spec.ts',

@@ -9,8 +9,13 @@ import type { News } from '@/lib/schemas/news';
 const useNewsMock = vi.fn();
 const createNewsMutateAsyncMock = vi.fn();
 const deleteNewsMutateAsyncMock = vi.fn();
+const prefetchNewsMock = vi.fn();
 
-vi.mock('@/lib/news/hooks', () => ({
+vi.mock('@/lib/news/hooks', async () => {
+  const actual = await vi.importActual<typeof import('@/lib/news/hooks')>('@/lib/news/hooks');
+
+  return {
+    ...actual,
   useNews: () => useNewsMock(),
   useCreateNews: () => ({
     mutateAsync: createNewsMutateAsyncMock,
@@ -20,7 +25,9 @@ vi.mock('@/lib/news/hooks', () => ({
     mutateAsync: deleteNewsMutateAsyncMock,
     isPending: false,
   }),
-}));
+    usePrefetchNews: () => prefetchNewsMock,
+  };
+});
 
 function renderWithI18n(node: ReactNode) {
   return render(<I18nProvider defaultLanguage="en">{node}</I18nProvider>);
@@ -37,6 +44,7 @@ describe('NewsSection link rendering', () => {
     vi.clearAllMocks();
     createNewsMutateAsyncMock.mockReset();
     deleteNewsMutateAsyncMock.mockReset();
+    prefetchNewsMock.mockReset();
     useNewsMock.mockReturnValue({
       data: [],
       isLoading: false,

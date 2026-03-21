@@ -279,7 +279,7 @@ Wave 4: optimization, deletion, release hardening (`13`, `14`)
 
   **Commit**: YES | Message: `feat(shell): add vinext hybrid navigation` | Files: `apps/portal-vinext`, `lib/nav.ts`, `lib/i18n/copy.ts`, `e2e/mobile-dashboard-nav.spec.ts`
 
-- [ ] 5. Port shared feature adapters and server contracts for Vinext consumption
+- [x] 5. Port shared feature adapters and server contracts for Vinext consumption
 
   **What to do**: Create the shared adapter layer that allows Vinext routes to consume existing query hooks, client API wrappers, schemas, and server route contracts without cloning business logic. Normalize section-level data loading, optimistic mutations, permission checks, and read-model access so all later route migrations plug into one shared pattern.
   **Must NOT do**: Do not duplicate `lib/server/*` domain rules inside Vinext; do not bypass existing route helpers or invent a second API envelope.

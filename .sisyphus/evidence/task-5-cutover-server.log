@@ -1,0 +1,32 @@
+
+> justice-ru@2.0.0 dev:cutover:all
+> node scripts/dev-cutover.mjs all
+
+Starting local cutover in 'all' mode
+- Next: http://127.0.0.1:3000
+- Vinext: http://127.0.0.1:3101
+[vinext] > justice-ru@2.0.0 dev:vinext
+[vinext] > npm --prefix apps/portal-vinext run dev
+[vinext] > dev
+[vinext] > vinext dev --port 3101 --hostname 127.0.0.1
+[vinext]   vinext dev  (Vite 8.0.0)
+[vinext]   [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m3101[22m/[39m
+[next] ▲ Next.js 16.1.6 (Turbopack, Cache Components)
+[next] - Local:         http://localhost:3000
+[next] - Network:       http://172.18.0.1:3000
+[next] - Environments: .env.local
+[next] ✓ Starting...
+[next] ✓ Ready in 4.8s
+[next] (node:17248) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+[next] (Use `node --trace-deprecation ...` to show where the warning was created)
+[vinext] [vite] connected.
+[vinext] [vite] connected.
+[vinext]  GET /news 200 in 25.8s (compile: 7.7s, render: 5.7s)
+[vinext]  GET /news 200 in 104ms (compile: 8ms, render: 90ms)
+[vinext]  GET /news 200 in 61ms (compile: 2ms, render: 57ms)
+[vinext]  GET /news 200 in 126ms (compile: 3ms, render: 119ms)
+[vinext]  GET /news 200 in 87ms (compile: 3ms, render: 81ms)
+[vinext]  GET /news 200 in 80ms (compile: 2ms, render: 75ms)
+[vinext]  GET /news 200 in 62ms (compile: 2ms, render: 57ms)
+[next] [?25h
+[next] exited with code 1

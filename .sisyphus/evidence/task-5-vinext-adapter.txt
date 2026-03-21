@@ -2,3 +2,7 @@ happy-path: vinext /news used shared adapter fetch + create mutation
 failure-path: member sees normalized permission state on vinext /news
 happy-path: vinext /news used shared adapter fetch + create mutation
 failure-path: member sees normalized permission state on vinext /news
+happy-path: vinext /news used shared adapter fetch + create mutation
+failure-path: member sees normalized permission state on vinext /news
+happy-path: vinext /news used shared adapter fetch + create mutation
+failure-path: member sees normalized permission state on vinext /news

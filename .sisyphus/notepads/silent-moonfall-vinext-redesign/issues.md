@@ -47,3 +47,7 @@
 ## 2026-03-21 Task 5 adapter lane wait-strategy fix
 - `e2e/vinext-data-adapter.spec.ts` was flaky because `waitForPortalShell()` coupled route readiness to `page.goto('/news', { waitUntil: 'networkidle' })`; in cutover dev runtime, background requests can keep network activity alive even when the shell is already rendered and authenticated.
 - Replaced the helper with a bounded DOM-state gate: navigate with `waitUntil: 'domcontentloaded'`, wait for `[data-testid="portal-shell"]` visibility, then poll `data-auth-state === authenticated`; route assertions remain unchanged (`news-list`, create mutation path, member permission path).
+
+## 2026-03-21 Task 5 stale NewsSection hooks mock
+- `tests/components/NewsSection.test.tsx` mocked `@/lib/news/hooks` without `newsKeys` (and `usePrefetchNews`), which became stale once `lib/news/adapter.ts` imported those exports for the shared adapter contract.
+- Fixed only the test-side contract by extending the hooks mock shape (including `newsKeys` and `usePrefetchNews`) so adapter-driven imports resolve in test runtime without altering production adapter code.

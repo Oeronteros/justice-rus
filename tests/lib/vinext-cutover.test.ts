@@ -33,6 +33,8 @@ describe('vinext cutover helpers', () => {
 
   it('keeps all scope rewrites on parity-ready routes only', () => {
     expect(getVinextOwnedRoutes('all')).toEqual([
+      '/',
+      '/about',
       '/news',
       '/help',
       '/guides',
@@ -46,8 +48,6 @@ describe('vinext cutover helpers', () => {
 
   it('exposes blocked final-scope routes in the parity manifest', () => {
     expect(getVinextBlockedRoutes('all')).toEqual([
-      '/',
-      '/about',
       '/analytics',
       '/workflow',
       '/integrations',
