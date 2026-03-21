@@ -5,7 +5,7 @@ import vinext from 'vinext';
 const vinextDevOrigin = process.env.VINEXT_DEV_ORIGIN?.replace(/\/$/, '');
 
 export default defineConfig({
-  envDir: path.resolve(__dirname, '../../'),
+  envDir: path.resolve(__dirname),
   build: {
     chunkSizeWarningLimit: 1500,
   },
@@ -23,7 +23,7 @@ export default defineConfig({
                 enableInlinedConditionalMerge: true,
                 treeshakeCompensation: true,
                 aliases: {
-                  '@/*': [path.resolve(__dirname, '../../*')],
+                  '@/*': [path.resolve(__dirname, '*')],
                 },
                 unstable_moduleResolution: {
                   type: 'commonJS',
@@ -35,17 +35,12 @@ export default defineConfig({
       },
     }),
   ],
-  publicDir: path.resolve(__dirname, '../../public'),
   resolve: {
     tsconfigPaths: true,
     alias: [
       {
-        find: /^fonts\//,
-        replacement: `${path.resolve(__dirname, '../../node_modules/katex/dist/fonts')}/`,
-      },
-      {
         find: '@',
-        replacement: path.resolve(__dirname, '../../'),
+        replacement: path.resolve(__dirname),
       },
       {
         find: 'pg-native',
@@ -55,11 +50,8 @@ export default defineConfig({
   },
   server: {
     host: '127.0.0.1',
-    port: 3101,
+    port: 3000,
     origin: vinextDevOrigin,
-    fs: {
-      allow: [path.resolve(__dirname, '../../')],
-    },
   },
   ssr: {
     external: ['jsonwebtoken', 'semver', 'pg'],
