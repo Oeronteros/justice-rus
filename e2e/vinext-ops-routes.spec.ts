@@ -52,7 +52,7 @@ test.describe('@ops-admin-routes', () => {
   test('Workflow page loads for officers', async ({ page }) => {
     test.slow();
     await addAuth(page, officerUser);
-    await page.goto(`${baseUrl}/workflow`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.goto(`${baseUrl}/workflow`, { waitUntil: 'networkidle', timeout: 30000 });
     
     // Verify the workflow automation grid is visible
     await expect(page.locator('[data-testid="workflow-automation-grid"]')).toBeVisible({ timeout: 15000 });
@@ -61,7 +61,7 @@ test.describe('@ops-admin-routes', () => {
   test('Workflow page restricts access for non-officers', async ({ page }) => {
     test.slow();
     await addAuth(page, memberUser);
-    await page.goto(`${baseUrl}/workflow`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.goto(`${baseUrl}/workflow`, { waitUntil: 'networkidle', timeout: 30000 });
     
     // Verify permission error is shown
     await expect(page.locator('[data-testid="permission-error"]')).toBeVisible({ timeout: 15000 });
@@ -70,7 +70,7 @@ test.describe('@ops-admin-routes', () => {
   test('Integrations page loads for officers', async ({ page }) => {
     test.slow();
     await addAuth(page, officerUser);
-    await page.goto(`${baseUrl}/integrations`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.goto(`${baseUrl}/integrations`, { waitUntil: 'networkidle', timeout: 30000 });
     
     // Verify the integration health list and discord status are visible
     await expect(page.locator('[data-testid="integration-health-list"]')).toBeVisible({ timeout: 15000 });
@@ -80,7 +80,7 @@ test.describe('@ops-admin-routes', () => {
   test('Integrations page restricts access for non-officers', async ({ page }) => {
     test.slow();
     await addAuth(page, memberUser);
-    await page.goto(`${baseUrl}/integrations`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.goto(`${baseUrl}/integrations`, { waitUntil: 'networkidle', timeout: 30000 });
     
     // Verify permission error is shown
     await expect(page.locator('[data-testid="permission-error"]')).toBeVisible({ timeout: 15000 });
