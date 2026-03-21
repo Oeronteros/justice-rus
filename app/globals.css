@@ -1,0 +1,50 @@
+@import "@milkdown/crepe/theme/common/style.css";
+@import "@milkdown/crepe/theme/classic-dark.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --wuxia-ink: #0B0C1A;
+  --wuxia-ink-soft: #1A1F35;
+  --wuxia-paper: #e6dccb;
+  --wuxia-vermillion: #8b403a;
+  --wuxia-crimson: #5f2b28;
+  --wuxia-gold: #b8a06f;
+  --wuxia-jade: #9b8a63;
+  --wuxia-shadow: #050608;
+  --wuxia-ice: #eef4ec;
+  --wuxia-steel: #232730;
+  --wuxia-glass: rgba(18, 20, 26, 0.78);
+  --wuxia-line: rgba(184, 160, 111, 0.22);
+  --wuxia-glow: rgba(184, 160, 111, 0.18);
+  --font-body: 'Manrope', 'Noto Sans', 'Segoe UI', sans-serif;
+  --font-display: 'Noto Serif', 'Noto Serif SC', 'Times New Roman', serif;
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --cursor-x: 50%;
+  --cursor-y: 35%;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --skeleton-duration: 1.8s;
+}
+
+.theme-wuxia[data-theme='light'] {
+  color-scheme: light;
+  --wuxia-ink: #eff3f8;
+  --wuxia-ink-soft: #dde7f0;
+  --wuxia-paper: #1b2230;
+  --wuxia-vermillion: #8f5a51;
+  --wuxia-crimson: #6d3c36;
+  --wuxia-gold: #7b433d;
+  --wuxia-jade: #618673;
+  --wuxia-shadow: rgba(41, 53, 72, 0.12);
+  --wuxia-ice: #f8fbff;
+  --wuxia-steel: #4d5c70;
+  --wuxia-glass: rgba(255, 255, 255, 0.76);
+  --wuxia-line: rgba(27, 34, 48, 0.12);
+  --wuxia-glow: rgba(60, 122, 168, 0.12);
+}
