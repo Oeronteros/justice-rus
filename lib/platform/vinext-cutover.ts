@@ -119,10 +119,10 @@ const vinextRouteParityManifest: readonly VinextRouteParityEntry[] = [
     route: '/analytics',
     sectionKey: 'analytics',
     nextPagePath: 'app/(portal)/analytics/page.tsx',
-    vinextPagePath: null,
+    vinextPagePath: 'apps/portal-vinext/app/(portal)/analytics/page.tsx',
     cutoverWave: 'all',
-    status: 'blocked',
-    blocker: 'Missing vinext route file for analytics section.',
+    status: 'ready',
+    blocker: null,
     rollbackScope: 'off',
   },
   {

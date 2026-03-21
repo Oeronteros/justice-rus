@@ -404,7 +404,7 @@ Wave 4: optimization, deletion, release hardening (`13`, `14`)
 
   **Commit**: YES | Message: `feat(vinext): migrate member routes and personalization` | Files: profile/absences/pvp Vinext routes, related shared profile logic, tests
 
-- [ ] 8. Migrate schedule, calendar, dashboard, and analytics surfaces with lazy-loaded charts
+- [x] 8. Migrate schedule, calendar, dashboard, and analytics surfaces with lazy-loaded charts
 
   **What to do**: Rebuild `/schedule`, `/calendar`, `/dashboard`, and `/analytics` in Vinext with responsive density-aware layouts and first-version charting using `Chart.js`. Keep existing schedule and analytics semantics, but modernize information hierarchy, event cards, hero summaries, and chart affordances. Charts must be lazy loaded, empty-state aware, and bounded to known datasets from existing read-models.
   **Must NOT do**: Do not introduce `D3.js`, custom SVG chart engines, or unbounded client-side data fetching.
