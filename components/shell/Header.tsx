@@ -243,7 +243,7 @@ export default function Header({
               <span {...stylex.props(shellStyles.desktopSectionSignalDivider)} />
               <span {...stylex.props(shellStyles.desktopSectionSignalStat)}>
                 <span {...stylex.props(shellStyles.desktopSectionSignalStatLabel)}>{secondaryNavLabel}</span>
-                <span {...stylex.props(shellStyles.desktopSectionSignalStatValue)}>{String(groupedRouteCount).padStart(2, '0')}</span>
+                <span {...stylex.props(shellStyles.desktopSectionSignalStatValue)}>{String(totalNavCount).padStart(2, '0')}</span>
               </span>
             </div>
           </div>
