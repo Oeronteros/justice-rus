@@ -173,6 +173,10 @@ function buildRecommendationTags(draft: Pick<ProfileDraftState, 'profileTitle' |
   return tags;
 }
 
+function isProfileTitleOption(value: string): value is (typeof profileTitleOptions)[number] {
+  return profileTitleOptions.includes(value as (typeof profileTitleOptions)[number]);
+}
+
 function isPrefixOption(value: string): value is (typeof prefixOptions)[number] {
   return prefixOptions.includes(value as (typeof prefixOptions)[number]);
 }
@@ -778,7 +782,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
     }
 
     if (nextProfileTitle !== (profileRegistration?.title || user.profileTitle || '')) {
-      payload.profileTitle = nextProfileTitle ? nextProfileTitle : null;
+      payload.profileTitle = nextProfileTitle ? (isProfileTitleOption(nextProfileTitle) ? nextProfileTitle : null) : null;
     }
 
     if (nextClassName && nextClassName !== (profileRegistration?.class || user.className || '')) {
@@ -1159,3 +1163,5 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
     </section>
   );
 }
+
+
