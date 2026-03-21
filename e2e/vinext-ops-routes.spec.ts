@@ -44,15 +44,38 @@ const officerUser: VinextFixtureUser = {
 };
 
 async function addAuth(page: Page, user: VinextFixtureUser) {
-  process.env.PLAYWRIGHT_VINEXT_BASE_URL = baseUrl;
+  // Set the vinext base URL to vinext server (port 3101)
+  process.env.PLAYWRIGHT_VINEXT_BASE_URL = 'http://127.0.0.1:3101';
   await addVinextAuthCookie(page.context(), user);
+  
+  // Get the token value
+  const cookies = await page.context().cookies();
+  const tokenValue = cookies.find(c => c.name === 'auth_token')?.value || '';
+  
+  // Add cookie for all possible origins
+  const origins = [
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:3101',
+    'http://localhost:3000',
+    'http://localhost:3101',
+  ];
+  
+  await page.context().addCookies(origins.map(origin => ({
+    name: 'auth_token',
+    value: tokenValue,
+    url: origin,
+    httpOnly: false,
+    secure: false,
+    sameSite: 'Lax',
+  })));
 }
 
 test.describe('@ops-admin-routes', () => {
   test('Workflow page loads for officers', async ({ page }) => {
     test.slow();
     await addAuth(page, officerUser);
-    await page.goto(`${baseUrl}/workflow`, { waitUntil: 'networkidle', timeout: 30000 });
+    // Navigate directly to vinext server to bypass proxy issues
+    await page.goto('http://127.0.0.1:3101/workflow', { waitUntil: 'networkidle', timeout: 30000 });
     
     // Verify the workflow automation grid is visible
     await expect(page.locator('[data-testid="workflow-automation-grid"]')).toBeVisible({ timeout: 15000 });
@@ -61,7 +84,7 @@ test.describe('@ops-admin-routes', () => {
   test('Workflow page restricts access for non-officers', async ({ page }) => {
     test.slow();
     await addAuth(page, memberUser);
-    await page.goto(`${baseUrl}/workflow`, { waitUntil: 'networkidle', timeout: 30000 });
+    await page.goto('http://127.0.0.1:3101/workflow', { waitUntil: 'networkidle', timeout: 30000 });
     
     // Verify permission error is shown
     await expect(page.locator('[data-testid="permission-error"]')).toBeVisible({ timeout: 15000 });
@@ -70,7 +93,7 @@ test.describe('@ops-admin-routes', () => {
   test('Integrations page loads for officers', async ({ page }) => {
     test.slow();
     await addAuth(page, officerUser);
-    await page.goto(`${baseUrl}/integrations`, { waitUntil: 'networkidle', timeout: 30000 });
+    await page.goto('http://127.0.0.1:3101/integrations', { waitUntil: 'networkidle', timeout: 30000 });
     
     // Verify the integration health list and discord status are visible
     await expect(page.locator('[data-testid="integration-health-list"]')).toBeVisible({ timeout: 15000 });
@@ -80,7 +103,7 @@ test.describe('@ops-admin-routes', () => {
   test('Integrations page restricts access for non-officers', async ({ page }) => {
     test.slow();
     await addAuth(page, memberUser);
-    await page.goto(`${baseUrl}/integrations`, { waitUntil: 'networkidle', timeout: 30000 });
+    await page.goto('http://127.0.0.1:3101/integrations', { waitUntil: 'networkidle', timeout: 30000 });
     
     // Verify permission error is shown
     await expect(page.locator('[data-testid="permission-error"]')).toBeVisible({ timeout: 15000 });
