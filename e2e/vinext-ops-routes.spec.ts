@@ -48,7 +48,44 @@ async function addAuth(page: Page, user: VinextFixtureUser) {
   await addVinextAuthCookie(page.context(), user);
 }
 
-test.describe('@ops-routes', () => {
+test.describe('@ops-admin-routes', () => {
+  test('Workflow page loads for officers', async ({ page }) => {
+    test.slow();
+    await addAuth(page, officerUser);
+    await page.goto(`${baseUrl}/workflow`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    
+    // Verify the workflow automation grid is visible
+    await expect(page.locator('[data-testid="workflow-automation-grid"]')).toBeVisible({ timeout: 15000 });
+  });
+
+  test('Workflow page restricts access for non-officers', async ({ page }) => {
+    test.slow();
+    await addAuth(page, memberUser);
+    await page.goto(`${baseUrl}/workflow`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    
+    // Verify permission error is shown
+    await expect(page.locator('[data-testid="permission-error"]')).toBeVisible({ timeout: 15000 });
+  });
+
+  test('Integrations page loads for officers', async ({ page }) => {
+    test.slow();
+    await addAuth(page, officerUser);
+    await page.goto(`${baseUrl}/integrations`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    
+    // Verify the integration health list and discord status are visible
+    await expect(page.locator('[data-testid="integration-health-list"]')).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('[data-testid="integration-discord-status"]')).toBeVisible({ timeout: 15000 });
+  });
+
+  test('Integrations page restricts access for non-officers', async ({ page }) => {
+    test.slow();
+    await addAuth(page, memberUser);
+    await page.goto(`${baseUrl}/integrations`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    
+    // Verify permission error is shown
+    await expect(page.locator('[data-testid="permission-error"]')).toBeVisible({ timeout: 15000 });
+  });
+
   test('Dashboard page loads without crash', async ({ page }) => {
     test.slow();
     await addAuth(page, memberUser);
