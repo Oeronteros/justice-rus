@@ -35,6 +35,8 @@
     "react-hook-form": "^7.70.0",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
+    "vite": "^8.0.0",
+    "vinext": "^0.0.29",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -60,8 +62,6 @@
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.2",
     "typescript": "^5",
-    "vite": "^8.0.0",
-    "vitest": "^4.0.16",
-    "vinext": "^0.0.29"
+    "vitest": "^4.0.16"
   }
 }
