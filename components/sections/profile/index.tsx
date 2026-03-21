@@ -883,7 +883,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
             <span {...stylex.props(profileStyles.mutedText)}>{language === 'ru' ? 'Класс, префикс и PvP-статус вынесены в быстрый обзор перед детальными настройками.' : language === 'zh' ? '职业、前缀和 PvP 状态先进入快速概览，再进入详细设置。' : 'Class, prefix, and PvP status now sit in a quick overview before the detailed settings.'}</span>
             <div {...stylex.props(uiStyles.inlineTags)} data-testid="profile-recommendation-tags">
               {recommendationTags.slice(0, 4).map((tag) => (
-                <span key={tag.id} {...stylex.props(uiStyles.badge, uiStyles.badgeMuted)} title={tag.reason}>
+                <span key={tag.id} data-testid="recommendation-chip-list" {...stylex.props(uiStyles.badge, uiStyles.badgeMuted)} title={tag.reason}>
                   {tag.label}
                 </span>
               ))}
@@ -915,6 +915,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
                 {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary)}
                 onClick={saveProfileStats}
                 disabled={updateRegistrationStatsMutation.isPending}
+                data-testid="profile-save"
               >
                 {updateRegistrationStatsMutation.isPending ? 'Сохраняем...' : 'Сохранить профиль'}
               </button>
@@ -976,6 +977,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
                 value={profileDraft.prefix}
                 onChange={(e) => setProfileDraft((prev) => ({ ...prev, prefix: e.target.value }))}
                 {...stylex.props(uiStyles.select)}
+                data-testid="profile-prefix-input"
               >
                 <option value="">Без префикса</option>
                 {prefixOptions.map((prefix) => (
@@ -1039,7 +1041,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
           <div {...stylex.props(profileStyles.personalizationGrid)}>
             <div {...stylex.props(profileStyles.personalizationCard)}>
               <div {...stylex.props(profileStyles.fieldLabel)}>Предпочитаемые классы</div>
-              <div {...stylex.props(uiStyles.inlineTags)}>
+              <div {...stylex.props(uiStyles.inlineTags)} data-testid="class-multiselect">
                 {classOptions.map((className) => {
                   const isActive = profileDraft.preferredClasses.includes(className);
 

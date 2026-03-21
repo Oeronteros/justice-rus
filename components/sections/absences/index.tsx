@@ -118,7 +118,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
               <h3 {...stylex.props(opsStyles.panelTitle)}>{t.absences.createRequest}</h3>
             </div>
 
-            <form onSubmit={handleSubmit} {...stylex.props(opsStyles.formStack)}>
+            <form onSubmit={handleSubmit} {...stylex.props(opsStyles.formStack)} data-testid="absence-form">
               <div {...stylex.props(opsStyles.helperInline)}>{t.absences.profilePrefix} <span {...stylex.props(opsStyles.helperAccent)}>{user.nickname || t.absences.currentUserFallback}</span></div>
 
               <div {...stylex.props(opsStyles.fieldGrid2)}>
