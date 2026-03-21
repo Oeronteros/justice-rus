@@ -4,7 +4,14 @@ const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:3000';
 
 export default defineConfig({
   testDir: './e2e',
-  testMatch: ['vinext-pilot.spec.ts', 'vinext-pilot-a11y.spec.ts', 'vinext-route-parity.spec.ts', 'vinext-theme-primitives.spec.ts', 'vinext-nav.spec.ts'],
+  testMatch: [
+    'vinext-pilot.spec.ts',
+    'vinext-pilot-a11y.spec.ts',
+    'vinext-route-parity.spec.ts',
+    'vinext-theme-primitives.spec.ts',
+    'vinext-nav.spec.ts',
+    'vinext-data-adapter.spec.ts',
+  ],
   timeout: 120000,
   fullyParallel: false,
   retries: 1,

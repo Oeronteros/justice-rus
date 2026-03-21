@@ -5,21 +5,20 @@ import { Fragment, useMemo, useState, type ReactNode } from 'react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
-import { useCreateNews, useDeleteNews, useNews } from '@/lib/news/hooks';
+import { sharedNewsFeatureAdapter, type NewsFeatureAdapter } from '@/lib/news/adapter';
 import { formatDate } from '@/lib/utils';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import type { User } from '@/lib/schemas/auth';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { useTranslation } from '@/lib/i18n/context';
 import { sectionLabels } from '@/lib/i18n';
-import { hasRoleAtLeast } from '@/lib/authz';
-import { handleApiError } from '@/lib/api/errors';
 import * as stylex from '@stylexjs/stylex';
 import { uiStyles } from '@/components/shared/Ui.stylex';
 import { newsStyles } from './News.stylex';
 
 interface NewsSectionProps {
   user: User;
+  adapter?: NewsFeatureAdapter;
 }
 
 const ROLE_MENTION_RE = /<@&\d+>/g;
@@ -270,11 +269,11 @@ function DeliveryBadge({ status }: { status?: 'pending' | 'sent' | 'failed' }) {
   return <span {...stylex.props(newsStyles.deliveryBadge, tone)}>{label}</span>;
 }
 
-function NewsSectionContent({ user }: NewsSectionProps) {
+function NewsSectionContent({ user, adapter = sharedNewsFeatureAdapter }: NewsSectionProps) {
   const { t, language } = useTranslation();
-  const { data: news = [], isLoading, error, refetch } = useNews();
-  const createNewsMutation = useCreateNews();
-  const deleteNewsMutation = useDeleteNews();
+  const { data: news = [], isLoading, error, refetch } = adapter.useListQuery();
+  const createNewsMutation = adapter.useCreateMutation();
+  const deleteNewsMutation = adapter.useDeleteMutation();
   const { featured, list } = splitFeaturedNews(news);
   const [expandedNewsIds, setExpandedNewsIds] = useState<string[]>([]);
   const [isFeaturedExpanded, setIsFeaturedExpanded] = useState(false);
@@ -282,7 +281,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
   const [draftContent, setDraftContent] = useState('');
   const [draftPinned, setDraftPinned] = useState(false);
   const [composerNotice, setComposerNotice] = useState<string | null>(null);
-  const canPublish = hasRoleAtLeast(user.role, 'officer');
+  const canPublish = adapter.canManage(user);
 
   const handleDeleteNews = async (id: string) => {
     const confirmed = window.confirm('Удалить эту новость?');
@@ -294,7 +293,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
       await deleteNewsMutation.mutateAsync(id);
       setComposerNotice('Новость удалена с сайта.');
     } catch (deleteError) {
-      setComposerNotice(handleApiError(deleteError));
+      setComposerNotice(adapter.toErrorMessage(deleteError));
     }
   };
 
@@ -338,7 +337,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
       setDraftPinned(false);
       setComposerNotice('Новость опубликована и отправлена в Discord.');
     } catch (submitError) {
-      setComposerNotice(handleApiError(submitError));
+      setComposerNotice(adapter.toErrorMessage(submitError));
     }
   };
 
@@ -464,6 +463,7 @@ function NewsSectionContent({ user }: NewsSectionProps) {
                 <div {...stylex.props(newsStyles.actionRow)}>
                   <button
                     type="button"
+                    data-testid="news-create-button"
                     {...stylex.props(uiStyles.buttonBase, uiStyles.buttonPrimary)}
                     onClick={submitNews}
                     disabled={createNewsMutation.isPending}
@@ -500,9 +500,13 @@ function NewsSectionContent({ user }: NewsSectionProps) {
               )}
             </article>
           </div>
-        ) : null}
+        ) : (
+          <div data-testid="permission-error" {...stylex.props(uiStyles.notice, newsStyles.noticeInfo)}>
+            {adapter.permissionMessage}
+          </div>
+        )}
 
-        <div {...stylex.props(uiStyles.stackLg)}>
+        <div data-testid="news-list" {...stylex.props(uiStyles.stackLg)}>
           {news.length === 0 ? (
             <EmptyState
               icon={<WuxiaIcon name="news" {...stylex.props(newsStyles.iconEmpty)} />}

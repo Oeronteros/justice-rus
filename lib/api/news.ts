@@ -1,5 +1,6 @@
 import { getApiNews, postApiNews } from '@/lib/api/generated';
 import { sameOriginOpenApiClient } from './openapi-client';
+import { toApiError, parseJsonResponse } from './route-contract';
 import {
   createNewsSchema,
   newsArraySchema,
@@ -10,10 +11,22 @@ import {
 
 export type CreateNewsPayload = CreateNewsDto;
 
+function unwrapNewsResponse<T>(
+  result: { data?: T; error?: unknown; response?: Response },
+  fallbackMessage: string
+): T {
+  if (result.error !== undefined) {
+    const status = result.response?.status ?? 500;
+    throw toApiError(result.error, status, fallbackMessage);
+  }
+
+  return (result.data as T | undefined) as T;
+}
+
 export const newsApi = {
   list: async (): Promise<News[]> => {
     const response = await getApiNews({ client: sameOriginOpenApiClient });
-    return newsArraySchema.parse(response.data || []);
+    return newsArraySchema.parse(unwrapNewsResponse(response, 'Failed to fetch news') || []);
   },
 
   create: async (payload: CreateNewsDto): Promise<News> => {
@@ -22,7 +35,7 @@ export const newsApi = {
       body: createNewsSchema.parse(payload),
     });
 
-    return newsSchema.parse(response.data || {});
+    return newsSchema.parse(unwrapNewsResponse(response, 'Failed to create news') || {});
   },
 
   remove: async (id: string): Promise<{ id: string }> => {
@@ -34,13 +47,18 @@ export const newsApi = {
       },
     });
 
-    const payload = await response.json().catch(() => ({}));
+    const payload = await parseJsonResponse(response);
     if (!response.ok) {
-      throw new Error(typeof payload?.error === 'string' ? payload.error : 'Failed to delete news');
+      throw toApiError(payload, response.status, 'Failed to delete news');
     }
 
+    const payloadId =
+      payload && typeof payload === 'object' && 'id' in payload && typeof payload.id === 'string'
+        ? payload.id
+        : id;
+
     return {
-      id: typeof payload?.id === 'string' ? payload.id : id,
+      id: payloadId,
     };
   },
 };

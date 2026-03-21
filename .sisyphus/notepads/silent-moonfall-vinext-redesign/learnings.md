@@ -51,3 +51,7 @@
 ## 2026-03-21 Task 4 header regression test contract
 - `tests/components/Header.test.tsx` must target the desktop grouped-nav contract now implemented in `components/shell/Header.tsx`: `Sections` is a `role="group"` rail label, not a single launcher button, and open desktop submenu panels expose group-specific labels like `Command navigation: Guild`.
 - Meaningful header regression coverage still comes from opening real group triggers (`Core`, `Guild`, `Command`, `Tools`) and asserting actual grouped links/prefetch behavior, not from falling back to generic panel selectors.
+
+## 2026-03-21 Task 4 live cutover runtime fix
+- Fresh combined cutover boot can request shared Vinext workspace modules through Vite `/@fs/...` URLs (for example shared shell/auth modules imported from outside `apps/portal-vinext`); the live break was that `lib/platform/vinext-cutover.ts` proxied `@vite`/`app`/`node_modules` dev assets but not explicit `/@fs/:path*` requests.
+- Fix was to add a dedicated `/@fs/:path* -> VINEXT_CUTOVER_ORIGIN/@fs/:path*` rewrite and cover it in `tests/lib/vinext-cutover.test.ts`; `e2e/vinext-nav.spec.ts` now also fails on `/@fs/` request/console errors so the focused task-4 lane catches the same regression class as fresh live QA.

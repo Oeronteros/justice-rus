@@ -43,3 +43,7 @@
 
 ## 2026-03-20 Task 3 verification gotcha
 - Existing Vinext login flow in `e2e/vinext-pilot.spec.ts` remains unstable for authenticated transitions (legacy `fixme` tests already reflected this), so the new `@shell-auth` lane is intentionally scoped to stable unauthenticated shell-boundary assertions (`portal-shell` + `runtime-badge`) while keeping broader authenticated browser flows outside this focused gate.
+
+## 2026-03-21 Task 5 adapter lane wait-strategy fix
+- `e2e/vinext-data-adapter.spec.ts` was flaky because `waitForPortalShell()` coupled route readiness to `page.goto('/news', { waitUntil: 'networkidle' })`; in cutover dev runtime, background requests can keep network activity alive even when the shell is already rendered and authenticated.
+- Replaced the helper with a bounded DOM-state gate: navigate with `waitUntil: 'domcontentloaded'`, wait for `[data-testid="portal-shell"]` visibility, then poll `data-auth-state === authenticated`; route assertions remain unchanged (`news-list`, create mutation path, member permission path).

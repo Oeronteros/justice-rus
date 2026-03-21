@@ -238,7 +238,7 @@ Wave 4: optimization, deletion, release hardening (`13`, `14`)
 
   **Commit**: YES | Message: `feat(vinext): port shell provider boundaries` | Files: `apps/portal-vinext`, `lib/providers/QueryProvider.tsx`, `lib/auth/context.tsx`, `lib/i18n/copy.ts`
 
-- [ ] 4. Implement hybrid navigation, motion system, and shell responsiveness in Vinext
+- [x] 4. Implement hybrid navigation, motion system, and shell responsiveness in Vinext
 
   **What to do**: Build the redesigned navigation shell in Vinext using the current section registry as the source of truth. Desktop must render a horizontal top navigation with icons, grouped submenus, and tooltips; mobile must render a vertical drawer or stacked nav with the same information architecture. Add route transitions and section-level motion using `Framer Motion`, but keep durations bounded and disable non-essential animation for reduced-motion users.
   **Must NOT do**: Do not rename routes or section keys unless task `1` explicitly called for it; do not create a second navigation registry.
