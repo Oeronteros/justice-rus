@@ -16,16 +16,8 @@ Starting local cutover in 'all' mode
 [next] - Network:       http://172.18.0.1:3000
 [next] - Environments: .env.local
 [next] ✓ Starting...
-[next] ✓ Ready in 3.8s
-[next] (node:21316) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
-[next] (Use `node --trace-deprecation ...` to show where the warning was created)
+[next] ✓ Ready in 4.4s
 [vinext] [vite] connected.
 [vinext] [vite] connected.
-[vinext]  GET /about 200 in 143ms (compile: 6ms, render: 125ms)
-[vinext]  GET / 200 in 117ms (compile: 3ms, render: 109ms)
-[vinext]  GET / 200 in 114ms (compile: 4ms, render: 107ms)
-[vinext]  GET / 200 in 76ms (compile: 3ms, render: 69ms)
-[vinext]  GET /about 200 in 110ms (compile: 12ms, render: 96ms)
-[vinext]  GET / 200 in 123ms (compile: 3ms, render: 111ms)
-[vinext] exited with code 4294967295
-[next] [?25h
+[vinext]  GET /news 200 in 43.1s (compile: 10.3s, render: 9.1s)
+[vinext]  GET / 200 in 43.3s (compile: 13.3s, render: 6.2s)

@@ -2,13 +2,14 @@ import { expect, test, type Page, type Route } from '@playwright/test';
 import { addVinextAuthCookie, type VinextFixtureUser } from './utils/vinext-auth';
 
 const baseUrl = process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:3000';
+const officerAccountId = '90021';
 
 const officerUser: VinextFixtureUser = {
-  id: '90021',
+  id: 'pin-officer',
   nickname: 'Content Officer',
   role: 'officer',
   isActive: true,
-  authMethod: 'account',
+  authMethod: 'pin',
   discordHandle: null,
   className: 'Numina',
 };
@@ -87,7 +88,7 @@ const helpPayload = [
     details: 'Нужен офицер, который сможет координировать группу на вечернем событии.',
     category: 'outer_city_heroic',
     author: 'Content Officer',
-    authorUserId: officerUser.id,
+    authorUserId: officerAccountId,
     status: 'open',
     createdAt: '2099-03-11T16:00:00.000Z',
     gatheringStart: '2099-03-11T18:00:00.000Z',
@@ -100,7 +101,7 @@ const guidesPayload = [
   {
     id: 'guide-1',
     slug: 'guide-evening-raid',
-    ownerAccountId: officerUser.id,
+    ownerAccountId: officerAccountId,
     title: 'Гайд по вечернему сбору',
     category: 'general',
     author: 'Content Officer',
@@ -116,7 +117,7 @@ const guideDetailPayload = {
   guide: {
     id: 'guide-1',
     slug: 'guide-evening-raid',
-    ownerAccountId: officerUser.id,
+    ownerAccountId: officerAccountId,
     title: 'Гайд по вечернему сбору',
     category: 'general',
     author: 'Content Officer',
@@ -288,9 +289,10 @@ test.describe('vinext content routes', () => {
     await page.goto('/guides', { waitUntil: 'domcontentloaded' });
     await expect(page.getByRole('heading', { name: 'Гайды гильдии' })).toBeVisible();
     await page.getByRole('button', { name: /Гайд по вечернему сбору/ }).click();
-    await expect(page.getByRole('dialog')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Гайд по вечернему сбору' })).toBeVisible();
-    await expect(page.getByText('Подготовь состав, расходники и голосовой канал.')).toBeVisible();
+    const guideDialog = page.getByRole('dialog');
+    await expect(guideDialog).toBeVisible();
+    await expect(guideDialog.getByRole('heading', { name: 'Гайд по вечернему сбору' })).toBeVisible();
+    await expect(guideDialog.getByText('Подготовь состав, расходники и голосовой канал.')).toBeVisible();
   });
 
   test('@content-routes renders intentional empty states across Vinext content routes', async ({ page }) => {
