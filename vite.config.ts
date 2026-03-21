@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { defineConfig } from 'vite';
 import vinext from 'vinext';
+import { nitro } from 'nitro/vite';
 
 const vinextDevOrigin = process.env.VINEXT_DEV_ORIGIN?.replace(/\/$/, '');
 
@@ -34,6 +35,7 @@ export default defineConfig({
         },
       },
     }),
+    nitro(),
   ],
   resolve: {
     tsconfigPaths: true,
