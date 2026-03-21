@@ -5,5 +5,6 @@ import { useUser } from '@/lib/auth/context';
 
 export default function HelpPage() {
   const user = useUser();
+
   return <HelpSection user={user} />;
 }

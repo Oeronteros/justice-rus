@@ -7,6 +7,6 @@ import { useUser } from '@/lib/auth/context';
 export default function SchedulePage() {
   const { language } = useLanguage();
   const user = useUser();
-  
+
   return <ScheduleSection user={user} language={language} />;
 }

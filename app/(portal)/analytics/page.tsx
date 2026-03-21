@@ -1,20 +1,29 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, lazy, Suspense } from 'react';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
-import WuxiaIcon from '@/components/WuxiaIcons';
+import WuxiaIcon, { type IconName } from '@/components/WuxiaIcons';
 import { useRosterAnalytics } from '@/lib/analytics';
-import {
-  AttendanceHeatmapDisplay,
-  ClassCompositionChart,
-  AttendanceTrendsChart,
-  OfficerWorkloadDisplay,
-} from '@/components/analytics';
 import { useUser } from '@/lib/auth/context';
 import { hasRoleAtLeast } from '@/lib/authz';
 import { useLanguage, type Language } from '@/lib/i18n/context';
+import * as stylex from '@stylexjs/stylex';
+
+// Lazy load chart components for performance
+const AttendanceHeatmapDisplay = lazy(() =>
+  import('@/components/analytics').then((mod) => ({ default: mod.AttendanceHeatmapDisplay }))
+);
+const ClassCompositionChart = lazy(() =>
+  import('@/components/analytics').then((mod) => ({ default: mod.ClassCompositionChart }))
+);
+const AttendanceTrendsChart = lazy(() =>
+  import('@/components/analytics').then((mod) => ({ default: mod.AttendanceTrendsChart }))
+);
+const OfficerWorkloadDisplay = lazy(() =>
+  import('@/components/analytics').then((mod) => ({ default: mod.OfficerWorkloadDisplay }))
+);
 
 const copy: Record<Language, {
   title: string;
@@ -45,6 +54,91 @@ const copy: Record<Language, {
     loading: '正在加载分析...',
   },
 };
+
+const chartStyles = stylex.create({
+  container: {
+    display: 'grid',
+    gap: '1.5rem',
+  },
+  summaryGrid: {
+    display: 'grid',
+    gridTemplateColumns: {
+      default: 'repeat(2, 1fr)',
+      '@media (min-width: 768px)': 'repeat(4, 1fr)',
+    },
+    gap: '1rem',
+  },
+  summaryCard: {
+    padding: '1rem',
+    borderRadius: '0.75rem',
+    backgroundColor: 'rgba(16, 26, 35, 0.65)',
+    border: '1px solid rgba(42, 60, 76, 0.6)',
+  },
+  summaryLabel: {
+    fontSize: '0.75rem',
+    color: '#9ca3af',
+    marginBottom: '0.25rem',
+  },
+  summaryValue: {
+    fontSize: '1.5rem',
+    fontWeight: '700',
+    color: '#e6eff5',
+  },
+  summaryValueGood: {
+    color: '#2d5a3f',
+  },
+  summaryValueBad: {
+    color: '#5a2d2d',
+  },
+  chartGrid: {
+    display: 'grid',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 1024px)': 'repeat(2, 1fr)',
+    },
+    gap: '1.5rem',
+  },
+  loadingContainer: {
+    minHeight: '200px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  chartLoading: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '0.5rem',
+    padding: '2rem',
+    color: '#9ca3af',
+  },
+  chartLoadingSpinner: {
+    width: '2rem',
+    height: '2rem',
+    border: '2px solid rgba(42, 60, 76, 0.6)',
+    borderTopColor: '#8fb9cc',
+    borderRadius: '50%',
+    animation: 'spin 1s linear infinite',
+  },
+});
+
+function ChartLoadingFallback() {
+  return (
+    <div data-testid="chart-loading" {...stylex.props(chartStyles.chartLoading)}>
+      <div {...stylex.props(chartStyles.chartLoadingSpinner)} />
+      <span>Loading chart...</span>
+    </div>
+  );
+}
+
+function ChartEmptyFallback({ icon = 'registration', message = 'No data' }: { icon?: IconName; message?: string }) {
+  return (
+    <div data-testid="chart-empty-state" {...stylex.props(chartStyles.chartLoading)}>
+      <WuxiaIcon name={icon} className="w-8 h-8" />
+      <span>{message}</span>
+    </div>
+  );
+}
 
 export default function AnalyticsPage() {
   const { language } = useLanguage();
@@ -129,48 +223,60 @@ export default function AnalyticsPage() {
           chips={['Analytics', '30 days', `${analytics?.summary.totalMembers || 0} members`]}
         />
 
-        <div className="space-y-6">
+        <div {...stylex.props(chartStyles.container)}>
           {/* Summary Cards */}
           {analytics?.summary && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="card section-card p-4 rounded-xl bg-[#101a23]/65 border border-[#2a3c4c]/60">
-                <div className="text-gray-400 text-xs mb-1">Всего участников</div>
-                <div className="text-2xl font-bold text-[#e6eff5]">{analytics.summary.totalMembers}</div>
+            <div {...stylex.props(chartStyles.summaryGrid)}>
+              <div {...stylex.props(chartStyles.summaryCard)}>
+                <div {...stylex.props(chartStyles.summaryLabel)}>Всего участников</div>
+                <div {...stylex.props(chartStyles.summaryValue)}>{analytics.summary.totalMembers}</div>
               </div>
-              <div className="card section-card p-4 rounded-xl bg-[#101a23]/65 border border-[#2a3c4c]/60">
-                <div className="text-gray-400 text-xs mb-1">Активны</div>
-                <div className="text-2xl font-bold text-[#2d5a3f]">{analytics.summary.activeMembers}</div>
+              <div {...stylex.props(chartStyles.summaryCard)}>
+                <div {...stylex.props(chartStyles.summaryLabel)}>Активны</div>
+                <div {...stylex.props(chartStyles.summaryValue, chartStyles.summaryValueGood)}>{analytics.summary.activeMembers}</div>
               </div>
-              <div className="card section-card p-4 rounded-xl bg-[#101a23]/65 border border-[#2a3c4c]/60">
-                <div className="text-gray-400 text-xs mb-1">Неактивны</div>
-                <div className="text-2xl font-bold text-[#5a2d2d]">{analytics.summary.inactiveMembers}</div>
+              <div {...stylex.props(chartStyles.summaryCard)}>
+                <div {...stylex.props(chartStyles.summaryLabel)}>Неактивны</div>
+                <div {...stylex.props(chartStyles.summaryValue, chartStyles.summaryValueBad)}>{analytics.summary.inactiveMembers}</div>
               </div>
-              <div className="card section-card p-4 rounded-xl bg-[#101a23]/65 border border-[#2a3c4c]/60">
-                <div className="text-gray-400 text-xs mb-1">Средняя посещаемость</div>
-                <div className="text-2xl font-bold text-[#bcd6e5]">{analytics.summary.averageAttendance}%</div>
+              <div {...stylex.props(chartStyles.summaryCard)}>
+                <div {...stylex.props(chartStyles.summaryLabel)}>Средняя посещаемость</div>
+                <div {...stylex.props(chartStyles.summaryValue)}>{analytics.summary.averageAttendance}%</div>
               </div>
             </div>
           )}
 
-          {/* Attendance Heatmap */}
+          {/* Attendance Heatmap - Lazy loaded */}
           {analytics?.heatmap && analytics.heatmap.length > 0 && (
-            <AttendanceHeatmapDisplay data={analytics.heatmap} weeksToShow={8} />
+            <Suspense fallback={<ChartLoadingFallback />}>
+              <div data-testid="analytics-chart-attendance">
+                <AttendanceHeatmapDisplay data={analytics.heatmap} weeksToShow={8} />
+              </div>
+            </Suspense>
           )}
 
-          {/* Class Composition & Trends Side by Side */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {analytics?.classComposition && analytics.classComposition.length > 0 && (
-              <ClassCompositionChart data={analytics.classComposition} />
-            )}
-            {analytics?.trends && analytics.trends.length > 0 && (
-              <AttendanceTrendsChart data={analytics.trends} daysToShow={14} />
-            )}
+          {/* Class Composition & Trends Side by Side - Lazy loaded */}
+          <div {...stylex.props(chartStyles.chartGrid)}>
+            <Suspense fallback={<ChartLoadingFallback />}>
+              {analytics?.classComposition && analytics.classComposition.length > 0 && (
+                <div data-testid="analytics-chart-pvp">
+                  <ClassCompositionChart data={analytics.classComposition} />
+                </div>
+              )}
+            </Suspense>
+            <Suspense fallback={<ChartLoadingFallback />}>
+              {analytics?.trends && analytics.trends.length > 0 && (
+                <AttendanceTrendsChart data={analytics.trends} daysToShow={14} />
+              )}
+            </Suspense>
           </div>
 
-          {/* Officer Workload */}
-          {analytics?.officerWorkload && analytics.officerWorkload.length > 0 && (
-            <OfficerWorkloadDisplay data={analytics.officerWorkload} />
-          )}
+          {/* Officer Workload - Lazy loaded */}
+          <Suspense fallback={<ChartLoadingFallback />}>
+            {analytics?.officerWorkload && analytics.officerWorkload.length > 0 && (
+              <OfficerWorkloadDisplay data={analytics.officerWorkload} />
+            )}
+          </Suspense>
         </div>
       </div>
     </section>

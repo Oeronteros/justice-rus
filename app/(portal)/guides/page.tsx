@@ -5,5 +5,6 @@ import { useUser } from '@/lib/auth/context';
 
 export default function GuidesPage() {
   const user = useUser();
+
   return <GuidesSection user={user} />;
 }

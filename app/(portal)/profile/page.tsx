@@ -5,5 +5,6 @@ import { useUser } from '@/lib/auth/context';
 
 export default function ProfilePage() {
   const user = useUser();
+
   return <ProfileSection user={user} />;
 }

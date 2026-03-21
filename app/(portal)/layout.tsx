@@ -5,9 +5,14 @@ import { resolveSessionFromToken } from '@/lib/server/auth-session';
 
 export default async function PortalLayout({ children }: { children: React.ReactNode }) {
   await connection();
+
   const cookieStore = await cookies();
   const token = cookieStore.get('auth_token')?.value;
   const session = await resolveSessionFromToken(token);
 
-  return <PortalShell initialUser={session.valid ? session.user : null}>{children}</PortalShell>;
+  return (
+    <PortalShell runtime="vinext" initialUser={session.valid ? session.user : null}>
+      {children}
+    </PortalShell>
+  );
 }
