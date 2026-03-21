@@ -4,7 +4,7 @@ import { useMemo, lazy, Suspense } from 'react';
 import { SectionHero } from '@/components/shared/SectionHero';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { EmptyState } from '@/components/shared/EmptyState';
-import WuxiaIcon from '@/components/WuxiaIcons';
+import WuxiaIcon, { type IconName } from '@/components/WuxiaIcons';
 import { useRosterAnalytics } from '@/lib/analytics';
 import { useUser } from '@/lib/auth/context';
 import { hasRoleAtLeast } from '@/lib/authz';
@@ -131,7 +131,7 @@ function ChartLoadingFallback() {
   );
 }
 
-function ChartEmptyFallback({ icon = 'registration', message = 'No data' }: { icon?: string; message?: string }) {
+function ChartEmptyFallback({ icon = 'registration', message = 'No data' }: { icon?: IconName; message?: string }) {
   return (
     <div data-testid="chart-empty-state" {...stylex.props(chartStyles.chartLoading)}>
       <WuxiaIcon name={icon} className="w-8 h-8" />

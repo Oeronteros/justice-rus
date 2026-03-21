@@ -445,7 +445,7 @@ Wave 4: optimization, deletion, release hardening (`13`, `14`)
 
   **Commit**: YES | Message: `feat(vinext): migrate schedule dashboard analytics` | Files: dashboard/schedule/calendar/analytics Vinext routes, chart components, targeted tests
 
-- [x] 9. Migrate officer operations routes for workflow, integrations, and command surfaces
+- [ ] 9. Migrate officer operations routes for workflow, integrations, and command surfaces
 
   **What to do**: Rebuild the officer-facing operational surfaces in Vinext for `/workflow` and `/integrations`, and expose a consistent command surface for alerts, automations, and integration health within the redesigned shell. Use the new design system and shared adapters, but keep the current admin-only boundaries and command semantics intact.
   **Must NOT do**: Do not introduce new officer roles, approval rules, or automation logic beyond what is needed to render and manage the existing operational surfaces.
