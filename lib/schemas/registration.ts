@@ -12,6 +12,33 @@ export const prefixOptions = [
 
 export const prefixOptionSchema = z.enum(prefixOptions);
 
+export const profileTitleOptions = [
+  'Striker',
+  'Strategist',
+  'Vanguard',
+  'Scout',
+  'Support',
+] as const;
+
+export const profileTitleSchema = z.enum(profileTitleOptions);
+
+export const profileInterestOptions = [
+  'pvp',
+  'absences-planning',
+  'raid-prep',
+  'matchmaking',
+  'mentoring',
+] as const;
+
+export const profileInterestSchema = z.enum(profileInterestOptions);
+
+export const notificationDefaultsSchema = z.object({
+  helpRequests: z.boolean(),
+  absenceApprovals: z.boolean(),
+  pvpMatches: z.boolean(),
+  eventReminders: z.boolean(),
+});
+
 export const registrationRanks = [
   'guest', 'member', 'officer', 'head', 'sysadmin'
 ] as const;
@@ -25,6 +52,10 @@ export const registrationSchema = z.object({
   discordHandle: z.string().nullable().optional(),
   avatarUrl: z.string().nullable().optional(),
   prefix: z.string().nullable().optional(),
+  title: profileTitleSchema.nullable().optional(),
+  preferredClasses: z.array(z.string()).optional().default([]),
+  interests: z.array(profileInterestSchema).optional().default([]),
+  notificationDefaults: notificationDefaultsSchema.optional(),
   nickname: z.string(),
   rank: z.enum(registrationRanks),
   class: z.string(),
@@ -52,3 +83,6 @@ export type Registration = z.infer<typeof registrationSchema>;
 export type RegistrationRank = typeof registrationRanks[number];
 export type RegistrationStatus = typeof registrationStatuses[number];
 export type PrefixOption = typeof prefixOptions[number];
+export type ProfileTitle = typeof profileTitleOptions[number];
+export type ProfileInterest = typeof profileInterestOptions[number];
+export type NotificationDefaults = z.infer<typeof notificationDefaultsSchema>;

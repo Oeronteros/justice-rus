@@ -1,4 +1,9 @@
 import { z } from 'zod';
+import {
+  notificationDefaultsSchema,
+  profileInterestSchema,
+  profileTitleSchema,
+} from '@/lib/schemas/registration';
 
 export const userRoleSchema = z.enum(['guest', 'member', 'officer', 'head', 'sysadmin']);
 export const authMethodSchema = z.enum(['account', 'pin']);
@@ -15,6 +20,10 @@ export const authUserSchema = z.object({
   discordHandle: z.string().nullable().optional(),
   className: z.string().nullable().optional(),
   prefix: z.string().nullable().optional(),
+  profileTitle: profileTitleSchema.nullable().optional(),
+  preferredClasses: z.array(z.string()).optional(),
+  interests: z.array(profileInterestSchema).optional(),
+  notificationDefaults: notificationDefaultsSchema.optional(),
   exp: z.number().optional(),
 });
 
