@@ -11,6 +11,8 @@ const mockedRoster: Registration[] = [
   {
     discord: 'discord-001',
     avatarUrl: null,
+    preferredClasses: ['Numina'],
+    interests: ['raid-prep'],
     nickname: 'Tester',
     rank: 'member',
     class: 'Numina',
@@ -153,5 +155,33 @@ describe('ProfileSection role explainer and guild fields', () => {
     );
 
     expect(screen.getAllByText('Raid Lead')[0]).toBeInTheDocument();
+  });
+
+  it('persists first-version personalization fields and renders deterministic recommendation tags', async () => {
+    render(
+      <I18nProvider>
+        <NotificationsProvider>
+          <ProfileSection user={user} />
+        </NotificationsProvider>
+      </I18nProvider>
+    );
+
+    fireEvent.change(screen.getByTestId('profile-personalization-title'), { target: { value: 'Strategist' } });
+    fireEvent.click(screen.getByTestId('profile-class-tag-Sylph'));
+    fireEvent.click(screen.getByTestId('profile-interest-tag-pvp'));
+    fireEvent.click(screen.getByTestId('profile-default-pvp-matches'));
+    fireEvent.click(screen.getByRole('button', { name: 'Сохранить профиль' }));
+
+    expect(mutateProfileStats).toHaveBeenCalledTimes(1);
+    expect(mutateProfileStats).toHaveBeenCalledWith(expect.objectContaining({
+      nickname: 'Tester',
+      profileTitle: 'Strategist',
+      preferredClasses: expect.arrayContaining(['Sylph']),
+      interests: expect.arrayContaining(['pvp']),
+      notificationDefaults: expect.objectContaining({ pvpMatches: false }),
+    }));
+
+    expect(screen.getByTestId('profile-recommendation-tags')).toHaveTextContent('Title: Strategist');
+    expect(screen.getByTestId('profile-recommendation-tags-detailed')).toHaveTextContent('PvP focus');
   });
 });

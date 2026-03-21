@@ -10,6 +10,7 @@ import { optionsResponse } from '@/lib/server/cors';
 import { jsonError, parseJsonBody, requireDatabase, requireSameOrigin } from '@/lib/server/route-helpers';
 import { buildLegacyUser, canUseDevNicknameFallback, legacyPinRole, resolveClassName } from '@/lib/server/auth/legacy-pin';
 import { AuthRateLimitError, createAuthRateLimiter } from '@/lib/server/auth/rate-limit';
+import type { NotificationDefaults, ProfileInterest } from '@/lib/schemas/registration';
 
 const AUTH_WINDOW_MS = 15 * 60 * 1000;
 const AUTH_MAX_ATTEMPTS = 8;
@@ -20,6 +21,48 @@ const rateLimiter = createAuthRateLimiter({
   maxAttempts: AUTH_MAX_ATTEMPTS,
   blockMs: AUTH_BLOCK_MS,
 });
+
+function parseStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.filter((entry): entry is string => typeof entry === 'string' && entry.trim().length > 0);
+}
+
+function parseInterests(value: unknown): ProfileInterest[] {
+  const interests = parseStringArray(value);
+  return interests.filter((entry): entry is ProfileInterest => (
+    entry === 'pvp' ||
+    entry === 'absences-planning' ||
+    entry === 'raid-prep' ||
+    entry === 'matchmaking' ||
+    entry === 'mentoring'
+  ));
+}
+
+function parseNotificationDefaults(value: unknown): NotificationDefaults | undefined {
+  if (!value || typeof value !== 'object') {
+    return undefined;
+  }
+
+  const source = value as Partial<NotificationDefaults>;
+  if (
+    typeof source.helpRequests !== 'boolean' ||
+    typeof source.absenceApprovals !== 'boolean' ||
+    typeof source.pvpMatches !== 'boolean' ||
+    typeof source.eventReminders !== 'boolean'
+  ) {
+    return undefined;
+  }
+
+  return {
+    helpRequests: source.helpRequests,
+    absenceApprovals: source.absenceApprovals,
+    pvpMatches: source.pvpMatches,
+    eventReminders: source.eventReminders,
+  };
+}
 
 const authSchema = z.object({
   nickname: z.string().trim().min(3).max(32).optional(),
@@ -60,7 +103,7 @@ export async function POST(request: NextRequest) {
         const pool = getPool();
         const result = await pool.query(
           `
-          SELECT id, nickname, class_name, discord_handle, prefix, role, is_active, password_hash
+          SELECT id, nickname, class_name, discord_handle, prefix, profile_title, preferred_classes, interests, notification_defaults, role, is_active, password_hash
           FROM portal_account
           WHERE LOWER(nickname) = LOWER($1)
           LIMIT 1
@@ -103,6 +146,10 @@ export async function POST(request: NextRequest) {
               discordHandle: row.discord_handle || null,
               className: (await resolveClassName(row.nickname)) || row.class_name || null,
               prefix: row.prefix || null,
+              profileTitle: row.profile_title || null,
+              preferredClasses: parseStringArray(row.preferred_classes),
+              interests: parseInterests(row.interests),
+              notificationDefaults: parseNotificationDefaults(row.notification_defaults),
             };
           }
         } else if (legacyRole && canUseDevNicknameFallback(request)) {

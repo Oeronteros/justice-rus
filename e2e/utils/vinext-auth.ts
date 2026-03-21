@@ -13,6 +13,15 @@ export type VinextFixtureUser = {
   discordHandle: string | null;
   className: string | null;
   prefix?: string | null;
+  profileTitle?: 'Striker' | 'Strategist' | 'Vanguard' | 'Scout' | 'Support' | null;
+  preferredClasses?: string[];
+  interests?: Array<'pvp' | 'absences-planning' | 'raid-prep' | 'matchmaking' | 'mentoring'>;
+  notificationDefaults?: {
+    helpRequests: boolean;
+    absenceApprovals: boolean;
+    pvpMatches: boolean;
+    eventReminders: boolean;
+  };
 };
 
 const seededAccountIds = new Set<string>();
@@ -108,6 +117,10 @@ function createAuthToken(user: VinextFixtureUser) {
       discordHandle: user.discordHandle,
       className: user.className,
       prefix: user.prefix ?? null,
+      profileTitle: user.profileTitle ?? null,
+      preferredClasses: user.preferredClasses ?? [],
+      interests: user.interests ?? [],
+      notificationDefaults: user.notificationDefaults,
       iss: 'silent-moonfall-portal',
       aud: 'silent-moonfall-users',
       sub: user.id || user.nickname || user.role,

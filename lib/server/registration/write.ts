@@ -5,6 +5,7 @@ import type { User } from '@/lib/schemas/auth';
 import type { UpdateRegistrationStatsPayload } from './contracts';
 import { type PortalOnlyRow, pick, portalStatsDiscordId } from './shared';
 import { ensureActivityRow, ensureRegistrationStatsSchema, getTableColumns } from './schema';
+import type { NotificationDefaults, ProfileInterest } from '@/lib/schemas/registration';
 
 type RegistrationTarget = {
   row: Record<string, unknown> | null;
@@ -56,7 +57,16 @@ async function resolveRegistrationTarget(nickname: string): Promise<Registration
 
 async function updatePortalAccountProfile(
   nickname: string,
-  next: { className?: string; guild?: string; discordHandle?: string; prefix?: string | null }
+  next: {
+    className?: string;
+    guild?: string;
+    discordHandle?: string;
+    prefix?: string | null;
+    profileTitle?: string | null;
+    preferredClasses?: string[];
+    interests?: ProfileInterest[];
+    notificationDefaults?: NotificationDefaults;
+  }
 ) {
   const pool = getPool();
   await ensureAccountsSchema();
@@ -81,6 +91,26 @@ async function updatePortalAccountProfile(
   if (next.prefix !== undefined) {
     values.push(next.prefix);
     updates.push(`prefix = $${values.length}`);
+  }
+
+  if (next.profileTitle !== undefined) {
+    values.push(next.profileTitle);
+    updates.push(`profile_title = $${values.length}`);
+  }
+
+  if (next.preferredClasses !== undefined) {
+    values.push(JSON.stringify(next.preferredClasses));
+    updates.push(`preferred_classes = $${values.length}::jsonb`);
+  }
+
+  if (next.interests !== undefined) {
+    values.push(JSON.stringify(next.interests));
+    updates.push(`interests = $${values.length}::jsonb`);
+  }
+
+  if (next.notificationDefaults !== undefined) {
+    values.push(JSON.stringify(next.notificationDefaults));
+    updates.push(`notification_defaults = $${values.length}::jsonb`);
   }
 
   if (updates.length === 0) {
@@ -118,6 +148,14 @@ export async function updateRegistrationStats(
 
   if (payload.className !== undefined && !(await isKnownClassName(payload.className))) {
     throw new RegistrationUpdateError('Unknown class selected', 400);
+  }
+
+  if (payload.preferredClasses !== undefined) {
+    for (const className of payload.preferredClasses) {
+      if (!(await isKnownClassName(className))) {
+        throw new RegistrationUpdateError('Unknown preferred class selected', 400);
+      }
+    }
   }
 
   const isOfficer = hasRoleAtLeast(decoded.role, 'officer');
@@ -165,12 +203,25 @@ export async function updateRegistrationStats(
     );
   }
 
-  if (payload.className !== undefined || payload.guild !== undefined || payload.discordHandle !== undefined || payload.prefix !== undefined) {
+  if (
+    payload.className !== undefined ||
+    payload.guild !== undefined ||
+    payload.discordHandle !== undefined ||
+    payload.prefix !== undefined ||
+    payload.profileTitle !== undefined ||
+    payload.preferredClasses !== undefined ||
+    payload.interests !== undefined ||
+    payload.notificationDefaults !== undefined
+  ) {
     await updatePortalAccountProfile(payload.nickname, {
       className: payload.className,
       guild: payload.guild,
       discordHandle: payload.discordHandle,
       prefix: payload.prefix,
+      profileTitle: payload.profileTitle,
+      preferredClasses: payload.preferredClasses,
+      interests: payload.interests,
+      notificationDefaults: payload.notificationDefaults,
     });
   }
 

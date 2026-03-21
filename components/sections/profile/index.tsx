@@ -4,7 +4,14 @@ import Link from 'next/link';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import type { PortalAccount } from '@/lib/schemas/account';
 import type { User, UserRole } from '@/lib/schemas/auth';
-import { prefixOptions, type Registration } from '@/lib/schemas/registration';
+import {
+  prefixOptions,
+  profileInterestOptions,
+  profileTitleOptions,
+  type NotificationDefaults,
+  type ProfileInterest,
+  type Registration,
+} from '@/lib/schemas/registration';
 import WuxiaIcon from '@/components/WuxiaIcons';
 import { ClassBadge } from '@/components/ClassIcon';
 import { PrefixBadge } from '@/components/PrefixBadge';
@@ -36,7 +43,11 @@ const activityKeys: ActivityKey[] = ['outerHeroic', 'innerHeroic', 'crimsonSands
 interface ProfileDraftState {
   discordHandle: string;
   prefix: string;
+  profileTitle: string;
   className: string;
+  preferredClasses: string[];
+  interests: ProfileInterest[];
+  notificationDefaults: NotificationDefaults;
   guild: string;
   mmr20: number;
   outerHeroic: number;
@@ -67,6 +78,100 @@ const resetActivityDraft = (draft: ProfileDraftState): ProfileDraftState => ({
 });
 
 const roleOptions: UserRole[] = [...roleOrder];
+
+const defaultNotificationDefaults: NotificationDefaults = {
+  helpRequests: true,
+  absenceApprovals: true,
+  pvpMatches: true,
+  eventReminders: true,
+};
+
+const profileInterestLabels: Record<ProfileInterest, string> = {
+  pvp: 'PvP focus',
+  'absences-planning': 'Roster planning',
+  'raid-prep': 'Raid prep',
+  matchmaking: 'Matchmaking',
+  mentoring: 'Mentoring',
+};
+
+type RecommendationTag = {
+  id: string;
+  label: string;
+  reason: string;
+};
+
+function normalizeList(values: string[]): string[] {
+  return [...new Set(values.map((value) => value.trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ru'));
+}
+
+function sameNormalizedList(left: string[], right: string[]): boolean {
+  const leftNormalized = normalizeList(left);
+  const rightNormalized = normalizeList(right);
+
+  if (leftNormalized.length !== rightNormalized.length) {
+    return false;
+  }
+
+  return leftNormalized.every((value, index) => value === rightNormalized[index]);
+}
+
+function buildRecommendationTags(draft: Pick<ProfileDraftState, 'profileTitle' | 'prefix' | 'preferredClasses' | 'interests' | 'notificationDefaults'>): RecommendationTag[] {
+  const tags: RecommendationTag[] = [];
+
+  if (draft.profileTitle) {
+    tags.push({
+      id: `title-${draft.profileTitle.toLowerCase()}`,
+      label: `Title: ${draft.profileTitle}`,
+      reason: 'Based on your selected personal title.',
+    });
+  }
+
+  if (draft.prefix) {
+    tags.push({
+      id: `prefix-${draft.prefix.toLowerCase().replace(/\s+/g, '-')}`,
+      label: `Prefix: ${draft.prefix}`,
+      reason: 'Derived from your visible profile prefix.',
+    });
+  }
+
+  for (const className of normalizeList(draft.preferredClasses).slice(0, 3)) {
+    tags.push({
+      id: `class-${className.toLowerCase().replace(/\s+/g, '-')}`,
+      label: `Class lane: ${className}`,
+      reason: 'Selected in your preferred classes.',
+    });
+  }
+
+  for (const interest of profileInterestOptions) {
+    if (!draft.interests.includes(interest)) {
+      continue;
+    }
+
+    tags.push({
+      id: `interest-${interest}`,
+      label: profileInterestLabels[interest],
+      reason: 'Enabled in your tactical interests.',
+    });
+  }
+
+  if (draft.notificationDefaults.pvpMatches) {
+    tags.push({
+      id: 'notif-pvp',
+      label: 'PvP alerts on',
+      reason: 'Notification defaults keep PvP match alerts enabled.',
+    });
+  }
+
+  if (draft.notificationDefaults.absenceApprovals) {
+    tags.push({
+      id: 'notif-absences',
+      label: 'Absence watch',
+      reason: 'Notification defaults keep absence approval alerts enabled.',
+    });
+  }
+
+  return tags;
+}
 
 function isPrefixOption(value: string): value is (typeof prefixOptions)[number] {
   return prefixOptions.includes(value as (typeof prefixOptions)[number]);
@@ -118,7 +223,13 @@ const ProfileOverview = memo(function ProfileOverview({ profileRegistration, use
   );
 });
 
-function NotificationSettingsSection() {
+function NotificationSettingsSection({
+  notificationDefaults,
+  onNotificationDefaultsChange,
+}: {
+  notificationDefaults: NotificationDefaults;
+  onNotificationDefaultsChange: (next: NotificationDefaults) => void;
+}) {
   const { settings, updateSettings, requestPermission } = useNotifications();
   const [requesting, setRequesting] = useState(false);
 
@@ -170,6 +281,21 @@ function NotificationSettingsSection() {
               <span {...stylex.props(profileStyles.toggleKnob, settings.enabled && settings.helpRequests && profileStyles.toggleKnobActive)} />
             </button>
           </div>
+          <button
+            type="button"
+            {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary, uiStyles.buttonXs)}
+            onClick={() => {
+              const next = {
+                ...notificationDefaults,
+                helpRequests: !notificationDefaults.helpRequests,
+              };
+              onNotificationDefaultsChange(next);
+              updateSettings({ helpRequests: next.helpRequests });
+            }}
+            data-testid="profile-default-help-requests"
+          >
+            Профиль по умолчанию: {notificationDefaults.helpRequests ? 'вкл' : 'выкл'}
+          </button>
         </div>
 
         <div {...stylex.props(profileStyles.notificationItem)}>
@@ -188,6 +314,21 @@ function NotificationSettingsSection() {
               <span {...stylex.props(profileStyles.toggleKnob, settings.enabled && settings.absenceApprovals && profileStyles.toggleKnobActive)} />
             </button>
           </div>
+          <button
+            type="button"
+            {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary, uiStyles.buttonXs)}
+            onClick={() => {
+              const next = {
+                ...notificationDefaults,
+                absenceApprovals: !notificationDefaults.absenceApprovals,
+              };
+              onNotificationDefaultsChange(next);
+              updateSettings({ absenceApprovals: next.absenceApprovals });
+            }}
+            data-testid="profile-default-absence-approvals"
+          >
+            Профиль по умолчанию: {notificationDefaults.absenceApprovals ? 'вкл' : 'выкл'}
+          </button>
         </div>
 
         <div {...stylex.props(profileStyles.notificationItem)}>
@@ -206,6 +347,43 @@ function NotificationSettingsSection() {
               <span {...stylex.props(profileStyles.toggleKnob, settings.enabled && settings.pvpMatches && profileStyles.toggleKnobActive)} />
             </button>
           </div>
+          <button
+            type="button"
+            {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary, uiStyles.buttonXs)}
+            onClick={() => {
+              const next = {
+                ...notificationDefaults,
+                pvpMatches: !notificationDefaults.pvpMatches,
+              };
+              onNotificationDefaultsChange(next);
+              updateSettings({ pvpMatches: next.pvpMatches });
+            }}
+            data-testid="profile-default-pvp-matches"
+          >
+            Профиль по умолчанию: {notificationDefaults.pvpMatches ? 'вкл' : 'выкл'}
+          </button>
+        </div>
+
+        <div {...stylex.props(profileStyles.notificationItem)}>
+          <div {...stylex.props(profileStyles.notificationLabel)}>
+            <div {...stylex.props(profileStyles.notificationTitle)}>Напоминания событий</div>
+            <div {...stylex.props(profileStyles.notificationDescription)}>Базовый профиль уведомлений для событий и календаря</div>
+          </div>
+          <button
+            type="button"
+            {...stylex.props(uiStyles.buttonBase, uiStyles.buttonSecondary, uiStyles.buttonXs)}
+            onClick={() => {
+              const next = {
+                ...notificationDefaults,
+                eventReminders: !notificationDefaults.eventReminders,
+              };
+              onNotificationDefaultsChange(next);
+              updateSettings({ eventReminders: next.eventReminders });
+            }}
+            data-testid="profile-default-event-reminders"
+          >
+            Профиль по умолчанию: {notificationDefaults.eventReminders ? 'вкл' : 'выкл'}
+          </button>
         </div>
 
         <div {...stylex.props(profileStyles.notificationItem)}>
@@ -444,7 +622,11 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
   const [profileDraft, setProfileDraft] = useState<ProfileDraftState>({
     discordHandle: '',
     prefix: '',
+    profileTitle: '',
     className: '',
+    preferredClasses: [],
+    interests: [],
+    notificationDefaults: defaultNotificationDefaults,
     guild: '',
     mmr20: 0,
     outerHeroic: 0,
@@ -485,6 +667,24 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
     return profileStyles.statsMetricBad;
   }, [profileRegistration?.kpi]);
 
+  const savedNotificationDefaults = useMemo<NotificationDefaults>(() => {
+    const fromRegistration = profileRegistration?.notificationDefaults;
+    if (fromRegistration) {
+      return fromRegistration;
+    }
+
+    if (user.notificationDefaults) {
+      return user.notificationDefaults;
+    }
+
+    return defaultNotificationDefaults;
+  }, [profileRegistration?.notificationDefaults, user.notificationDefaults]);
+
+  const recommendationTags = useMemo(
+    () => buildRecommendationTags(profileDraft),
+    [profileDraft]
+  );
+
   const accountsError = useMemo(() => {
     if (updateAccountMutation.error instanceof Error) {
       return updateAccountMutation.error.message;
@@ -501,7 +701,11 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
     setProfileDraft({
       discordHandle: profileRegistration?.discordHandle || user.discordHandle || '',
       prefix: profileRegistration?.prefix ?? user.prefix ?? '',
+      profileTitle: profileRegistration?.title ?? user.profileTitle ?? '',
       className: profileRegistration?.class || user.className || '',
+      preferredClasses: normalizeList(profileRegistration?.preferredClasses || user.preferredClasses || []),
+      interests: profileInterestOptions.filter((interest) => (profileRegistration?.interests || user.interests || []).includes(interest)),
+      notificationDefaults: savedNotificationDefaults,
       guild: profileRegistration?.guild || '',
       mmr20: profileRegistration?.mmr20 || 0,
       outerHeroic: profileRegistration?.outerHeroic || 0,
@@ -511,7 +715,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
       gvg: profileRegistration?.gvg || 0,
       secretRealm: profileRegistration?.secretRealm || 0,
     });
-  }, [profileRegistration, user.className, user.discordHandle, user.prefix]);
+  }, [profileRegistration, savedNotificationDefaults, user.className, user.discordHandle, user.interests, user.prefix, user.preferredClasses, user.profileTitle]);
 
   const loadAccounts = useCallback(() => {
     if (!isAdmin) return;
@@ -559,7 +763,10 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
 
     const nextDiscordHandle = profileDraft.discordHandle.trim();
     const nextPrefix = profileDraft.prefix.trim();
+    const nextProfileTitle = profileDraft.profileTitle.trim();
     const nextClassName = profileDraft.className.trim();
+    const nextPreferredClasses = normalizeList(profileDraft.preferredClasses);
+    const nextInterests = [...profileDraft.interests].sort((a, b) => a.localeCompare(b, 'en'));
     const nextGuild = profileDraft.guild.trim();
 
     if (nextDiscordHandle !== (profileRegistration?.discordHandle || user.discordHandle || '')) {
@@ -570,12 +777,33 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
       payload.prefix = nextPrefix ? (isPrefixOption(nextPrefix) ? nextPrefix : null) : null;
     }
 
+    if (nextProfileTitle !== (profileRegistration?.title || user.profileTitle || '')) {
+      payload.profileTitle = nextProfileTitle ? nextProfileTitle : null;
+    }
+
     if (nextClassName && nextClassName !== (profileRegistration?.class || user.className || '')) {
       payload.className = nextClassName;
     }
 
     if (nextGuild !== (profileRegistration?.guild || '')) {
       payload.guild = nextGuild;
+    }
+
+    if (!sameNormalizedList(nextPreferredClasses, profileRegistration?.preferredClasses || user.preferredClasses || [])) {
+      payload.preferredClasses = nextPreferredClasses;
+    }
+
+    if (!sameNormalizedList(nextInterests, profileRegistration?.interests || user.interests || [])) {
+      payload.interests = nextInterests;
+    }
+
+    if (
+      profileDraft.notificationDefaults.helpRequests !== savedNotificationDefaults.helpRequests ||
+      profileDraft.notificationDefaults.absenceApprovals !== savedNotificationDefaults.absenceApprovals ||
+      profileDraft.notificationDefaults.pvpMatches !== savedNotificationDefaults.pvpMatches ||
+      profileDraft.notificationDefaults.eventReminders !== savedNotificationDefaults.eventReminders
+    ) {
+      payload.notificationDefaults = profileDraft.notificationDefaults;
     }
 
     if ((profileDraft.mmr20 || 0) !== (profileRegistration?.mmr20 || 0)) {
@@ -653,6 +881,13 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
             <span {...stylex.props(profileStyles.headingKicker)}>{language === 'ru' ? 'Боевой профиль' : language === 'zh' ? '战斗档案' : 'Combat profile'}</span>
             <strong {...stylex.props(profileStyles.metricValue)}>{profileRegistration?.class || user.className || '—'}</strong>
             <span {...stylex.props(profileStyles.mutedText)}>{language === 'ru' ? 'Класс, префикс и PvP-статус вынесены в быстрый обзор перед детальными настройками.' : language === 'zh' ? '职业、前缀和 PvP 状态先进入快速概览，再进入详细设置。' : 'Class, prefix, and PvP status now sit in a quick overview before the detailed settings.'}</span>
+            <div {...stylex.props(uiStyles.inlineTags)} data-testid="profile-recommendation-tags">
+              {recommendationTags.slice(0, 4).map((tag) => (
+                <span key={tag.id} {...stylex.props(uiStyles.badge, uiStyles.badgeMuted)} title={tag.reason}>
+                  {tag.label}
+                </span>
+              ))}
+            </div>
           </article>
         </div>
 
@@ -767,6 +1002,20 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
               ) : null}
             </label>
             <label {...stylex.props(profileStyles.labelStack)}>
+              <span {...stylex.props(profileStyles.fieldLabel)}>Титул</span>
+              <select
+                value={profileDraft.profileTitle}
+                onChange={(e) => setProfileDraft((prev) => ({ ...prev, profileTitle: e.target.value }))}
+                {...stylex.props(uiStyles.select)}
+                data-testid="profile-personalization-title"
+              >
+                <option value="">Без титула</option>
+                {profileTitleOptions.map((title) => (
+                  <option key={title} value={title}>{title}</option>
+                ))}
+              </select>
+            </label>
+            <label {...stylex.props(profileStyles.labelStack)}>
               <span {...stylex.props(profileStyles.fieldLabel)}>Клан</span>
               <input
                 type="text"
@@ -787,6 +1036,83 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
             </label>
           </div>
 
+          <div {...stylex.props(profileStyles.personalizationGrid)}>
+            <div {...stylex.props(profileStyles.personalizationCard)}>
+              <div {...stylex.props(profileStyles.fieldLabel)}>Предпочитаемые классы</div>
+              <div {...stylex.props(uiStyles.inlineTags)}>
+                {classOptions.map((className) => {
+                  const isActive = profileDraft.preferredClasses.includes(className);
+
+                  return (
+                    <button
+                      key={className}
+                      type="button"
+                      {...stylex.props(uiStyles.chip, isActive && uiStyles.chipActive)}
+                      onClick={() => {
+                        setProfileDraft((prev) => {
+                          const next = prev.preferredClasses.includes(className)
+                            ? prev.preferredClasses.filter((value) => value !== className)
+                            : normalizeList([...prev.preferredClasses, className]).slice(0, 6);
+
+                          return {
+                            ...prev,
+                            preferredClasses: next,
+                          };
+                        });
+                      }}
+                      data-testid={`profile-class-tag-${className}`}
+                    >
+                      {className}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div {...stylex.props(profileStyles.personalizationCard)}>
+              <div {...stylex.props(profileStyles.fieldLabel)}>Интересы</div>
+              <div {...stylex.props(uiStyles.inlineTags)}>
+                {profileInterestOptions.map((interest) => {
+                  const isActive = profileDraft.interests.includes(interest);
+                  return (
+                    <button
+                      key={interest}
+                      type="button"
+                      {...stylex.props(uiStyles.chip, isActive && uiStyles.chipActive)}
+                      onClick={() => {
+                        setProfileDraft((prev) => {
+                          const nextInterests = prev.interests.includes(interest)
+                            ? prev.interests.filter((value) => value !== interest)
+                            : [...prev.interests, interest];
+
+                          return {
+                            ...prev,
+                            interests: profileInterestOptions.filter((entry) => nextInterests.includes(entry)),
+                          };
+                        });
+                      }}
+                      data-testid={`profile-interest-tag-${interest}`}
+                    >
+                      {profileInterestLabels[interest]}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div {...stylex.props(profileStyles.personalizationCard)}>
+              <div {...stylex.props(profileStyles.fieldLabel)}>Recommendation tags</div>
+              <div {...stylex.props(profileStyles.mutedText)}>Теги детерминированы по title/prefix/classes/interests и notification defaults.</div>
+              <div {...stylex.props(uiStyles.inlineTags)} data-testid="profile-recommendation-tags-detailed">
+                {recommendationTags.map((tag) => (
+                  <span key={tag.id} {...stylex.props(uiStyles.badge)} title={tag.reason}>
+                    {tag.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
           <div {...stylex.props(profileStyles.activityGrid)}>
             {activityLabels.map(({ key, label }) => {
               const isMarked = profileDraft[key] > 0;
@@ -804,7 +1130,15 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
           </div>
         </div>
 
-        <NotificationSettingsSection />
+        <NotificationSettingsSection
+          notificationDefaults={profileDraft.notificationDefaults}
+          onNotificationDefaultsChange={(next) => {
+            setProfileDraft((prev) => ({
+              ...prev,
+              notificationDefaults: next,
+            }));
+          }}
+        />
 
         {isAdmin && (
           <AccountsPanel

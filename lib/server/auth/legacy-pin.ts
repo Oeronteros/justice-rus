@@ -38,6 +38,9 @@ export async function buildLegacyUser(role: UserRole, nickname?: string): Promis
     discordHandle: null,
     className: (await resolveClassName(nickname)) || null,
     prefix: null,
+    profileTitle: null,
+    preferredClasses: [],
+    interests: [],
   };
 }
 

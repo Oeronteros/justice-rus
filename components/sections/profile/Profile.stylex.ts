@@ -395,4 +395,20 @@ export const profileStyles = stylex.create({
   nicknameCell: {
     fontWeight: 500,
   },
+  personalizationGrid: {
+    display: 'grid',
+    gap: '16px',
+    gridTemplateColumns: {
+      default: '1fr',
+      '@media (min-width: 1024px)': 'repeat(3, minmax(0, 1fr))',
+    },
+  },
+  personalizationCard: {
+    display: 'grid',
+    gap: '12px',
+    borderRadius: radius.xl,
+    border: '1px solid rgba(42, 60, 76, 0.72)',
+    backgroundColor: 'rgba(12, 21, 29, 0.78)',
+    padding: '16px',
+  },
 });
