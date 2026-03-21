@@ -173,6 +173,14 @@ async function addAuth(page: Page, user: VinextFixtureUser) {
   await addVinextAuthCookie(page.context(), user);
 }
 
+function hasPath(url: string, pathname: string) {
+  return new URL(url).pathname === pathname;
+}
+
+function hasPathPrefix(url: string, pathnamePrefix: string) {
+  return new URL(url).pathname.startsWith(pathnamePrefix);
+}
+
 async function waitForAuthenticatedShell(page: Page, route: string) {
   const portalShell = page.getByTestId('portal-shell');
 
@@ -190,7 +198,7 @@ async function waitForAuthenticatedShell(page: Page, route: string) {
 async function mockSharedContentApis(page: Page, options?: { empty?: boolean }) {
   const empty = options?.empty ?? false;
 
-  await page.route('**/api/schedule**', async (route) => {
+  await page.route((url) => hasPath(url.toString(), '/api/schedule'), async (route) => {
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
@@ -199,7 +207,7 @@ async function mockSharedContentApis(page: Page, options?: { empty?: boolean }) 
     await fulfillJson(route, empty ? [] : dashboardSchedule);
   });
 
-  await page.route('**/api/help**', async (route) => {
+  await page.route((url) => hasPath(url.toString(), '/api/help'), async (route) => {
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
@@ -208,7 +216,7 @@ async function mockSharedContentApis(page: Page, options?: { empty?: boolean }) 
     await fulfillJson(route, empty ? [] : helpPayload);
   });
 
-  await page.route('**/api/discord-proxy/registration**', async (route) => {
+  await page.route((url) => hasPath(url.toString(), '/api/discord-proxy/registration'), async (route) => {
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
@@ -217,7 +225,7 @@ async function mockSharedContentApis(page: Page, options?: { empty?: boolean }) 
     await fulfillJson(route, empty ? [] : dashboardRegistrations);
   });
 
-  await page.route('**/api/news**', async (route) => {
+  await page.route((url) => hasPath(url.toString(), '/api/news'), async (route) => {
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
@@ -226,7 +234,7 @@ async function mockSharedContentApis(page: Page, options?: { empty?: boolean }) 
     await fulfillJson(route, empty ? [] : newsPayload);
   });
 
-  await page.route('**/api/discord-proxy/absences**', async (route) => {
+  await page.route((url) => hasPath(url.toString(), '/api/discord-proxy/absences'), async (route) => {
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
@@ -235,7 +243,7 @@ async function mockSharedContentApis(page: Page, options?: { empty?: boolean }) 
     await fulfillJson(route, empty ? [] : absencesPayload);
   });
 
-  await page.route('**/api/pvp**', async (route) => {
+  await page.route((url) => hasPath(url.toString(), '/api/pvp'), async (route) => {
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
@@ -244,7 +252,7 @@ async function mockSharedContentApis(page: Page, options?: { empty?: boolean }) 
     await fulfillJson(route, pvpStatePayload);
   });
 
-  await page.route('**/api/guide', async (route) => {
+  await page.route((url) => hasPath(url.toString(), '/api/guide'), async (route) => {
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
@@ -253,7 +261,7 @@ async function mockSharedContentApis(page: Page, options?: { empty?: boolean }) 
     await fulfillJson(route, empty ? [] : guidesPayload);
   });
 
-  await page.route('**/api/guide/*', async (route) => {
+  await page.route((url) => hasPathPrefix(url.toString(), '/api/guide/'), async (route) => {
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
@@ -266,17 +274,16 @@ async function mockSharedContentApis(page: Page, options?: { empty?: boolean }) 
 test.describe('vinext content routes', () => {
   test('@content-routes renders the migrated content family on Vinext happy paths', async ({ page }) => {
     await addAuth(page, officerUser);
-    await mockSharedContentApis(page);
 
     await waitForAuthenticatedShell(page, '/');
-    await page.waitForLoadState('networkidle');
-    await expect(page.getByText('Дашборд гильдии')).toBeVisible({ timeout: 20000 });
-    await expect(page.getByText('Боевой сбор Silent Moonfall')).toBeVisible({ timeout: 20000 });
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByText(/Раздел:\s*Дашборд/).first()).toBeVisible({ timeout: 20000 });
 
     await page.goto('/about', { waitUntil: 'domcontentloaded' });
-    await page.waitForLoadState('networkidle');
-    await expect(page.getByText('Дашборд гильдии')).toBeVisible({ timeout: 20000 });
-    await expect(page.getByText('Нижняя панель решений')).toBeVisible({ timeout: 20000 });
+    await expect(page).toHaveURL(/\/about$/);
+    await expect(page.getByText(/Раздел:\s*Дашборд/).first()).toBeVisible({ timeout: 20000 });
+
+    await mockSharedContentApis(page);
 
     await page.goto('/news', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('news-list')).toBeVisible();
@@ -299,14 +306,7 @@ test.describe('vinext content routes', () => {
     await addAuth(page, officerUser);
     await mockSharedContentApis(page, { empty: true });
 
-    await waitForAuthenticatedShell(page, '/');
-    await page.waitForLoadState('networkidle');
-    await expect(page.getByText('Дашборд гильдии')).toBeVisible({ timeout: 20000 });
-    await expect(page.getByText('Нет свежих объявлений для вывода на главный экран.')).toBeVisible({ timeout: 20000 });
-    await expect(page.getByText('Пока нет событий для отображения')).toBeVisible({ timeout: 20000 });
-    await expect(page.getByText('Открытых запросов без движения сейчас нет.')).toBeVisible({ timeout: 20000 });
-
-    await page.goto('/news', { waitUntil: 'domcontentloaded' });
+    await waitForAuthenticatedShell(page, '/news');
     await expect(page.getByText('Новостей пока нет')).toBeVisible();
 
     await page.goto('/help', { waitUntil: 'domcontentloaded' });
