@@ -24,15 +24,15 @@ export const navItems: NavItem[] = [
   { section: 'registration', href: '/members', icon: 'registration' },
   { section: 'schedule', href: '/schedule', icon: 'schedule' },
   { section: 'calendar', href: '/calendar', icon: 'calendar' },
+  { section: 'guides', href: '/guides', icon: 'guides' },
+  { section: 'absences', href: '/absences', icon: 'absences' },
+  { section: 'pvp', href: '/pvp', icon: 'sword' },
   { section: 'analytics', href: '/analytics', icon: 'analytics' },
   { section: 'workflow', href: '/workflow', icon: 'workflow' },
   { section: 'integrations', href: '/integrations', icon: 'integrations' },
-  { section: 'pvp', href: '/pvp', icon: 'sword' },
-  { section: 'guides', href: '/guides', icon: 'guides' },
   { section: 'help', href: '/help', icon: 'help' },
-  { section: 'absences', href: '/absences', icon: 'absences' },
-  { section: 'calculator', href: '/calculator', icon: 'calculator' },
   { section: 'profile', href: '/profile', icon: 'profile' },
+  { section: 'calculator', href: '/calculator', icon: 'calculator' },
 ];
 
 export const sectionPathAliases: Readonly<Partial<Record<Section, readonly string[]>>> = {
@@ -45,7 +45,6 @@ export const sectionPathEntries: ReadonlyArray<readonly [path: string, section: 
 });
 
 const pathToSection = Object.fromEntries(sectionPathEntries) as Record<string, Section>;
-
 export function resolveSectionFromPath(pathname: string): Section {
   return pathToSection[pathname] ?? 'about';
 }
@@ -56,12 +55,49 @@ function pickNavItems(sections: readonly Section[]): NavItem[] {
     .filter((item): item is NavItem => Boolean(item));
 }
 
-function buildGroupedNavItems(groups: readonly NavGroup[]): NavGroupWithItems[] {
-  return groups.map((group) => ({
-    ...group,
-    items: pickNavItems(group.sections),
-  }));
-}
+// Primary sections - shown as main nav items
+export const primarySections: readonly Section[] = [
+  'about', 'news', 'registration', 'schedule', 'guides', 'help', 'profile'
+];
+
+// All sections for unified navigation
+export const allSections: readonly Section[] = [
+  'about', 'news', 'registration', 'schedule', 'calendar', 'guides', 
+  'absences', 'pvp', 'analytics', 'workflow', 'integrations', 
+  'help', 'profile', 'calculator'
+];
+
+// Navigation groups (for mobile accordion)
+export const navGroups: readonly NavGroup[] = [
+  { key: 'core', sections: ['registration', 'schedule', 'calendar'] },
+  { key: 'guild', sections: ['guides', 'absences', 'pvp'] },
+  { key: 'command', sections: ['analytics', 'workflow', 'integrations'] },
+  { key: 'tools', sections: ['help', 'calculator', 'profile'] },
+];
+
+// Unified nav items for desktop (no split between primary/secondary)
+export const unifiedNavItems = pickNavItems(allSections);
+export const primaryNavItems = pickNavItems(primarySections);
+export const groupedNavItems = navGroups.map((group) => ({
+  ...group,
+  items: pickNavItems(group.sections),
+}));
+
+// Legacy exports for backwards compatibility
+export const desktopPrimarySections: readonly Section[] = primarySections;
+export const desktopSecondarySections: readonly Section[] = allSections.filter(s => !primarySections.includes(s));
+export const mobilePrimarySections: readonly Section[] = ['about', 'news', 'schedule', 'help'];
+export const mobileSecondarySections: readonly Section[] = allSections.filter(s => !mobilePrimarySections.includes(s));
+
+export const desktopNavGroups: readonly NavGroup[] = navGroups;
+export const mobileNavGroups: readonly NavGroup[] = navGroups;
+
+export const desktopPrimaryNavItems = primaryNavItems;
+export const desktopSecondaryNavItems = pickNavItems(desktopSecondarySections);
+export const mobilePrimaryNavItems = pickNavItems(mobilePrimarySections);
+export const mobileSecondaryNavItems = pickNavItems(mobileSecondarySections);
+export const desktopGroupedNavItems = groupedNavItems;
+export const mobileGroupedNavItems = groupedNavItems;
 
 export function resolveNavGroupForSection(
   section: Section,
@@ -69,29 +105,3 @@ export function resolveNavGroupForSection(
 ): NavGroupWithItems | null {
   return groups.find((group) => group.sections.includes(section)) ?? null;
 }
-
-export const desktopPrimarySections: readonly Section[] = ['about', 'news', 'schedule', 'help', 'profile'];
-export const desktopSecondarySections: readonly Section[] = ['registration', 'guides', 'absences', 'pvp', 'analytics', 'workflow', 'integrations', 'calculator'];
-export const mobilePrimarySections: readonly Section[] = ['about', 'news', 'schedule', 'help'];
-export const mobileSecondarySections: readonly Section[] = ['registration', 'profile', 'guides', 'absences', 'pvp', 'analytics', 'workflow', 'integrations', 'calculator'];
-
-export const desktopNavGroups: readonly NavGroup[] = [
-  { key: 'core', sections: ['registration'] },
-  { key: 'guild', sections: ['guides', 'absences', 'pvp'] },
-  { key: 'command', sections: ['analytics', 'workflow', 'integrations'] },
-  { key: 'tools', sections: ['calculator'] },
-];
-
-export const mobileNavGroups: readonly NavGroup[] = [
-  { key: 'core', sections: ['registration', 'profile'] },
-  { key: 'guild', sections: ['guides', 'absences', 'pvp'] },
-  { key: 'command', sections: ['analytics', 'workflow', 'integrations'] },
-  { key: 'tools', sections: ['calculator'] },
-];
-
-export const desktopPrimaryNavItems = pickNavItems(desktopPrimarySections);
-export const desktopSecondaryNavItems = pickNavItems(desktopSecondarySections);
-export const mobilePrimaryNavItems = pickNavItems(mobilePrimarySections);
-export const mobileSecondaryNavItems = pickNavItems(mobileSecondarySections);
-export const desktopGroupedNavItems = buildGroupedNavItems(desktopNavGroups);
-export const mobileGroupedNavItems = buildGroupedNavItems(mobileNavGroups);

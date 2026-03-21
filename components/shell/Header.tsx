@@ -6,7 +6,7 @@ import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'motion/r
 import * as stylex from '@stylexjs/stylex';
 import { Section } from '@/types';
 import { headerCopy, Language, portalCopy, sectionLabels } from '@/lib/i18n';
-import { desktopGroupedNavItems, desktopPrimaryNavItems, resolveNavGroupForSection, type NavGroupKey } from '@/lib/nav';
+import { groupedNavItems, primaryNavItems, resolveNavGroupForSection, type NavGroupKey } from '@/lib/nav';
 import WuxiaIcon from '../WuxiaIcons';
 import ThemeModeSwitch from './ThemeModeSwitch';
 import { shellStyles } from './Shell.stylex';
@@ -79,15 +79,15 @@ export default function Header({
   const utilityStripLabel = labels.quickAccess;
 
   const sectionLabel = orderLabels[currentSection];
-  const groupedRouteCount = desktopGroupedNavItems.reduce((total, group) => total + group.items.length, 0);
+  const totalNavCount = primaryNavItems.length + groupedNavItems.reduce((total, group) => total + group.items.length, 0);
 
   const activeDesktopGroup = useMemo(
-    () => resolveNavGroupForSection(currentSection, desktopGroupedNavItems),
+    () => resolveNavGroupForSection(currentSection, groupedNavItems),
     [currentSection]
   );
 
   const openDesktopGroupData = useMemo(
-    () => desktopGroupedNavItems.find((group) => group.key === openDesktopGroup) ?? null,
+    () => groupedNavItems.find((group) => group.key === openDesktopGroup) ?? null,
     [openDesktopGroup]
   );
 
@@ -238,7 +238,7 @@ export default function Header({
             <div {...stylex.props(shellStyles.desktopSectionSignalMeta)}>
               <span {...stylex.props(shellStyles.desktopSectionSignalStat)}>
                 <span {...stylex.props(shellStyles.desktopSectionSignalStatLabel)}>{primaryNavLabel}</span>
-                <span {...stylex.props(shellStyles.desktopSectionSignalStatValue)}>{String(desktopPrimaryNavItems.length).padStart(2, '0')}</span>
+                <span {...stylex.props(shellStyles.desktopSectionSignalStatValue)}>{String(totalNavCount).padStart(2, '0')}</span>
               </span>
               <span {...stylex.props(shellStyles.desktopSectionSignalDivider)} />
               <span {...stylex.props(shellStyles.desktopSectionSignalStat)}>
@@ -327,7 +327,7 @@ export default function Header({
                 </div>
                 <LayoutGroup id="desktop-core-nav">
                   <div {...stylex.props(shellStyles.coreRail, headerCompact && shellStyles.coreRailCompact)}>
-                    {desktopPrimaryNavItems.map((item, index) => {
+                    {primaryNavItems.map((item, index) => {
                       const isActive = currentSection === item.section;
 
                       return (
@@ -389,7 +389,7 @@ export default function Header({
                   </div>
 
                   <div {...stylex.props(shellStyles.groupTriggerRail)} role="group" aria-label={immersiveMenuLabel}>
-                    {desktopGroupedNavItems.map((group) => {
+                    {groupedNavItems.map((group) => {
                       const isOpen = openDesktopGroup === group.key;
                       const isCurrentGroup = activeDesktopGroup?.key === group.key;
                       const groupStatusLabel = isCurrentGroup ? sectionLabel : orderLabels[group.sections[0]];
