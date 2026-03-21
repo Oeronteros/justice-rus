@@ -209,7 +209,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
               </button>
             </div>
 
-            <div {...stylex.props(opsStyles.listStack)}>
+            <div {...stylex.props(opsStyles.listStack)} data-testid="absence-list">
               {filteredAbsences.length === 0 ? (
                 <EmptyState
                   icon={<WuxiaIcon name="calendarX" {...stylex.props(uiStyles.icon2xl, uiStyles.iconMuted)} />}
@@ -249,7 +249,7 @@ function AbsencesSectionContent({ user }: AbsencesSectionProps) {
                       <div {...stylex.props(opsStyles.bodyText)}>{absence.reason}</div>
                     </div>
 
-                    <div {...stylex.props(opsStyles.actionRow)} style={{ justifyContent: 'flex-end', marginTop: 24 }}>
+                    <div {...stylex.props(opsStyles.actionRow)} style={{ justifyContent: 'flex-end', marginTop: 24 }} data-testid="absence-moderation-controls">
                       {canModerateAbsences && absence.status === 'pending' && (
                         <>
                           <button

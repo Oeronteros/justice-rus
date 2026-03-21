@@ -294,7 +294,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
                 </div>
               </div>
 
-              <div {...stylex.props(opsStyles.fieldGrid2)}>
+              <div {...stylex.props(opsStyles.fieldGrid2)} data-testid="pvp-stats">
                 <div {...stylex.props(opsStyles.statCard)}>
                   <div {...stylex.props(opsStyles.statLabel)}>Рейтинг</div>
                   <div {...stylex.props(opsStyles.statValue)}>{data.userRating?.rating ?? 1000}</div>
@@ -312,6 +312,7 @@ function PvpSectionContent({ user }: PvpSectionProps) {
                   style={{ flex: 1, minHeight: 48 }}
                   disabled={!canJoinQueue || joinQueue.isPending}
                   onClick={() => void joinQueueAction()}
+                  data-testid="pvp-queue-button"
                 >
                   {joinQueue.isPending ? 'Ставим в очередь...' : 'Встать в очередь'}
                 </button>

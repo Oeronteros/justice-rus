@@ -36,7 +36,7 @@ export default defineConfig({
   webServer: {
     command: 'set NODE_OPTIONS=--max-old-space-size=4096 && set JWT_SECRET=e2e-secret && npm run dev:cutover:all',
     url: `${baseURL}/news`,
-    reuseExistingServer: false,
+    reuseExistingServer: true,
     stdout: 'ignore',
     stderr: 'pipe',
     timeout: 120000,
