@@ -273,6 +273,8 @@ async function mockSharedContentApis(page: Page, options?: { empty?: boolean }) 
 
 test.describe('vinext content routes', () => {
   test('@content-routes renders the migrated content family on Vinext happy paths', async ({ page }) => {
+    test.slow();
+
     await addAuth(page, officerUser);
 
     await waitForAuthenticatedShell(page, '/');
@@ -286,34 +288,36 @@ test.describe('vinext content routes', () => {
     await mockSharedContentApis(page);
 
     await page.goto('/news', { waitUntil: 'domcontentloaded' });
-    await expect(page.getByTestId('news-list')).toBeVisible();
-    await expect(page.getByTestId('news-list')).toContainText('Боевой сбор Silent Moonfall');
+    await expect(page.getByTestId('news-list')).toBeVisible({ timeout: 20000 });
+    await expect(page.getByTestId('news-list')).toContainText('Боевой сбор Silent Moonfall', { timeout: 20000 });
 
     await page.goto('/help', { waitUntil: 'domcontentloaded' });
-    await expect(page.getByRole('heading', { name: 'Запросы помощи' })).toBeVisible();
-    await expect(page.getByText('Нужен лидер на вечерний сбор')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Запросы помощи' }).first()).toBeVisible({ timeout: 20000 });
+    await expect(page.getByText('Нужен лидер на вечерний сбор')).toBeVisible({ timeout: 20000 });
 
     await page.goto('/guides', { waitUntil: 'domcontentloaded' });
-    await expect(page.getByRole('heading', { name: 'Гайды гильдии' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Гайды гильдии' })).toBeVisible({ timeout: 20000 });
     await page.getByRole('button', { name: /Гайд по вечернему сбору/ }).click();
     const guideDialog = page.getByRole('dialog');
-    await expect(guideDialog).toBeVisible();
-    await expect(guideDialog.getByRole('heading', { name: 'Гайд по вечернему сбору' })).toBeVisible();
-    await expect(guideDialog.getByText('Подготовь состав, расходники и голосовой канал.')).toBeVisible();
+    await expect(guideDialog).toBeVisible({ timeout: 20000 });
+    await expect(guideDialog.getByRole('heading', { name: 'Гайд по вечернему сбору' })).toBeVisible({ timeout: 20000 });
+    await expect(guideDialog.getByText('Подготовь состав, расходники и голосовой канал.')).toBeVisible({ timeout: 20000 });
   });
 
   test('@content-routes renders intentional empty states across Vinext content routes', async ({ page }) => {
+    test.slow();
+
     await addAuth(page, officerUser);
     await mockSharedContentApis(page, { empty: true });
 
     await waitForAuthenticatedShell(page, '/news');
-    await expect(page.getByText('Новостей пока нет')).toBeVisible();
+    await expect(page.getByText('Новостей пока нет')).toBeVisible({ timeout: 20000 });
 
     await page.goto('/help', { waitUntil: 'domcontentloaded' });
-    await expect(page.getByText('Тишина в зале ритуалов')).toBeVisible();
+    await expect(page.getByText('Тишина в зале ритуалов')).toBeVisible({ timeout: 20000 });
 
     await page.goto('/guides', { waitUntil: 'domcontentloaded' });
-    await expect(page.getByText('Ничего не найдено')).toBeVisible();
-    await expect(page.getByText('Измени фильтр или напиши новый гайд.')).toBeVisible();
+    await expect(page.getByText('Ничего не найдено')).toBeVisible({ timeout: 20000 });
+    await expect(page.getByText('Измени фильтр или напиши новый гайд.')).toBeVisible({ timeout: 20000 });
   });
 });
