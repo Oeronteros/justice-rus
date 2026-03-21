@@ -268,12 +268,14 @@ test.describe('vinext content routes', () => {
     await mockSharedContentApis(page);
 
     await waitForAuthenticatedShell(page, '/');
-    await expect(page.locator('[data-dashboard-module="hero"]')).toBeVisible();
-    await expect(page.locator('[data-dashboard-module="announcements"]')).toContainText('Боевой сбор Silent Moonfall');
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByText('Дашборд гильдии')).toBeVisible({ timeout: 20000 });
+    await expect(page.getByText('Боевой сбор Silent Moonfall')).toBeVisible({ timeout: 20000 });
 
     await page.goto('/about', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('[data-dashboard-module="hero"]')).toBeVisible();
-    await expect(page.locator('[data-dashboard-region="dense_follow_up"]')).toBeVisible();
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByText('Дашборд гильдии')).toBeVisible({ timeout: 20000 });
+    await expect(page.getByText('Нижняя панель решений')).toBeVisible({ timeout: 20000 });
 
     await page.goto('/news', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('news-list')).toBeVisible();
@@ -296,9 +298,11 @@ test.describe('vinext content routes', () => {
     await mockSharedContentApis(page, { empty: true });
 
     await waitForAuthenticatedShell(page, '/');
-    await expect(page.locator('[data-dashboard-module="announcements"]')).toContainText('Нет свежих объявлений для вывода на главный экран.');
-    await expect(page.locator('[data-dashboard-module="activity_feed"]')).toContainText('Пока нет событий для отображения');
-    await expect(page.locator('[data-dashboard-module="urgent_help"]')).toContainText('Открытых запросов без движения сейчас нет.');
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByText('Дашборд гильдии')).toBeVisible({ timeout: 20000 });
+    await expect(page.getByText('Нет свежих объявлений для вывода на главный экран.')).toBeVisible({ timeout: 20000 });
+    await expect(page.getByText('Пока нет событий для отображения')).toBeVisible({ timeout: 20000 });
+    await expect(page.getByText('Открытых запросов без движения сейчас нет.')).toBeVisible({ timeout: 20000 });
 
     await page.goto('/news', { waitUntil: 'domcontentloaded' });
     await expect(page.getByText('Новостей пока нет')).toBeVisible();

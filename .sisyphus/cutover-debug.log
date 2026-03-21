@@ -21,3 +21,11 @@ Starting local cutover in 'all' mode
 [next] (Use `node --trace-deprecation ...` to show where the warning was created)
 [vinext] [vite] connected.
 [vinext] [vite] connected.
+[vinext]  GET /about 200 in 143ms (compile: 6ms, render: 125ms)
+[vinext]  GET / 200 in 117ms (compile: 3ms, render: 109ms)
+[vinext]  GET / 200 in 114ms (compile: 4ms, render: 107ms)
+[vinext]  GET / 200 in 76ms (compile: 3ms, render: 69ms)
+[vinext]  GET /about 200 in 110ms (compile: 12ms, render: 96ms)
+[vinext]  GET / 200 in 123ms (compile: 3ms, render: 111ms)
+[vinext] exited with code 4294967295
+[next] [?25h
