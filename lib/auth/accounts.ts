@@ -10,6 +10,10 @@ export type AccountRecord = {
   guild_name?: string | null;
   discord_handle?: string | null;
   prefix?: string | null;
+  profile_title?: string | null;
+  preferred_classes?: unknown;
+  interests?: unknown;
+  notification_defaults?: unknown;
   role: UserRole;
   is_active: boolean;
   password_hash: string;
@@ -32,6 +36,10 @@ export async function ensureAccountsSchema() {
         guild_name TEXT NULL,
         discord_handle TEXT NULL,
         prefix TEXT NULL,
+        profile_title TEXT NULL,
+        preferred_classes JSONB NOT NULL DEFAULT '[]'::jsonb,
+        interests JSONB NOT NULL DEFAULT '[]'::jsonb,
+        notification_defaults JSONB NOT NULL DEFAULT '{}'::jsonb,
         password_hash TEXT NOT NULL,
         role TEXT NOT NULL DEFAULT 'guest',
         is_active BOOLEAN NOT NULL DEFAULT FALSE,
@@ -47,6 +55,10 @@ export async function ensureAccountsSchema() {
     await pool.query(`ALTER TABLE portal_account ADD COLUMN IF NOT EXISTS guild_name TEXT NULL;`).catch(() => undefined);
     await pool.query(`ALTER TABLE portal_account ADD COLUMN IF NOT EXISTS discord_handle TEXT NULL;`).catch(() => undefined);
     await pool.query(`ALTER TABLE portal_account ADD COLUMN IF NOT EXISTS prefix TEXT NULL;`).catch(() => undefined);
+    await pool.query(`ALTER TABLE portal_account ADD COLUMN IF NOT EXISTS profile_title TEXT NULL;`).catch(() => undefined);
+    await pool.query(`ALTER TABLE portal_account ADD COLUMN IF NOT EXISTS preferred_classes JSONB NOT NULL DEFAULT '[]'::jsonb;`).catch(() => undefined);
+    await pool.query(`ALTER TABLE portal_account ADD COLUMN IF NOT EXISTS interests JSONB NOT NULL DEFAULT '[]'::jsonb;`).catch(() => undefined);
+    await pool.query(`ALTER TABLE portal_account ADD COLUMN IF NOT EXISTS notification_defaults JSONB NOT NULL DEFAULT '{}'::jsonb;`).catch(() => undefined);
     await pool.query(`ALTER TABLE portal_account ALTER COLUMN role SET DEFAULT 'guest';`);
     await pool.query(`UPDATE portal_account SET role = 'head' WHERE role = 'gm';`).catch(() => undefined);
     await pool.query(`

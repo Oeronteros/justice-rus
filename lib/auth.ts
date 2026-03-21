@@ -7,6 +7,11 @@ import {
   type User,
   type UserRole,
 } from '@/lib/schemas/auth';
+import type {
+  NotificationDefaults,
+  ProfileInterest,
+  ProfileTitle,
+} from '@/lib/schemas/registration';
 import { JWT_EXPIRES_IN, getJwtSecret } from './constants';
 import { timingSafeEqual } from 'node:crypto';
 
@@ -18,6 +23,10 @@ type JwtPayload = {
   authMethod?: 'account' | 'pin';
   discordId?: string | null;
   discordHandle?: string | null;
+  profileTitle?: ProfileTitle | null;
+  preferredClasses?: string[];
+  interests?: ProfileInterest[];
+  notificationDefaults?: NotificationDefaults | null;
   exp?: number;
   iss?: string;
   aud?: string;
@@ -40,6 +49,10 @@ export function generateToken(user: {
   authMethod?: 'account' | 'pin';
   discordId?: string | null;
   discordHandle?: string | null;
+  profileTitle?: ProfileTitle | null;
+  preferredClasses?: string[];
+  interests?: ProfileInterest[];
+  notificationDefaults?: NotificationDefaults | null;
 }): string {
   const authMethod = user.authMethod ?? 'account';
   if (!hasValidAuthId(authMethod, user.id)) {
@@ -55,6 +68,10 @@ export function generateToken(user: {
       authMethod,
       discordId: user.discordId || null,
       discordHandle: user.discordHandle || null,
+      profileTitle: user.profileTitle || null,
+      preferredClasses: user.preferredClasses || [],
+      interests: user.interests || [],
+      notificationDefaults: user.notificationDefaults || null,
       iss: 'silent-moonfall-portal',
       aud: 'silent-moonfall-users',
       sub: user.id || user.nickname || user.role,
@@ -90,6 +107,10 @@ export function verifyToken(token: string): User | null {
       authMethod,
       discordId: decoded.discordId || null,
       discordHandle: decoded.discordHandle || null,
+      profileTitle: decoded.profileTitle || null,
+      preferredClasses: decoded.preferredClasses || [],
+      interests: decoded.interests || [],
+      notificationDefaults: decoded.notificationDefaults || undefined,
       exp: decoded.exp,
     };
   } catch (error) {
