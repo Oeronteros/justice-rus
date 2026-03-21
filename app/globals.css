@@ -1,8 +1,6 @@
 @import "@milkdown/crepe/theme/common/style.css";
 @import "@milkdown/crepe/theme/classic-dark.css";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   color-scheme: dark;
