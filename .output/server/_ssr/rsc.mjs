@@ -7746,7 +7746,7 @@ function __isrFnv1a64(s) {
 }
 function __isrCacheKey(pathname, suffix) {
 	const normalized = pathname === "/" ? "/" : pathname.replace(/\/$/, "");
-	const prefix = "app:be437e95-ed5c-42fb-9334-2fb6ba6804af";
+	const prefix = "app:3ff2535d-46e1-4a3c-9d51-6b3f7db53f4b";
 	const key = prefix + ":" + normalized + ":" + suffix;
 	if (key.length <= 200) return key;
 	return prefix + ":__hash:" + __isrFnv1a64(normalized) + ":" + suffix;
