@@ -3,7 +3,6 @@ import { z } from 'zod';
 export const pvpQueueEntrySchema = z.object({
   playerId: z.string(),
   nickname: z.string(),
-  prefix: z.string().nullable().optional(),
   className: z.string(),
   joinedAt: z.string(),
 });
@@ -11,7 +10,6 @@ export const pvpQueueEntrySchema = z.object({
 export const pvpRatingSchema = z.object({
   playerId: z.string(),
   nickname: z.string(),
-  prefix: z.string().nullable().optional(),
   rating: z.number(),
   wins: z.number(),
   losses: z.number(),
@@ -27,13 +25,11 @@ export const pvpMatchSchema = z.object({
   playerOne: z.object({
     id: z.string(),
     nickname: z.string(),
-    prefix: z.string().nullable().optional(),
     className: z.string(),
   }),
   playerTwo: z.object({
     id: z.string(),
     nickname: z.string(),
-    prefix: z.string().nullable().optional(),
     className: z.string(),
   }),
   yourReport: z.enum(['win', 'loss']).nullable(),

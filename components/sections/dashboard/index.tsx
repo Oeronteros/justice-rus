@@ -36,7 +36,6 @@ type LiveTone = 'steady' | 'active' | 'alert';
 type ActivityType =
   | 'joined_guild'
   | 'responded_help'
-  | 'created_help'
   | 'created_absence'
   | 'approved_absence'
   | 'closed_help'
@@ -149,7 +148,6 @@ type DashboardCopy = {
   reloadLiveModules: string;
   joinedGuild: string;
   respondedToHelp: string;
-  createdHelp: string;
   createdAbsence: string;
   approvedAbsence: string;
   closedHelp: string;
@@ -260,7 +258,6 @@ const dashboardCopy: Record<Language, DashboardCopy> = {
     reloadLiveModules: 'Перезагрузить модули',
     joinedGuild: 'Присоединился к гильдии',
     respondedToHelp: 'Откликнулся на помощь',
-    createdHelp: 'Создан запрос помощи',
     createdAbsence: 'Создал отсутствие',
     approvedAbsence: 'Одобрено отсутствие',
     closedHelp: 'Закрыт запрос помощи',
@@ -369,7 +366,6 @@ const dashboardCopy: Record<Language, DashboardCopy> = {
     reloadLiveModules: 'Reload live modules',
     joinedGuild: 'Joined the guild',
     respondedToHelp: 'Responded to help request',
-    createdHelp: 'Created help request',
     createdAbsence: 'Created absence',
     approvedAbsence: 'Approved absence',
     closedHelp: 'Closed help request',
@@ -478,7 +474,6 @@ const dashboardCopy: Record<Language, DashboardCopy> = {
     reloadLiveModules: '重新加载实时模块',
     joinedGuild: '加入公会',
     respondedToHelp: '响应求助',
-    createdHelp: '创建求助请求',
     createdAbsence: '创建请假',
     approvedAbsence: '批准请假',
     closedHelp: '关闭求助',
@@ -540,7 +535,7 @@ function generateSyntheticActivity(
     }
     events.push({
       id: `help-created-${h.id}`,
-      type: 'created_help',
+      type: 'closed_help',
       actor: h.author,
       timestamp: h.createdAt,
       details: h.title,
@@ -841,7 +836,7 @@ function DashboardPrimaryRegion({
                   <div className="activity-feed-icon">
                     <WuxiaIcon name={
                       event.type === 'joined_guild' ? 'user' :
-                      event.type === 'responded_help' || event.type === 'created_help' ? 'help' :
+                      event.type === 'responded_help' ? 'help' :
                       event.type === 'created_absence' || event.type === 'approved_absence' ? 'absences' :
                       event.type === 'closed_help' ? 'checkCircle' :
                       event.type === 'created_guide' ? 'book' :
@@ -856,7 +851,6 @@ function DashboardPrimaryRegion({
                     <div className="activity-feed-action">
                       {event.type === 'joined_guild' ? copy.joinedGuild :
                        event.type === 'responded_help' ? copy.respondedToHelp :
-                       event.type === 'created_help' ? copy.createdHelp :
                        event.type === 'created_absence' ? copy.createdAbsence :
                        event.type === 'approved_absence' ? copy.approvedAbsence :
                        event.type === 'closed_help' ? copy.closedHelp :
@@ -961,9 +955,9 @@ function DashboardSectionContent({ user, language }: DashboardSectionProps) {
   const liveTone: LiveTone = helpSnapshot.unattended > 0 || absenceSnapshot.pending.length > 0 || pvpSnapshot.disputed ? 'alert' : 'steady';
   const liveLabel = liveTone === 'alert' ? copy.activeAlerts : copy.allClear;
 
-  const coreLoading = scheduleLoading || helpLoading || registrationsLoading || newsLoading;
+  const coreLoading = scheduleLoading && helpLoading && registrationsLoading && newsLoading;
   const coreEmpty = !schedule.length && !openHelp.length && !registrations.length && !news.length;
-  const coreErrored = Boolean(scheduleError || helpError || registrationsError || newsError);
+  const coreErrored = Boolean(scheduleError && helpError && registrationsError && newsError);
 
   if (coreLoading && coreEmpty) {
     return <LoadingState title={copy.title} subtitle={copy.refreshPulse} icon="eye" skeletonCount={4} layout="cards" />;

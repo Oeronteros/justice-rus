@@ -325,70 +325,6 @@ body {
   inset: 0;
   pointer-events: none;
   overflow: hidden;
-  z-index: 1;
-}
-
-.theme-wuxia .auth-shell {
-  position: relative;
-  isolation: isolate;
-  background:
-    radial-gradient(circle at 18% 20%, rgba(124, 189, 220, 0.1), transparent 24%),
-    radial-gradient(circle at 82% 16%, rgba(191, 227, 244, 0.08), transparent 20%),
-    linear-gradient(145deg, rgba(6, 10, 15, 0.34), rgba(6, 10, 15, 0.22));
-}
-
-.theme-wuxia .auth-shell::before {
-  content: '';
-  position: absolute;
-  inset: 1px;
-  border-radius: 31px;
-  border: 1px solid rgba(226, 241, 248, 0.06);
-  pointer-events: none;
-}
-
-.theme-wuxia .auth-shell__aside,
-.theme-wuxia .auth-shell__form {
-  position: relative;
-  z-index: 2;
-}
-
-.theme-wuxia .auth-shell__aside::after {
-  content: '';
-  position: absolute;
-  inset: auto 16% 0 16%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(191, 227, 244, 0.22), transparent);
-  pointer-events: none;
-}
-
-.theme-wuxia .auth-shell__form {
-  background:
-    linear-gradient(160deg, rgba(9, 16, 23, 0.58), rgba(8, 12, 18, 0.38));
-}
-
-.theme-wuxia .auth-shell__form::before {
-  content: '';
-  position: absolute;
-  inset: 18px;
-  border-radius: 28px;
-  border: 1px solid rgba(191, 227, 244, 0.08);
-  background:
-    radial-gradient(circle at 16% 8%, rgba(124, 189, 220, 0.12), transparent 22%),
-    linear-gradient(180deg, rgba(191, 227, 244, 0.04), transparent 18%, transparent 82%, rgba(95, 178, 214, 0.05));
-  pointer-events: none;
-}
-
-.theme-wuxia .auth-shell__form::after {
-  content: '';
-  position: absolute;
-  top: 26px;
-  right: 30px;
-  width: 180px;
-  height: 180px;
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(124, 189, 220, 0.12), transparent 72%);
-  filter: blur(18px);
-  pointer-events: none;
 }
 
 .theme-wuxia .auth-scene-card {
@@ -402,7 +338,7 @@ body {
     inset 0 0 0 1px rgba(226, 241, 248, 0.04),
     0 24px 80px rgba(2, 8, 14, 0.32);
   backdrop-filter: blur(12px);
-  opacity: 0.68;
+  opacity: 0.55;
 }
 
 .theme-wuxia .auth-scene-card::before {
@@ -415,28 +351,28 @@ body {
 }
 
 .theme-wuxia .auth-scene-card-left {
-  top: 10%;
-  left: 6%;
-  width: min(22vw, 320px);
-  height: min(28vw, 390px);
+  top: 12%;
+  left: 8%;
+  width: min(20vw, 280px);
+  height: min(26vw, 360px);
   transform: rotate(-10deg);
   animation: authSceneFloatLeft 20s ease-in-out infinite;
 }
 
 .theme-wuxia .auth-scene-card-right {
-  top: 12%;
-  right: 7%;
-  width: min(20vw, 290px);
-  height: min(24vw, 340px);
+  top: 14%;
+  right: 9%;
+  width: min(18vw, 250px);
+  height: min(22vw, 310px);
   transform: rotate(11deg);
   animation: authSceneFloatRight 18s ease-in-out infinite;
 }
 
 .theme-wuxia .auth-scene-card-bottom {
-  bottom: 5%;
+  bottom: 7%;
   left: 50%;
-  width: min(30vw, 460px);
-  height: min(16vw, 240px);
+  width: min(28vw, 420px);
+  height: min(15vw, 220px);
   transform: translateX(-50%) rotate(-3deg);
   animation: authSceneFloatBottom 22s ease-in-out infinite;
 }
@@ -543,63 +479,51 @@ body {
 
 @media (max-width: 1023px) {
   .theme-wuxia .auth-scene-card-left {
-    top: 8%;
-    left: -8%;
-    width: min(38vw, 240px);
-    height: min(48vw, 300px);
+    top: 10%;
+    left: -4%;
+    width: min(34vw, 220px);
+    height: min(44vw, 280px);
   }
 
   .theme-wuxia .auth-scene-card-right {
     top: auto;
-    bottom: 14%;
-    right: -6%;
-    width: min(32vw, 220px);
-    height: min(40vw, 270px);
+    bottom: 16%;
+    right: -3%;
+    width: min(30vw, 200px);
+    height: min(38vw, 250px);
   }
 
   .theme-wuxia .auth-scene-card-bottom {
-    bottom: 4%;
-    width: min(62vw, 360px);
-    height: min(32vw, 190px);
+    bottom: 5%;
+    width: min(58vw, 320px);
+    height: min(30vw, 170px);
   }
 }
 
 @media (max-width: 639px) {
-  .theme-wuxia .auth-shell__form::before {
-    inset: 12px;
-    border-radius: 24px;
-  }
-
-  .theme-wuxia .auth-shell__form::after {
-    top: 16px;
-    right: 16px;
-    width: 120px;
-    height: 120px;
-  }
-
   .theme-wuxia .auth-scene-card {
-    opacity: 0.34;
+    opacity: 0.4;
     backdrop-filter: blur(8px);
   }
 
   .theme-wuxia .auth-scene-card-left {
-    top: 10%;
-    left: -16%;
-    width: 144px;
-    height: 204px;
+    top: 8%;
+    left: -12%;
+    width: 160px;
+    height: 220px;
   }
 
   .theme-wuxia .auth-scene-card-right {
-    right: -14%;
-    bottom: 18%;
-    width: 138px;
-    height: 190px;
+    right: -10%;
+    bottom: 22%;
+    width: 150px;
+    height: 200px;
   }
 
   .theme-wuxia .auth-scene-card-bottom {
-    bottom: 2%;
-    width: 220px;
-    height: 124px;
+    bottom: 4%;
+    width: 240px;
+    height: 132px;
   }
 
   .theme-wuxia .auth-scene-symbol {
@@ -1773,15 +1697,9 @@ body {
     flex-shrink: 0;
   }
 
-.section-shell {
-  scroll-margin-top: calc(96px + var(--safe-top));
-}
-
-@media (max-width: 767px) {
   .section-shell {
-    padding-bottom: calc(84px + var(--safe-bottom));
+    scroll-margin-top: calc(96px + var(--safe-top));
   }
-}
 
   .section-stack-lg {
     display: grid;

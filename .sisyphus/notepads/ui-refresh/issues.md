@@ -11,7 +11,7 @@
 - No standalone dashboard empty-state variants for individual regions were extracted yet; later redesign must preserve the current top-level loading/error gate and inline card-empty states.
 
 ## 2026-03-12 T6
-- Resolved: PvP now carries `prefix` through schema/service/UI, so shared prefix rendering is no longer blocked there.
+- `components/sections/pvp/index.tsx` still cannot render shared prefixes for other participants without expanding the PvP data contract: `lib/schemas/pvp.ts` and `lib/server/pvp/service.ts` currently expose nickname/class only, no prefix field.
 
 ## 2026-03-12 T2/T7/T8/T9/T10
 - Browser QA on webpack dev server is stable enough for a desktop dashboard/header pass, but detached dev processes are flaky in this environment; mobile visual verification is less reliable and should be backed by Playwright specs later.

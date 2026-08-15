@@ -16,7 +16,6 @@
 ## 2026-03-12 T6
 - Introduced `PrefixBadge` with `default` and `compact` variants as the single shared prefix presentation primitive.
 - Replaced profile inline badge markup and added compact prefix rendering to both mobile and desktop participant views in `RegistrationTable`.
-- Extended the PvP contract so queue, leaderboard, and match participant payloads now include `prefix`, enabling shared prefix rendering there without hacks.
 
 ## 2026-03-12 T2/T7/T8/T9/T10
 - Strengthened the shared shell aesthetic through additive CSS overrides at the end of `app/globals.css` instead of rewriting existing foundations.

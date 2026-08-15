@@ -73,7 +73,7 @@ interface ProfileOverviewProps {
 }
 
 const ProfileOverview = memo(function ProfileOverview({ profileRegistration, user }: ProfileOverviewProps) {
-  const prefix = profileRegistration?.prefix ?? user.prefix ?? null;
+  const prefix = profileRegistration?.prefix || user.prefix || null;
 
   return (
     <div className="card section-card p-5 sm:p-6">
@@ -518,7 +518,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
   useEffect(() => {
     setProfileDraft({
       discordHandle: profileRegistration?.discordHandle || user.discordHandle || '',
-      prefix: profileRegistration?.prefix ?? user.prefix ?? '',
+      prefix: profileRegistration?.prefix || user.prefix || '',
       className: profileRegistration?.class || user.className || '',
       guild: profileRegistration?.guild || '',
       mmr20: profileRegistration?.mmr20 || 0,
